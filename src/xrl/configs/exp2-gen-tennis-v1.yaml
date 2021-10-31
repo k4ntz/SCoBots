@@ -1,0 +1,18 @@
+env_name: 'TennisDeterministic-v4'
+
+rl_algo: 2
+
+device: 'cuda:0'
+parallel: False
+
+logdir: '/xrl/genlogs/'
+
+video_steps: 100
+
+train:
+  num_episodes: 50000
+  max_steps: 50000
+  
+  log_steps: 500
+
+

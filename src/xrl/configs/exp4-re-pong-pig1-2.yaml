@@ -1,0 +1,25 @@
+env_name: 'PongDeterministic-v4'
+seed: 5
+
+rl_algo: 1
+
+device: 'cuda:0'
+parallel: False
+
+logdir: '/xrl/relogs/'
+
+video_steps: 100
+
+train:
+  gamma: 0.97
+  learning_rate: 0.0001
+
+  num_episodes: 50000
+  max_steps: 100000
+
+  pruning_method: "ig-pr"
+  pruning_steps: 10000
+  
+  log_steps: 25
+  # save every is for episodes
+  save_every: 100

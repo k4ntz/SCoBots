@@ -1,0 +1,18 @@
+env_name: 'PongDeterministic-v4'
+
+rl_algo: 3
+
+device: 'cuda:0'
+parallel: False
+
+logdir: '/xrl/drlogs/'
+
+video_steps: 100
+
+raw_image: True
+
+train:
+  max_steps: 200000000 #2mio steps
+  save_every: 100
+
+
