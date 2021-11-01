@@ -1,4 +1,4 @@
-env_name: 'PongDeterministic-v4'
+env_name: 'TennisDeterministic-v4'
 seed: 42
 
 rl_algo: 4
