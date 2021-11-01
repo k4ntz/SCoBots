@@ -79,8 +79,8 @@ def load(path,
 
 # function to select action
 # TODO: fix for planning
-def select_action(features, policy):
-    action = np.random.randint(0, 6)
+def select_action(n_actions, policy):
+    action = np.random.randint(0, n_actions)
     return action, None
 
 
@@ -147,7 +147,7 @@ def train(cfg):
                 r_sum = 0
                 t = 0
                 while t < 50000:
-                    a, _ = select_action(features, policy)
+                    a, _ = select_action(n_actions, policy)
                     # create episode entry with last state, action, state and reward
                     episode.append(raw_features)
                     episode.append(a)

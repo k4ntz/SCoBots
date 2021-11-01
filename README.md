@@ -14,7 +14,8 @@ This repository contains a modular reinforcement learning framework. Instead of 
 ## How to simple call
 
 ```
-python src/xrl.py --config path/to/config/file.yaml
+cd src
+python xrl.py --config path/to/config/file.yaml
 ```
 
 There are some example config files inside `configs`-Folder for various experiments. 
