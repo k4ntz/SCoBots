@@ -126,7 +126,7 @@ def plot_screen(env, episode, step, second_img=None):
 # function to get integrated gradients
 def get_integrated_gradients(ig, input, target_class):
     # get attributions and print
-    attributions, approximation_error = ig.attribute(torch.tensor(input).unsqueeze(0).float(), 
+    attributions, approximation_error = ig.attribute(input,
         target=target_class, return_convergence_delta=True)
     #print(attributions)
     attr = attributions[0].cpu().detach().numpy()
@@ -150,33 +150,44 @@ def get_feature_titles(n_raw_features = 3):
     return feature_titles
 
 
-# helper function to get integrated gradients of given features as plotable image
-def plot_integrated_gradient_img(ig, exp_name, input, feature_titles, target_class, env, plot):
-    attr = get_integrated_gradients(ig, input, target_class)
-    attr_df = pd.DataFrame({"Values": attr},
-                  index=feature_titles)
-    #print(attr_df)
-    env_img = env.render(mode='rgb_array')
-    # plot both next to each other
-    fig, (ax1, ax2) = plt.subplots(ncols=2)
-    ax1.imshow(env_img)
-    sn.heatmap(attr_df, ax=ax2, vmin=-0.2, vmax=1)
-    ax1.set_title(exp_name)
-    fig.tight_layout()
-    # convert fig to cv2 img
-    # put pixel buffer in numpy array
-    canvas = FigureCanvas(fig)
-    canvas.draw()
-    mat = np.array(canvas.renderer._renderer)
-    mat = cv2.cvtColor(mat, cv2.COLOR_RGB2BGR)
-    resized = cv2.resize(mat, (480, 480), interpolation = cv2.INTER_AREA)
-    if plot:
-        plt.draw()
-        plt.pause(0.0001)
-    # clean up
-    fig.clf()
-    plt.close(fig)
-    return resized
+class Plotter():
+    def __init__(self, figsize=(20, 10)):
+        fig, axes = plt.subplots(ncols=2, figsize=figsize,
+                                 gridspec_kw={'width_ratios': [6, 1]})
+        self.fig = fig
+        self.axes = axes
+        self.cbar = True
+        # self.fig.tight_layout()
+
+    # helper function to get integrated gradients of given features as plotable image
+    def plot_IG_img(self, ig, exp_name, input, feature_titles, target_class, env, plot):
+        attr = get_integrated_gradients(ig, input, target_class)
+        attr_df = pd.DataFrame({"Values": attr},
+                      index=feature_titles)
+        #print(attr_df)
+        env_img = env.render(mode='rgb_array')
+        # plot both next to each other
+        ax1, ax2 = self.axes
+        ax1.imshow(env_img)
+        sn.heatmap(attr_df, ax=ax2, vmin=-0.2, vmax=1, cbar=self.cbar)
+        self.cbar = False
+        ax1.set_title(exp_name)
+        # convert fig to cv2 img
+        # put pixel buffer in numpy array
+        canvas = FigureCanvas(self.fig)
+        canvas.draw()
+        mat = np.array(canvas.renderer._renderer)
+        mat = cv2.cvtColor(mat, cv2.COLOR_RGB2BGR)
+        resized = cv2.resize(mat, (480, 480), interpolation = cv2.INTER_AREA)
+        if plot:
+            plt.draw()
+            plt.pause(0.0001)
+        # clean up
+        for ax in self.axes:
+            ax.clear()
+        # self.fig.clf()
+        # plt.close(self.fig)
+        return resized
 
 
 # 0: "NOOP",
@@ -190,7 +201,7 @@ def ig_pca(ig_action_sum, action_meanings):
     plt.figure(figsize=(8,6))
     # process ig df with actions
     mapping = {i: action_meanings[i] for i in range(len(action_meanings))}
-    # watch out, n_cols is -1 from col count 
+    # watch out, n_cols is -1 from col count
     n_cols = len(ig_action_sum[1,:]) - 1
     ig_df = pd.DataFrame(data=ig_action_sum).replace({n_cols: mapping}).rename(columns={n_cols: "action"})
     # pca for ig values
@@ -202,7 +213,7 @@ def ig_pca(ig_action_sum, action_meanings):
     plot.set_title("PCA on Integrated Gradient Values")
     plt.tight_layout()
     plt.show()
-    
+
 
 
 
@@ -210,7 +221,7 @@ def ig_pca(ig_action_sum, action_meanings):
 def plot_igs(ig_sum, plot_titles, action_meanings):
     # process ig df with actions
     mapping = {i: action_meanings[i] for i in range(len(action_meanings))}
-    # watch out, n_cols is -1 from col count 
+    # watch out, n_cols is -1 from col count
     n_cols = len(ig_sum[1,:]) - 1
     ig_df = pd.DataFrame(data=ig_sum).replace({n_cols: mapping}).rename(columns={n_cols: "action"})
     # remove action col
@@ -220,7 +231,7 @@ def plot_igs(ig_sum, plot_titles, action_meanings):
         fig, ax = plt.subplots(1,2, figsize=(12,6))
         sns.set(font_scale=0.7)
         sns.set_style("ticks")
-        ## seaborn lineplot 
+        ## seaborn lineplot
         scatter = sns.scatterplot(x=igs.index, y=igs, size=0.02, alpha=0.7, palette="deep", hue=ig_df["action"], ax=ax[0])
         scatter.set(xlabel='Step', ylabel='Integrated gradient')
         if plot_titles is not None:
@@ -241,7 +252,7 @@ def plot_corr(features):
     sns.set_style("ticks")
     plt.figure(figsize=(6,5))
     corrplot = sns.heatmap(
-        df.corr(), 
+        df.corr(),
         vmin=-1, vmax=1, center=0,
         cmap=sns.diverging_palette(20, 220, n=200),
         square=True
@@ -264,7 +275,7 @@ def plot_corr(features):
 def plot_igs_violin(ig_sum, feature_titles, action_meanings):
     # process ig df with actions
     mapping = {i: action_meanings[i] for i in range(len(action_meanings))}
-    # watch out, n_cols is -1 from col count 
+    # watch out, n_cols is -1 from col count
     n_cols = len(ig_sum[1,:]) - 1
     ig_df = pd.DataFrame(data=ig_sum).replace({n_cols: mapping}).rename(columns={n_cols: "action"})
     # rename cols to feature names
@@ -328,17 +339,17 @@ def plot_lin_weights(model, feature_titles, actions):
 ###############################
 
 
-# function to get raw features and order them by 
+# function to get raw features and order them by
 def get_raw_features(env_info, last_raw_features=None, gametype=0):
     # extract raw features
     labels = env_info["labels"]
     # if ball game
     if gametype == 0:
-        player = [labels["player_x"].astype(np.int16), 
+        player = [labels["player_x"].astype(np.int16),
                 labels["player_y"].astype(np.int16)]
-        enemy = [labels["enemy_x"].astype(np.int16), 
+        enemy = [labels["enemy_x"].astype(np.int16),
                 labels["enemy_y"].astype(np.int16)]
-        ball = [labels["ball_x"].astype(np.int16), 
+        ball = [labels["ball_x"].astype(np.int16),
                 labels["ball_y"].astype(np.int16)]
         # set new raw_features
         raw_features = last_raw_features
@@ -353,15 +364,15 @@ def get_raw_features(env_info, last_raw_features=None, gametype=0):
     ###########################################
     # demon attack game
     elif gametype == 1:
-        player = [labels["player_x"].astype(np.int16), 
-                np.int16(3)]        # constant 3 
-        enemy1 = [labels["enemy_x1"].astype(np.int16), 
+        player = [labels["player_x"].astype(np.int16),
+                np.int16(3)]        # constant 3
+        enemy1 = [labels["enemy_x1"].astype(np.int16),
                 labels["enemy_y1"].astype(np.int16)]
-        enemy2 = [labels["enemy_x2"].astype(np.int16), 
+        enemy2 = [labels["enemy_x2"].astype(np.int16),
                 labels["enemy_y2"].astype(np.int16)]
-        enemy3 = [labels["enemy_x3"].astype(np.int16), 
+        enemy3 = [labels["enemy_x3"].astype(np.int16),
                 labels["enemy_y3"].astype(np.int16)]
-        #missile = [labels["player_x"].astype(np.int16), 
+        #missile = [labels["player_x"].astype(np.int16),
         #        labels["missile_y"].astype(np.int16)]
         # set new raw_features
         raw_features = last_raw_features
@@ -377,9 +388,9 @@ def get_raw_features(env_info, last_raw_features=None, gametype=0):
     ###########################################
     # boxing game
     elif gametype == 2:
-        player = [labels["player_x"].astype(np.int16), 
+        player = [labels["player_x"].astype(np.int16),
                 labels["player_y"].astype(np.int16)]
-        enemy = [labels["enemy_x"].astype(np.int16), 
+        enemy = [labels["enemy_x"].astype(np.int16),
                 labels["enemy_y"].astype(np.int16)]
         # set new raw_features
         raw_features = last_raw_features
@@ -403,7 +414,7 @@ def get_lineq_param(obj1, obj2):
 
 
 # helper function to convert env info into custom list
-# raw_features contains player x, y, ball x, y, oldplayer x, y, oldball x, y, 
+# raw_features contains player x, y, ball x, y, oldplayer x, y, oldball x, y,
 # features are processed stuff for policy
 def preprocess_raw_features(raw_features):
     n_raw_features = int(len(raw_features)/2)

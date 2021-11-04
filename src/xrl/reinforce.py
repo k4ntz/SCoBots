@@ -28,7 +28,7 @@ model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pt
 
 # with preprocessed meaningful features
 class Policy(nn.Module):
-    def __init__(self, input, hidden, actions, make_hidden = True): 
+    def __init__(self, input, hidden, actions, make_hidden = True):
         super(Policy, self).__init__()
         # should make one hidden layer
         self.make_hidden = make_hidden
@@ -124,7 +124,7 @@ def train(cfg):
     # init policy net
     print("Make hidden layer in nn:", cfg.train.make_hidden)
     policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
-    optimizer = optim.Adam(policy.parameters(), lr=cfg.train.learning_rate) 
+    optimizer = optim.Adam(policy.parameters(), lr=cfg.train.learning_rate)
     eps = np.finfo(np.float32).eps.item()
     i_episode = 1
     # load if exists
@@ -219,7 +219,7 @@ def eval_load(cfg):
     print('Evaluating Mode')
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
-    # init env 
+    # init env
     env = AtariARIWrapper(gym.make(cfg.env_name))
     n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
