@@ -2,7 +2,6 @@ env_name: 'PongDeterministic-v4'
 
 rl_algo: 3
 
-device: 'cuda:0'
 parallel: False
 
 logdir: '/xrl/drlogs/'
