@@ -1,7 +1,6 @@
 # main file for all rl algos
 
 import random
-from re import L
 import torch
 import gym
 import numpy as np
@@ -21,18 +20,21 @@ from xrl import utils
 from xrl.genetic_rl import policy_net
 import xrl.utils as xutils
 import xrl.video_logger as vlogger
-
+from xrl.utils import Plotter
 
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
-def select_action(features, policy, random_tr = -1):
+def select_action(features, policy, random_tr = -1, select_argmax=False):
     sample = random.random()
     if sample > random_tr:
         # calculate probabilities of taking each action
-        probs = policy(torch.tensor(features).unsqueeze(0).float())
+        probs = policy(features)
+        if select_argmax:
+            return probs.argmax().item()
         # sample an action from that set of probs
-        sampler = Categorical(probs)
-        action = sampler.sample()
+        else:
+            sampler = Categorical(probs)
+            action = sampler.sample()
     else:
         action = random.randint(0, 5)
     # return action
@@ -43,7 +45,6 @@ def select_action(features, policy, random_tr = -1):
 def play_agent(agent, cfg):
     # init env
     env = AtariARIWrapper(gym.make(cfg.env_name))
-    n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
     _, _, done, _ = env.step(1)
     raw_features, features, _, _ = xutils.do_step(env)
@@ -51,22 +52,24 @@ def play_agent(agent, cfg):
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # init objects
-    summary(agent, input_size=(1, len(features)))
-    logger = vlogger.VideoLogger(size=(480,480))
+    summary(agent, input_size=(1, len(features)), device=cfg.device)
+    logger = vlogger.VideoLogger(size=(480, 480))
     ig = IntegratedGradients(agent)
     ig_sum = []
     ig_action_sum = []
     l_features = []
     feature_titles = xutils.get_feature_titles(int(len(raw_features)/2))
     # env loop
+    plotter = Plotter()
     t = 0
-    while t  < 3000:  # Don't infinite loop while playing
+    while t < 3000:  # Don't infinite loop while playing
         # only when raw features should be used
         if cfg.train.use_raw_features:
             features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
+        features = torch.tensor(features).unsqueeze(0).float().to(cfg.device)
         action = select_action(features, agent)
         if cfg.liveplot or cfg.make_video:
-            img = xutils.plot_integrated_gradient_img(ig, cfg.exp_name, features, feature_titles, action, env, cfg.liveplot)
+            img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, env, cfg.liveplot)
             logger.fill_video_buffer(img)
         else:
             ig_sum.append(xutils.get_integrated_gradients(ig, features, action))
@@ -89,12 +92,12 @@ def play_agent(agent, cfg):
         ig_action_sum = np.asarray(ig_action_sum)
         print('Final reward: {:.2f}\tSteps: {}\tIG-Mean: {}'.format(
         ep_reward, t, np.mean(ig_sum, axis=0)))
-    
+
     ################## PLOT STUFF ##################
     #xutils.ig_pca(ig_action_sum, env.unwrapped.get_action_meanings())
     #xutils.plot_igs_violin(ig_action_sum, feature_titles, env.unwrapped.get_action_meanings())
     #if not cfg.train.make_hidden:
-    #    # plot some weight stuff due of linear model 
+    #    # plot some weight stuff due of linear model
     #    xutils.plot_lin_weights(agent, feature_titles, env.unwrapped.get_action_meanings())
     #xutils.plot_igs(ig_action_sum, feature_titles, env.unwrapped.get_action_meanings())
 
@@ -141,7 +144,7 @@ def use_minidreamer(cfg):
 # switch for each algo
 if __name__ == '__main__':
     cfg = utils.get_config()
-    # algo selection 
+    # algo selection
     # 1: REINFORCE
     # 2: Deep Neuroevolution
     # 3: DreamerV2
@@ -156,5 +159,3 @@ if __name__ == '__main__':
         use_minidreamer(cfg)
     else:
         print("Unknown algorithm selected")
-
-    
