@@ -25,7 +25,7 @@ cfg = CfgNode({
     'parallel': False,
     # Device ids to use
     'device_ids': [0, 1, 2, 3],
-    'device': 'cuda:0',
+    'device': 'cpu',
     'logdir': '/xrl/logs/',
 
     'make_video': False,

@@ -2,7 +2,6 @@ env_name: 'DemonAttackDeterministic-v4'
 
 rl_algo: 1
 
-device: 'cuda:0'
 parallel: False
 
 logdir: '/xrl/relogs/'

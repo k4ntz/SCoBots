@@ -2,7 +2,6 @@ env_name: 'BoxingDeterministic-v4'
 
 rl_algo: 2
 
-device: 'cuda:0'
 parallel: False
 
 logdir: '/xrl/genlogs/'
