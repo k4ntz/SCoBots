@@ -13,12 +13,23 @@ This repository contains a modular reinforcement learning framework. Instead of 
 
 ## How to simple call
 
+Pretrained models and their config files are available inside ```pretrained/```. To use one of the pretrained models:
+
 ```
+sh setup_pretrained.sh
 cd src
-python xrl.py --config path/to/config/file.yaml
+
+# for just evaluating a trained model
+python xrl.py --config ../pretrained/configs/pretrained-boxing-gen.yaml mode eval 
+
+# for creating a video while evaluating a trained model
+python xrl.py --config ../pretrained/configs/pretrained-boxing-gen.yaml mode eval make_video True   
+
+# for showing the liveplot while using a trained model
+python xrl.py --config ../pretrained/configs/pretrained-boxing-gen.yaml mode eval liveplot True
 ```
 
-There are some example config files inside `configs`-Folder for various experiments. 
+There are other example config files inside `configs`-Folder for various experiments. They can be used to train new models. 
 
 ## A little deeper explanation about the framework
 
@@ -27,9 +38,9 @@ The main file to call in this framework is `src/xrl.py`. It is called together w
 Parameters set in the config file can be overwritten by calling the parameter and its new value in the command. For example: 
 
 ```
-python src/xrl.py --config path/to/config/file.yaml mode eval
+python src/xrl.py --config path/to/config/file.yaml device "cpu"
 ```
 
-This call overwrites the "mode"-parameter to "eval"
+This call overwrites the "device"-parameter to "cpu"
 
 TODO: Checkpoint and logs
