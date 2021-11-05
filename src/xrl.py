@@ -2,10 +2,8 @@
 
 import random
 import torch
-import gym
 import numpy as np
 
-from atariari.benchmark.wrapper import AtariARIWrapper
 from captum.attr import IntegratedGradients
 from torch.distributions import Categorical
 from torchinfo import summary
@@ -21,6 +19,9 @@ from xrl.genetic_rl import policy_net
 import xrl.utils as xutils
 import xrl.video_logger as vlogger
 from xrl.utils import Plotter
+from xrl.environments import agym
+# import gym
+# from atariari.benchmark.wrapper import AtariARIWrapper
 
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
@@ -44,7 +45,7 @@ def select_action(features, policy, random_tr = -1, select_argmax=False):
 # function to test agent loaded via main switch
 def play_agent(agent, cfg):
     # init env
-    env = AtariARIWrapper(gym.make(cfg.env_name))
+    env = agym.make(cfg.env_name)
     _, ep_reward = env.reset(), 0
     _, _, done, _ = env.step(1)
     raw_features, features, _, _ = xutils.do_step(env)
