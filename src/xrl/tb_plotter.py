@@ -204,6 +204,57 @@ def plot_entropy():
     plt.show()
 
 
+# plot function for first try minidreamer
+def plot_mdr():
+    # first load all data
+    runs = ["exp3-mdr-pong", "exp3-mdr-tennis"]
+    list_dsi = []   # list distance next state
+    list_dsns = []  # list distance id
+    list_loss = []  # list loss 
+    list_loss_s = []    # list loss state
+    list_loss_r = []    # list loss reward
+    for run in runs:
+        x = EventAccumulator(path=os.getcwd() + "/xrl/mdrlogs/" + run + "/")
+        x.Reload()
+        # print(x.Tags())
+        dsi_df = pd.DataFrame(x.Scalars('Train/Diff State Identity'))
+        list_dsi.append(dsi_df)
+        list_dsi[len(list_dsi) - 1]["run"] = run
+        dsns_df = pd.DataFrame(x.Scalars('Train/Diff State Next State'))
+        list_dsns.append(dsns_df)
+        list_dsns[len(list_dsns) - 1]["run"] = run
+        #list_loss.append(pd.DataFrame(x.Scalars('Train/Loss World Predictor')))
+        #list_loss_s.append(pd.DataFrame(x.Scalars('Train/Loss World Predictor State')))
+        #list_loss_r.append(pd.DataFrame(x.Scalars('Train/Loss World Predictor Reward')))
+        # do some stats stuff
+        print(run)
+        print(dsi_df[dsi_df["step"] > 900000].describe())
+        print(dsns_df[dsns_df["step"] > 900000].describe())
+    ##### first plot diff to next state and identity #####
+    sns.set(font_scale=1.5)
+    sns.set_style("ticks")
+    plt.figure(figsize=(10,5))
+    # reward for diff to identity
+    df1 = pd.concat(list_dsi)
+    df2 = pd.concat(list_dsns)
+    # smooth
+    df1["s-value"] = smooth2(df1["value"], 121)
+    df2["s-value"] = smooth2(df2["value"], 121)
+    '''
+    # plot first
+    p = sns.lineplot(data=df1, x="step", y="value", alpha=0.2, legend=False, color="green")
+    sns.lineplot(data=df1, x="step", y="s-value", color="green")
+    sns.lineplot(data=df2, x="step", y="value", alpha=0.2, legend=False, color="red")
+    sns.lineplot(data=df2, x="step", y="s-value", color="red")
+    p.set(ylabel='Loss', xlabel='Frame')
+    # finish
+    sns.despine(offset=10, trim=True)
+    plt.tight_layout()
+    #plt.savefig("dummy.pdf")
+    plt.show()
+    '''
+
+
 
 # call function to plot
-plot_exp4_tr()
+plot_mdr()
