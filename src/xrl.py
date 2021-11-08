@@ -8,10 +8,10 @@ from captum.attr import IntegratedGradients
 from torch.distributions import Categorical
 from torchinfo import summary
 
-from xrl import reinforce
-from xrl import genetic_rl as genetic
-from xrl import dreamer_v2
-from xrl import minidreamer
+from xrl.algorithms import reinforce
+from xrl.algorithms import genetic_rl as genetic
+from xrl.algorithms import dreamer_v2
+from xrl.algorithms import minidreamer
 
 from xrl import utils
 # otherwise genetic loading model doesnt work, torch bug?
@@ -20,8 +20,6 @@ import xrl.utils as xutils
 import xrl.video_logger as vlogger
 from xrl.utils import Plotter
 from xrl.environments import agym
-# import gym
-# from atariari.benchmark.wrapper import AtariARIWrapper
 
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
