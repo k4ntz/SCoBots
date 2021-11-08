@@ -13,12 +13,12 @@ from xrl.algorithms import genetic_rl as genetic
 from xrl.algorithms import dreamer_v2
 from xrl.algorithms import minidreamer
 
-from xrl import utils
+from xrl.utils.utils import get_config
 # otherwise genetic loading model doesnt work, torch bug?
 from xrl.genetic_rl import policy_net
-import xrl.utils as xutils
-import xrl.video_logger as vlogger
-from xrl.utils import Plotter
+import xrl.utils.plotter as plt
+import xrl.utils.utils as xutils
+import xrl.utils.video_logger as vlogger
 from xrl.environments import agym
 
 # helper function to select action from loaded agent
@@ -57,9 +57,9 @@ def play_agent(agent, cfg):
     ig_sum = []
     ig_action_sum = []
     l_features = []
-    feature_titles = xutils.get_feature_titles(int(len(raw_features)/2))
+    feature_titles = plt.get_feature_titles(int(len(raw_features)/2))
     # env loop
-    plotter = Plotter()
+    plotter = plt.Plotter()
     t = 0
     while t < 3000:  # Don't infinite loop while playing
         # only when raw features should be used
@@ -71,8 +71,8 @@ def play_agent(agent, cfg):
             img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, env, cfg.liveplot)
             logger.fill_video_buffer(img)
         else:
-            ig_sum.append(xutils.get_integrated_gradients(ig, features, action))
-            ig_action_sum.append(np.append(xutils.get_integrated_gradients(ig, features, action), [action]))
+            ig_sum.append(plt.get_integrated_gradients(ig, features, action))
+            ig_action_sum.append(np.append(plt.get_integrated_gradients(ig, features, action), [action]))
         print('Reward: {:.2f}\t Step: {:.2f}'.format(
                 ep_reward, t), end="\r")
         raw_features, features, reward, done = xutils.do_step(env, action, raw_features)
@@ -142,7 +142,7 @@ def use_minidreamer(cfg):
 # main function
 # switch for each algo
 if __name__ == '__main__':
-    cfg = utils.get_config()
+    cfg = get_config()
     # algo selection
     # 1: REINFORCE
     # 2: Deep Neuroevolution

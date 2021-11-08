@@ -1,3 +1,6 @@
+# Test file for plotting trained graphs
+# Used for thesis
+
 from packaging import version
 
 import os

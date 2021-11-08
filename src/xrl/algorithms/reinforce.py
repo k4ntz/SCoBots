@@ -15,9 +15,8 @@ from captum.attr import IntegratedGradients
 
 from rtpt import RTPT
 
-import xrl.utils as xutils
-import xrl.video_logger as vlogger
-import xrl.pruner as pruner
+import xrl.utils.utils as xutils
+import xrl.utils.pruner as pruner
 
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):
@@ -173,8 +172,6 @@ def train(cfg):
                 ig_sum.append(xutils.get_integrated_gradients(ig, features, action))
             policy.saved_log_probs.append(log_prob)
             raw_features, features, reward, done = xutils.do_step(env, action, raw_features)
-            if cfg.liveplot:
-                xutils.plot_screen(env, i_episode, t)
             policy.rewards.append(reward)
             ep_reward += reward
             t += 1
