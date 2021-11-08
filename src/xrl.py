@@ -13,13 +13,14 @@ from xrl.algorithms import genetic_rl as genetic
 from xrl.algorithms import dreamer_v2
 from xrl.algorithms import minidreamer
 
+import xrl.utils.plotter as plt
+import xrl.utils.video_logger as vlogger
+
 from xrl.utils.utils import get_config
 # otherwise genetic loading model doesnt work, torch bug?
 from xrl.genetic_rl import policy_net
-import xrl.utils.plotter as plt
-import xrl.utils.utils as xutils
-import xrl.utils.video_logger as vlogger
 from xrl.environments import agym
+from xrl.features import aari_feature_processor
 
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
@@ -46,7 +47,7 @@ def play_agent(agent, cfg):
     env = agym.make(cfg.env_name)
     _, ep_reward = env.reset(), 0
     _, _, done, _ = env.step(1)
-    raw_features, features, _, _ = xutils.do_step(env)
+    raw_features, features, _, _ = aari_feature_processor.do_step(env)
     # only when raw features should be used
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
@@ -75,7 +76,7 @@ def play_agent(agent, cfg):
             ig_action_sum.append(np.append(plt.get_integrated_gradients(ig, features, action), [action]))
         print('Reward: {:.2f}\t Step: {:.2f}'.format(
                 ep_reward, t), end="\r")
-        raw_features, features, reward, done = xutils.do_step(env, action, raw_features)
+        raw_features, features, reward, done = aari_feature_processor.do_step(env, action, raw_features)
         l_features.append(features)
         ep_reward += reward
         t += 1
@@ -124,10 +125,11 @@ def use_genetic(cfg):
 # function to call dreamerv2
 def use_dreamerv2(cfg):
     print("Selected algorithm: DreamerV2")
-    if cfg.mode == "train":
-        dreamer_v2.train(cfg)
-    elif cfg.mode == "eval":
-        dreamer_v2.eval(cfg)
+    print("Implementation has errors, terminating ...")
+    #if cfg.mode == "train":
+    #    dreamer_v2.train(cfg)
+    #elif cfg.mode == "eval":
+    #    dreamer_v2.eval(cfg)
 
 
 # function to call minidreamer
@@ -136,7 +138,7 @@ def use_minidreamer(cfg):
     if cfg.mode == "train":
         minidreamer.train(cfg)
     elif cfg.mode == "eval":
-        print("Not implemented ...")
+        print("Eval not implemented ...")
 
 
 # main function

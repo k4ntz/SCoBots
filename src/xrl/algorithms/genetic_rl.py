@@ -22,8 +22,7 @@ from captum.attr import IntegratedGradients
 
 from rtpt import RTPT
 
-#from xrl.model import policy_net
-import xrl.utils.utils as xutils
+from xrl.features import aari_feature_processor
 
 
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
@@ -105,14 +104,14 @@ def run_agents(env, agents, cfg):
     _, _, done, info = env.step(1)
     for agent in agents:
         agent.eval()
-        raw_features, features, _, _ = xutils.do_step(env)
+        raw_features, features, _, _ = aari_feature_processor.do_step(env)
         r = 0
         t = 0
         while t < cfg.train.max_steps:
             if cfg.train.use_raw_features:
                 features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent)
-            raw_features, features, reward, done = xutils.do_step(env, action, raw_features)
+            raw_features, features, reward, done = aari_feature_processor.do_step(env, action, raw_features)
             r = r + reward
             if(done):
                 break
@@ -249,7 +248,7 @@ def train(cfg):
     env = AtariARIWrapper(gym.make(cfg.env_name))
     n_actions = env.action_space.n
     _ = env.reset()
-    raw_features, features, _, _ = xutils.do_step(env)
+    raw_features, features, _, _ = aari_feature_processor.do_step(env)
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # initialize N number of agents
@@ -322,7 +321,7 @@ def eval_load(cfg):
     env = AtariARIWrapper(gym.make(cfg.env_name))
     n_actions = env.action_space.n
     _ = env.reset()
-    raw_features, features, _, _ = xutils.do_step(env)
+    raw_features, features, _, _ = aari_feature_processor.do_step(env)
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # initialize N number of agents
