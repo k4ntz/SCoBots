@@ -18,7 +18,7 @@ from time import sleep, time
 from xrl.algorithms.minidr.dataset import ModelDataset
 from xrl.algorithms.minidr.model import WorldPredictor, Policy
 
-import xrl.utils as xutils
+import xrl.utils.utils as xutils
 
 torch.autograd.set_detect_anomaly(True)
 

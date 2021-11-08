@@ -23,8 +23,7 @@ from captum.attr import IntegratedGradients
 from rtpt import RTPT
 
 #from xrl.model import policy_net
-import xrl.utils as xutils
-import xrl.video_logger as vlogger
+import xrl.utils.utils as xutils
 
 
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
