@@ -15,8 +15,8 @@ from itertools import count
 from rtpt import RTPT
 from time import sleep, time
 
-from xrl.minidr.dataset import ModelDataset
-from xrl.minidr.model import WorldPredictor, Policy
+from xrl.algorithms.minidr.dataset import ModelDataset
+from xrl.algorithms.minidr.model import WorldPredictor, Policy
 
 import xrl.utils as xutils
 
