@@ -16,7 +16,6 @@ from xrl.algorithms import minidreamer
 import xrl.utils.plotter as plt
 import xrl.utils.video_logger as vlogger
 
-from xrl.utils.utils import get_config
 # otherwise genetic loading model doesnt work, torch bug?
 from xrl.genetic_rl import policy_net
 from xrl.environments import agym
@@ -103,27 +102,27 @@ def play_agent(agent, cfg):
 
 
 # function to call reinforce algorithm
-def use_reinforce(cfg):
+def use_reinforce(cfg, mode):
     print("Selected algorithm: REINFORCE")
-    if cfg.mode == "train":
+    if mode == "train":
         reinforce.train(cfg)
-    elif cfg.mode == "eval":
+    elif mode == "eval":
         agent = reinforce.eval_load(cfg)
         play_agent(agent=agent, cfg=cfg)
 
 
 # function to call deep neuroevolution algorithm
-def use_genetic(cfg):
+def use_genetic(cfg, mode):
     print("Selected algorithm: Deep Neuroevolution")
-    if cfg.mode == "train":
+    if mode == "train":
         genetic.train(cfg)
-    elif cfg.mode == "eval":
+    elif mode == "eval":
         agent = genetic.eval_load(cfg)
         play_agent(agent=agent, cfg=cfg)
 
 
 # function to call dreamerv2
-def use_dreamerv2(cfg):
+def use_dreamerv2(cfg, mode):
     print("Selected algorithm: DreamerV2")
     print("Implementation has errors, terminating ...")
     #if cfg.mode == "train":
@@ -133,30 +132,29 @@ def use_dreamerv2(cfg):
 
 
 # function to call minidreamer
-def use_minidreamer(cfg):
+def use_minidreamer(cfg, mode):
     print("Selected algorithm: Minidreamer")
-    if cfg.mode == "train":
+    if mode == "train":
         minidreamer.train(cfg)
-    elif cfg.mode == "eval":
+    elif mode == "eval":
         print("Eval not implemented ...")
 
 
 # main function
 # switch for each algo
-if __name__ == '__main__':
-    cfg = get_config()
+def xrl(cfg, mode):
     # algo selection
     # 1: REINFORCE
     # 2: Deep Neuroevolution
     # 3: DreamerV2
     # 4: Minidreamer
     if cfg.rl_algo == 1:
-        use_reinforce(cfg)
+        use_reinforce(cfg, mode)
     elif cfg.rl_algo == 2:
-        use_genetic(cfg)
+        use_genetic(cfg, mode)
     elif cfg.rl_algo == 3:
-        use_dreamerv2(cfg)
+        use_dreamerv2(cfg, mode)
     elif cfg.rl_algo == 4:
-        use_minidreamer(cfg)
+        use_minidreamer(cfg, mode)
     else:
         print("Unknown algorithm selected")
