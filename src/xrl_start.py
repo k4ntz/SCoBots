@@ -19,7 +19,7 @@ import xrl.utils.video_logger as vlogger
 # otherwise genetic loading model doesnt work, torch bug?
 from xrl.genetic_rl import policy_net
 from xrl.environments import agym
-from xrl.features import aari_feature_processor
+from xrl.features import feature_processing
 
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
@@ -46,7 +46,7 @@ def play_agent(agent, cfg):
     env = agym.make(cfg.env_name)
     _, ep_reward = env.reset(), 0
     _, _, done, _ = env.step(1)
-    raw_features, features, _, _ = aari_feature_processor.do_step(env)
+    raw_features, features, _, _ = feature_processing.do_step(env)
     # only when raw features should be used
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
@@ -75,7 +75,7 @@ def play_agent(agent, cfg):
             ig_action_sum.append(np.append(plt.get_integrated_gradients(ig, features, action), [action]))
         print('Reward: {:.2f}\t Step: {:.2f}'.format(
                 ep_reward, t), end="\r")
-        raw_features, features, reward, done = aari_feature_processor.do_step(env, action, raw_features)
+        raw_features, features, reward, done = feature_processing.do_step(env, action, raw_features)
         l_features.append(features)
         ep_reward += reward
         t += 1

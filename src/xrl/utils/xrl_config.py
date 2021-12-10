@@ -14,6 +14,11 @@ cfg = CfgNode({
     # 4: Minidreamer
     'rl_algo': 1,
 
+    # add here all possible extractor for task 1
+    # - atariari: Using AtariARI for extracting raw features from ram
+    # - ...
+    'raw_features_extractor': "atariari",
+
     # Resume training or not
     'resume': True,
 
