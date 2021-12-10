@@ -19,7 +19,8 @@ from scipy.stats import entropy
 
 from argparse import ArgumentParser
 from xrl.utils.xrl_config import cfg
-from xrl.features import aari_feature_processor
+
+import xrl.features.feature_processing as feature_processing
 
 # player enemy ball
 features_names = [
@@ -127,10 +128,10 @@ def init_corr_prune(env, it = 5, tr = 0.75):
         n_actions = env.action_space.n
         _ = env.reset()
         _, _, done, _ = env.step(1)
-        raw_features, features, _, _ = aari_feature_processor.do_step(env)
+        raw_features, features, _, _ = feature_processing.do_step(env)
         for t in range(50000):  # max 50k steps per episode
             action = np.random.randint(0, n_actions)
-            raw_features, features, reward, done = aari_feature_processor.do_step(env, action, raw_features)
+            raw_features, features, reward, done = feature_processing.do_step(env, action, raw_features)
             features_list.append(features)
             if done:
                 break

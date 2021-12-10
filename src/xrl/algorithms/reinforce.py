@@ -15,7 +15,7 @@ from captum.attr import IntegratedGradients
 
 from rtpt import RTPT
 
-from xrl.features import aari_feature_processor
+import xrl.features.feature_processing as feature_processing
 
 import xrl.utils.utils as xutils
 import xrl.utils.pruner as pruner
@@ -121,7 +121,7 @@ def train(cfg):
     env = AtariARIWrapper(gym.make(cfg.env_name))
     n_actions = env.action_space.n
     _ = env.reset()
-    raw_features, features, _, _ = aari_feature_processor.do_step(env)
+    raw_features, features, _, _ = feature_processing.do_step(env)
     # init policy net
     print("Make hidden layer in nn:", cfg.train.make_hidden)
     policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
@@ -157,7 +157,7 @@ def train(cfg):
         # init env
         _, ep_reward = env.reset(), 0
         _, _, done, _ = env.step(1)
-        raw_features, features, _, _ = aari_feature_processor.do_step(env)
+        raw_features, features, _, _ = feature_processing.do_step(env)
         ig_pruning_episode = cfg.train.pruning_method == "ig-pr" and i_episode % cfg.train.pruning_steps == 0
         # prepare ig pruning when step and dont prune at the start
         if ig_pruning_episode:
@@ -173,7 +173,7 @@ def train(cfg):
             if ig_pruning_episode:
                 ig_sum.append(xutils.get_integrated_gradients(ig, features, action))
             policy.saved_log_probs.append(log_prob)
-            raw_features, features, reward, done = aari_feature_processor.do_step(env, action, raw_features)
+            raw_features, features, reward, done = feature_processing.do_step(env, action, raw_features)
             policy.rewards.append(reward)
             ep_reward += reward
             t += 1
@@ -223,7 +223,7 @@ def eval_load(cfg):
     n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
     _, _, done, _ = env.step(1)
-    raw_features, features, _, _ = aari_feature_processor.do_step(env)
+    raw_features, features, _, _ = feature_processing.do_step(env)
     print("Make hidden layer in nn:", cfg.train.make_hidden)
     policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
     # load if exists
