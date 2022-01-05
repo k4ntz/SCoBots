@@ -53,4 +53,4 @@ def preprocess_raw_features(raw_features):
                 else:
                     features.append(0)
                     features.append(0)
-    return raw_features, features
+    return features

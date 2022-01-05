@@ -159,3 +159,18 @@ def calc_entropies(features):
         entropies.append(entropy1(col))
     print(entropies)
     return entropies
+
+
+# get gametype
+# check if ball game
+# 0: ball game
+# 1: demonattack
+# 2: boxing    
+def get_gametype(env):
+    name = env.unwrapped.spec.id
+    gametype = 0
+    if "Demon" in name:
+        gametype = 1
+    elif "Boxing" in name:
+        gametype = 2
+    return gametype
