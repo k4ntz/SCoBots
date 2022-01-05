@@ -1,3 +1,4 @@
+import imp
 from operator import mod
 import gym
 import numpy as np
@@ -15,10 +16,11 @@ from captum.attr import IntegratedGradients
 
 from rtpt import RTPT
 
-import xrl.features.feature_processing as feature_processing
-
 import xrl.utils.utils as xutils
+from xrl.environments import agym
 import xrl.utils.pruner as pruner
+
+from xrl.agent import Agent
 
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):
@@ -112,16 +114,19 @@ def load_model(model_path, policy, optimizer=None):
     return policy, optimizer, i_episode
 
 
-def train(cfg):
+def train(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     torch.manual_seed(cfg.seed)
     print('Seed:', torch.initial_seed())
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
     # init env to get params for policy net
-    env = AtariARIWrapper(gym.make(cfg.env_name))
+    env = agym.make(cfg.env_name)
     n_actions = env.action_space.n
-    _ = env.reset()
-    raw_features, features, _, _ = feature_processing.do_step(env)
+    gametype = xutils.get_gametype(env)
+    _, ep_reward = env.reset(), 0
+    _, _, _, info = env.step(1)
+    raw_features = agent.image_to_feature(info, None, gametype)
+    features = agent.feature_to_mf(raw_features)
     # init policy net
     print("Make hidden layer in nn:", cfg.train.make_hidden)
     policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
@@ -144,6 +149,8 @@ def train(cfg):
         print('Features to prune based on correlation:', str(pruned_input))
     if cfg.train.pruning_method != "None":
         print('Pruning Steps:', cfg.train.pruning_steps)
+    # reinit agent with loaded policy model
+    agent = Agent(f1=agent.image_to_feature, f2=agent.feature_to_mf, m=policy, f3=select_action)
     # setup last variables for init
     running_reward = None
     reward_buffer = 0
@@ -156,8 +163,6 @@ def train(cfg):
     while i_episode < cfg.train.num_episodes:
         # init env
         _, ep_reward = env.reset(), 0
-        _, _, done, _ = env.step(1)
-        raw_features, features, _, _ = feature_processing.do_step(env)
         ig_pruning_episode = cfg.train.pruning_method == "ig-pr" and i_episode % cfg.train.pruning_steps == 0
         # prepare ig pruning when step and dont prune at the start
         if ig_pruning_episode:
@@ -168,12 +173,14 @@ def train(cfg):
         while t < cfg.train.max_steps:  # Don't infinite loop while learning
             if len(pruned_input) > 0:
                 features = prune_input(features, pruned_input)
-            action, log_prob = select_action(features, policy)
+            action, log_prob = agent.mf_to_action(features, agent.model)
             # when ig pruning episode
             if ig_pruning_episode:
                 ig_sum.append(xutils.get_integrated_gradients(ig, features, action))
             policy.saved_log_probs.append(log_prob)
-            raw_features, features, reward, done = feature_processing.do_step(env, action, raw_features)
+            _, reward, done, info = env.step(action)
+            raw_features = agent.image_to_feature(info, None, gametype)
+            features = agent.feature_to_mf(raw_features)
             policy.rewards.append(reward)
             ep_reward += reward
             t += 1
@@ -213,17 +220,18 @@ def train(cfg):
 
 
 # eval function, returns trained model
-def eval_load(cfg):
+def eval_load(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     print('Evaluating Mode')
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
-    env = AtariARIWrapper(gym.make(cfg.env_name))
+    env = agym.make(cfg.env_name)
     n_actions = env.action_space.n
-    _, ep_reward = env.reset(), 0
-    _, _, done, _ = env.step(1)
-    raw_features, features, _, _ = feature_processing.do_step(env)
+    env.reset()
+    _, _, _, info = env.step(1)
+    raw_features = agent.image_to_feature(info, None, xutils.get_gametype(env))
+    features = agent.feature_to_mf(raw_features)
     print("Make hidden layer in nn:", cfg.train.make_hidden)
     policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
     # load if exists
@@ -231,5 +239,5 @@ def eval_load(cfg):
     if os.path.isfile(model_path):
         policy, _, _ = load_model(model_path, policy)
     policy.eval()
-    # return policy as agent and select_action function
+    # return policy 
     return policy

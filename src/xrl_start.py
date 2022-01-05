@@ -1,5 +1,6 @@
 # main file for all rl algos
 
+import imp
 import random
 import torch
 import numpy as np
@@ -15,11 +16,16 @@ from xrl.algorithms import minidreamer
 
 import xrl.utils.plotter as plt
 import xrl.utils.video_logger as vlogger
+import xrl.utils.utils as xutils
 
 # otherwise genetic loading model doesnt work, torch bug?
 from xrl.genetic_rl import policy_net
 from xrl.environments import agym
-from xrl.features import feature_processing
+# feature processing functions
+from xrl.features.aari_raw_features_extractor import get_raw_features
+from xrl.features.aari_feature_processer import preprocess_raw_features
+# agent class
+from xrl.agent import Agent
 
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
@@ -44,16 +50,18 @@ def select_action(features, policy, random_tr = -1, select_argmax=False):
 def play_agent(agent, cfg):
     # init env
     env = agym.make(cfg.env_name)
+    gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
-    _, _, done, _ = env.step(1)
-    raw_features, features, _, _ = feature_processing.do_step(env)
+    _, _, _, info = env.step(1)
+    raw_features = agent.image_to_feature(info, None, gametype)
+    features = agent.feature_to_mf(raw_features)
     # only when raw features should be used
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # init objects
-    summary(agent, input_size=(1, len(features)), device=cfg.device)
+    summary(agent.model, input_size=(1, len(features)), device=cfg.device)
     logger = vlogger.VideoLogger(size=(480, 480))
-    ig = IntegratedGradients(agent)
+    ig = IntegratedGradients(agent.model)
     ig_sum = []
     ig_action_sum = []
     l_features = []
@@ -66,7 +74,7 @@ def play_agent(agent, cfg):
         if cfg.train.use_raw_features:
             features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
         features = torch.tensor(features).unsqueeze(0).float().to(cfg.device)
-        action = select_action(features, agent)
+        action = agent.mf_to_action(features, agent.model)
         if cfg.liveplot or cfg.make_video:
             img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, env, cfg.liveplot)
             logger.fill_video_buffer(img)
@@ -75,7 +83,9 @@ def play_agent(agent, cfg):
             ig_action_sum.append(np.append(plt.get_integrated_gradients(ig, features, action), [action]))
         print('Reward: {:.2f}\t Step: {:.2f}'.format(
                 ep_reward, t), end="\r")
-        raw_features, features, reward, done = feature_processing.do_step(env, action, raw_features)
+        obs, reward, done, info = env.step(action)
+        raw_features = agent.image_to_feature(info, raw_features, gametype)
+        features = agent.feature_to_mf(raw_features)
         l_features.append(features)
         ep_reward += reward
         t += 1
@@ -102,12 +112,14 @@ def play_agent(agent, cfg):
 
 
 # function to call reinforce algorithm
-def use_reinforce(cfg, mode):
+def use_reinforce(cfg, mode, agent):
     print("Selected algorithm: REINFORCE")
     if mode == "train":
-        reinforce.train(cfg)
+        reinforce.train(cfg, agent)
     elif mode == "eval":
-        agent = reinforce.eval_load(cfg)
+        policy = reinforce.eval_load(cfg, agent)
+        # reinit agent with loaded model and eval function
+        agent = Agent(f1=agent.image_to_feature, f2=agent.feature_to_mf, m=policy, f3=select_action)
         play_agent(agent=agent, cfg=cfg)
 
 
@@ -143,13 +155,15 @@ def use_minidreamer(cfg, mode):
 # main function
 # switch for each algo
 def xrl(cfg, mode):
+    # init agent without third part of pipeline
+    agent = Agent(f1=get_raw_features, f2=preprocess_raw_features)
     # algo selection
     # 1: REINFORCE
     # 2: Deep Neuroevolution
     # 3: DreamerV2
     # 4: Minidreamer
     if cfg.rl_algo == 1:
-        use_reinforce(cfg, mode)
+        use_reinforce(cfg, mode, agent)
     elif cfg.rl_algo == 2:
         use_genetic(cfg, mode)
     elif cfg.rl_algo == 3:
