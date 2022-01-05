@@ -27,6 +27,7 @@ from xrl.features.aari_feature_processer import preprocess_raw_features
 # agent class
 from xrl.agent import Agent
 
+
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
 def select_action(features, policy, random_tr = -1, select_argmax=False):
@@ -101,14 +102,6 @@ def play_agent(agent, cfg):
         ig_action_sum = np.asarray(ig_action_sum)
         print('Final reward: {:.2f}\tSteps: {}\tIG-Mean: {}'.format(
         ep_reward, t, np.mean(ig_sum, axis=0)))
-
-    ################## PLOT STUFF ##################
-    #xutils.ig_pca(ig_action_sum, env.unwrapped.get_action_meanings())
-    #xutils.plot_igs_violin(ig_action_sum, feature_titles, env.unwrapped.get_action_meanings())
-    #if not cfg.train.make_hidden:
-    #    # plot some weight stuff due of linear model
-    #    xutils.plot_lin_weights(agent, feature_titles, env.unwrapped.get_action_meanings())
-    #xutils.plot_igs(ig_action_sum, feature_titles, env.unwrapped.get_action_meanings())
 
 
 # function to call reinforce algorithm

@@ -21,7 +21,7 @@ env = AtariARIWrapper(gym.make(env_name))
 name = env.unwrapped.spec.id
 #ballgame = any(game in name for game in ["Pong", "Tennis"])
 print(np.int16(3))
-üsad
+
 n_actions = env.action_space.n
 _ = env.reset()
 obs, _, done, info = env.step(0)
