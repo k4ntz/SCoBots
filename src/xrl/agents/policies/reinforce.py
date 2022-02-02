@@ -20,7 +20,7 @@ import xrl.utils.utils as xutils
 from xrl.environments import agym
 import xrl.utils.pruner as pruner
 
-from xrl.agent import Agent
+from xrl.agents import Agent
 
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):

@@ -9,10 +9,10 @@ from captum.attr import IntegratedGradients
 from torch.distributions import Categorical
 from torchinfo import summary
 
-from xrl.algorithms import reinforce
-from xrl.algorithms import genetic_rl as genetic
-from xrl.algorithms import dreamer_v2
-from xrl.algorithms import minidreamer
+from xrl.agents.policies import reinforce
+from xrl.agents.policies import genetic_rl as genetic
+from xrl.agents.policies import dreamer_v2
+from xrl.agents.policies import minidreamer
 
 import xrl.utils.plotter as plt
 import xrl.utils.video_logger as vlogger
@@ -21,11 +21,17 @@ import xrl.utils.utils as xutils
 # otherwise genetic loading model doesnt work, torch bug?
 from xrl.genetic_rl import policy_net
 from xrl.environments import agym
+
+# all extractor and processor to later select with infos from config file
+# feature extractor functions
+from xrl.agents.image_extractors.aari_raw_features_extractor import get_raw_features
+from xrl.agents.image_extractors.color_extractor import ColorExtractor
+from xrl.agents.image_extractors.interactive_color_extractor import IColorExtractor
+
 # feature processing functions
-from xrl.features.aari_raw_features_extractor import get_raw_features
-from xrl.features.aari_feature_processer import preprocess_raw_features
+from xrl.agents.feature_processing.aari_feature_processer import preprocess_raw_features
 # agent class
-from xrl.agent import Agent
+from xrl.agents import Agent
 
 
 # helper function to select action from loaded agent
@@ -120,6 +126,7 @@ def use_reinforce(cfg, mode, agent):
 def use_genetic(cfg, mode):
     print("Selected algorithm: Deep Neuroevolution")
     if mode == "train":
+        raise RuntimeError("Refactoring not complete for genetic algos :( ...")
         genetic.train(cfg)
     elif mode == "eval":
         agent = genetic.eval_load(cfg)
@@ -149,6 +156,7 @@ def use_minidreamer(cfg, mode):
 # switch for each algo
 def xrl(cfg, mode):
     # init agent without third part of pipeline
+    # TODO: Replace with selection from config file
     agent = Agent(f1=get_raw_features, f2=preprocess_raw_features)
     # algo selection
     # 1: REINFORCE
@@ -160,8 +168,10 @@ def xrl(cfg, mode):
     elif cfg.rl_algo == 2:
         use_genetic(cfg, mode)
     elif cfg.rl_algo == 3:
+        raise RuntimeError("Pls don't use, not working :( ...")
         use_dreamerv2(cfg, mode)
     elif cfg.rl_algo == 4:
+        raise RuntimeError("Pls don't use, Minidreamer not finished :( ...")
         use_minidreamer(cfg, mode)
     else:
         print("Unknown algorithm selected")
