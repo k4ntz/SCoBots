@@ -189,16 +189,19 @@ class ObjDict():
                     buttons = []
                     objects_fields = list(self.object_samples.keys())
                     objects_fields.append("textbox")
+                    x_pos = 0.2
                     for i, el in enumerate(objects_fields):
+                        x_size = len(el) * 0.004 + 0.016
                         if el != "textbox":
-                            axcut = plt.axes([0.2 + 0.05*i, 0.05, 0.04, 0.02], label=el)
-                            bcut = Button(axcut, el, hovercolor='green')
+                            axcut = plt.axes([x_pos, 0.05, x_size, 0.02], label=el)
+                            bcut = Button(axcut, el, hovercolor='#00aa00')
                             bcut.on_clicked(_on_button_click)
                             buttons.append(bcut)
                         else:
-                            axcut = plt.axes([0.2 + 0.05*i + 0.034, 0.05, 0.04, 0.02], label=el)
+                            axcut = plt.axes([x_pos + 0.04, 0.05, 0.04, 0.02], label=el)
                             tcut = TextBox(axcut, label="New class: ")
                             tcut.on_submit(_on_text_submit)
+                        x_pos += x_size + 0.01
                 plt.show()
                 global NEW_CLASSNAME
                 assert NEW_CLASSNAME is not None
