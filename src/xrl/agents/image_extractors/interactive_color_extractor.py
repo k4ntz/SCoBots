@@ -337,7 +337,7 @@ def discard_zone(image):
         if inputed == "u":
             import ipdb; ipdb.set_trace()
             new_image = image.copy()
-        print(msg)
+        print(input_msg)
         inputed = input().lower()
 
 
