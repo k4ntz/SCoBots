@@ -123,13 +123,15 @@ def use_reinforce(cfg, mode, agent):
 
 
 # function to call deep neuroevolution algorithm
-def use_genetic(cfg, mode):
+def use_genetic(cfg, mode, agent):
     print("Selected algorithm: Deep Neuroevolution")
     if mode == "train":
         raise RuntimeError("Refactoring not complete for genetic algos :( ...")
         genetic.train(cfg)
     elif mode == "eval":
-        agent = genetic.eval_load(cfg)
+        policy = genetic.eval_load(cfg, agent)
+        # reinit agent with loaded model and eval function
+        agent = Agent(f1=agent.image_to_feature, f2=agent.feature_to_mf, m=policy, f3=select_action)
         play_agent(agent=agent, cfg=cfg)
 
 
@@ -166,7 +168,7 @@ def xrl(cfg, mode):
     if cfg.rl_algo == 1:
         use_reinforce(cfg, mode, agent)
     elif cfg.rl_algo == 2:
-        use_genetic(cfg, mode)
+        use_genetic(cfg, mode, agent)
     elif cfg.rl_algo == 3:
         raise RuntimeError("Pls don't use, not working :( ...")
         use_dreamerv2(cfg, mode)

@@ -24,6 +24,12 @@ from rtpt import RTPT
 
 from xrl.agents import env_steps
 
+import xrl.utils.utils as xutils
+from xrl.environments import agym
+import xrl.utils.pruner as pruner
+
+from xrl.agents import Agent
+
 
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):
@@ -312,16 +318,18 @@ def train(cfg):
 
 
 # function to eval best agent of last generation
-def eval_load(cfg):
+def eval_load(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     print('Evaluating Mode')
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
-    env = AtariARIWrapper(gym.make(cfg.env_name))
+    env = agym.make(cfg.env_name)
     n_actions = env.action_space.n
-    _ = env.reset()
-    raw_features, features, _, _ = env_steps.do_step(env)
+    env.reset()
+    _, _, _, info = env.step(1)
+    raw_features = agent.image_to_feature(info, None, xutils.get_gametype(env))
+    features = agent.feature_to_mf(raw_features)
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # initialize N number of agents
