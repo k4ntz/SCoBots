@@ -17,7 +17,7 @@ from captum.attr import IntegratedGradients
 from rtpt import RTPT
 
 import xrl.utils.utils as xutils
-from xrl.environments import agym
+from xrl.environments import env_manager
 import xrl.utils.pruner as pruner
 
 from xrl.agents import Agent
@@ -120,7 +120,7 @@ def train(cfg, agent):
     print('Seed:', torch.initial_seed())
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
     # init env to get params for policy net
-    env = agym.make(cfg.env_name)
+    env = env_manager.make(cfg)
     n_actions = env.action_space.n
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
@@ -226,7 +226,7 @@ def eval_load(cfg, agent):
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
-    env = agym.make(cfg.env_name)
+    env = env_manager.make(cfg)
     n_actions = env.action_space.n
     env.reset()
     _, _, _, info = env.step(1)

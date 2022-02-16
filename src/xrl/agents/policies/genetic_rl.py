@@ -25,7 +25,7 @@ from rtpt import RTPT
 from xrl.agents import env_steps
 
 import xrl.utils.utils as xutils
-from xrl.environments import agym
+from xrl.environments import env_manager
 import xrl.utils.pruner as pruner
 
 from xrl.agents import Agent
@@ -324,7 +324,7 @@ def eval_load(cfg, agent):
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
-    env = agym.make(cfg.env_name)
+    env = env_manager.make(cfg)
     n_actions = env.action_space.n
     env.reset()
     _, _, _, info = env.step(1)

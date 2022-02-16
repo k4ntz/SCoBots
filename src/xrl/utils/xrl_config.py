@@ -16,7 +16,7 @@ cfg = CfgNode({
 
     # add here all possible extractor for task 1
     # - atariari: Using AtariARI for extracting raw features from ram
-    # - ...
+    # - IColorExtractor
     'raw_features_extractor': "atariari",
 
     # Resume training or not
