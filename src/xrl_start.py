@@ -88,7 +88,8 @@ def play_agent(agent, cfg):
             #logger.fill_video_buffer(img)
             plt.imshow(obs, interpolation='none')
             plt.plot()
-            plt.pause(0.0001)  # pause a bit so that plots are updated
+            plt.pause(0.001)  # pause a bit so that plots are updated
+            plt.clf()
         else:
             #ig_sum.append(xplt.get_integrated_gradients(ig, features, action))
             #ig_action_sum.append(np.append(xplt.get_integrated_gradients(ig, features, action), [action]))
