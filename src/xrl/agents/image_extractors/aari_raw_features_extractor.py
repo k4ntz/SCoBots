@@ -6,7 +6,8 @@ import math
 # function to get raw features and order them by
 def get_raw_features(env_info, last_raw_features=None, gametype=0):
     # extract raw features
-    labels = env_info["labels"]
+    if gametype != 3:
+        labels = env_info["labels"]
     # if ball game
     if gametype == 0:
         player = [labels["player_x"].astype(np.int16),
@@ -64,4 +65,20 @@ def get_raw_features(env_info, last_raw_features=None, gametype=0):
             raw_features = np.roll(raw_features, 2)
             raw_features[0] = player
             raw_features[1] = enemy
+        return raw_features
+    ###########################################
+    # coinrun
+    elif gametype == 3:
+        player = env_info["agent_pos"]
+        saw1 = env_info["saw1_pos"]
+        saw2 = env_info["saw2_pos"]
+        # set new raw_features
+        raw_features = last_raw_features
+        if raw_features is None:
+            raw_features = [player, saw1, saw2, None, None, None]
+        else:
+            raw_features = np.roll(raw_features, 3)
+            raw_features[0] = player
+            raw_features[1] = saw1
+            raw_features[2] = saw2
         return raw_features

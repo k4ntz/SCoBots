@@ -20,7 +20,7 @@ import xrl.utils.utils as xutils
 
 # otherwise genetic loading model doesnt work, torch bug?
 from xrl.genetic_rl import policy_net
-from xrl.environments import agym
+from xrl.environments import env_manager
 
 # all extractor and processor to later select with infos from config file
 # feature extractor functions
@@ -56,7 +56,7 @@ def select_action(features, policy, random_tr = -1, select_argmax=False):
 # function to test agent loaded via main switch
 def play_agent(agent, cfg):
     # init env
-    env = agym.make(cfg.env_name)
+    env = env_manager.make(cfg)
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     _, _, _, info = env.step(1)
