@@ -4,6 +4,7 @@ import imp
 import random
 import torch
 import numpy as np
+import matplotlib.pyplot as plt
 
 from captum.attr import IntegratedGradients
 from torch.distributions import Categorical
@@ -14,7 +15,7 @@ from xrl.agents.policies import genetic_rl as genetic
 from xrl.agents.policies import dreamer_v2
 from xrl.agents.policies import minidreamer
 
-import xrl.utils.plotter as plt
+#import xrl.utils.plotter as xplt
 import xrl.utils.video_logger as vlogger
 import xrl.utils.utils as xutils
 
@@ -59,7 +60,7 @@ def play_agent(agent, cfg):
     env = env_manager.make(cfg)
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
-    _, _, _, info = env.step(1)
+    obs, _, _, info = env.step(1)
     raw_features = agent.image_to_feature(info, None, gametype)
     features = agent.feature_to_mf(raw_features)
     # only when raw features should be used
@@ -72,9 +73,9 @@ def play_agent(agent, cfg):
     ig_sum = []
     ig_action_sum = []
     l_features = []
-    feature_titles = plt.get_feature_titles(int(len(raw_features)/2))
+    #feature_titles = xplt.get_feature_titles(int(len(raw_features)/2))
     # env loop
-    plotter = plt.Plotter()
+    #plotter = xplt.Plotter()
     t = 0
     while t < 3000:  # Don't infinite loop while playing
         # only when raw features should be used
@@ -83,11 +84,15 @@ def play_agent(agent, cfg):
         features = torch.tensor(features).unsqueeze(0).float().to(cfg.device)
         action = agent.mf_to_action(features, agent.model)
         if cfg.liveplot or cfg.make_video:
-            img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, env, cfg.liveplot)
-            logger.fill_video_buffer(img)
+            #img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, obs, cfg.liveplot)
+            #logger.fill_video_buffer(img)
+            plt.imshow(obs, interpolation='none')
+            plt.plot()
+            plt.pause(0.0001)  # pause a bit so that plots are updated
         else:
-            ig_sum.append(plt.get_integrated_gradients(ig, features, action))
-            ig_action_sum.append(np.append(plt.get_integrated_gradients(ig, features, action), [action]))
+            #ig_sum.append(xplt.get_integrated_gradients(ig, features, action))
+            #ig_action_sum.append(np.append(xplt.get_integrated_gradients(ig, features, action), [action]))
+            None
         print('Reward: {:.2f}\t Step: {:.2f}'.format(
                 ep_reward, t), end="\r")
         obs, reward, done, info = env.step(action)

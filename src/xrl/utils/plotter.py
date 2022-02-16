@@ -62,12 +62,12 @@ class Plotter():
         # self.fig.tight_layout()
 
     # helper function to get integrated gradients of given features as plotable image
-    def plot_IG_img(self, ig, exp_name, input, feature_titles, target_class, env, plot):
+    def plot_IG_img(self, ig, exp_name, input, feature_titles, target_class, obs, plot):
         attr = get_integrated_gradients(ig, input, target_class)
         attr_df = pd.DataFrame({"Values": attr},
                       index=feature_titles)
-        print(attr_df)
-        env_img = env.render(mode='rgb_array')
+        #print(attr_df)
+        env_img = obs
         # plot both next to each other
         ax1, ax2 = self.axes
         ax1.imshow(env_img)
@@ -80,7 +80,7 @@ class Plotter():
         canvas.draw()
         mat = np.array(canvas.renderer._renderer)
         mat = cv2.cvtColor(mat, cv2.COLOR_RGB2BGR)
-        resized = cv2.resize(mat, (480, 480), interpolation = cv2.INTER_AREA)
+        resized = cv2.resize(mat, (240, 240), interpolation = cv2.INTER_AREA)
         if plot:
             plt.draw()
             plt.pause(0.0001)
