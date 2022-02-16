@@ -70,15 +70,15 @@ def get_raw_features(env_info, last_raw_features=None, gametype=0):
     # coinrun
     elif gametype == 3:
         player = env_info["agent_pos"]
+        coin = env_info["coin_pos"]
         saw1 = env_info["saw1_pos"]
-        saw2 = env_info["saw2_pos"]
         # set new raw_features
         raw_features = last_raw_features
         if raw_features is None:
-            raw_features = [player, saw1, saw2, None, None, None]
+            raw_features = [player, coin, saw1, None, None, None]
         else:
             raw_features = np.roll(raw_features, 3)
             raw_features[0] = player
-            raw_features[1] = saw1
-            raw_features[2] = saw2
+            raw_features[1] = coin
+            raw_features[2] = saw1
         return raw_features
