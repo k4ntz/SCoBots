@@ -120,7 +120,7 @@ def train(cfg, agent):
     print('Seed:', torch.initial_seed())
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
     # init env to get params for policy net
-    env = env_manager.make(cfg)
+    env = env_manager.make(cfg, True)
     n_actions = env.action_space.n
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0

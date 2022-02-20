@@ -11,6 +11,7 @@ except ImportError as imp_err:
     raise imp_err
 
 
-def make(env_name):
-    #print(colored("Using AtariARI", "green"))
+def make(env_name, notify=False):
+    if notify:
+        print(colored("Using AtariARI", "green"))
     return AtariARIWrapper(gym.make(env_name))

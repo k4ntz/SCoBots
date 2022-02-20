@@ -103,7 +103,6 @@ def select_action(features, policy, random_tr = -1):
 # function to run list of agents in given env
 def run_agents(env, rl_agent, agents, cfg):
     reward_agents = []
-    _ = env.reset()
     _, _, done, info = env.step(1)
     for agent in agents:
         agent.eval()
@@ -254,7 +253,7 @@ def train(cfg, rl_agent):
     torch.set_grad_enabled(False)
 
     # init env to get actions count and features space
-    env = env_manager.make(cfg)
+    env = env_manager.make(cfg, True)
     n_actions = env.action_space.n
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
