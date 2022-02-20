@@ -1,5 +1,6 @@
 # main file for all rl algos
 
+from curses import raw
 import imp
 import random
 import torch
@@ -86,6 +87,7 @@ def play_agent(agent, cfg):
         if cfg.liveplot or cfg.make_video:
             #img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, obs, cfg.liveplot)
             #logger.fill_video_buffer(img)
+            #print("Features:", features)
             plt.imshow(obs, interpolation='none')
             plt.plot()
             plt.pause(0.001)  # pause a bit so that plots are updated
@@ -132,8 +134,7 @@ def use_reinforce(cfg, mode, agent):
 def use_genetic(cfg, mode, agent):
     print("Selected algorithm: Deep Neuroevolution")
     if mode == "train":
-        raise RuntimeError("Refactoring not complete for genetic algos :( ...")
-        genetic.train(cfg)
+        genetic.train(cfg, agent)
     elif mode == "eval":
         policy = genetic.eval_load(cfg, agent)
         # reinit agent with loaded model and eval function

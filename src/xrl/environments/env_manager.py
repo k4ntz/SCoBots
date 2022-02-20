@@ -5,7 +5,7 @@ import xrl.environments.pgym as pgym
 
 def make(cfg):
     env_name = cfg.env_name
-    print("Env Name:", env_name)
+    #print("Env Name:", env_name)
     if "coin" in env_name:
         return pgym.make(env_name)
     else:

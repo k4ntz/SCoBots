@@ -15,5 +15,5 @@ except ImportError as imp_err:
 
 
 def make(env_name):
-    print(colored("Using ProcgenGymEnv", "green"))
+    #print(colored("Using ProcgenGymEnv", "green"))
     return gym.make("procgen:procgen-" + env_name + "-v0")
