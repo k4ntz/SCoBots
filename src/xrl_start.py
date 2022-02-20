@@ -58,7 +58,7 @@ def select_action(features, policy, random_tr = -1, select_argmax=False):
 # function to test agent loaded via main switch
 def play_agent(agent, cfg):
     # init env
-    env = env_manager.make(cfg)
+    env = env_manager.make(cfg, True)
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     obs, _, _, info = env.step(1)
