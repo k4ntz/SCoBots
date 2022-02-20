@@ -178,6 +178,7 @@ def train(cfg, agent):
             if ig_pruning_episode:
                 ig_sum.append(xutils.get_integrated_gradients(ig, features, action))
             policy.saved_log_probs.append(log_prob)
+            # to env step
             _, reward, done, info = env.step(action)
             raw_features = agent.image_to_feature(info, None, gametype)
             features = agent.feature_to_mf(raw_features)
