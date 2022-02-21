@@ -103,12 +103,11 @@ def select_action(features, policy, random_tr = -1):
 # function to run list of agents in given env
 def run_agents(env, rl_agent, agents, cfg):
     reward_agents = []
-    _, _, done, info = env.step(1)
     for agent in agents:
         agent.eval()
         gametype = xutils.get_gametype(env)
         _ = env.reset()
-        _, _, _, info = env.step(1)
+        _, _, done, info = env.step(1)
         raw_features = rl_agent.image_to_feature(info, None, gametype)
         features = rl_agent.feature_to_mf(raw_features)
         r = 0
