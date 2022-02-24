@@ -41,6 +41,11 @@ cfg = CfgNode({
 
     # For engine.train
     'train': {
+        # genetic params
+        'n_runs': 3,
+        'elite_n_runs': 5,
+
+        # reinforce parameters
         'batch_size': 128,
         'gamma': 0.97,
         'eps_start': 1.0,
