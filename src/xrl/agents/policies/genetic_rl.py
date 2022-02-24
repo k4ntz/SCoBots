@@ -182,7 +182,9 @@ def add_elite(rl_agent, agents, sorted_parent_indexes, cfg, elite_index=None, on
     top_elite_index = None
     tqdmcandidate_elite_index = tqdm(candidate_elite_index)
     cpu_cores = min(100, max(multiprocessing.cpu_count(), only_consider_top_n))
-    scores = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(rl_agent, agents[i], runs=5, cfg=cfg) for i in tqdmcandidate_elite_index)
+    # elite runs from config
+    elite_runs = cfg.train.elite_n_runs
+    scores = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(rl_agent, agents[i], runs=elite_runs, cfg=cfg) for i in tqdmcandidate_elite_index)
     for i, score in enumerate(scores):
         i = candidate_elite_index[i]
         print("Score for elite i ", i, " is ", score)
@@ -277,8 +279,9 @@ def train(cfg, rl_agent):
     print('Number of top agents:', top_limit)
 
     # runs per generation
-    n_gen_runs = 3
+    n_gen_runs = cfg.train.n_runs
     print('Number of runs per generation:', n_gen_runs)
+    print('Number of runs for elite per generation:', cfg.train.elite_n_runs)
 
     elite_index = None
 
