@@ -53,7 +53,7 @@ def get_feature_titles(n_raw_features = 3):
 
 
 class Plotter():
-    def __init__(self, figsize=(20, 10)):
+    def __init__(self, figsize=(12, 8)):
         fig, axes = plt.subplots(ncols=2, figsize=figsize,
                                  gridspec_kw={'width_ratios': [6, 1]})
         self.fig = fig
