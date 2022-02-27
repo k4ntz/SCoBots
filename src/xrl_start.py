@@ -19,6 +19,7 @@ from xrl.agents.policies import minidreamer
 #import xrl.utils.plotter as xplt
 import xrl.utils.video_logger as vlogger
 import xrl.utils.utils as xutils
+import xrl.utils.plotter as xplt
 
 # otherwise genetic loading model doesnt work, torch bug?
 from xrl.genetic_rl import policy_net
@@ -76,7 +77,7 @@ def play_agent(agent, cfg):
     l_features = []
     #feature_titles = xplt.get_feature_titles(int(len(raw_features)/2))
     # env loop
-    #plotter = xplt.Plotter()
+    plotter = xplt.Plotter()
     t = 0
     while t < 3000:  # Don't infinite loop while playing
         # only when raw features should be used
@@ -93,8 +94,8 @@ def play_agent(agent, cfg):
             plt.pause(0.001)  # pause a bit so that plots are updated
             plt.clf()
         else:
-            #ig_sum.append(xplt.get_integrated_gradients(ig, features, action))
-            #ig_action_sum.append(np.append(xplt.get_integrated_gradients(ig, features, action), [action]))
+            ig_sum.append(xplt.get_integrated_gradients(ig, features, action))
+            ig_action_sum.append(np.append(xplt.get_integrated_gradients(ig, features, action), [action]))
             None
         print('Reward: {:.2f}\t Step: {:.2f}'.format(
                 ep_reward, t), end="\r")
@@ -114,8 +115,15 @@ def play_agent(agent, cfg):
     else:
         ig_sum = np.asarray(ig_sum)
         ig_action_sum = np.asarray(ig_action_sum)
-        print('Final reward: {:.2f}\tSteps: {}\tIG-Mean: {}'.format(
-        ep_reward, t, np.mean(ig_sum, axis=0)))
+        ig_mean = np.mean(ig_sum, axis=0)
+        # create dict with feature as key and ig-mean als value
+        feature_names = xplt.get_feature_titles(int(len(raw_features) / 2))
+        zip_iterator = zip(feature_names, ig_mean)
+        ig_dict = dict(zip_iterator)
+        print('Final reward: {:.2f}\tSteps: {}'.format(
+        ep_reward, t))
+        for k in ig_dict:
+            print(k + ": " + str(ig_dict[k]))
 
 
 # function to call reinforce algorithm
