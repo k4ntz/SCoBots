@@ -75,7 +75,7 @@ def play_agent(agent, cfg):
     ig_sum = []
     ig_action_sum = []
     l_features = []
-    #feature_titles = xplt.get_feature_titles(int(len(raw_features)/2))
+    feature_titles = xplt.get_feature_titles(int(len(raw_features)/2))
     # env loop
     plotter = xplt.Plotter()
     t = 0
@@ -85,10 +85,10 @@ def play_agent(agent, cfg):
             features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
         features = torch.tensor(features).unsqueeze(0).float().to(cfg.device)
         action = agent.mf_to_action(features, agent.model)
-        if cfg.liveplot or cfg.make_video:
-            #img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, obs, cfg.liveplot)
-            #logger.fill_video_buffer(img)
-            #print("Features:", features)
+        if cfg.make_video:
+            img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, obs, cfg.liveplot)
+            logger.fill_video_buffer(img)
+        elif cfg.liveplot:
             plt.imshow(obs, interpolation='none')
             plt.plot()
             plt.pause(0.001)  # pause a bit so that plots are updated
@@ -117,8 +117,7 @@ def play_agent(agent, cfg):
         ig_action_sum = np.asarray(ig_action_sum)
         ig_mean = np.mean(ig_sum, axis=0)
         # create dict with feature as key and ig-mean als value
-        feature_names = xplt.get_feature_titles(int(len(raw_features) / 2))
-        zip_iterator = zip(feature_names, ig_mean)
+        zip_iterator = zip(feature_titles, ig_mean)
         ig_dict = dict(zip_iterator)
         print('Final reward: {:.2f}\tSteps: {}'.format(
         ep_reward, t))
