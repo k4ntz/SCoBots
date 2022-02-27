@@ -53,7 +53,7 @@ def get_feature_titles(n_raw_features = 3):
 
 
 class Plotter():
-    def __init__(self, figsize=(12, 8)):
+    def __init__(self, figsize=(8, 6)):
         fig, axes = plt.subplots(ncols=2, figsize=figsize,
                                  gridspec_kw={'width_ratios': [6, 1]})
         self.fig = fig
@@ -80,15 +80,15 @@ class Plotter():
         canvas.draw()
         mat = np.array(canvas.renderer._renderer)
         mat = cv2.cvtColor(mat, cv2.COLOR_RGB2BGR)
-        resized = cv2.resize(mat, (240, 240), interpolation = cv2.INTER_AREA)
-        if plot:
-            plt.draw()
-            plt.pause(0.0001)
+        resized = cv2.resize(mat, (480, 480), interpolation = cv2.INTER_AREA)
+        #if plot:
+        #    plt.imshow(resized)
+        #    plt.plot()
+        #    plt.pause(0.00001)
         # clean up
         for ax in self.axes:
             ax.clear()
-        # self.fig.clf()
-        # plt.close(self.fig)
+        #plt.close(self.fig)
         return resized
 
 

@@ -15,7 +15,7 @@ class VideoLogger:
     def save_video(self, model_name, fps=25.0):
         if not os.path.exists(self.PATH_TO_VIDEO):
             os.makedirs(self.PATH_TO_VIDEO)
-        if len(self.video_buffer) > fps:
+        if len(self.video_buffer) > 15:
             file_path = self.PATH_TO_VIDEO + model_name + ".avi"
             # do video saving stuff
             fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
