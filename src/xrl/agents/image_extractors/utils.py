@@ -62,18 +62,22 @@ def find_objects(image, colors, size=(15, 15), tol_s=15, position=None, tol_p=2,
 
     return: positions (array of all positions), boxes
     """
-    assert len(image.shape) == 3
-    contours = []
+    try:
+        assert len(image.shape) == 3
+    except:
+        import ipdb; ipdb.set_trace()
+    rects = []
     for color in colors:
         mask = cv2.inRange(image, np.array(color), np.array(color))
         output = cv2.bitwise_and(image, image, mask=mask)
         color_contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, 1)
-        contours.extend(color_contours)
+        if splitted_objects:
+            rects.extend(merge_rects([cv2.boundingRect(c) for c in color_contours], 4))
+        else:
+            rects.extend([cv2.boundingRect(c) for c in color_contours])
     detected_positions = []
     detected_boxes = []
-    rects = [_reorder(cv2.boundingRect(cnt)) for cnt in contours]
-    if splitted_objects:
-        rects = merge_rects(rects, 4)
+    rects = [_reorder(rec) for rec in rects]
     for rec in rects:
         x, y, w, h = rec
         if size is not None:
