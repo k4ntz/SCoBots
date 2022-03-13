@@ -43,7 +43,7 @@ class IColorExtractor():
                 return
             try:
                 game_dict = load_game_dict(game)
-                self.objects_colors = list(game_dict["colors"].values())
+                self.objects_colors = game_dict["colors"].values()
                 self.splitted_objects = game_dict["splitted_objects"]
                 self.game = game
                 if "obj_size" in game_dict:
@@ -98,18 +98,18 @@ class IColorExtractor():
 
     def _operating_call(self, image):
         img_objects = {}
-        positions, boxes = find_objects(image, self.objects_colors, size=self.obj_size,
-                                        splitted_objects=self.splitted_objects,
-                                        mark_objects=self.show_objects)
+        positions, boxes, _ = find_objects(image, self.objects_colors, size=self.obj_size,
+                                           splitted_objects=self.splitted_objects,
+                                           mark_objects=self.show_objects)
         obj_classes = self.imp_objects.find_categories(boxes)
         img_objects = dict(zip(obj_classes, positions))
         return img_objects
 
     def _interactive_call(self, image):
-        positions, boxes = find_objects(image, self.objects_colors,
-                                        size=self.obj_size,
-                                        splitted_objects=self.splitted_objects,
-                                        mark_objects=self.show_objects)
+        positions, boxes, _ = find_objects(image, self.objects_colors,
+                                           size=self.obj_size,
+                                           splitted_objects=self.splitted_objects,
+                                           mark_objects=self.show_objects)
         self.imp_objects.fill(boxes, positions, image)
         self.n_times += 1
         if self.show_objects and self.n_times > 200:  # delays

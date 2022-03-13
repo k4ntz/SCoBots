@@ -49,8 +49,8 @@ if args.interactive:
                    RandomPolicy(env.action_space.n)])
 else:
     agent = Agent([ColorExtractor(game=game, load=False),
-                   ZWhatClassifier(32, nb_class=10),
                    RandomPolicy(env.action_space.n)])
+    agent.pipeline[0].show_objects = True
 
 run_agent(agent, env, render=args.render)
 if args.interactive:
