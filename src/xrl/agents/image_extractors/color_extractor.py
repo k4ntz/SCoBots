@@ -1,5 +1,6 @@
 import numpy as np
-from .utils import find_objects, mark_point, repeat_upsample, load_game_dict, plot_with_hover
+from .utils import find_objects, mark_point, repeat_upsample, load_game_dict, \
+                   plot_with_hover, _increment_string
 from PIL import Image
 
 n_times = 0
@@ -30,7 +31,7 @@ class ColorExtractor():
         elif game is not None:
             try:
                 game_dict = load_game_dict(game)
-                self.objects_colors = game_dict["colors"].values()
+                self.objects_colors = game_dict["colors"]
                 self.splitted_objects = game_dict["splitted_objects"]
                 self.game = game
                 if "obj_size" in game_dict:
@@ -70,9 +71,9 @@ class ColorExtractor():
             self._calling_function = self.classify
 
     def _filling_memory(self, image):
-        positions, boxes = find_objects(image, self.objects_colors, size=self.obj_size,
-                                        splitted_objects=self.splitted_objects,
-                                        mark_objects=self.show_objects)
+        positions, boxes, types = find_objects(image, self.objects_colors, size=self.obj_size,
+                                               splitted_objects=self.splitted_objects,
+                                               mark_objects=self.show_objects)
         self.memory.extend(boxes)
         global n_times
         n_times += 1
@@ -83,18 +84,25 @@ class ColorExtractor():
             ax.set_axis_off()
             plt.tight_layout()
             plt.show()
-        if n_times > 200 and self.auto_change:
-            print("Changing from fill memory mode to extract object mode")
-            self.run_pca_on_memory(plot=True) # plot a 2D PCA of current collected objects
-            self.fill_memory = False
-        return [(0, 0)], [np.random.random(self.z_what_size)]
+        # if n_times > 200 and self.auto_change:
+        #     print("Changing from fill memory mode to extract object mode")
+        #     self.run_pca_on_memory(plot=True) # plot a 2D PCA of current collected objects
+        #     self.fill_memory = False
+        ret = {}
+        for type, pos in zip(types, positions):
+            while type in ret.keys():
+                type = _increment_string(type)
+            ret[type] = pos
+        print(ret); exit()
+        return ret
+
 
     def classify(self, image):
         # To be reworked
         all_omage_descriptions = []
         objects_in_image = []
         pos_and_z_whats = []
-        objects_in_image = find_objects(image, self.objects_colors, size=self.obj_size,
+        positions, boxes, types = find_objects(image, self.objects_colors, size=self.obj_size,
                                         splitted_objects=self.splitted_objects,
                                         mark_objects=self.show_objects)
         for pos, omage in np.array(objects_in_image).T:
