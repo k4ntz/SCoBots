@@ -10,20 +10,24 @@ from atariari.benchmark.wrapper import AtariARIWrapper
 
 # YarsRevenge
 # 
-env_name = "procgen:procgen-ecoinrun-v0"
+env_name = "BowlingDeterministic-v4"
 
 def print_labels(env_info):
     # extract raw features
     labels = env_info["labels"]
-    print(labels)
+    ypos = labels["ball_y"]
+    if ypos > 5 and ypos < 115:
+        None
+        print(labels)
 
-env = gym.make(env_name)
+env = AtariARIWrapper(gym.make(env_name))
 name = env.unwrapped.spec.id
 print(name)
 
 n_actions = env.action_space.n
 _ = env.reset()
 obs, _, done, info = env.step(0)
+
 r = 0
 for t in range(50000):
     plt.imshow(obs, interpolation='none')
@@ -33,12 +37,8 @@ for t in range(50000):
     obs, reward, done, info = env.step(action)
     r += reward
     print("Reward:", reward)
-    print("Info:", info)
-    for obj in ["coin_pos", "saw1_pos", "saw2_pos", "saw3_pos", "saw4_pos"]:
-        obj_pos = info[obj]
-        print(obj, obj_pos)
+    print_labels(info)
     print("------")
-    #print_labels(info)
     if(done):
         break
 print(r)

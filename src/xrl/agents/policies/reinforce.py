@@ -176,7 +176,8 @@ def train(cfg, agent):
             action, log_prob = agent.mf_to_action(features, agent.model)
             # when ig pruning episode
             if ig_pruning_episode:
-                ig_sum.append(xutils.get_integrated_gradients(ig, features, action))
+                t_features = torch.tensor(features).unsqueeze(0).float().to(cfg.device)
+                ig_sum.append(xutils.get_integrated_gradients(ig, t_features, action))
             policy.saved_log_probs.append(log_prob)
             # to env step
             _, reward, done, info = env.step(action)

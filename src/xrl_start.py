@@ -108,7 +108,7 @@ def play_agent(agent, cfg):
         if done:
             print("\n")
             break
-    if cfg.liveplot or cfg.make_video:
+    if cfg.make_video:
         logger.save_video(cfg.exp_name)
         print('Final reward: {:.2f}\tSteps: {}'.format(
         ep_reward, t))
