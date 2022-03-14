@@ -10,5 +10,7 @@ video_steps: 100
 
 train:
   num_episodes: 1500
+
+  max_steps: 25000
   
   log_steps: 500

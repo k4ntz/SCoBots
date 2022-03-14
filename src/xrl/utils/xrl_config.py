@@ -65,7 +65,7 @@ cfg = CfgNode({
         'memory_min_size': 25000,
 
         'num_episodes': 1000,
-        'max_steps': 1000000,
+        'max_steps': 100000,
 
         'skip_frames': 1,
 
