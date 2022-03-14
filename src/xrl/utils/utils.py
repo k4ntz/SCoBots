@@ -161,12 +161,14 @@ def calc_entropies(features):
     return entropies
 
 
+# TODO: Replace with external file or sth similar
 # get gametype
 # check if ball game
 # 0: ball game
 # 1: demonattack
 # 2: boxing    
 # 3: coinrun
+# 4: bowling
 def get_gametype(env):
     name = env.unwrapped.spec.id
     gametype = 0
@@ -176,4 +178,6 @@ def get_gametype(env):
         gametype = 2
     elif "coin" in name:
         gametype = 3
+    elif "Bowling" in name:
+        gametype = 4
     return gametype
