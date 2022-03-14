@@ -1,0 +1,14 @@
+env_name: 'BowlingDeterministic-v4'
+
+rl_algo: 2
+
+parallel: False
+
+logdir: '/xrl/genlogs/'
+
+video_steps: 100
+
+train:
+  num_episodes: 1500
+  
+  log_steps: 500
