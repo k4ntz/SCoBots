@@ -43,12 +43,15 @@ class IColorExtractor():
                 return
             try:
                 game_dict = load_game_dict(game)
-                self.objects_colors = list(game_dict["colors"].values())
+                self.objects_colors = game_dict["colors"].values()
                 self.splitted_objects = game_dict["splitted_objects"]
                 self.game = game
-                self.obj_size = game_dict["obj_size"]
+                if "obj_size" in game_dict:
+                    self.obj_size = game_dict["obj_size"]
+                else:
+                    self.obj_size = None
                 # self.max_obj = int(input('What is the maximum number of objects ?'))
-                self.max_obj = 20
+                self.max_obj = game_dict["max_obj"]
                 self.img_shape = (210, 160)
                 self.divide = max(*self.img_shape)
                 self.obj_features = 2
@@ -95,18 +98,18 @@ class IColorExtractor():
 
     def _operating_call(self, image):
         img_objects = {}
-        positions, boxes = find_objects(image, self.objects_colors, size=self.obj_size,
-                                        splitted_objects=self.splitted_objects,
-                                        mark_objects=self.show_objects)
+        positions, boxes, _ = find_objects(image, self.objects_colors, size=self.obj_size,
+                                           splitted_objects=self.splitted_objects,
+                                           mark_objects=self.show_objects)
         obj_classes = self.imp_objects.find_categories(boxes)
         img_objects = dict(zip(obj_classes, positions))
         return img_objects
 
     def _interactive_call(self, image):
-        positions, boxes = find_objects(image, self.objects_colors,
-                                        size=self.obj_size,
-                                        splitted_objects=self.splitted_objects,
-                                        mark_objects=self.show_objects)
+        positions, boxes, _ = find_objects(image, self.objects_colors,
+                                           size=self.obj_size,
+                                           splitted_objects=self.splitted_objects,
+                                           mark_objects=self.show_objects)
         self.imp_objects.fill(boxes, positions, image)
         self.n_times += 1
         if self.show_objects and self.n_times > 200:  # delays
@@ -274,7 +277,7 @@ class ObjSample():
                 if (stored_spl.omg_sample == self.omg_sample[:, :w0]).all() or \
                    (stored_spl.omg_sample == self.omg_sample[:, -w0:]).all():
                     print(f"Updating image sample : {stored_spl.shape} -> {self.shape}")
-                    show_img([stored_spl.omg_sample, self.omg_sample])
+                    # show_img([stored_spl.omg_sample, self.omg_sample])
                     stored_spl.omg_sample = self.omg_sample
                     stored_spl._dominant_color = self.dominant_color
                     return True
@@ -283,7 +286,7 @@ class ObjSample():
                 if (stored_spl.omg_sample == self.omg_sample[:h0]).all() or \
                    (stored_spl.omg_sample == self.omg_sample[-h0:]).all():
                     print(f"Updating image sample : {stored_spl.shape} -> {self.shape}")
-                    show_img([stored_spl.omg_sample, self.omg_sample])
+                    # show_img([stored_spl.omg_sample, self.omg_sample])
                     stored_spl.omg_sample = self.omg_sample
                     stored_spl._dominant_color = self.dominant_color
                     return True
