@@ -28,6 +28,7 @@ def run_agent(agent, env, render=False):
             print(tot_return)
             break
 
+
 args = parser.parse_args()
 # game = ["Carnival", "MsPacman", "Pong", "SpaceInvaders", "Tennis"][1]
 game = args.game
@@ -38,16 +39,19 @@ else:
     env = gym.make(game_full_name)
 random.seed(0)
 env.seed(0)
+# import matplotlib.pyplot as plt
+# plt.imshow(env.render(mode="rgb_array"))
+# plt.show()
+# exit()
 if args.interactive:
     ice = IColorExtractor(game=game, load=False)
     agent = Agent([ice,
                    RandomPolicy(env.action_space.n)])
 else:
     agent = Agent([ColorExtractor(game=game, load=False),
-                   ZWhatClassifier(32, nb_class=10),
                    RandomPolicy(env.action_space.n)])
+    agent.pipeline[0].show_objects = True
 
-print(agent)
 run_agent(agent, env, render=args.render)
 if args.interactive:
     ice.save()

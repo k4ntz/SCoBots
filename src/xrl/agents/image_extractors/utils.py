@@ -45,6 +45,10 @@ def draw_rectangles(image, rectangles, color=(255, 0, 0), show=True):
         plt.show()
 
 
+def write_on_image(image, pos, string, size=0.2, color=(15, 15, 15)):
+    cv2.putText(image, string, (pos[1], pos[0]), cv2.FONT_HERSHEY_DUPLEX, size, color, 1)
+
+
 _reorder = lambda rect: (rect[1], rect[0], rect[3], rect[2])
 
 
@@ -62,19 +66,26 @@ def find_objects(image, colors, size=(15, 15), tol_s=15, position=None, tol_p=2,
 
     return: positions (array of all positions), boxes
     """
-    assert len(image.shape) == 3
-    contours = []
-    for color in colors:
+    try:
+        assert len(image.shape) == 3
+    except:
+        import ipdb; ipdb.set_trace()
+    rects = []
+    types = []
+    for obj_type, color in colors.items():
         mask = cv2.inRange(image, np.array(color), np.array(color))
         output = cv2.bitwise_and(image, image, mask=mask)
         color_contours, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, 1)
-        contours.extend(color_contours)
+        if splitted_objects:
+            new_bbs = merge_rects([cv2.boundingRect(c) for c in color_contours], 4)
+        else:
+            new_bbs = [cv2.boundingRect(c) for c in color_contours]
+        rects.extend(new_bbs)
+        types.extend([obj_type for _ in new_bbs])
     detected_positions = []
     detected_boxes = []
-    rects = [_reorder(cv2.boundingRect(cnt)) for cnt in contours]
-    if splitted_objects:
-        rects = merge_rects(rects, 4)
-    for rec in rects:
+    rects = [_reorder(rec) for rec in rects]
+    for (rec, type) in zip(rects, types):
         x, y, w, h = rec
         if size is not None:
             if not assert_in((h, w), size, tol_s):
@@ -92,9 +103,10 @@ def find_objects(image, colors, size=(15, 15), tol_s=15, position=None, tol_p=2,
                 continue
         if mark_objects:
             draw_rectangles(image, [(x, y, w, h)], show=False)
+            write_on_image(image, (x,y), type)
         detected_positions.append((x, y))
         detected_boxes.append(image[x:x+w, y:y+h])
-    return detected_positions, detected_boxes
+    return detected_positions, detected_boxes, types
 
 
 def assert_in(observed, target, tol):
@@ -226,3 +238,12 @@ def plot_with_hover(data, colors, hover_images, limit=100):
     # add callback for mouse moves
     fig.canvas.mpl_connect('motion_notify_event', hover)
     plt.show()
+
+
+def _increment_string(string):
+    if string[-1] in [str(i) for i in range(10)]:
+        import re
+        last_number = re.findall(r'\d+', string)[-1]
+        return string[:-len(last_number)] + str(int(last_number) + 1)
+    else:
+        return string + "_2"

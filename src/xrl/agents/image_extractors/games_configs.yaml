@@ -47,6 +47,19 @@ spaceinvaders:
   splitted_objects: True
   max_obj: 40
 
+skiing:
+  colors:
+    flag: (66, 72, 200)
+    player: (214, 92, 92)
+    tree: (72, 160, 72)
+    tree2: (158, 208, 101)
+    tree3: (82, 126, 45)
+    tree4: (110, 156, 66)
+    puddle: (192, 192, 192)
+    puddle2: (214, 214, 214)
+  splitted_objects: True
+  max_obj: 20
+
 tennis:
   colors:
     enemy: (117, 231, 194)
