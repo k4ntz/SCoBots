@@ -60,7 +60,7 @@ def get_avg_bowling_pin(labels):
 
 
 # function to get raw features and order them by
-def get_raw_features(env_info, last_raw_features=None, gametype=0):
+def get_raw_features(env_info, gametype=0):
     # extract raw features
     if gametype != 3:
         labels = env_info["labels"]
@@ -73,15 +73,7 @@ def get_raw_features(env_info, last_raw_features=None, gametype=0):
         ball = [labels["ball_x"].astype(np.int16),
                 labels["ball_y"].astype(np.int16)]
         # set new raw_features
-        raw_features = last_raw_features
-        if raw_features is None:
-            raw_features = [player, enemy, ball, None, None, None]
-        else:
-            raw_features = np.roll(raw_features, 3)
-            raw_features[0] = player
-            raw_features[1] = enemy
-            raw_features[2] = ball
-        return raw_features
+        return [player, enemy, ball]
     ###########################################
     # demon attack game
     elif gametype == 1:
@@ -96,16 +88,7 @@ def get_raw_features(env_info, last_raw_features=None, gametype=0):
         #missile = [labels["player_x"].astype(np.int16),
         #        labels["missile_y"].astype(np.int16)]
         # set new raw_features
-        raw_features = last_raw_features
-        if raw_features is None:
-            raw_features = [player, enemy1, enemy2, enemy3, None, None, None, None]
-        else:
-            raw_features = np.roll(raw_features, 4)
-            raw_features[0] = player
-            raw_features[1] = enemy1
-            raw_features[2] = enemy2
-            raw_features[3] = enemy3
-        return raw_features
+        return [player, enemy1, enemy2, enemy3]
     ###########################################
     # boxing game
     elif gametype == 2:
@@ -114,14 +97,7 @@ def get_raw_features(env_info, last_raw_features=None, gametype=0):
         enemy = [labels["enemy_x"].astype(np.int16),
                 labels["enemy_y"].astype(np.int16)]
         # set new raw_features
-        raw_features = last_raw_features
-        if raw_features is None:
-            raw_features = [player, enemy, None, None]
-        else:
-            raw_features = np.roll(raw_features, 2)
-            raw_features[0] = player
-            raw_features[1] = enemy
-        return raw_features
+        return [player, enemy]
     ###########################################
     # coinrun
     elif gametype == 3:
@@ -129,15 +105,7 @@ def get_raw_features(env_info, last_raw_features=None, gametype=0):
         coin = env_info["coin_pos"]
         saw = get_next_saw(env_info)
         # set new raw_features
-        raw_features = last_raw_features
-        if raw_features is None:
-            raw_features = [player, coin, saw, None, None, None]
-        else:
-            raw_features = np.roll(raw_features, 3)
-            raw_features[0] = player
-            raw_features[1] = coin
-            raw_features[2] = saw
-        return raw_features
+        return [player, coin, saw]
     ###########################################
     # bowling game
     elif gametype == 4:
@@ -147,12 +115,4 @@ def get_raw_features(env_info, last_raw_features=None, gametype=0):
         ball = [labels["ball_x"].astype(np.int16),
                 labels["ball_y"].astype(np.int16)]
         # set new raw_features
-        raw_features = last_raw_features
-        if raw_features is None:
-            raw_features = [player, pin, ball, None, None, None]
-        else:
-            raw_features = np.roll(raw_features, 3)
-            raw_features[0] = player
-            raw_features[1] = pin
-            raw_features[2] = ball
-        return raw_features
+        return [player, pin, ball]

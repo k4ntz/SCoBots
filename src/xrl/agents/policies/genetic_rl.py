@@ -108,7 +108,7 @@ def run_agents(env, rl_agent, agents, cfg):
         gametype = xutils.get_gametype(env)
         _ = env.reset()
         _, _, done, info = env.step(1)
-        raw_features = rl_agent.image_to_feature(info, None, gametype)
+        raw_features = rl_agent.image_to_feature(info, gametype)
         features = rl_agent.feature_to_mf(raw_features)
         r = 0
         t = 0
@@ -117,7 +117,7 @@ def run_agents(env, rl_agent, agents, cfg):
                 features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent)
             _, reward, done, info = env.step(action)
-            raw_features = rl_agent.image_to_feature(info, raw_features, gametype)
+            raw_features = rl_agent.image_to_feature(info, gametype)
             features = rl_agent.feature_to_mf(raw_features)
             r = r + reward
             if(done):
@@ -259,7 +259,7 @@ def train(cfg, rl_agent):
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     _, _, _, info = env.step(1)
-    raw_features = rl_agent.image_to_feature(info, None, gametype)
+    raw_features = rl_agent.image_to_feature(info, gametype)
     features = rl_agent.feature_to_mf(raw_features)
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
@@ -335,7 +335,7 @@ def eval_load(cfg, agent):
     n_actions = env.action_space.n
     env.reset()
     _, _, _, info = env.step(1)
-    raw_features = agent.image_to_feature(info, None, xutils.get_gametype(env))
+    raw_features = agent.image_to_feature(info, xutils.get_gametype(env))
     features = agent.feature_to_mf(raw_features)
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()

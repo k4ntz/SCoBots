@@ -61,7 +61,7 @@ def play_agent(agent, cfg):
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     obs, _, _, info = env.step(1)
-    raw_features = agent.image_to_feature(info, None, gametype)
+    raw_features = agent.image_to_feature(info, gametype)
     features = agent.feature_to_mf(raw_features)
     # only when raw features should be used
     if cfg.train.use_raw_features:
@@ -99,7 +99,7 @@ def play_agent(agent, cfg):
         print('Reward: {:.2f}\t Step: {:.2f}'.format(
                 ep_reward, t), end="\r")
         obs, reward, done, info = env.step(action)
-        raw_features = agent.image_to_feature(info, raw_features, gametype)
+        raw_features = agent.image_to_feature(info, gametype)
         features = agent.feature_to_mf(raw_features)
         l_features.append(features)
         ep_reward += reward
@@ -132,7 +132,7 @@ def use_reinforce(cfg, mode, agent):
     elif mode == "eval":
         policy = reinforce.eval_load(cfg, agent)
         # reinit agent with loaded model and eval function
-        agent = Agent(f1=agent.image_to_feature, f2=agent.feature_to_mf, m=policy, f3=select_action)
+        agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
         play_agent(agent=agent, cfg=cfg)
 
 
@@ -144,7 +144,7 @@ def use_genetic(cfg, mode, agent):
     elif mode == "eval":
         policy = genetic.eval_load(cfg, agent)
         # reinit agent with loaded model and eval function
-        agent = Agent(f1=agent.image_to_feature, f2=agent.feature_to_mf, m=policy, f3=select_action)
+        agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
         play_agent(agent=agent, cfg=cfg)
 
 

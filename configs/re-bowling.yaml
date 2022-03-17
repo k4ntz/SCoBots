@@ -1,4 +1,5 @@
 env_name: 'BowlingDeterministic-v4'
+seed: 2
 
 rl_algo: 1
 
