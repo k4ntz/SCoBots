@@ -181,7 +181,7 @@ def train(cfg, agent):
             policy.saved_log_probs.append(log_prob)
             # to env step
             _, reward, done, info = env.step(action)
-            raw_features = agent.image_to_feature(info, None, gametype)
+            raw_features = agent.image_to_feature(info, raw_features, gametype)
             features = agent.feature_to_mf(raw_features)
             policy.rewards.append(reward)
             ep_reward += reward

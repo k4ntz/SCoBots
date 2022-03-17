@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import random
 import time
+from xrl import agents
 from xrl.agents import Agent
 from xrl.environments import agym
 import gym
@@ -18,7 +19,9 @@ def run_agent(agent, env, render=False):
     if render:
         env.render()
     for t in tqdm(range(3000)):
-        action = agent(observation)
+        feature = agent.image_to_feature(observation)
+        #print(feature)
+        action = agent.mf_to_action(None)
         observation, reward, done, info = env.step(action)
         tot_return += reward
         if render:
@@ -45,13 +48,14 @@ env.seed(0)
 # exit()
 if args.interactive:
     ice = IColorExtractor(game=game, load=False)
-    agent = Agent([ice,
-                   RandomPolicy(env.action_space.n)])
+    agent = Agent(f1=ice, f2=None,
+                   f3=RandomPolicy(env.action_space.n))
 else:
-    agent = Agent([ColorExtractor(game=game, load=False),
-                   RandomPolicy(env.action_space.n)])
+    agent = Agent(f1=ColorExtractor(game=game, load=False), f2=None,
+                   f3=RandomPolicy(env.action_space.n))
     agent.pipeline[0].show_objects = True
 
+print(agent)
 run_agent(agent, env, render=args.render)
 if args.interactive:
     ice.save()

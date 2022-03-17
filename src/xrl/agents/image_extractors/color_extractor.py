@@ -93,7 +93,7 @@ class ColorExtractor():
             while type in ret.keys():
                 type = _increment_string(type)
             ret[type] = pos
-        print(ret); exit()
+        #print(ret); exit()
         return ret
 
 

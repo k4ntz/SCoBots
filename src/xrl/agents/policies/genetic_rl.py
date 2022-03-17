@@ -117,7 +117,7 @@ def run_agents(env, rl_agent, agents, cfg):
                 features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent)
             _, reward, done, info = env.step(action)
-            raw_features = rl_agent.image_to_feature(info, None, gametype)
+            raw_features = rl_agent.image_to_feature(info, raw_features, gametype)
             features = rl_agent.feature_to_mf(raw_features)
             r = r + reward
             if(done):
@@ -352,6 +352,7 @@ def eval_load(cfg, agent):
         agents, generation, t_elite_index = load_agents(model_path)
         if t_elite_index is not None:
             elite_index = t_elite_index
+    print('Agents in generation:', generation)
     print('Selected elite agent:', elite_index)
     elite_agent = agents[elite_index]
     # print nn structure

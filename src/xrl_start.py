@@ -1,7 +1,5 @@
 # main file for all rl algos
 
-from curses import raw
-import imp
 import random
 import torch
 import numpy as np
@@ -79,6 +77,7 @@ def play_agent(agent, cfg):
     # env loop
     plotter = xplt.Plotter()
     t = 0
+    env.reset()
     while t < 3000:  # Don't infinite loop while playing
         # only when raw features should be used
         if cfg.train.use_raw_features:
