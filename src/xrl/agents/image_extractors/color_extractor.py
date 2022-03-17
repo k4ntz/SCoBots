@@ -147,7 +147,7 @@ class ColorExtractor():
         f[ay:img.shape[0]+ay, ax:ax+img.shape[1]] = img
         return f.flatten()
 
-    def __call__(self, images):
+    def __call__(self, images, gametype = None):
         if len(images.shape) == 3:
             batch_size = 1
         elif len(images.shape) == 5:

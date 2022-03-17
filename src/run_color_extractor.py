@@ -19,7 +19,7 @@ def run_agent(agent, env, render=False):
     if render:
         env.render()
     for t in tqdm(range(3000)):
-        feature = agent.image_to_feature(observation)
+        feature = agent.image_to_feature(observation, None)
         #print(feature)
         action = agent.mf_to_action(None)
         observation, reward, done, info = env.step(action)
@@ -53,7 +53,7 @@ if args.interactive:
 else:
     agent = Agent(f1=ColorExtractor(game=game, load=False), f2=None,
                    f3=RandomPolicy(env.action_space.n))
-    agent.pipeline[0].show_objects = True
+    agent.feature_extractor.show_objects = True
 
 print(agent)
 run_agent(agent, env, render=args.render)

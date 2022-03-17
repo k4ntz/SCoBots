@@ -125,7 +125,7 @@ def train(cfg, agent):
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     _, _, _, info = env.step(1)
-    raw_features = agent.image_to_feature(info, None, gametype)
+    raw_features = agent.image_to_feature(info, gametype)
     features = agent.feature_to_mf(raw_features)
     # init policy net
     print("Make hidden layer in nn:", cfg.train.make_hidden)
@@ -150,7 +150,7 @@ def train(cfg, agent):
     if cfg.train.pruning_method != "None":
         print('Pruning Steps:', cfg.train.pruning_steps)
     # reinit agent with loaded policy model
-    agent = Agent(f1=agent.image_to_feature, f2=agent.feature_to_mf, m=policy, f3=select_action)
+    agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
     # setup last variables for init
     running_reward = None
     reward_buffer = 0
@@ -181,7 +181,7 @@ def train(cfg, agent):
             policy.saved_log_probs.append(log_prob)
             # to env step
             _, reward, done, info = env.step(action)
-            raw_features = agent.image_to_feature(info, raw_features, gametype)
+            raw_features = agent.image_to_feature(info, gametype)
             features = agent.feature_to_mf(raw_features)
             policy.rewards.append(reward)
             ep_reward += reward
@@ -232,7 +232,7 @@ def eval_load(cfg, agent):
     n_actions = env.action_space.n
     env.reset()
     _, _, _, info = env.step(1)
-    raw_features = agent.image_to_feature(info, None, xutils.get_gametype(env))
+    raw_features = agent.image_to_feature(info, xutils.get_gametype(env))
     features = agent.feature_to_mf(raw_features)
     print("Make hidden layer in nn:", cfg.train.make_hidden)
     policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
