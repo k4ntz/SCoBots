@@ -10,7 +10,7 @@ from atariari.benchmark.wrapper import AtariARIWrapper
 
 # YarsRevenge
 # 
-env_name = "BowlingDeterministic-v4"
+env_name = "SkiingDeterministic-v4"
 
 def print_labels(env_info):
     # extract raw features
@@ -37,7 +37,8 @@ for t in range(50000):
     obs, reward, done, info = env.step(action)
     r += reward
     print("Reward:", reward)
-    print_labels(info)
+    print(info)
+    #print_labels(info)
     print("------")
     if(done):
         break
