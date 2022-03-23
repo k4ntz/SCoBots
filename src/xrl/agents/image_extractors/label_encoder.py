@@ -75,23 +75,26 @@ def get_correct_flags(labels):
         flag2 = list(labels["flag_2"])
         if "flag_3" in labels:
             flag3 = list(labels["flag_3"])
-            flag4 = list(labels["flag_4"])
             # return pair with same first coordinate
             if flag1[0] == flag2[0]:
                 return flag1, flag2
             elif flag1[0] == flag3[0]:
                 return flag1, flag3
             else:
-                return flag1, flag4
+                if "flag_4" in labels:
+                    flag4 = list(labels["flag_4"])
+                    return flag1, flag4
+                else:
+                    return flag1, flag1
         else:
             return flag1, flag2
     else: 
-        return [0,0], [0,0]
+        return [1,1], [1,1]
 
 
 # function to get the nearest tree
 def get_first_tree(labels):
-    tree = [99999, 99999]
+    tree = [999, 999]
     for i in range (1, 20):
         current_tree = "tree"
         if i > 1:
