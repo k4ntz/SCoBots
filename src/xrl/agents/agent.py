@@ -32,10 +32,9 @@ class Agent():
     # for the raw features from the last frame
     def image_to_feature(self, images, info, gametype):
         labels = self.feature_extractor(images, info, gametype)
-        print(labels)
+        #print(labels)
         # encode given labels dict
         new_raw_features = extract_from_labels(labels, gametype)
-        print(new_raw_features)
         #print("extracted raw features:", new_raw_features)
         if len(self.raw_features) < 1:
             # init with double length
