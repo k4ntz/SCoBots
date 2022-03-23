@@ -1,6 +1,7 @@
 # file for extracting objects with given labels in dictionary
 # it is not important whether label dict is given by CE or ATARIARI
 
+from cProfile import label
 import numpy as np
 import math
 
@@ -58,6 +59,45 @@ def get_avg_bowling_pin(labels):
         x = sum(xs) / len(xs)
         y = sum(ys) / len(ys)
     return [np.int16(x), np.int16(y)]
+
+
+# function to get avg flag position
+def get_flag_center(labels):
+    flag1, flag2 = get_correct_flags(labels)
+    middle = [(flag1[0]+flag2[0])/2, (flag1[1]+flag2[1])/2]
+    return middle
+
+
+# function to sort between all flags to give the two uppermost
+def get_correct_flags(labels):
+    flag1 = list(labels["flag"])
+    flag2 = list(labels["flag_2"])
+    if "flag_3" in labels:
+        flag3 = list(labels["flag_3"])
+        flag4 = list(labels["flag_4"])
+        # return pair with same first coordinate
+        if flag1[0] == flag2[0]:
+            return flag1, flag2
+        elif flag1[0] == flag3[0]:
+            return flag1, flag3
+        else:
+            return flag1, flag4
+    else:
+        return flag1, flag2
+
+
+# function to get the nearest tree
+def get_first_tree(labels):
+    tree = [99999, 99999]
+    for i in range (1, 20):
+        current_tree = "tree"
+        if i > 1:
+            current_tree = current_tree + str(i)
+        if current_tree in labels:
+            tmptree = list(labels[current_tree])
+            if tree[0] > tmptree[0]:
+                tree = tmptree
+    return tree
 
 
 # function to get raw features and order them by
@@ -118,5 +158,7 @@ def extract_from_labels(labels, gametype=0):
     # skiing game (only CE pls)
     elif gametype == 5:
         player = list(labels["player"])
+        flag = get_flag_center(labels)
+        tree = get_first_tree(labels)
         # set new raw_features
-        return [player]
+        return [player, flag, tree]
