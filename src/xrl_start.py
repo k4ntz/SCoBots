@@ -25,7 +25,7 @@ from xrl.environments import env_manager
 
 # all extractor and processor to later select with infos from config file
 # feature extractor functions
-from xrl.agents.image_extractors.aari_raw_features_extractor import get_raw_features
+from xrl.agents.image_extractors.aari_raw_features_extractor import get_labels
 from xrl.agents.image_extractors.color_extractor import ColorExtractor
 from xrl.agents.image_extractors.interactive_color_extractor import IColorExtractor
 
@@ -172,7 +172,7 @@ def use_minidreamer(cfg, mode):
 def xrl(cfg, mode):
     # init agent without third part of pipeline
     # TODO: Replace with selection from config file
-    agent = Agent(f1=get_raw_features, f2=preprocess_raw_features)
+    agent = Agent(f1=get_labels, f2=preprocess_raw_features)
     # algo selection
     # 1: REINFORCE
     # 2: Deep Neuroevolution

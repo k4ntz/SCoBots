@@ -2,7 +2,10 @@
 # each agent has 3 functions representing 
 # the three steps in the pipeline
 
+from cProfile import label
 import numpy as np
+
+from xrl.agents.image_extractors.label_encoder import extract_from_labels
 
 
 class Agent():
@@ -28,7 +31,8 @@ class Agent():
     # to have the last used features, there is a wrapper and temp variable
     # for the raw features from the last frame
     def image_to_feature(self, images, gametype):
-        new_raw_features = self.feature_extractor(images, gametype)
+        labels = self.feature_extractor(images, gametype)
+        new_raw_features = extract_from_labels(labels, gametype)
         #print("extracted raw features:", new_raw_features)
         if len(self.raw_features) < 1:
             # init with double length
