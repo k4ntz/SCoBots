@@ -180,4 +180,6 @@ def get_gametype(env):
         gametype = 3
     elif "Bowling" in name:
         gametype = 4
+    elif "Skiing" in name:
+        gametype = 5
     return gametype
