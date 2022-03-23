@@ -163,7 +163,9 @@ def extract_from_labels(labels, gametype=0):
     ###########################################
     # skiing game (only CE pls)
     elif gametype == 5:
-        player = list(labels["player"])
+        player = [1,1]
+        if "player" in labels:
+            player = list(labels["player"])
         flag = get_flag_center(labels)
         tree = get_first_tree(labels)
         # set new raw_features
