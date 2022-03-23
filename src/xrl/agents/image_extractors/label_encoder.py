@@ -70,20 +70,23 @@ def get_flag_center(labels):
 
 # function to sort between all flags to give the two uppermost
 def get_correct_flags(labels):
-    flag1 = list(labels["flag"])
-    flag2 = list(labels["flag_2"])
-    if "flag_3" in labels:
-        flag3 = list(labels["flag_3"])
-        flag4 = list(labels["flag_4"])
-        # return pair with same first coordinate
-        if flag1[0] == flag2[0]:
-            return flag1, flag2
-        elif flag1[0] == flag3[0]:
-            return flag1, flag3
+    if "flag" in labels:
+        flag1 = list(labels["flag"])
+        flag2 = list(labels["flag_2"])
+        if "flag_3" in labels:
+            flag3 = list(labels["flag_3"])
+            flag4 = list(labels["flag_4"])
+            # return pair with same first coordinate
+            if flag1[0] == flag2[0]:
+                return flag1, flag2
+            elif flag1[0] == flag3[0]:
+                return flag1, flag3
+            else:
+                return flag1, flag4
         else:
-            return flag1, flag4
-    else:
-        return flag1, flag2
+            return flag1, flag2
+    else: 
+        return [0,0], [0,0]
 
 
 # function to get the nearest tree
