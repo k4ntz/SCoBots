@@ -115,8 +115,8 @@ def extract_from_labels(labels, gametype=0):
         # set new raw_features
         return [player, pin, ball]
     ###########################################
-    # skiing game
-    elif gametype == 4:
-        player = [labels["player"]]
+    # skiing game (only CE pls)
+    elif gametype == 5:
+        player = list(labels["player"])
         # set new raw_features
         return [player]

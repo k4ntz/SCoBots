@@ -30,9 +30,12 @@ class Agent():
         
     # to have the last used features, there is a wrapper and temp variable
     # for the raw features from the last frame
-    def image_to_feature(self, images, gametype):
-        labels = self.feature_extractor(images, gametype)
+    def image_to_feature(self, images, info, gametype):
+        labels = self.feature_extractor(images, info, gametype)
+        print(labels)
+        # encode given labels dict
         new_raw_features = extract_from_labels(labels, gametype)
+        print(new_raw_features)
         #print("extracted raw features:", new_raw_features)
         if len(self.raw_features) < 1:
             # init with double length

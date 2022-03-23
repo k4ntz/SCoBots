@@ -20,7 +20,7 @@ def run_agent(agent, env, render=False):
         env.render()
     for t in tqdm(range(3000)):
         feature = agent.image_to_feature(observation, None)
-        #print(feature)
+        print(feature)
         action = agent.mf_to_action(None)
         observation, reward, done, info = env.step(action)
         tot_return += reward
