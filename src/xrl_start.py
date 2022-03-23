@@ -61,7 +61,7 @@ def play_agent(agent, cfg):
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     obs, _, _, info = env.step(1)
-    raw_features = agent.image_to_feature(info, gametype)
+    raw_features = agent.image_to_feature(obs, info, gametype)
     features = agent.feature_to_mf(raw_features)
     # only when raw features should be used
     if cfg.train.use_raw_features:
@@ -99,7 +99,7 @@ def play_agent(agent, cfg):
         print('Reward: {:.2f}\t Step: {:.2f}'.format(
                 ep_reward, t), end="\r")
         obs, reward, done, info = env.step(action)
-        raw_features = agent.image_to_feature(info, gametype)
+        raw_features = agent.image_to_feature(obs, info, gametype)
         features = agent.feature_to_mf(raw_features)
         l_features.append(features)
         ep_reward += reward
@@ -167,12 +167,26 @@ def use_minidreamer(cfg, mode):
         print("Eval not implemented ...")
 
 
+# init agent function
+def init_agent(cfg):
+    # init correct raw features extractor
+    rfe = None
+    if cfg.raw_features_extractor == "atariari":
+        print("Raw Features Extractor:", "atariari")
+        rfe = get_labels
+    elif cfg.raw_features_extractor == "CE":
+        print("Raw Features Extractor:", "ColorExtractor")
+        game = cfg.env_name.replace("Deterministic-v4", "")
+        rfe = ColorExtractor(game=game, load=False)
+    # create agent and return
+    return Agent(f1=rfe, f2=preprocess_raw_features)
+
+
 # main function
 # switch for each algo
 def xrl(cfg, mode):
     # init agent without third part of pipeline
-    # TODO: Replace with selection from config file
-    agent = Agent(f1=get_labels, f2=preprocess_raw_features)
+    agent = init_agent(cfg)
     # algo selection
     # 1: REINFORCE
     # 2: Deep Neuroevolution

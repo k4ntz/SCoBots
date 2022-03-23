@@ -107,8 +107,8 @@ def run_agents(env, rl_agent, agents, cfg):
         agent.eval()
         gametype = xutils.get_gametype(env)
         _ = env.reset()
-        _, _, done, info = env.step(1)
-        raw_features = rl_agent.image_to_feature(info, gametype)
+        obs, _, done, info = env.step(1)
+        raw_features = rl_agent.image_to_feature(obs, info, gametype)
         features = rl_agent.feature_to_mf(raw_features)
         r = 0
         t = 0
@@ -116,8 +116,8 @@ def run_agents(env, rl_agent, agents, cfg):
             if cfg.train.use_raw_features:
                 features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent)
-            _, reward, done, info = env.step(action)
-            raw_features = rl_agent.image_to_feature(info, gametype)
+            obs, reward, done, info = env.step(action)
+            raw_features = rl_agent.image_to_feature(obs, info, gametype)
             features = rl_agent.feature_to_mf(raw_features)
             r = r + reward
             if(done):
@@ -258,8 +258,8 @@ def train(cfg, rl_agent):
     n_actions = env.action_space.n
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
-    _, _, _, info = env.step(1)
-    raw_features = rl_agent.image_to_feature(info, gametype)
+    obs, _, _, info = env.step(1)
+    raw_features = rl_agent.image_to_feature(obs, info, gametype)
     features = rl_agent.feature_to_mf(raw_features)
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
@@ -334,8 +334,8 @@ def eval_load(cfg, agent):
     env = env_manager.make(cfg)
     n_actions = env.action_space.n
     env.reset()
-    _, _, _, info = env.step(1)
-    raw_features = agent.image_to_feature(info, xutils.get_gametype(env))
+    obs, _, _, info = env.step(1)
+    raw_features = agent.image_to_feature(obs, info, xutils.get_gametype(env))
     features = agent.feature_to_mf(raw_features)
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()

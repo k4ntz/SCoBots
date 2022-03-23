@@ -3,7 +3,7 @@
 
 
 # wrapper for atariari to get labels
-def get_labels(env_info, gametype=0):
+def get_labels(obs, env_info, gametype=0):
     labels = env_info
     # extract raw features
     if gametype != 3:
