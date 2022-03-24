@@ -37,17 +37,15 @@ from xrl.agents import Agent
 
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
-def select_action(features, policy, random_tr = -1, select_argmax=False):
+# function to select action by given features
+def select_action(features, policy, random_tr = -1):
     sample = random.random()
     if sample > random_tr:
         # calculate probabilities of taking each action
-        probs = policy(features)
-        if select_argmax:
-            return probs.argmax().item()
+        probs = policy(torch.tensor(features).unsqueeze(0).float())
         # sample an action from that set of probs
-        else:
-            sampler = Categorical(probs)
-            action = sampler.sample()
+        sampler = Categorical(probs)
+        action = sampler.sample()
     else:
         action = random.randint(0, 5)
     # return action
@@ -77,12 +75,11 @@ def play_agent(agent, cfg):
     # env loop
     plotter = xplt.Plotter()
     t = 0
-    env.reset()
+    # env.reset()
     while t < 3000:  # Don't infinite loop while playing
         # only when raw features should be used
         if cfg.train.use_raw_features:
             features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
-        features = torch.tensor(features).unsqueeze(0).float().to(cfg.device)
         action = agent.mf_to_action(features, agent.model)
         if cfg.make_video:
             img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, obs, cfg.liveplot)
@@ -142,9 +139,7 @@ def use_genetic(cfg, mode, agent):
     if mode == "train":
         genetic.train(cfg, agent)
     elif mode == "eval":
-        policy = genetic.eval_load(cfg, agent)
-        # reinit agent with loaded model and eval function
-        agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
+        agent = genetic.eval_load(cfg, agent)
         play_agent(agent=agent, cfg=cfg)
 
 

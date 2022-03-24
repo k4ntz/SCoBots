@@ -27,6 +27,8 @@ import xrl.utils.pruner as pruner
 
 from xrl.agents import Agent
 
+import matplotlib.pyplot as plt
+
 
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):
@@ -117,6 +119,10 @@ def run_agents(env, rl_agent, agents, cfg):
                 features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent)
             obs, reward, done, info = env.step(action)
+            #plt.imshow(obs, interpolation='none')
+            #plt.plot()
+            #plt.pause(0.001)  # pause a bit so that plots are updated
+            #plt.clf()
             raw_features = rl_agent.image_to_feature(obs, info, gametype)
             features = rl_agent.feature_to_mf(raw_features)
             r = r + reward
@@ -140,6 +146,7 @@ def return_average_score(rl_agent, agent, runs, cfg):
         score += run_agents(env, rl_agent, [agent], cfg)[0]
         rtpt.step()
     avg_score = score/runs
+    print("avgScore:", avg_score)
     return avg_score
 
 
@@ -360,5 +367,8 @@ def eval_load(cfg, agent):
     # because old trained runs does not have make_hidden param
     dummy.load_state_dict(elite_agent.state_dict())
     elite_agent = dummy
-    return elite_agent
+    #print("Agent reward:", run_agents(env, agent, [elite_agent], cfg))
+    agent.model = elite_agent
+    agent.mf_to_action = select_action
+    return agent
 
