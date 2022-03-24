@@ -93,6 +93,13 @@ cfg = CfgNode({
         # save every is for episodes
         'save_every': 5,
 
+        'feedback_alpha': 0,
+        'feedback_delta': 0,
+
+        'stale_window': 20,
+        'stale_threshold': 0.1,
+        'stale_probe_window': 5,
+
         ### XRL SPECIFIC
         'make_hidden': True,
         'hidden_layer_size': 32,

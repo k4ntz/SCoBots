@@ -19,5 +19,5 @@ torchinfo
 torchvision
 tqdm
 yacs
-atari_py==0.2.6
+atari_py
 termcolor

@@ -1,0 +1,33 @@
+# better to use noframeskip env and own frameskipp wrapper? 
+env_name: 'PongDeterministic-v4'
+
+rl_algo: 1
+
+parallel: False
+
+logdir: '/xrl/relogs/'
+
+video_steps: 100
+exp_name: 'test'
+
+seed: 42
+
+train:
+  gamma: 0.97
+  learning_rate: 0.001
+
+  num_episodes: 1050
+  max_steps: 100000
+  
+  log_steps: 1
+  save_every: 50
+
+  
+  feedback_alpha: 1
+  feedback_delta: 0
+
+  stale_window: 5
+  stale_threshold: 0.05
+  stale_probe_window: 2
+
+  hidden_layer_size: 16

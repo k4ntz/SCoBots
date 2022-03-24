@@ -1,0 +1,37 @@
+random notes:
+    - use correct names in REINFORCE such as trajectory and horizon (instead of episodes, training steps etc)
+    - mix env reward with feedback reward.
+    - how to normalize a feature based feedback rewards
+        use distance delta as reward: negative delta -> reward, everything else 0 (if -1 -> punishment when ball returns)
+        0.5  * reward + 0.5 feedback reward
+        probably inflates the sparse env rewards of 1.0 and -1.0
+    - 'running reward' is a terrible metric for tinkering with rewards, not comparable 
+        - reward per steps, steps? -> still needed to normalize rewards across experiments so its comparable
+    - unexpected performance maybe by inaccurate atariari feature extraction
+    
+    - think about the nature of the feature extraction agent, how handcrafted can the features be in order to provide a good interface for URL
+        - challenge of mapping feedback intentions to rewards defined on the agent's feature space 
+
+UFR to machine, decide if feedback is useful on its own, give feedback back
+demographic pyramide as vizualation for features
+make sure rendering is off during training
+
+continous reward, histogramm implementation, NR graphs, maybe refactor
+
+0.001 | 50-50 
+
+
+- switching between feedback_alpha 0 and 1 inflates the rewards. how much does this reset the weights and biases in the policy NN?
+    --> looks like its wiping all the learned parameters
+    --> think of a way to always have the same reward range (per episode), independent of the feedback alpha
+    --> maybe map the average distance to 0-1 range, normalizing it with what (best observation?)
+        --> normalize all the step rewards at the end of the episode so they add up to a number between 0-1
+        --> 
+- run 2k episode alpha 0 and alpha 1 sim to compare
+
+
+- looks like the feedback reward helped to prio the agent (pls validate) so it can finetune with natural reward faster
+
+- really understand how reward is used for loss calculation and backprop (especially how it correlates to the action space and their respective log probs)
+
+- how does the learnign rate correlate to the feedback alpha? maybe bind lr to the feedback alpha

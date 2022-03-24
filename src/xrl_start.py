@@ -56,7 +56,6 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
         action = sampler.sample()
     else:
         action = random.randint(0, n_actions - 1)
-    # return action
     return action
 
 
