@@ -19,7 +19,7 @@ train:
   num_episodes: 25000
   max_steps: 100000
   
-  log_steps: 50
+  log_steps: 25
   save_every: 100
 
   feedback_alpha: 0
