@@ -286,7 +286,7 @@ def train(cfg, agent):
             avg_nr = nr_buffer / cfg.train.log_steps
             writer.add_scalar('rewards/avg natural', avg_nr, i_episode)
             writer.add_scalar('rewards/avg combined', avg_r, i_episode)
-            writer.add_scalar('loss/policy_loss', avg_r, loss)
+            writer.add_scalar('loss/policy_loss', loss, i_episode)
             writer.add_scalar('params/feedback_alpha', feedback_alpha, i_episode)
             cr_buffer = 0
             nr_buffer = 0
