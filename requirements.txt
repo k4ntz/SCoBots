@@ -22,3 +22,4 @@ tqdm
 yacs
 atari_py
 termcolor
+git+https://github.com/mila-iqia/atari-representation-learning.git
