@@ -47,10 +47,10 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
     else:
         action = action.item()
     # return action and log prob
-    return action, log_prob
+    return action, log_prob, probs.detach().cpu().numpy()
 
 
-def finish_episode(policy, optimizer, eps, cfg):
+def finish_episode(policy, optimizer, entropy, eps, cfg):
     R = 0
     policy_loss = []
     returns = []
@@ -59,15 +59,17 @@ def finish_episode(policy, optimizer, eps, cfg):
         returns.insert(0, R)
     returns = torch.tensor(returns, device=dev)
     returns = (returns - returns.mean()) / (returns.std() + eps)
-    for log_prob, R in zip(policy.saved_log_probs, returns):
-        policy_loss.append(-log_prob * R)
+    for log_prob, e,  R in zip(policy.saved_log_probs, policy.entropies, returns):
+        policy_loss.append((-log_prob * R) - e)       #entropy regularization
     optimizer.zero_grad()
     policy_loss = torch.cat(policy_loss).sum() #try mean
     policy_loss.backward()
     optimizer.step()
+    episode_entropy = np.mean(policy.entropies)
     del policy.rewards[:]
     del policy.saved_log_probs[:]
-    return policy, optimizer, policy_loss
+    del policy.entropies[:]
+    return policy, optimizer, policy_loss, episode_entropy
 
 
 # save model helper function
@@ -163,6 +165,7 @@ def train(cfg, agent):
     rtpt = RTPT(name_initials='SeSz', experiment_name=cfg.exp_name,
                     max_iterations=cfg.train.num_episodes)
     rtpt.start()
+    #pbar = tqdm(initial = i_episode, total = cfg.train.num_episodes)
     while i_episode < cfg.train.num_episodes: #TODO: name to trajectories
         # init env
         _, ep_comb_reward, ep_natural_reward, ep_feedback_reward = env.reset(), 0, 0, 0
@@ -171,7 +174,7 @@ def train(cfg, agent):
         last_raw_features = None
         last_features = None
         while t < cfg.train.max_steps:  # Don't infinite loop while learning TODO: naming
-            action, log_prob = agent.mf_to_action(features, agent.model, cfg.train.random_action_p, n_actions)
+            action, log_prob, probs = agent.mf_to_action(features, agent.model, cfg.train.random_action_p, n_actions)
             policy.saved_log_probs.append(log_prob)
             _, natural_reward, done, info = env.step(action)
             # reward <- distance(player, ball)
@@ -208,8 +211,9 @@ def train(cfg, agent):
             #    feedback_reward = 0
             # reward weights
             #comb_reward = float(feedback_reward)
-
+            entropy = -np.sum(list(map(lambda p: p * np.log(p), probs)))
             policy.rewards.append(comb_reward)
+            policy.entropies.append(entropy)
             ep_comb_reward += comb_reward
             ep_natural_reward += natural_reward
             ep_feedback_reward += feedback_reward
@@ -234,9 +238,9 @@ def train(cfg, agent):
         cr_buffer += ep_comb_reward
         nr_buffer += ep_natural_reward
 
-        policy, optimizer, loss = finish_episode(policy, optimizer, eps, cfg)
-        print('Episode {}\tLast reward: {:.2f}\tRunning reward: {:.2f}\tNR: {:.2f}\tSteps: {}       '.format(
-            i_episode, ep_comb_reward, running_reward, ep_natural_reward, t)) #, end="\r")
+        policy, optimizer, loss, ep_entropy = finish_episode(policy, optimizer, entropy, eps, cfg)
+        print('Episode {}\tLast reward: {:.2f}\tRunning reward: {:.2f}\tNR: {:.2f}\tEntropy: {:.2f}\tSteps: {}       '.format(
+            i_episode, ep_comb_reward, running_reward, ep_natural_reward, ep_entropy, t)) #, end="\r")
         
         # turn feedback reward alpha up or down when natural reward is stuck
         # TODO: make reward histories persistent to be able to continue training after aborting
@@ -286,8 +290,9 @@ def train(cfg, agent):
             avg_nr = nr_buffer / cfg.train.log_steps
             writer.add_scalar('rewards/avg natural', avg_nr, i_episode)
             writer.add_scalar('rewards/avg combined', avg_r, i_episode)
-            writer.add_scalar('loss/policy_loss', loss, i_episode)
-            writer.add_scalar('params/feedback_alpha', feedback_alpha, i_episode)
+            writer.add_scalar('rewards/feedback_alpha', feedback_alpha, i_episode)
+            writer.add_scalar('loss/policy_net', loss, i_episode)
+            writer.add_scalar('loss/policy_net_entropy', ep_entropy, i_episode)
             cr_buffer = 0
             nr_buffer = 0
       
@@ -296,7 +301,7 @@ def train(cfg, agent):
             save_policy(cfg.exp_name, policy, i_episode + 1, optimizer)
         # finish episode
         i_episode += 1
-        pbar.update(1)
+        #pbar.update(1)
         rtpt.step()
 
 
