@@ -14,7 +14,7 @@ seed: 42
 
 train:
   gamma: 0.97
-  learning_rate: 0.001
+  learning_rate: 0.0001
 
   num_episodes: 1050
   max_steps: 100000

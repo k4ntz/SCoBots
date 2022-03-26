@@ -14,9 +14,9 @@ seed: 28312
 
 train:
   gamma: 0.97
-  learning_rate: 0.001
+  learning_rate: 0.0001
 
-  num_episodes: 25000
+  num_episodes: 20000
   max_steps: 100000
   
   log_steps: 25
