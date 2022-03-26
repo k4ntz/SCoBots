@@ -50,7 +50,7 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
     return action, log_prob, probs.detach().cpu().numpy()
 
 
-def finish_episode(policy, optimizer, entropy, eps, cfg):
+def finish_episode(policy, optimizer, eps, cfg):
     R = 0
     policy_loss = []
     returns = []
@@ -211,7 +211,7 @@ def train(cfg, agent):
             #    feedback_reward = 0
             # reward weights
             #comb_reward = float(feedback_reward)
-            entropy = -np.sum(list(map(lambda p: p * np.log(p), probs)))
+            entropy = -np.sum(list(map(lambda p: p * np.log(p + eps), probs)))
             policy.rewards.append(comb_reward)
             policy.entropies.append(entropy)
             ep_comb_reward += comb_reward
@@ -238,7 +238,7 @@ def train(cfg, agent):
         cr_buffer += ep_comb_reward
         nr_buffer += ep_natural_reward
 
-        policy, optimizer, loss, ep_entropy = finish_episode(policy, optimizer, entropy, eps, cfg)
+        policy, optimizer, loss, ep_entropy = finish_episode(policy, optimizer, eps, cfg)
         print('Episode {}\tLast reward: {:.2f}\tRunning reward: {:.2f}\tNR: {:.2f}\tEntropy: {:.2f}\tSteps: {}       '.format(
             i_episode, ep_comb_reward, running_reward, ep_natural_reward, ep_entropy, t)) #, end="\r")
         
