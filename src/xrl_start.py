@@ -81,6 +81,7 @@ def play_agent(agent, cfg):
         if cfg.train.use_raw_features:
             features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
         action = agent.mf_to_action(features, agent.model)
+        features = torch.tensor(features).unsqueeze(0).float()
         if cfg.make_video:
             img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, obs, cfg.liveplot)
             logger.fill_video_buffer(img)
@@ -104,21 +105,19 @@ def play_agent(agent, cfg):
         if done:
             print("\n")
             break
+    print('Final reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
     if cfg.make_video:
         logger.save_video(cfg.exp_name)
-        print('Final reward: {:.2f}\tSteps: {}'.format(
-        ep_reward, t))
-    else:
+    elif not cfg.liveplot:
         ig_sum = np.asarray(ig_sum)
         ig_action_sum = np.asarray(ig_action_sum)
         ig_mean = np.mean(ig_sum, axis=0)
         # create dict with feature as key and ig-mean als value
         zip_iterator = zip(feature_titles, ig_mean)
         ig_dict = dict(zip_iterator)
-        print('Final reward: {:.2f}\tSteps: {}'.format(
-        ep_reward, t))
         for k in ig_dict:
             print(k + ": " + str(ig_dict[k]))
+        
 
 
 # function to call reinforce algorithm
@@ -171,7 +170,7 @@ def init_agent(cfg):
         rfe = get_labels
     elif cfg.raw_features_extractor == "CE":
         print("Raw Features Extractor:", "ColorExtractor")
-        game = cfg.env_name.replace("Deterministic-v4", "")
+        game = cfg.env_name.replace("Deterministic", "").replace("-v4", "")
         rfe = ColorExtractor(game=game, load=False)
     # create agent and return
     return Agent(f1=rfe, f2=preprocess_raw_features)

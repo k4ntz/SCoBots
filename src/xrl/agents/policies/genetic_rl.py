@@ -359,7 +359,7 @@ def eval_load(cfg, agent):
         agents, generation, t_elite_index = load_agents(model_path)
         if t_elite_index is not None:
             elite_index = t_elite_index
-    print('Agents in generation:', generation)
+    print('Generation:', generation)
     print('Selected elite agent:', elite_index)
     elite_agent = agents[elite_index]
     # print nn structure
