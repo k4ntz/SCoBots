@@ -96,6 +96,8 @@ cfg = CfgNode({
         'feedback_alpha': 0,
         'feedback_delta': 0,
 
+        'entropy_alpha': 0.0,
+
         'stale_window': 20,
         'stale_threshold': 0.1,
         'stale_probe_window': 5,
