@@ -146,7 +146,6 @@ def return_average_score(rl_agent, agent, runs, cfg):
         score += run_agents(env, rl_agent, [agent], cfg)[0]
         rtpt.step()
     avg_score = score/runs
-    print("avgScore:", avg_score)
     return avg_score
 
 
