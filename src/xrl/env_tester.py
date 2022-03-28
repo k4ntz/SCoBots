@@ -10,7 +10,7 @@ from atariari.benchmark.wrapper import AtariARIWrapper
 
 # YarsRevenge
 # 
-env_name = "SkiingDeterministic-v4"
+env_name = "Skiing-v4"
 
 def print_labels(env_info):
     # extract raw features
