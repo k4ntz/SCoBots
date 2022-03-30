@@ -53,6 +53,7 @@ cfg = CfgNode({
         'eps_end': 0.01,
         'eps_decay': 100000,
         'learning_rate': 0.00025,
+        'random_action_p': -1.0,
 
         'use_raw_features': False,
 
