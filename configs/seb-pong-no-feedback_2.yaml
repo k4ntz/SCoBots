@@ -1,4 +1,4 @@
-env_name: 'PongDeterministic-v4'
+env_name: 'Pong-v4'
 
 rl_algo: 1
 
@@ -13,9 +13,9 @@ seed: 12382
 
 train:
   gamma: 0.9
-  learning_rate: 0.001
+  learning_rate: 0.0001
 
-  num_episodes: 20000
+  num_episodes: 10000
   max_steps: 100000
   
   log_steps: 25
@@ -24,6 +24,6 @@ train:
   feedback_alpha: 0
   feedback_delta: 0
 
-  entropy_alpha: 0.01
+  entropy_alpha: 0.0
 
   hidden_layer_size: 200

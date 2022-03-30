@@ -35,3 +35,10 @@ continous reward, histogramm implementation, NR graphs, maybe refactor
 - really understand how reward is used for loss calculation and backprop (especially how it correlates to the action space and their respective log probs)
 
 - how does the learnign rate correlate to the feedback alpha? maybe bind lr to the feedback alpha
+
+-----------------------------
+
+training on normalized features, then playing on not normalized features -> better final reward than playing on normalized. why?
+why is feedback slower in training than no-feedback
+remove human feedback if it has reached max value? 
+"ignore the other player for now" -> mask on features?

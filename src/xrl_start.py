@@ -59,6 +59,13 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
     return action
 
 
+def normalize_features(features, max_observed):
+    max_value = features.max()
+    if max_observed < max_value:
+        return features / max_value, max_value
+    else:
+        return features / max_observed, max_observed
+
 # function to test agent loaded via main switch
 def play_agent(agent, cfg):
     # init env
@@ -71,6 +78,7 @@ def play_agent(agent, cfg):
     features = agent.feature_to_mf(raw_features)
     # init objects
     summary(agent.model, input_size=(1, len(features)), device=cfg.device)
+<<<<<<< HEAD
     # make multiple runs for eval
     runs = 5
     print("Runs:", runs)
@@ -105,6 +113,53 @@ def play_agent(agent, cfg):
         rtpt.step()
     print(rewards)
     print("Mean of Rewards:", sum(rewards) / len(rewards))
+=======
+    logger = vlogger.VideoLogger(size=(480, 480))
+    ig = IntegratedGradients(agent.model)
+    ig_sum = []
+    ig_action_sum = []
+    l_features = []
+    feature_titles = plt.get_feature_titles(int(len(raw_features)/2))
+    # env loop
+    plotter = plt.Plotter()
+    t = 0
+    max_feature_value_observed = 0
+    while t < 1500:  # Don't infinite loop while playing
+        # only when raw features should be used
+        if cfg.train.use_raw_features:
+            features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
+
+        features = torch.tensor(features).unsqueeze(0).float().to(cfg.device)
+        features, max_feature_value_observed = normalize_features(features, max_feature_value_observed) #normalize feature
+
+        action = agent.mf_to_action(features, agent.model)
+        if cfg.liveplot or cfg.make_video:
+            img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, env, cfg.liveplot)
+            logger.fill_video_buffer(img)
+        else:
+            ig_sum.append(plt.get_integrated_gradients(ig, features, action))
+            ig_action_sum.append(np.append(plt.get_integrated_gradients(ig, features, action), [action]))
+        print('Reward: {:.2f}\t Step: {:.2f}'.format(
+                ep_reward, t), end="\r")
+        obs, reward, done, info = env.step(action)
+        raw_features = agent.image_to_feature(info, raw_features, gametype)
+        features = agent.feature_to_mf(raw_features)
+        l_features.append(features)
+        ep_reward += reward
+        t += 1
+        if done:
+            print("\n")
+            break
+    if cfg.liveplot or cfg.make_video:
+        logger.save_video(cfg.exp_name)
+        print('Final reward: {:.2f}\tSteps: {}'.format(
+        ep_reward, t))
+    else:
+        ig_sum = np.asarray(ig_sum)
+        ig_action_sum = np.asarray(ig_action_sum)
+        print('Final reward: {:.2f}\tSteps: {}\tIG-Mean: {}'.format(
+        ep_reward, t, np.mean(ig_sum, axis=0)))
+>>>>>>> non deterministic experiments
 
 
 
