@@ -97,7 +97,6 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
         sampler = Categorical(probs)
         action = sampler.sample()
     else:
-        print("RANDOM ACTION!")
         action = random.randint(0, n_actions - 1)
     # return action
     return action
