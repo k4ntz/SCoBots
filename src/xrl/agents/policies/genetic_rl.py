@@ -88,7 +88,7 @@ def return_random_agents(n_inputs, num_agents, n_actions, cfg):
 
 
 # function to select action by given features
-def select_action(features, policy, random_tr = -1):
+def select_action(features, policy, random_tr = -1, n_actions=3):
     sample = random.random()
     if sample > random_tr:
         # calculate probabilities of taking each action
@@ -97,7 +97,8 @@ def select_action(features, policy, random_tr = -1):
         sampler = Categorical(probs)
         action = sampler.sample()
     else:
-        action = random.randint(0, 5)
+        print("RANDOM ACTION!")
+        action = random.randint(0, n_actions - 1)
     # return action
     return action
 
@@ -108,6 +109,7 @@ def run_agents(env, rl_agent, agents, cfg):
     for agent in agents:
         agent.eval()
         gametype = xutils.get_gametype(env)
+        n_actions = env.action_space.n
         _ = env.reset()
         obs, _, done, info = env.step(1)
         raw_features = rl_agent.image_to_feature(obs, info, gametype)
@@ -117,7 +119,7 @@ def run_agents(env, rl_agent, agents, cfg):
         while t < cfg.train.max_steps:
             if cfg.train.use_raw_features:
                 features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
-            action = select_action(features, agent)
+            action = select_action(features, agent, cfg.train.random_action_p, n_actions)
             obs, reward, done, info = env.step(action)
             #plt.imshow(obs, interpolation='none')
             #plt.plot()

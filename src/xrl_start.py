@@ -38,7 +38,8 @@ from xrl.agents import Agent
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
 # function to select action by given features
-def select_action(features, policy, random_tr = -1):
+# TODO: Remove like genetic algo
+def select_action(features, policy, random_tr = -1, n_actions=3):
     sample = random.random()
     if sample > random_tr:
         # calculate probabilities of taking each action
@@ -47,7 +48,7 @@ def select_action(features, policy, random_tr = -1):
         sampler = Categorical(probs)
         action = sampler.sample()
     else:
-        action = random.randint(0, 5)
+        action = random.randint(0, n_actions - 1)
     # return action
     return action
 
@@ -56,6 +57,7 @@ def select_action(features, policy, random_tr = -1):
 def play_agent(agent, cfg):
     # init env
     env = env_manager.make(cfg, True)
+    n_actions = env.action_space.n
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     obs, _, _, info = env.step(1)
@@ -80,7 +82,7 @@ def play_agent(agent, cfg):
         # only when raw features should be used
         if cfg.train.use_raw_features:
             features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
-        action = agent.mf_to_action(features, agent.model)
+        action = agent.mf_to_action(features, agent.model, cfg.train.random_action_p, n_actions)
         features = torch.tensor(features).unsqueeze(0).float()
         if cfg.make_video:
             img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, obs, cfg.liveplot)

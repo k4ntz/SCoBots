@@ -1,0 +1,20 @@
+env_name: 'Skiing-v4'
+
+raw_features_extractor: "CE"
+
+rl_algo: 2
+
+parallel: False
+
+logdir: '/xrl/genlogs/'
+
+video_steps: 100
+
+train:
+  random_action_p: 0.02
+
+  num_episodes: 1500
+  max_steps: 25000
+  
+  log_steps: 500
+
