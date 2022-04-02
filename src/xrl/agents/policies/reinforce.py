@@ -292,7 +292,7 @@ def train(cfg, agent):
                 #print(past_probe_end)
                 #print(past_window)
                 past_avg = sum(past_window) / len(past_window)
-                change = (present_avg - past_avg) / abs(past_avg)
+                change = (present_avg - past_avg) / (abs(past_avg) + eps)
                 #print("")
                 #print(str(past_avg) + " " + str(present_avg) + " " + str(change))
 
