@@ -124,7 +124,7 @@ def play_agent(agent, cfg):
     plotter = plt.Plotter()
     t = 0
     max_feature_value_observed = 0
-    while t < 1500:  # Don't infinite loop while playing
+    while t < 3000:  # Don't infinite loop while playing
         # only when raw features should be used
         if cfg.train.use_raw_features:
             features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
