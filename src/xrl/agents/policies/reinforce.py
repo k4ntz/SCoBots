@@ -3,6 +3,7 @@ from operator import mod
 import gym
 import numpy as np
 import os
+import random
 
 import torch
 import torch.nn as nn
@@ -53,14 +54,20 @@ class Policy(nn.Module):
         return F.softmax(self.out(x), dim=1)
 
 
-def select_action(features, policy):
+def select_action(features, policy, random_tr = -1, n_actions=3):
     input = torch.tensor(features).unsqueeze(0).float()
     probs = policy(input)
     #print(list(np.around(probs.detach().numpy(), 3)))
-    m = Categorical(probs)
-    action = m.sample()
-    log_prob = m.log_prob(action)
-    return action.item(), log_prob
+    sampler = Categorical(probs)
+    action = sampler.sample()
+    log_prob = sampler.log_prob(action)
+    # select action when no random action should be selected
+    if random.random() <= random_tr:
+       action = random.randint(0, n_actions - 1)
+    else:
+        action = action.item()
+    # return action and log prob
+    return action, log_prob
 
 
 def finish_episode(policy, optimizer, eps, cfg):
@@ -138,6 +145,7 @@ def train(cfg, agent):
     if os.path.isfile(model_path):
         policy, optimizer, i_episode = load_model(model_path, policy, optimizer)
     print('Episodes:', cfg.train.num_episodes)
+    print("Random Action probability:", cfg.train.random_action_p)
     print('Max Steps per Episode:', cfg.train.max_steps)
     print('Gamma:', cfg.train.gamma)
     print('Learning rate:', cfg.train.learning_rate)
@@ -173,7 +181,7 @@ def train(cfg, agent):
         while t < cfg.train.max_steps:  # Don't infinite loop while learning
             if len(pruned_input) > 0:
                 features = prune_input(features, pruned_input)
-            action, log_prob = agent.mf_to_action(features, agent.model)
+            action, log_prob = agent.mf_to_action(features, agent.model, cfg.train.random_action_p, n_actions)
             # when ig pruning episode
             if ig_pruning_episode:
                 t_features = torch.tensor(features).unsqueeze(0).float().to(cfg.device)
@@ -225,6 +233,7 @@ def train(cfg, agent):
 def eval_load(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     print('Evaluating Mode')
+    print("Random Action probability:", cfg.train.random_action_p)
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
