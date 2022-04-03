@@ -256,6 +256,7 @@ def train(cfg, rl_agent):
     generations = cfg.train.num_episodes
     print('Generations:', generations)
     print('Max Steps per Episode:', cfg.train.max_steps)
+    print("Random Action probability:", cfg.train.random_action_p)
 
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
@@ -335,6 +336,7 @@ def train(cfg, rl_agent):
 def eval_load(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     print('Evaluating Mode')
+    print("Random Action probability:", cfg.train.random_action_p)
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
