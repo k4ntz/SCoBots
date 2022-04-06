@@ -42,3 +42,11 @@ training on normalized features, then playing on not normalized features -> bett
 why is feedback slower in training than no-feedback
 remove human feedback if it has reached max value? 
 "ignore the other player for now" -> mask on features?
+
+
+write: what do you want to show? what would be the method, what would be the experiment? 
+formulate questions of research -> and method and expirements
+- pong without potentials   -> distance of now (normalized to [-1,0])
+- breakout without potentials
+- feature pruning for pong
+- other environments
