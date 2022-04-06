@@ -214,11 +214,12 @@ def train(cfg, agent):
                 max_distance_observed = b_p_distance_now
 
             # difference of potentials scale to max_distance
-            feedback_reward = feedback_alpha * ((-b_p_distance_now - -b_p_distance_past ) / max_distance_observed)
-            comb_reward = natural_reward + feedback_reward
+            # feedback_reward = feedback_alpha * ((-b_p_distance_now - -b_p_distance_past ) / max_distance_observed)
+            # comb_reward = natural_reward + feedback_reward
 
             # normalize to [0,1]. convex feedback_reward handling
-            # feedback_reward = 1 -  (b_p_distance_now / max_distance_observed )
+            feedback_reward = -(b_p_distance_now / max_distance_observed )
+            comb_reward = natural_reward + (feedback_alpha * feedback_reward)
             # alpha = feedback_alpha
             # comb_reward = (1 - alpha) * natural_reward + alpha * feedback_reward
             
