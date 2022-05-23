@@ -1,6 +1,7 @@
 # main file for all rl algos
 
 import random
+from sklearn import tree
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,6 +9,8 @@ import matplotlib.pyplot as plt
 from captum.attr import IntegratedGradients
 from torch.distributions import Categorical
 from torchinfo import summary
+from termcolor import colored
+from tqdm import tqdm
 
 from xrl.agents.policies import reinforce
 from xrl.agents.policies import genetic_rl as genetic
@@ -18,6 +21,7 @@ from xrl.agents.policies import minidreamer
 import xrl.utils.video_logger as vlogger
 import xrl.utils.utils as xutils
 import xrl.utils.plotter as xplt
+import xrl.utils.tree_explainer as tx
 
 # otherwise genetic loading model doesnt work, torch bug?
 from xrl.genetic_rl import policy_net
@@ -33,6 +37,7 @@ from xrl.agents.image_extractors.interactive_color_extractor import IColorExtrac
 from xrl.agents.feature_processing.aari_feature_processer import preprocess_raw_features
 # agent class
 from xrl.agents import Agent
+import xrl.utils.pruner as pruner
 
 
 # helper function to select action from loaded agent
@@ -119,7 +124,59 @@ def play_agent(agent, cfg):
         ig_dict = dict(zip_iterator)
         for k in ig_dict:
             print(k + ": " + str(ig_dict[k]))
-        
+
+
+# function for experimental tests, do not use!
+def explain(agent, cfg):
+    print(colored("CREATING EXPLAINING DECISION TREE", "green"))
+    # init env
+    env = env_manager.make(cfg, True)
+    n_actions = env.action_space.n
+    gametype = xutils.get_gametype(env)
+    # TODO: Fix, because 100% of avg weight does not make any sense lol
+    #agent.model, _ = pruner.prune_nn(agent.model, "avg-pr", 0.7, len(features))
+    # data collecting loop
+    x = []
+    y = []
+    data_collecting_loops = 20
+    for i in tqdm(range(data_collecting_loops)):
+        _, ep_reward = env.reset(), 0
+        obs, _, _, info = env.step(1)
+        raw_features = agent.image_to_feature(obs, info, gametype)
+        features = agent.feature_to_mf(raw_features)
+        t = 0
+        action_randomness = random.random()
+        while t < 3000:  # Don't infinite loop while playing
+            # get maybe random action
+            action = agent.mf_to_action(features, agent.model, action_randomness, n_actions)
+            # get the actual action decided by policy without randomness in current situation
+            true_action = agent.mf_to_action(features, agent.model, -1, n_actions)
+            # save feature and action
+            x.append(features)
+            y.append(float(true_action))
+            features = torch.tensor(features).unsqueeze(0).float()
+            #print('Reward: {:.2f}\t Step: {:.2f}'.format(ep_reward, t), end="\r")
+            # do action
+            obs, reward, done, info = env.step(action)
+            raw_features = agent.image_to_feature(obs, info, gametype)
+            features = agent.feature_to_mf(raw_features)
+            ep_reward += reward
+            t += 1
+            if done:
+                #print("\n")
+                break
+        #print('Final reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
+    # test explainable conversion stuff
+    print(len(x))
+    print(len(y))
+    feature_titles = xplt.get_feature_titles(int(len(raw_features) / 2))
+    action_names_full = env.env.get_action_meanings()
+    action_n_list = [int(i) for i in set(y)]
+    action_names = [action_names_full[i] for i in action_n_list]
+    tree_explainer = tx.TreeExplainer(x, y, feature_titles, action_names)
+    tree_explainer.train()
+    tree_explainer.visualize()
+
 
 
 # function to call reinforce algorithm
@@ -127,11 +184,14 @@ def use_reinforce(cfg, mode, agent):
     print("Selected algorithm: REINFORCE")
     if mode == "train":
         reinforce.train(cfg, agent)
-    elif mode == "eval":
+    else:
         policy = reinforce.eval_load(cfg, agent)
         # reinit agent with loaded model and eval function
         agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
-        play_agent(agent=agent, cfg=cfg)
+        if mode == "eval":
+            play_agent(agent=agent, cfg=cfg)
+        elif mode == "test":
+            explain(agent=agent, cfg=cfg)
 
 
 # function to call deep neuroevolution algorithm
@@ -139,9 +199,12 @@ def use_genetic(cfg, mode, agent):
     print("Selected algorithm: Deep Neuroevolution")
     if mode == "train":
         genetic.train(cfg, agent)
-    elif mode == "eval":
+    else:
         agent = genetic.eval_load(cfg, agent)
-        play_agent(agent=agent, cfg=cfg)
+        if mode == "eval":
+            play_agent(agent=agent, cfg=cfg)
+        elif mode == "explain":
+            explain(agent=agent, cfg=cfg)
 
 
 # function to call dreamerv2

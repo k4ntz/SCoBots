@@ -44,22 +44,46 @@ class IGPruning(prune.BasePruningMethod):
         return tensor != 0
 
 
-def prune_nn(nn, pruning_method = "threshold-pr", pruning_feature = 0.01):
+# own pruning class for disabling nodes from prev layer 
+# based on avg weight value
+class AvgPruning(prune.BasePruningMethod):
+    PRUNING_TYPE = "unstructured"
+
+    def __init__(self, pruning_feature, feature_size):
+        self.threshold = pruning_feature
+        self.feature_size = feature_size
+
+    def compute_mask(self, tensor, default_mask):
+        # calc avg weight of connection for each feature input
+        avg_weight = torch.mean(tensor)
+        nt = self.threshold * avg_weight
+        for i in range(tensor.size()[0]):
+            if abs(tensor[i]) < nt:
+                print("Pruning weight nr.", i, ": abs(", tensor[i], ")<", nt)
+                tensor[i] = 0
+        return tensor != 0
+
+
+# main functin to call
+def prune_nn(nn, pruning_method_s = "threshold-pr", pruning_feature = 0.01, feature_size = 21):
     # set params to prune
     parameters_to_prune = (
         (nn.h, 'weight'),
     )
     # select pruning method
-    if pruning_method == "threshold-pr": 
+    pruning_method = None
+    if pruning_method_s == "threshold-pr": 
         pruning_method = ThresholdPruning
-    elif pruning_method == "ig-pr":
+    elif pruning_method_s == "ig-pr":
         pruning_method = IGPruning
+    elif pruning_method_s == "avg-pr":
+        pruning_method = AvgPruning
     # prune
     prune.global_unstructured(
         parameters_to_prune,
         pruning_method = pruning_method,
         pruning_feature = pruning_feature,
-        feature_size = 21,
+        feature_size = feature_size,
     )
     prune.remove(nn.h, 'weight')
     # print
@@ -68,6 +92,24 @@ def prune_nn(nn, pruning_method = "threshold-pr", pruning_feature = 0.01):
             / float(nn.h.weight.nelement())
         )
     )
+    # prune final layer
+    if pruning_method_s == "avg-pr":
+        parameters_to_prune = (
+            (nn.out, 'weight'),
+        )
+        prune.global_unstructured(
+           parameters_to_prune,
+           pruning_method = pruning_method,
+           pruning_feature = pruning_feature,
+           feature_size = feature_size,
+        )
+        prune.remove(nn.out, 'weight')
+        print("Sparsity in out.weight: {:.2f}%".format(
+            100. * float(torch.sum(nn.out.weight == 0.0))
+            / float(nn.out.weight.nelement())
+        )
+    )
+    print(pruning_method)
     # create list which inputs should be set to zero
     pruned_input = []
     for i, param in enumerate(nn.parameters()):

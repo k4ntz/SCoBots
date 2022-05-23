@@ -43,12 +43,12 @@ def get_feature_titles(n_raw_features = 3):
         feature_titles.append(str("obj" +  str(i) + " vel"))
         for j in range(0, n_raw_features):
             if j > i:
-                feature_titles.append(str("x obj" + str(j) + " - obj" + str(i)))
-                feature_titles.append(str("y obj" + str(j) + " - obj" + str(i)))
+                feature_titles.append(str("obj" + str(j) + "_x - obj" + str(i) + "_x"))
+                feature_titles.append(str("obj" + str(j) + "_y - obj" + str(i) + "_y"))
         for j in range(0, n_raw_features):
             if i != j:
-                feature_titles.append(str("target y obj" + str(j) + " - obj" + str(i)))
-                feature_titles.append(str("target x obj" + str(j) + " - obj" + str(i)))
+                feature_titles.append(str("mov_obj" + str(j) + "_y - obj" + str(i) + "_y"))
+                feature_titles.append(str("mov_obj" + str(j) + "_x - obj" + str(i) + "_x"))
     return feature_titles
 
 
