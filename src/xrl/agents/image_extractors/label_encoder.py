@@ -1,7 +1,6 @@
 # file for extracting objects with given labels in dictionary
 # it is not important whether label dict is given by CE or ATARIARI
 
-from cProfile import label
 import numpy as np
 import math
 
