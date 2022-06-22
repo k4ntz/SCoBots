@@ -3,6 +3,7 @@
 import graphviz
 
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.tree import DecisionTreeClassifier, plot_tree, export_graphviz # Import Decision Tree Classifier
@@ -26,9 +27,10 @@ class TreeExplainer():
         # Split the dataset in two equal parts
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=test_size, random_state=0)    
         # parameters for tree
-        parameters = {'max_depth':range(3,10), 'criterion':["gini", "entropy"], 'min_samples_leaf':[100]}
+        min_samples_node = int(len(y_train) * 0.02)
+        parameters = {'max_depth':range(3,6), 'criterion':["gini", "entropy"], 'min_samples_leaf': np.arange(0.005, 0.05, 0.005)} #min_samples_leaf':[1], 'ccp_alpha': np.arange(0.01, 0.05, 0.01)
         # grid search CV for paramter search
-        clf = GridSearchCV(self.tree, parameters, n_jobs=-1, verbose=1)
+        clf = GridSearchCV(self.tree, parameters, n_jobs=-1, verbose=1, cv=10)
         clf.fit(X_train, y_train)
         # apply best tree
         self.tree = clf.best_estimator_
@@ -44,8 +46,8 @@ class TreeExplainer():
         print("The model is trained on the full development set.")
         print("The scores are computed on the full evaluation set.")
         print()
-        y_true, y_pred = y_test, self.tree.predict(X_test)
-        print(classification_report(y_true, y_pred))
+        y_pred = self.tree.predict(X_test)
+        print(classification_report(y_test, y_pred))
         print()
     
     

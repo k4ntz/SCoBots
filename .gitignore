@@ -152,3 +152,5 @@ static
 
 # add folder from training files
 aiml_*/
+src/test/*
+src/visualisation/xdt*

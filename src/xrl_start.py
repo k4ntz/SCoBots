@@ -5,6 +5,7 @@ from sklearn import tree
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from captum.attr import IntegratedGradients
 from torch.distributions import Categorical
@@ -167,8 +168,6 @@ def explain(agent, cfg):
                 break
         #print('Final reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
     # test explainable conversion stuff
-    print(len(x))
-    print(len(y))
     feature_titles = xplt.get_feature_titles(int(len(raw_features) / 2))
     action_names_full = env.env.get_action_meanings()
     action_n_list = [int(i) for i in set(y)]
@@ -176,6 +175,36 @@ def explain(agent, cfg):
     tree_explainer = tx.TreeExplainer(x, y, feature_titles, action_names)
     tree_explainer.train()
     tree_explainer.visualize()
+    agasgd
+    # now play the game with the decision tree
+    print("Now playing the game with the DT ...")
+    _, ep_reward = env.reset(), 0
+    obs, _, _, info = env.step(1)
+    raw_features = agent.image_to_feature(obs, info, gametype)
+    features = agent.feature_to_mf(raw_features)
+    t = 0
+    while t < 3000:  # Don't infinite loop while playing
+        f = []
+        f.append(features)
+        feature_row = pd.DataFrame(f[:], columns=feature_titles)
+        action = int(tree_explainer.tree.predict(feature_row)[0])
+        print('Reward: {:.2f}\t Step: {:.2f}'.format(ep_reward, t), end="\r")
+        # plot 
+        if False:
+            plt.imshow(obs, interpolation='none')
+            plt.plot()
+            plt.pause(0.001)  # pause a bit so that plots are updated
+            plt.clf()
+        # do action
+        obs, reward, done, info = env.step(action)
+        raw_features = agent.image_to_feature(obs, info, gametype)
+        features = agent.feature_to_mf(raw_features)
+        ep_reward += reward
+        t += 1
+        if done:
+            #print("\n")
+            break
+    print('\n\nFinal reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
 
 
 
