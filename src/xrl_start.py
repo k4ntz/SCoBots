@@ -25,7 +25,7 @@ import xrl.utils.plotter as xplt
 import xrl.utils.tree_explainer as tx
 
 # otherwise genetic loading model doesnt work, torch bug?
-from xrl.genetic_rl import policy_net
+from xrl.agents.policies.policy_model import policy_net
 from xrl.environments import env_manager
 
 # all extractor and processor to later select with infos from config file
