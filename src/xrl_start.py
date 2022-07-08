@@ -69,25 +69,19 @@ def play_agent(agent, cfg):
     obs, _, _, info = env.step(1)
     raw_features = agent.image_to_feature(obs, info, gametype)
     features = agent.feature_to_mf(raw_features)
-    # only when raw features should be used
-    if cfg.train.use_raw_features:
-        features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # init objects
     summary(agent.model, input_size=(1, len(features)), device=cfg.device)
     logger = vlogger.VideoLogger(size=(480, 480))
     ig = IntegratedGradients(agent.model)
     ig_sum = []
     ig_action_sum = []
-    l_features = []
     feature_titles = xplt.get_feature_titles(int(len(raw_features)/2))
     # env loop
     plotter = xplt.Plotter()
     t = 0
     # env.reset()
+    max_value = 0
     while t < 3000:  # Don't infinite loop while playing
-        # only when raw features should be used
-        if cfg.train.use_raw_features:
-            features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
         action = agent.mf_to_action(features, agent.model, cfg.train.random_action_p, n_actions)
         features = torch.tensor(features).unsqueeze(0).float()
         if cfg.make_video:
@@ -99,32 +93,32 @@ def play_agent(agent, cfg):
             plt.pause(0.001)  # pause a bit so that plots are updated
             plt.clf()
         else:
-            ig_sum.append(xplt.get_integrated_gradients(ig, features, action))
-            ig_action_sum.append(np.append(xplt.get_integrated_gradients(ig, features, action), [action]))
+            #ig_sum.append(xplt.get_integrated_gradients(ig, features, action))
+            #ig_action_sum.append(np.append(xplt.get_integrated_gradients(ig, features, action), [action]))
             None
         print('Reward: {:.2f}\t Step: {:.2f}'.format(
                 ep_reward, t), end="\r")
         obs, reward, done, info = env.step(action)
         raw_features = agent.image_to_feature(obs, info, gametype)
         features = agent.feature_to_mf(raw_features)
-        l_features.append(features)
         ep_reward += reward
         t += 1
         if done:
             print("\n")
             break
     print('Final reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
+    print(max_value)
     if cfg.make_video:
         logger.save_video(cfg.exp_name)
-    elif not cfg.liveplot:
-        ig_sum = np.asarray(ig_sum)
-        ig_action_sum = np.asarray(ig_action_sum)
-        ig_mean = np.mean(ig_sum, axis=0)
-        # create dict with feature as key and ig-mean als value
-        zip_iterator = zip(feature_titles, ig_mean)
-        ig_dict = dict(zip_iterator)
-        for k in ig_dict:
-            print(k + ": " + str(ig_dict[k]))
+    #elif not cfg.liveplot:
+    #    ig_sum = np.asarray(ig_sum)
+    #    ig_action_sum = np.asarray(ig_action_sum)
+    #    ig_mean = np.mean(ig_sum, axis=0)
+    #    # create dict with feature as key and ig-mean als value
+    #    zip_iterator = zip(feature_titles, ig_mean)
+    #    ig_dict = dict(zip_iterator)
+    #    for k in ig_dict:
+    #        print(k + ": " + str(ig_dict[k]))
 
 
 # function for experimental tests, do not use!
@@ -139,7 +133,7 @@ def explain(agent, cfg):
     # data collecting loop
     x = []
     y = []
-    data_collecting_loops = 20
+    data_collecting_loops = 5
     for i in tqdm(range(data_collecting_loops)):
         _, ep_reward = env.reset(), 0
         obs, _, _, info = env.step(1)
@@ -175,7 +169,6 @@ def explain(agent, cfg):
     tree_explainer = tx.TreeExplainer(x, y, feature_titles, action_names)
     tree_explainer.train()
     tree_explainer.visualize()
-    agasgd
     # now play the game with the decision tree
     print("Now playing the game with the DT ...")
     _, ep_reward = env.reset(), 0
@@ -219,7 +212,7 @@ def use_reinforce(cfg, mode, agent):
         agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
         if mode == "eval":
             play_agent(agent=agent, cfg=cfg)
-        elif mode == "test":
+        elif mode == "explain":
             explain(agent=agent, cfg=cfg)
 
 

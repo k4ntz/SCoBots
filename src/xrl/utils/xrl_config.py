@@ -25,7 +25,6 @@ cfg = CfgNode({
 
     'env_name': '',
 
-
     # Whether to use multiple GPUs
     'parallel': False,
     # Device ids to use
@@ -45,6 +44,9 @@ cfg = CfgNode({
         # genetic params
         'n_runs': 3,
         'elite_n_runs': 5,
+
+        # normalizing via groupnorm
+        'groupNorm': False,
 
         # reinforce parameters
         'batch_size': 128,

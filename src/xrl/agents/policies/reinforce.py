@@ -31,27 +31,29 @@ model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pt
 
 
 # with preprocessed meaningful features
-class Policy(nn.Module):
-    def __init__(self, input, hidden, actions, make_hidden = True):
-        super(Policy, self).__init__()
-        # should make one hidden layer
-        self.make_hidden = make_hidden
+#class Policy(nn.Module):
+#    def __init__(self, input, hidden, actions, make_hidden = True):
+#        super(Policy, self).__init__()
+#        # should make one hidden layer
+#        self.make_hidden = make_hidden
+#
+#        if self.make_hidden:
+#            print("Policy net has", input, "input nodes,", hidden, "hidden nodes and", actions, "output nodes")
+#            self.h = nn.Linear(input, hidden)
+#            self.out = nn.Linear(hidden, actions)
+#        else:
+#            print("Linear model, no hidden layer! Policy net has", input, "input nodes and", actions, "output nodes")
+#            self.out = nn.Linear(input, actions)
+#
+#        self.saved_log_probs = []
+#        self.rewards = []
+#
+#    def forward(self, x):
+#        if self.make_hidden:
+#            x = F.relu(self.h(x))
+#        return F.softmax(self.out(x), dim=1)
 
-        if self.make_hidden:
-            print("Policy net has", input, "input nodes,", hidden, "hidden nodes and", actions, "output nodes")
-            self.h = nn.Linear(input, hidden)
-            self.out = nn.Linear(hidden, actions)
-        else:
-            print("Linear model, no hidden layer! Policy net has", input, "input nodes and", actions, "output nodes")
-            self.out = nn.Linear(input, actions)
-
-        self.saved_log_probs = []
-        self.rewards = []
-
-    def forward(self, x):
-        if self.make_hidden:
-            x = F.relu(self.h(x))
-        return F.softmax(self.out(x), dim=1)
+from xrl.agents.policies.policy_model import policy_net as Policy
 
 
 def select_action(features, policy, random_tr = -1, n_actions=3):
