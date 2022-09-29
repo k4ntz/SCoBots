@@ -12,6 +12,7 @@ from torch.nn.modules import module
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from torch.distributions import Categorical
+from tqdm import tqdm
 
 from rtpt import RTPT
 
@@ -112,6 +113,7 @@ def train(cfg, agent):
     if os.path.isfile(model_path):
         policy, optimizer, i_episode = load_model(model_path, policy, optimizer)
     print('Episodes:', cfg.train.num_episodes)
+    print('Current episode:', i_episode)
     print("Random Action probability:", cfg.train.random_action_p)
     print('Max Steps per Episode:', cfg.train.max_steps)
     print('Gamma:', cfg.train.gamma)
@@ -121,11 +123,11 @@ def train(cfg, agent):
     # setup last variables for init
     running_reward = None
     reward_buffer = 0
-    ig_sum = []
     # training loop
     rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name,
                     max_iterations=cfg.train.num_episodes)
     rtpt.start()
+    pbar = tqdm(initial = i_episode, total = cfg.train.num_episodes)
     while i_episode < cfg.train.num_episodes:
         # init env
         _, ep_reward = env.reset(), 0
@@ -153,8 +155,10 @@ def train(cfg, agent):
             running_reward = 0.05 * ep_reward + (1 - 0.05) * running_reward
         reward_buffer += ep_reward
         policy, optimizer = finish_episode(policy, optimizer, eps, cfg)
-        print('Episode {}\tLast reward: {:.2f}\tRunning reward: {:.2f}\tSteps: {}       '.format(
-            i_episode, ep_reward, running_reward, t), end="\r")
+        pbar.set_description('Last reward: {:.2f} | Running reward: {:.2f} | Steps: {} '.format(
+            ep_reward, running_reward, t))
+        #print('Episode {}\tLast reward: {:.2f}\tRunning reward: {:.2f}\tSteps: {}       '.format(
+        #    i_episode, ep_reward, running_reward, t), end="\r")
         if i_episode % cfg.train.log_steps == 0:
             avg_r = reward_buffer / cfg.train.log_steps
             writer.add_scalar('Train/Avg reward', avg_r, i_episode)
@@ -163,6 +167,7 @@ def train(cfg, agent):
             save_policy(cfg.exp_name, policy, i_episode + 1, optimizer)
         # finish episode
         i_episode += 1
+        pbar.update(1)
         rtpt.step()
 
 
