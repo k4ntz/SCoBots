@@ -21,8 +21,8 @@ from torch.utils.tensorboard import SummaryWriter
 from PIL import Image
 from rtpt import RTPT
 
-from xrl.algorithms.dreamerv2.dataset import ModelDataset
-from xrl.algorithms.dreamerv2.model import WorldModel, Actor, Critic, LossModel, ActorLoss, CriticLoss
+from xrl.agents.policies.dreamerv2.dataset import ModelDataset
+from xrl.agents.policies.dreamerv2.model import WorldModel, Actor, Critic, LossModel, ActorLoss, CriticLoss
 
 import xrl.utils.utils as xutils
 # plt.ion()

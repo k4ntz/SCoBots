@@ -2,11 +2,14 @@
 # DELETE ME #
 #############
 
+# TODO: Finish refactoring, so that this file is no longer needed!!!!
+
+
 # main file which is selecting the raw features extractor 
 # and the processer to meaninful features
 
-import xrl.features.aari_raw_features_extractor as aari_raw_features_extractor
-import xrl.features.aari_feature_processer as aari_features_processer
+import xrl.agents.image_extractors.aari_raw_features_extractor as aari_raw_features_extractor
+import xrl.agents.feature_processing.aari_feature_processer as aari_features_processer
 
 
 # helper function to get features

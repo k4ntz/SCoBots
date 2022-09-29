@@ -1,0 +1,23 @@
+env_name: 'SkiingDeterministic-v4'
+seed: 1
+
+raw_features_extractor: "CE"
+
+rl_algo: 1
+
+parallel: False
+
+logdir: '/xrl/relogs/'
+
+video_steps: 100
+
+train:
+  gamma: 0.97
+  learning_rate: 0.001
+
+  num_episodes: 50000
+  max_steps: 10000
+  
+  log_steps: 100
+  # save every is for episodes
+  save_every: 100

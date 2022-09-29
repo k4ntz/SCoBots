@@ -43,17 +43,17 @@ def get_feature_titles(n_raw_features = 3):
         feature_titles.append(str("obj" +  str(i) + " vel"))
         for j in range(0, n_raw_features):
             if j > i:
-                feature_titles.append(str("x obj" + str(j) + " - obj" + str(i)))
-                feature_titles.append(str("y obj" + str(j) + " - obj" + str(i)))
+                feature_titles.append(str("obj" + str(j) + "_x - obj" + str(i) + "_x"))
+                feature_titles.append(str("obj" + str(j) + "_y - obj" + str(i) + "_y"))
         for j in range(0, n_raw_features):
             if i != j:
-                feature_titles.append(str("target y obj" + str(j) + " - obj" + str(i)))
-                feature_titles.append(str("target x obj" + str(j) + " - obj" + str(i)))
+                feature_titles.append(str("mov_obj" + str(j) + "_y - obj" + str(i) + "_y"))
+                feature_titles.append(str("mov_obj" + str(j) + "_x - obj" + str(i) + "_x"))
     return feature_titles
 
 
 class Plotter():
-    def __init__(self, figsize=(20, 10)):
+    def __init__(self, figsize=(8, 6)):
         fig, axes = plt.subplots(ncols=2, figsize=figsize,
                                  gridspec_kw={'width_ratios': [6, 1]})
         self.fig = fig
@@ -62,12 +62,12 @@ class Plotter():
         # self.fig.tight_layout()
 
     # helper function to get integrated gradients of given features as plotable image
-    def plot_IG_img(self, ig, exp_name, input, feature_titles, target_class, env, plot):
+    def plot_IG_img(self, ig, exp_name, input, feature_titles, target_class, obs, plot):
         attr = get_integrated_gradients(ig, input, target_class)
         attr_df = pd.DataFrame({"Values": attr},
                       index=feature_titles)
-        print(attr_df)
-        env_img = env.render(mode='rgb_array')
+        #print(attr_df)
+        env_img = obs
         # plot both next to each other
         ax1, ax2 = self.axes
         ax1.imshow(env_img)
@@ -81,14 +81,14 @@ class Plotter():
         mat = np.array(canvas.renderer._renderer)
         mat = cv2.cvtColor(mat, cv2.COLOR_RGB2BGR)
         resized = cv2.resize(mat, (480, 480), interpolation = cv2.INTER_AREA)
-        if plot:
-            plt.draw()
-            plt.pause(0.0001)
+        #if plot:
+        #    plt.imshow(resized)
+        #    plt.plot()
+        #    plt.pause(0.00001)
         # clean up
         for ax in self.axes:
             ax.clear()
-        # self.fig.clf()
-        # plt.close(self.fig)
+        #plt.close(self.fig)
         return resized
 
 

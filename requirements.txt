@@ -5,6 +5,7 @@ joblib
 matplotlib
 numpy
 opencv_python
+scikit-build
 packaging
 pandas
 Pillow

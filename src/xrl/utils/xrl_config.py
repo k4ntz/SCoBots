@@ -16,14 +16,14 @@ cfg = CfgNode({
 
     # add here all possible extractor for task 1
     # - atariari: Using AtariARI for extracting raw features from ram
-    # - ...
+    # - CE
+    # - ICE
     'raw_features_extractor': "atariari",
 
     # Resume training or not
     'resume': True,
 
     'env_name': '',
-
 
     # Whether to use multiple GPUs
     'parallel': False,
@@ -41,12 +41,21 @@ cfg = CfgNode({
 
     # For engine.train
     'train': {
+        # genetic params
+        'n_runs': 3,
+        'elite_n_runs': 5,
+
+        # normalizing via groupnorm
+        'groupNorm': False,
+
+        # reinforce parameters
         'batch_size': 128,
         'gamma': 0.97,
         'eps_start': 1.0,
         'eps_end': 0.01,
         'eps_decay': 100000,
         'learning_rate': 0.00025,
+        'random_action_p': -1.0,
 
         'use_raw_features': False,
 
@@ -60,7 +69,7 @@ cfg = CfgNode({
         'memory_min_size': 25000,
 
         'num_episodes': 1000,
-        'max_steps': 1000000,
+        'max_steps': 100000,
 
         'skip_frames': 1,
 

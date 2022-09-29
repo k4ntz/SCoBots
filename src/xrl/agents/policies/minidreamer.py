@@ -15,10 +15,10 @@ from itertools import count
 from rtpt import RTPT
 from time import sleep, time
 
-from xrl.algorithms.minidr.dataset import ModelDataset
-from xrl.algorithms.minidr.model import WorldPredictor, Policy
+from xrl.agents.policies.minidr.dataset import ModelDataset
+from xrl.agents.policies.minidr.model import WorldPredictor, Policy
 
-from xrl.features import feature_processing
+from xrl.agents import env_steps
 
 torch.autograd.set_detect_anomaly(True)
 
@@ -113,7 +113,7 @@ def train(cfg):
     env = AtariARIWrapper(gym.make(cfg.env_name))
     n_actions = env.action_space.n
     env.reset()
-    raw_features, features, _, _ = feature_processing.do_step(env)
+    raw_features, features, _, _ = env_steps.do_step(env)
     len_raw_features = 12
     # init policy net
     
@@ -141,7 +141,7 @@ def train(cfg):
             rtpt_s.start()
             while steps_done[0] < cfg.train.max_steps:
                 obs = env.reset()
-                raw_features, features, _, _ = feature_processing.do_step(env)
+                raw_features, features, _, _ = env_steps.do_step(env)
                 episode = []
                 done = False
                 r_sum = 0
@@ -151,7 +151,7 @@ def train(cfg):
                     # create episode entry with last state, action, state and reward
                     episode.append(raw_features)
                     episode.append(a)
-                    raw_features, features, reward, done = feature_processing.do_step(env, a, raw_features)
+                    raw_features, features, reward, done = env_steps.do_step(env, a, raw_features)
                     # append reward to features to have both
                     episode.append(raw_features)
                     episode.append(reward)
