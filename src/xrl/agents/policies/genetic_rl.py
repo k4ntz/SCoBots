@@ -318,6 +318,7 @@ def train(cfg, rl_agent):
 def eval_load(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     print('Evaluating Mode')
+    print('Seed:', cfg.seed)
     print("Random Action probability:", cfg.train.random_action_p)
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
