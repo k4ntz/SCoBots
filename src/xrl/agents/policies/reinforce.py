@@ -12,14 +12,12 @@ from torch.nn.modules import module
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from torch.distributions import Categorical
-from atariari.benchmark.wrapper import AtariARIWrapper
-from captum.attr import IntegratedGradients
 
 from rtpt import RTPT
 
 import xrl.utils.utils as xutils
 from xrl.environments import env_manager
-import xrl.utils.pruner as pruner
+from xrl.agents.policies.policy_model import policy_net as Policy
 
 from xrl.agents import Agent
 
@@ -28,32 +26,6 @@ if not os.path.exists(PATH_TO_OUTPUTS):
     os.makedirs(PATH_TO_OUTPUTS)
 
 model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pth"
-
-
-# with preprocessed meaningful features
-#class Policy(nn.Module):
-#    def __init__(self, input, hidden, actions, make_hidden = True):
-#        super(Policy, self).__init__()
-#        # should make one hidden layer
-#        self.make_hidden = make_hidden
-#
-#        if self.make_hidden:
-#            print("Policy net has", input, "input nodes,", hidden, "hidden nodes and", actions, "output nodes")
-#            self.h = nn.Linear(input, hidden)
-#            self.out = nn.Linear(hidden, actions)
-#        else:
-#            print("Linear model, no hidden layer! Policy net has", input, "input nodes and", actions, "output nodes")
-#            self.out = nn.Linear(input, actions)
-#
-#        self.saved_log_probs = []
-#        self.rewards = []
-#
-#    def forward(self, x):
-#        if self.make_hidden:
-#            x = F.relu(self.h(x))
-#        return F.softmax(self.out(x), dim=1)
-
-from xrl.agents.policies.policy_model import policy_net as Policy
 
 
 def select_action(features, policy, random_tr = -1, n_actions=3):
@@ -90,13 +62,6 @@ def finish_episode(policy, optimizer, eps, cfg):
     del policy.rewards[:]
     del policy.saved_log_probs[:]
     return policy, optimizer
-
-
-# helper function to prune input when given list
-def prune_input(features, pruned_input):
-    for i in pruned_input:
-        features[i] = 0
-    return features
 
 
 # save model helper function
@@ -151,20 +116,11 @@ def train(cfg, agent):
     print('Max Steps per Episode:', cfg.train.max_steps)
     print('Gamma:', cfg.train.gamma)
     print('Learning rate:', cfg.train.learning_rate)
-    print('Pruning Method:', cfg.train.pruning_method)
-    pruned_input = []
-    if cfg.train.init_corr_pruning:
-        print('Initial pruning based on feature correlation: True')
-        pruned_input = xutils.init_corr_prune(env)
-        print('Features to prune based on correlation:', str(pruned_input))
-    if cfg.train.pruning_method != "None":
-        print('Pruning Steps:', cfg.train.pruning_steps)
     # reinit agent with loaded policy model
     agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
     # setup last variables for init
     running_reward = None
     reward_buffer = 0
-    ig = IntegratedGradients(policy)
     ig_sum = []
     # training loop
     rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name,
@@ -173,21 +129,10 @@ def train(cfg, agent):
     while i_episode < cfg.train.num_episodes:
         # init env
         _, ep_reward = env.reset(), 0
-        ig_pruning_episode = cfg.train.pruning_method == "ig-pr" and i_episode % cfg.train.pruning_steps == 0
-        # prepare ig pruning when step and dont prune at the start
-        if ig_pruning_episode:
-            ig = IntegratedGradients(policy)
-            ig_sum = []
         # env loop
         t = 0
         while t < cfg.train.max_steps:  # Don't infinite loop while learning
-            if len(pruned_input) > 0:
-                features = prune_input(features, pruned_input)
             action, log_prob = agent.mf_to_action(features, agent.model, cfg.train.random_action_p, n_actions)
-            # when ig pruning episode
-            if ig_pruning_episode:
-                t_features = torch.tensor(features).unsqueeze(0).float().to(cfg.device)
-                ig_sum.append(xutils.get_integrated_gradients(ig, t_features, action))
             policy.saved_log_probs.append(log_prob)
             # to env step
             _, reward, done, info = env.step(action)
@@ -216,16 +161,6 @@ def train(cfg, agent):
             reward_buffer = 0
         if (i_episode + 1) % cfg.train.save_every == 0:
             save_policy(cfg.exp_name, policy, i_episode + 1, optimizer)
-        # do pruning when pruning step
-        pruning_feature = cfg.train.tr_value
-        if ig_pruning_episode:
-            pruning_feature = np.mean(np.asarray(ig_sum), axis=0)
-        if cfg.train.pruning_method != "None" and i_episode % cfg.train.pruning_steps == 0:
-            policy, tmp_pruned_input = pruner.prune_nn(policy, cfg.train.pruning_method, pruning_feature)
-            # add pruning input index to global list
-            for pi in tmp_pruned_input:
-                if pi not in pruned_input:
-                    pruned_input.append(pi)
         # finish episode
         i_episode += 1
         rtpt.step()
@@ -235,6 +170,7 @@ def train(cfg, agent):
 def eval_load(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     print('Evaluating Mode')
+    print('Seed:', cfg.seed)
     print("Random Action probability:", cfg.train.random_action_p)
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
@@ -250,7 +186,8 @@ def eval_load(cfg, agent):
     # load if exists
     model_path = model_name(cfg.exp_name)
     if os.path.isfile(model_path):
-        policy, _, _ = load_model(model_path, policy)
+        policy, _, i_episode = load_model(model_path, policy)
+        print('Episodes trained:', i_episode)
     policy.eval()
     # return policy 
     return policy
