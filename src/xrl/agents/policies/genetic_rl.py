@@ -17,12 +17,17 @@ from joblib import Parallel, delayed
 
 from itertools import count
 from PIL import Image
-from atariari.benchmark.wrapper import AtariARIWrapper
 from captum.attr import IntegratedGradients
 
 from rtpt import RTPT
 
-from xrl.features import feature_processing
+import xrl.utils.utils as xutils
+from xrl.environments import env_manager
+import xrl.utils.pruner as pruner
+
+from xrl.agents import Agent
+
+import matplotlib.pyplot as plt
 
 
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
@@ -33,25 +38,7 @@ model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pt
 
 # TODO: Fix serialization problem and decomment after,
 # look at other genetic_rl.py file for details!
-from xrl.genetic_rl import policy_net
-# define policy network for genetic algo
-#class policy_net(nn.Module):
-#    def __init__(self, input, hidden, actions, make_hidden = True): 
-#        super(policy_net, self).__init__()
-#        # should make one hidden layer
-#        self.make_hidden = make_hidden
-#
-#        if self.make_hidden:
-#            self.h = nn.Linear(input, hidden)
-#            self.out = nn.Linear(hidden, actions)
-#        else:
-#            self.out = nn.Linear(input, actions)
-#
-#
-#    def forward(self, x):
-#        if self.make_hidden:
-#            x = F.relu(self.h(x))
-#        return F.softmax(self.out(x), dim=1)
+from xrl.agents.policies.policy_model import policy_net
 
 
 def init_weights(m):
@@ -83,7 +70,7 @@ def return_random_agents(n_inputs, num_agents, n_actions, cfg):
 
 
 # function to select action by given features
-def select_action(features, policy, random_tr = -1):
+def select_action(features, policy, random_tr = -1, n_actions=3):
     sample = random.random()
     if sample > random_tr:
         # calculate probabilities of taking each action
@@ -92,26 +79,35 @@ def select_action(features, policy, random_tr = -1):
         sampler = Categorical(probs)
         action = sampler.sample()
     else:
-        action = random.randint(0, 5)
+        action = random.randint(0, n_actions - 1)
     # return action
     return action
 
 
 # function to run list of agents in given env
-def run_agents(env, agents, cfg):
+def run_agents(env, rl_agent, agents, cfg):
     reward_agents = []
-    _ = env.reset()
-    _, _, done, info = env.step(1)
     for agent in agents:
         agent.eval()
-        raw_features, features, _, _ = feature_processing.do_step(env)
+        gametype = xutils.get_gametype(env)
+        n_actions = env.action_space.n
+        _ = env.reset()
+        obs, _, done, info = env.step(1)
+        raw_features = rl_agent.image_to_feature(obs, info, gametype)
+        features = rl_agent.feature_to_mf(raw_features)
         r = 0
         t = 0
         while t < cfg.train.max_steps:
             if cfg.train.use_raw_features:
                 features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
-            action = select_action(features, agent)
-            raw_features, features, reward, done = feature_processing.do_step(env, action, raw_features)
+            action = select_action(features, agent, cfg.train.random_action_p, n_actions)
+            obs, reward, done, info = env.step(action)
+            #plt.imshow(obs, interpolation='none')
+            #plt.plot()
+            #plt.pause(0.001)  # pause a bit so that plots are updated
+            #plt.clf()
+            raw_features = rl_agent.image_to_feature(obs, info, gametype)
+            features = rl_agent.feature_to_mf(raw_features)
             r = r + reward
             if(done):
                 break
@@ -123,25 +119,25 @@ def run_agents(env, agents, cfg):
 
 
 # returns average score of given agent when it runs n times
-def return_average_score(agent, runs, cfg):
+def return_average_score(rl_agent, agent, runs, cfg):
     score = 0.
-    env = AtariARIWrapper(gym.make(cfg.env_name))
+    env = env_manager.make(cfg)
     rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name,
                     max_iterations=runs)
     rtpt.start()
     for i in range(runs):
-        score += run_agents(env, [agent], cfg)[0]
+        score += run_agents(env, rl_agent, [agent], cfg)[0]
         rtpt.step()
     avg_score = score/runs
     return avg_score
 
 
 # gets avg score of every agent running n runs 
-def run_agents_n_times(agents, runs, cfg):
+def run_agents_n_times(rl_agent, agents, runs, cfg):
     avg_score = []
     agents = tqdm(agents)
     cpu_cores = min(multiprocessing.cpu_count(), 100)
-    avg_score = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(agent, runs, cfg) for agent in agents)
+    avg_score = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(rl_agent, agent, runs, cfg) for agent in agents)
     return avg_score
 
 
@@ -167,7 +163,7 @@ def mutate(agent):
 
 
 # function to add elite to childs 
-def add_elite(agents, sorted_parent_indexes, cfg, elite_index=None, only_consider_top_n=10):
+def add_elite(rl_agent, agents, sorted_parent_indexes, cfg, elite_index=None, only_consider_top_n=10):
     candidate_elite_index = sorted_parent_indexes[:only_consider_top_n]
     if(elite_index is not None):
         candidate_elite_index = np.append(candidate_elite_index,[elite_index]) 
@@ -175,7 +171,9 @@ def add_elite(agents, sorted_parent_indexes, cfg, elite_index=None, only_conside
     top_elite_index = None
     tqdmcandidate_elite_index = tqdm(candidate_elite_index)
     cpu_cores = min(100, max(multiprocessing.cpu_count(), only_consider_top_n))
-    scores = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(agents[i], runs=5, cfg=cfg) for i in tqdmcandidate_elite_index)
+    # elite runs from config
+    elite_runs = cfg.train.elite_n_runs
+    scores = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(rl_agent, agents[i], runs=elite_runs, cfg=cfg) for i in tqdmcandidate_elite_index)
     for i, score in enumerate(scores):
         i = candidate_elite_index[i]
         print("Score for elite i ", i, " is ", score)
@@ -191,14 +189,14 @@ def add_elite(agents, sorted_parent_indexes, cfg, elite_index=None, only_conside
 
 
 # function to create and return children from given parent agents
-def return_children(agents, sorted_parent_indexes, elite_index, cfg):  
+def return_children(rl_agent, agents, sorted_parent_indexes, elite_index, cfg):  
     children_agents = []
     #first take selected parents from sorted_parent_indexes and generate N-1 children
     for i in range(len(agents) - 1):
         selected_agent_index = sorted_parent_indexes[np.random.randint(len(sorted_parent_indexes))]
         children_agents.append(mutate(agents[selected_agent_index]))
     #now add one elite
-    elite_child = add_elite(agents, sorted_parent_indexes, cfg, elite_index)
+    elite_child = add_elite(rl_agent, agents, sorted_parent_indexes, cfg, elite_index)
     children_agents.append(elite_child)
     elite_index = len(children_agents) - 1 #it is the last one
     return children_agents, elite_index
@@ -232,7 +230,7 @@ def load_agents(model_path):
 
 
 # train main function
-def train(cfg):
+def train(cfg, rl_agent):
     print('Experiment name:', cfg.exp_name)
 
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
@@ -240,15 +238,19 @@ def train(cfg):
     generations = cfg.train.num_episodes
     print('Generations:', generations)
     print('Max Steps per Episode:', cfg.train.max_steps)
+    print("Random Action probability:", cfg.train.random_action_p)
 
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
 
     # init env to get actions count and features space
-    env = AtariARIWrapper(gym.make(cfg.env_name))
+    env = env_manager.make(cfg, True)
     n_actions = env.action_space.n
-    _ = env.reset()
-    raw_features, features, _, _ = feature_processing.do_step(env)
+    gametype = xutils.get_gametype(env)
+    _, ep_reward = env.reset(), 0
+    obs, _, _, info = env.step(1)
+    raw_features = rl_agent.image_to_feature(obs, info, gametype)
+    features = rl_agent.feature_to_mf(raw_features)
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # initialize N number of agents
@@ -267,8 +269,9 @@ def train(cfg):
     print('Number of top agents:', top_limit)
 
     # runs per generation
-    n_gen_runs = 3
+    n_gen_runs = cfg.train.n_runs
     print('Number of runs per generation:', n_gen_runs)
+    print('Number of runs for elite per generation:', cfg.train.elite_n_runs)
 
     elite_index = None
 
@@ -278,7 +281,7 @@ def train(cfg):
     while generation < generations:
         print("Starting generation", generation)
         # return rewards of agents
-        rewards = run_agents_n_times(agents, n_gen_runs, cfg) #return average of 3 runs
+        rewards = run_agents_n_times(rl_agent, agents, n_gen_runs, cfg) #return average of 3 runs
  
         # sort by rewards
         # reverses and gives top values (argsort sorts by ascending by default) https://stackoverflow.com/questions/16486252/is-it-possible-to-use-argsort-in-descending-order
@@ -296,7 +299,7 @@ def train(cfg):
         print("Rewards for top: ",top_rewards)
         
         # setup an empty list for containing children agents
-        children_agents, elite_index = return_children(agents, sorted_parent_indexes, elite_index, cfg)
+        children_agents, elite_index = return_children(rl_agent, agents, sorted_parent_indexes, elite_index, cfg)
  
         # kill all agents, and replace them with their children
         agents = children_agents
@@ -312,16 +315,20 @@ def train(cfg):
 
 
 # function to eval best agent of last generation
-def eval_load(cfg):
+def eval_load(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     print('Evaluating Mode')
+    print('Seed:', cfg.seed)
+    print("Random Action probability:", cfg.train.random_action_p)
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
-    env = AtariARIWrapper(gym.make(cfg.env_name))
+    env = env_manager.make(cfg)
     n_actions = env.action_space.n
-    _ = env.reset()
-    raw_features, features, _, _ = feature_processing.do_step(env)
+    env.reset()
+    obs, _, _, info = env.step(1)
+    raw_features = agent.image_to_feature(obs, info, xutils.get_gametype(env))
+    features = agent.feature_to_mf(raw_features)
     if cfg.train.use_raw_features:
         features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # initialize N number of agents
@@ -337,6 +344,7 @@ def eval_load(cfg):
         agents, generation, t_elite_index = load_agents(model_path)
         if t_elite_index is not None:
             elite_index = t_elite_index
+    print('Generation:', generation)
     print('Selected elite agent:', elite_index)
     elite_agent = agents[elite_index]
     # print nn structure
@@ -344,5 +352,8 @@ def eval_load(cfg):
     # because old trained runs does not have make_hidden param
     dummy.load_state_dict(elite_agent.state_dict())
     elite_agent = dummy
-    return elite_agent
+    #print("Agent reward:", run_agents(env, agent, [elite_agent], cfg))
+    agent.model = elite_agent
+    agent.mf_to_action = select_action
+    return agent
 

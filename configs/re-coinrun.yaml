@@ -1,0 +1,20 @@
+env_name: 'ecoinrun'
+
+rl_algo: 1
+
+parallel: False
+
+logdir: '/xrl/relogs/'
+
+video_steps: 100
+
+train:
+  gamma: 0.97
+  learning_rate: 0.001
+
+  num_episodes: 50000
+  max_steps: 100000
+  
+  log_steps: 100
+  # save every is for episodes
+  save_every: 100

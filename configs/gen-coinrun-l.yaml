@@ -1,0 +1,18 @@
+env_name: 'ecoinrun'
+
+rl_algo: 2
+
+parallel: False
+
+logdir: '/xrl/genlogs/'
+
+video_steps: 100
+
+train:
+
+  n_runs: 10
+  elite_n_runs: 20
+
+  num_episodes: 1500
+  
+  log_steps: 500

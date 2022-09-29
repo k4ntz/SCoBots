@@ -20,7 +20,7 @@ from scipy.stats import entropy
 from argparse import ArgumentParser
 from xrl.utils.xrl_config import cfg
 
-import xrl.features.feature_processing as feature_processing
+import xrl.agents.env_steps as env_steps
 
 # player enemy ball
 features_names = [
@@ -128,10 +128,10 @@ def init_corr_prune(env, it = 5, tr = 0.75):
         n_actions = env.action_space.n
         _ = env.reset()
         _, _, done, _ = env.step(1)
-        raw_features, features, _, _ = feature_processing.do_step(env)
+        raw_features, features, _, _ = env_steps.do_step(env)
         for t in range(50000):  # max 50k steps per episode
             action = np.random.randint(0, n_actions)
-            raw_features, features, reward, done = feature_processing.do_step(env, action, raw_features)
+            raw_features, features, reward, done = env_steps.do_step(env, action, raw_features)
             features_list.append(features)
             if done:
                 break
@@ -161,11 +161,14 @@ def calc_entropies(features):
     return entropies
 
 
+# TODO: Replace with external file or sth similar
 # get gametype
 # check if ball game
 # 0: ball game
 # 1: demonattack
 # 2: boxing    
+# 3: coinrun
+# 4: bowling
 def get_gametype(env):
     name = env.unwrapped.spec.id
     gametype = 0
@@ -173,4 +176,10 @@ def get_gametype(env):
         gametype = 1
     elif "Boxing" in name:
         gametype = 2
+    elif "coin" in name:
+        gametype = 3
+    elif "Bowling" in name:
+        gametype = 4
+    elif "Skiing" in name:
+        gametype = 5
     return gametype
