@@ -1,4 +1,4 @@
-env_name: 'Tennis-v4'
+env_name: 'TennisDeterministic-v4'
 
 rl_algo: 2
 
