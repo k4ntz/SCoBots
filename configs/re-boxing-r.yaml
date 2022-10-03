@@ -1,4 +1,4 @@
-env_name: 'Boxing-v4'
+env_name: 'BoxingDeterministics-v4'
 
 rl_algo: 1
 
