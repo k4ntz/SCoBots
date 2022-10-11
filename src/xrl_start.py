@@ -82,7 +82,7 @@ def play_agent(agent, cfg):
     # env.reset()
     max_value = 0
     while t < 3000:  # Don't infinite loop while playing
-        action = agent.mf_to_action(features, agent.model, cfg.train.random_action_p, n_actions)
+        action = agent.mf_to_action(features, agent.model, -1, n_actions)
         features = torch.tensor(features).unsqueeze(0).float()
         if cfg.make_video:
             img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, obs, cfg.liveplot)
