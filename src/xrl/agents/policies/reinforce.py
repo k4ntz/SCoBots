@@ -93,6 +93,7 @@ def train(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     torch.manual_seed(cfg.seed)
     print('Seed:', torch.initial_seed())
+    cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
     # init env to get params for policy net
     env = env_manager.make(cfg, True)
@@ -189,7 +190,7 @@ def eval_load(cfg, agent):
     print("Make hidden layer in nn:", cfg.train.make_hidden)
     policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
     # load if exists
-    model_path = model_name(cfg.exp_name)
+    model_path = model_name(cfg.exp_name + "-seed" + str(cfg.seed))
     if os.path.isfile(model_path):
         policy, _, i_episode = load_model(model_path, policy)
         print('Episodes trained:', i_episode)
