@@ -232,6 +232,9 @@ def load_agents(model_path):
 # train main function
 def train(cfg, rl_agent):
     print('Experiment name:', cfg.exp_name)
+    torch.manual_seed(cfg.seed)
+    print('Seed:', torch.initial_seed())
+    cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
 
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
 
@@ -318,7 +321,9 @@ def train(cfg, rl_agent):
 def eval_load(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     print('Evaluating Mode')
+    torch.manual_seed(cfg.seed)
     print('Seed:', cfg.seed)
+    cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
     print("Random Action probability:", cfg.train.random_action_p)
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)

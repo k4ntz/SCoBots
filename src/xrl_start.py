@@ -12,6 +12,7 @@ from torch.distributions import Categorical
 from torchinfo import summary
 from termcolor import colored
 from tqdm import tqdm
+from rtpt import RTPT
 
 from xrl.agents.policies import reinforce
 from xrl.agents.policies import genetic_rl as genetic
@@ -71,54 +72,40 @@ def play_agent(agent, cfg):
     features = agent.feature_to_mf(raw_features)
     # init objects
     summary(agent.model, input_size=(1, len(features)), device=cfg.device)
-    logger = vlogger.VideoLogger(size=(480, 480))
-    ig = IntegratedGradients(agent.model)
-    ig_sum = []
-    ig_action_sum = []
-    feature_titles = xplt.get_feature_titles(int(len(raw_features)/2))
-    # env loop
-    plotter = xplt.Plotter()
-    t = 0
-    # env.reset()
-    max_value = 0
-    while t < 3000:  # Don't infinite loop while playing
-        action = agent.mf_to_action(features, agent.model, -1, n_actions)
-        features = torch.tensor(features).unsqueeze(0).float()
-        if cfg.make_video:
-            img = plotter.plot_IG_img(ig, cfg.exp_name, features, feature_titles, action, obs, cfg.liveplot)
-            logger.fill_video_buffer(img)
-        elif cfg.liveplot:
-            plt.imshow(obs, interpolation='none')
-            plt.plot()
-            plt.pause(0.001)  # pause a bit so that plots are updated
-            plt.clf()
-        else:
-            #ig_sum.append(xplt.get_integrated_gradients(ig, features, action))
-            #ig_action_sum.append(np.append(xplt.get_integrated_gradients(ig, features, action), [action]))
-            None
-        print('Reward: {:.2f}\t Step: {:.2f}'.format(
-                ep_reward, t), end="\r")
-        obs, reward, done, info = env.step(action)
-        raw_features = agent.image_to_feature(obs, info, gametype)
-        features = agent.feature_to_mf(raw_features)
-        ep_reward += reward
-        t += 1
-        if done:
-            print("\n")
-            break
-    print('Final reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
-    print(max_value)
-    if cfg.make_video:
-        logger.save_video(cfg.exp_name)
-    #elif not cfg.liveplot:
-    #    ig_sum = np.asarray(ig_sum)
-    #    ig_action_sum = np.asarray(ig_action_sum)
-    #    ig_mean = np.mean(ig_sum, axis=0)
-    #    # create dict with feature as key and ig-mean als value
-    #    zip_iterator = zip(feature_titles, ig_mean)
-    #    ig_dict = dict(zip_iterator)
-    #    for k in ig_dict:
-    #        print(k + ": " + str(ig_dict[k]))
+    # make multiple runs for eval
+    runs = 10
+    print("Runs:", runs)
+    rewards = []
+    rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name + "_EVAL",
+                max_iterations=runs)
+    rtpt.start()
+    for run in tqdm(range(runs)):
+        # env loop
+        t = 0
+        ep_reward = 0
+        env.reset()
+        while t < cfg.train.max_steps:  # Don't infinite loop while playing
+            action = agent.mf_to_action(features, agent.model, -1, n_actions)
+            features = torch.tensor(features).unsqueeze(0).float()
+            if cfg.liveplot:
+                plt.imshow(obs, interpolation='none')
+                plt.plot()
+                plt.pause(0.001)  # pause a bit so that plots are updated
+                plt.clf()
+            #print('Reward: {:.2f}\t Step: {:.2f}'.format(
+            #        ep_reward, t), end="\r")
+            obs, reward, done, info = env.step(action)
+            raw_features = agent.image_to_feature(obs, info, gametype)
+            features = agent.feature_to_mf(raw_features)
+            ep_reward += reward
+            t += 1
+            if done:
+                break
+        rewards.append(ep_reward)
+        #print('Final reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
+        rtpt.step()
+    print(rewards)
+    print("Mean of Rewards:", sum(rewards) / len(rewards))
 
 
 # function for experimental tests, do not use!
