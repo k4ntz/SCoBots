@@ -73,7 +73,7 @@ def play_agent(agent, cfg):
     # init objects
     summary(agent.model, input_size=(1, len(features)), device=cfg.device)
     # make multiple runs for eval
-    runs = 10
+    runs = 20
     print("Runs:", runs)
     rewards = []
     rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name + "_EVAL",
