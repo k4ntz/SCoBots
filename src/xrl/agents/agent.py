@@ -6,6 +6,8 @@ from cProfile import label
 import numpy as np
 
 from xrl.agents.image_extractors.label_encoder import extract_from_labels
+from xrl.agents.game_object import GameObject
+from xrl.agents.image_extractors.rgb_extractor import extract_rgb_value
 
 
 class Agent():
@@ -13,7 +15,7 @@ class Agent():
         # choose the raw features extractor and set as first functions 
         # function to extract raw features
         self.feature_extractor = f1
-        self.raw_features = []
+        self.game_objects = []
         # choose the meaningful feature processing function and set as second functions
         self.feature_to_mf = f2
         # choose the meaningful feature processing function and set as second functions
@@ -32,19 +34,18 @@ class Agent():
     # for the raw features from the last frame
     def image_to_feature(self, images, info, gametype):
         labels = self.feature_extractor(images, info, gametype)
-        #print(labels)
-        # encode given labels dict
-        new_raw_features = extract_from_labels(labels, gametype)
-        #print("extracted raw features:", new_raw_features)
-        if len(self.raw_features) < 1:
-            # init with double length
-            self.raw_features = [None] * (len(new_raw_features)) * 2
-        else:
-            # roll to have the old ones at front for overwriting
-            self.raw_features = np.roll(self.raw_features, len(new_raw_features))
-        # now add first len(new_raw_features) values
-        self.raw_features[0:len(new_raw_features)] = new_raw_features[0:len(new_raw_features)]
-        return self.raw_features
+        # encode given labels dict and its names
+        new_raw_features, gameobject_names = extract_from_labels(labels, gametype)
+        # initial generate game objects
+        if len(self.game_objects) < 1:
+            for name in gameobject_names:
+                self.game_objects.append(GameObject(name))
+        # add coordinates and color
+        for i in range(len(self.game_objects)):
+            tmp_raw_feature = new_raw_features[i]
+            self.game_objects[i].update_coords(tmp_raw_feature[0], tmp_raw_feature[1])
+            self.game_objects[i].rgb = extract_rgb_value(images, tmp_raw_feature, gametype)
+        return self.game_objects
 
     def feature_to_mf(self, feature):
         return None

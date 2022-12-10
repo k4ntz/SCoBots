@@ -36,7 +36,7 @@ from xrl.agents.image_extractors.color_extractor import ColorExtractor
 from xrl.agents.image_extractors.interactive_color_extractor import IColorExtractor
 
 # feature processing functions
-from xrl.agents.feature_processing.aari_feature_processer import preprocess_raw_features
+from xrl.agents.feature_processing.aari_feature_processer import calc_preset_mifs
 # agent class
 from xrl.agents import Agent
 import xrl.utils.pruner as pruner
@@ -73,7 +73,7 @@ def play_agent(agent, cfg):
     # init objects
     summary(agent.model, input_size=(1, len(features)), device=cfg.device)
     # make multiple runs for eval
-    runs = 20
+    runs = 5
     print("Runs:", runs)
     rewards = []
     rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name + "_EVAL",
@@ -106,85 +106,6 @@ def play_agent(agent, cfg):
         rtpt.step()
     print(rewards)
     print("Mean of Rewards:", sum(rewards) / len(rewards))
-
-
-# function for experimental tests, do not use!
-def explain(agent, cfg):
-    print(colored("CREATING EXPLAINING DECISION TREE", "green"))
-    # init env
-    env = env_manager.make(cfg, True)
-    n_actions = env.action_space.n
-    gametype = xutils.get_gametype(env)
-    # TODO: Fix, because 100% of avg weight does not make any sense lol
-    #agent.model, _ = pruner.prune_nn(agent.model, "avg-pr", 0.7, len(features))
-    # data collecting loop
-    x = []
-    y = []
-    data_collecting_loops = 5
-    for i in tqdm(range(data_collecting_loops)):
-        _, ep_reward = env.reset(), 0
-        obs, _, _, info = env.step(1)
-        raw_features = agent.image_to_feature(obs, info, gametype)
-        features = agent.feature_to_mf(raw_features)
-        t = 0
-        action_randomness = random.random()
-        while t < 3000:  # Don't infinite loop while playing
-            # get maybe random action
-            action = agent.mf_to_action(features, agent.model, action_randomness, n_actions)
-            # get the actual action decided by policy without randomness in current situation
-            true_action = agent.mf_to_action(features, agent.model, -1, n_actions)
-            # save feature and action
-            x.append(features)
-            y.append(float(true_action))
-            features = torch.tensor(features).unsqueeze(0).float()
-            #print('Reward: {:.2f}\t Step: {:.2f}'.format(ep_reward, t), end="\r")
-            # do action
-            obs, reward, done, info = env.step(action)
-            raw_features = agent.image_to_feature(obs, info, gametype)
-            features = agent.feature_to_mf(raw_features)
-            ep_reward += reward
-            t += 1
-            if done:
-                #print("\n")
-                break
-        #print('Final reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
-    # test explainable conversion stuff
-    feature_titles = xplt.get_feature_titles(int(len(raw_features) / 2))
-    action_names_full = env.env.get_action_meanings()
-    action_n_list = [int(i) for i in set(y)]
-    action_names = [action_names_full[i] for i in action_n_list]
-    tree_explainer = tx.TreeExplainer(x, y, feature_titles, action_names)
-    tree_explainer.train()
-    tree_explainer.visualize()
-    # now play the game with the decision tree
-    print("Now playing the game with the DT ...")
-    _, ep_reward = env.reset(), 0
-    obs, _, _, info = env.step(1)
-    raw_features = agent.image_to_feature(obs, info, gametype)
-    features = agent.feature_to_mf(raw_features)
-    t = 0
-    while t < 3000:  # Don't infinite loop while playing
-        f = []
-        f.append(features)
-        feature_row = pd.DataFrame(f[:], columns=feature_titles)
-        action = int(tree_explainer.tree.predict(feature_row)[0])
-        print('Reward: {:.2f}\t Step: {:.2f}'.format(ep_reward, t), end="\r")
-        # plot 
-        if False:
-            plt.imshow(obs, interpolation='none')
-            plt.plot()
-            plt.pause(0.001)  # pause a bit so that plots are updated
-            plt.clf()
-        # do action
-        obs, reward, done, info = env.step(action)
-        raw_features = agent.image_to_feature(obs, info, gametype)
-        features = agent.feature_to_mf(raw_features)
-        ep_reward += reward
-        t += 1
-        if done:
-            #print("\n")
-            break
-    print('\n\nFinal reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
 
 
 
@@ -237,6 +158,8 @@ def use_minidreamer(cfg, mode):
 
 # init agent function
 def init_agent(cfg):
+    focus_mode = cfg.focus_mode
+    print("Focus mode:", focus_mode)
     # init correct raw features extractor
     rfe = None
     if cfg.raw_features_extractor == "atariari":
@@ -246,8 +169,19 @@ def init_agent(cfg):
         print("Raw Features Extractor:", "ColorExtractor")
         game = cfg.env_name.replace("Deterministic", "").replace("-v4", "")
         rfe = ColorExtractor(game=game, load=False)
-    # create agent and return
-    return Agent(f1=rfe, f2=preprocess_raw_features)
+    # set correct mifs
+    # and set agent
+    if focus_mode == "scobot":
+        None
+    elif focus_mode == "iscobot":
+        print("Not implemented, sorry :(")
+        exit(1)
+    elif focus_mode == "iscobot-preset":
+        return Agent(f1=rfe, f2=calc_preset_mifs)
+    else:
+        print("Unknown mode, terminating...")
+        exit(1)
+    
 
 
 # main function
