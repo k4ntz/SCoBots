@@ -116,7 +116,7 @@ def extract_from_labels(labels, gametype=0):
         ball = [labels["ball_x"].astype(np.int16),
                 labels["ball_y"].astype(np.int16)]
         # set new raw_features
-        return [player, enemy, ball]
+        return [player, enemy, ball], ["player", "enemy", "ball"]
     ###########################################
     # demon attack game
     elif gametype == 1:
@@ -131,7 +131,7 @@ def extract_from_labels(labels, gametype=0):
         #missile = [labels["player_x"].astype(np.int16),
         #        labels["missile_y"].astype(np.int16)]
         # set new raw_features
-        return [player, enemy1, enemy2, enemy3]
+        return [player, enemy1, enemy2, enemy3], ["player", "enemy1", "enemy2", "enemy3"]
     ###########################################
     # boxing game
     elif gametype == 2:
@@ -140,7 +140,7 @@ def extract_from_labels(labels, gametype=0):
         enemy = [labels["enemy_x"].astype(np.int16),
                 labels["enemy_y"].astype(np.int16)]
         # set new raw_features
-        return [player, enemy]
+        return [player, enemy], ["player", "enemy"]
     ###########################################
     # coinrun
     elif gametype == 3:
@@ -148,7 +148,7 @@ def extract_from_labels(labels, gametype=0):
         coin = labels["coin_pos"]
         saw = get_next_saw(labels)
         # set new raw_features
-        return [player, coin, saw]
+        return [player, coin, saw], ["player", "coin", "saw"]
     ###########################################
     # bowling game
     elif gametype == 4:
@@ -158,7 +158,7 @@ def extract_from_labels(labels, gametype=0):
         ball = [labels["ball_x"].astype(np.int16),
                 labels["ball_y"].astype(np.int16)]
         # set new raw_features
-        return [player, pin, ball]
+        return [player, pin, ball], ["player", "pin", "ball"]
     ###########################################
     # skiing game (only CE pls)
     elif gametype == 5:
@@ -168,4 +168,4 @@ def extract_from_labels(labels, gametype=0):
         flag = get_flag_center(labels)
         tree = get_first_tree(labels)
         # set new raw_features
-        return [player, flag, tree]
+        return [player, flag, tree], ["player", "flag", "tree"]

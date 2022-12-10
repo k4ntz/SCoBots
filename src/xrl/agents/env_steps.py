@@ -27,6 +27,6 @@ def do_step(env, action=1, last_raw_features=None, raw_features_processer="atari
         gametype = 2
     # calculate meaningful features from given raw features and last raw features
     raw_features = aari_raw_features_extractor.get_raw_features(info, last_raw_features, gametype=gametype)
-    raw_features, features = aari_features_processer.preprocess_raw_features(raw_features)
+    raw_features, features = aari_features_processer.calc_preset_mifs(raw_features)
     raise RuntimeError("Looks like refactoring is not complete for this call :( ...")
     return raw_features, features, reward, done

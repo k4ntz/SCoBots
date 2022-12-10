@@ -38,6 +38,22 @@ cfg = CfgNode({
     'liveplot': False,
     'debug': False,
 
+    # mode for focus, either int1rl or int2rl
+    'focus_mode': 'iscobot-preset',
+    # for feature selection
+    'focus': {
+        # list of relevant objects
+        'Objects': ['ball', 'player', 'enemy'], 
+        # list of properties
+        'Properties': ['position', 'rgb', 'shape'], 
+        # list of functions
+        'Functions': ['distance', 'color', 'projection'], 
+        # list of actions
+        'Actions': ['NOOP', 'FIRE', 'UP', 'DOWN', 'RIGHT', 'LEFT'],
+
+        # TODO: Define types how to give reward 
+        'Reward': '',    
+    },
 
     # For engine.train
     'train': {
