@@ -329,9 +329,9 @@ def eval_load(cfg, agent):
     torch.set_grad_enabled(False)
     # init env
     env = env_manager.make(cfg)
-    n_actions = env.action_space.n
+    n_actions = env._env.action_space.n
     env.reset()
-    obs, _, _, info = env.step(1)
+    obs, _, _, _, info = env.step(1)
     raw_features = agent.image_to_feature(obs, info, xutils.get_gametype(env))
     features = agent.feature_to_mf(raw_features)
     if cfg.train.use_raw_features:

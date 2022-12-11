@@ -66,13 +66,13 @@ def convert_rgb_to_names(rgb_tuple):
 # features are processed stuff for policy
 def calc_preset_mifs(game_objects):
     features = []
-    for i in range(len(game_objects)):
+    for i in game_objects:
         current_gameobject = game_objects[i]
         obj1, obj1_past = current_gameobject.get_coords()
         # append vel
         features.append(get_velocity(obj1, obj1_past))
         # loop over all other objects
-        for j in range(len(game_objects)):
+        for j in game_objects:
             # apped all manhattan distances to all other objects
             # which are not already calculated
             if j > i:
@@ -82,7 +82,7 @@ def calc_preset_mifs(game_objects):
                 distx, disty = calc_distances(obj1, obj2)
                 features.append(distx) # append x dist
                 features.append(disty) # append y dist
-        for j in range(len(game_objects)):
+        for j in game_objects:
             # calculate movement paths of all other objects
             # and calculate distance to its x and y intersection
             if i != j:
@@ -91,6 +91,7 @@ def calc_preset_mifs(game_objects):
                 disty, distx = get_lin_traj_distance(obj1, obj2, obj2_past)
                 features.append(disty)
                 features.append(distx)
+    #print(features)
     return features
 
 
