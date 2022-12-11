@@ -15,7 +15,7 @@ class Agent():
         # choose the raw features extractor and set as first functions 
         # function to extract raw features
         self.feature_extractor = f1
-        self.game_objects = []
+        self.game_objects = {}
         # choose the meaningful feature processing function and set as second functions
         self.feature_to_mf = f2
         # choose the meaningful feature processing function and set as second functions
@@ -33,18 +33,20 @@ class Agent():
     # to have the last used features, there is a wrapper and temp variable
     # for the raw features from the last frame
     def image_to_feature(self, images, info, gametype):
-        labels = self.feature_extractor(images, info, gametype)
+        gameobject_info = self.feature_extractor(images, info, gametype)
         # encode given labels dict and its names
-        new_raw_features, gameobject_names = extract_from_labels(labels, gametype)
-        # initial generate game objects
-        if len(self.game_objects) < 1:
-            for name in gameobject_names:
-                self.game_objects.append(GameObject(name))
+        #new_raw_features, gameobject_names = extract_from_labels(labels, gametype)
+        # initial generate game objects when not in dict
+        for key in gameobject_info:
+            if not (key in self.game_objects):
+                tmp = gameobject_info[key]
+                # add rgb and wh inital to game object since its static
+                rgb = [tmp[4], tmp[5], tmp[6]]
+                wh = [tmp[2], tmp[3]]
+                self.game_objects[key] = GameObject(key, rgb, wh)
         # add coordinates and color
-        for i in range(len(self.game_objects)):
-            tmp_raw_feature = new_raw_features[i]
-            self.game_objects[i].update_coords(tmp_raw_feature[0], tmp_raw_feature[1])
-            self.game_objects[i].rgb = extract_rgb_value(images, tmp_raw_feature, gametype)
+        for key in self.game_objects:
+            self.game_objects[key].update_coords(gameobject_info[key][0],gameobject_info[key][1])
         return self.game_objects
 
     def feature_to_mf(self, feature):

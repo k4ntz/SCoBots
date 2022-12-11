@@ -170,7 +170,7 @@ def calc_entropies(features):
 # 3: coinrun
 # 4: bowling
 def get_gametype(env):
-    name = env.unwrapped.spec.id
+    name = env._env.unwrapped.spec.id
     gametype = 0
     if "Demon" in name:
         gametype = 1

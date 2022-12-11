@@ -64,10 +64,10 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
 def play_agent(agent, cfg):
     # init env
     env = env_manager.make(cfg, True)
-    n_actions = env.action_space.n
+    n_actions = env._env.action_space.n
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
-    obs, _, _, info = env.step(1)
+    obs, _, _, _, info = env.step(1)
     raw_features = agent.image_to_feature(obs, info, gametype)
     features = agent.feature_to_mf(raw_features)
     # init objects
@@ -94,12 +94,12 @@ def play_agent(agent, cfg):
                 plt.clf()
             #print('Reward: {:.2f}\t Step: {:.2f}'.format(
             #        ep_reward, t), end="\r")
-            obs, reward, done, info = env.step(action)
+            obs, reward, done, done2, info = env.step(action)
             raw_features = agent.image_to_feature(obs, info, gametype)
             features = agent.feature_to_mf(raw_features)
             ep_reward += reward
             t += 1
-            if done:
+            if done or done2:
                 break
         rewards.append(ep_reward)
         #print('Final reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
