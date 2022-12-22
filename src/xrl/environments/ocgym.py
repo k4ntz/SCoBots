@@ -4,7 +4,7 @@ Augmented gym that contain additional info based on ATARIARI wrapper module
 import gym
 from termcolor import colored
 try:
-    from ocatari import OCAtari
+    from ocatari.core import OCAtari
 except ImportError as imp_err:
     print(colored("OC-Atari Not found, please install it:", "red"))
     print(colored("https://github.com/k4ntz/OC_Atari:", "blue"))

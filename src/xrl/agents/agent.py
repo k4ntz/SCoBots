@@ -32,6 +32,7 @@ class Agent():
         
     # to have the last used features, there is a wrapper and temp variable
     # for the raw features from the last frame
+    # TODO: Normalize values
     def image_to_feature(self, images, info, gametype):
         gameobject_info = self.feature_extractor(images, info, gametype)
         # encode given labels dict and its names
