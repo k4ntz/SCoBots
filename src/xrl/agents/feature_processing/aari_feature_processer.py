@@ -72,7 +72,15 @@ def convert_rgb_to_names(gameobject):
         rgb_values.append(hex_to_rgb(color_hex))
     kdt_db = KDTree(rgb_values)
     distance, index = kdt_db.query(rgb_tuple)
+    #print(gameobject.name, names[index])
     return f'closest match: {names[index]}', index
+
+
+# just returns center of two game objects
+def get_center(gameobject1, gameobject2):
+    obj1, _ = gameobject1.get_coords()
+    obj2, _ = gameobject2.get_coords()
+    return (obj1[0] + obj2[0])/2, (obj1[1] + obj2[1])/2
 
 
 # helper function to convert env info into custom list
@@ -110,6 +118,15 @@ def calc_preset_mifs(game_objects):
                 disty, distx = get_lin_traj_distance(current_gameobject, game_objects[j])
                 features.append(disty)
                 features.append(distx)
+        # loop for centers
+        for j in game_objects:
+            # apped all axis centers to all other objects
+            # which are not already calculated
+            if j > i:
+                # get and append distances
+                cx, cy = get_center(current_gameobject, game_objects[j])
+                features.append(cx) # append x dist
+                features.append(cy) # append y dist
     #print(features)
     return features
 
