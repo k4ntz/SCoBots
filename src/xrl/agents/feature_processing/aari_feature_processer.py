@@ -18,14 +18,25 @@ def get_lineq_param(obj1, obj2):
 
 
 # function to get x and y distances between 2 objects
-def calc_distances(obj1, obj2):
+def calc_distances(gameobject1, gameobject2):
+    obj1, _ = gameobject1.get_coords()
+    obj2, _ = gameobject2.get_coords()
     distx = obj2[0] - obj1[0]
     disty = obj2[1] - obj1[1]
     return distx, disty
 
 
+# function for calculating euclidean distances between objects
+def calc_euclidean_distance(gameobject1, gameobject2):
+    obj1, _ = gameobject1.get_coords()
+    obj2, _ = gameobject2.get_coords()
+    dist = math.sqrt((obj2[1] - obj1[1])**2 + (obj2[0] - obj1[0])**2)
+    return dist
+
+
 # function to return velocity
-def get_velocity(obj, obj_past):
+def get_velocity(gameobject):
+    obj, obj_past = gameobject.get_coords()
     vel = 0
     if obj_past is not None and not (obj[0] == obj_past[0] and obj[1] == obj_past[1]):
         vel = math.sqrt((obj_past[0] - obj[0])**2 + (obj_past[1] - obj[1])**2)
@@ -33,7 +44,9 @@ def get_velocity(obj, obj_past):
 
 
 # function to get dist to lin trajectory of one object
-def get_lin_traj_distance(obj1, obj2, obj2_past):
+def get_lin_traj_distance(gameobject1, gameobject2):
+    obj1, obj1_past = gameobject1.get_coords()
+    obj2, obj2_past = gameobject2.get_coords()
     distx = 0
     disty = 0
     # if other object has moved
@@ -48,7 +61,8 @@ def get_lin_traj_distance(obj1, obj2, obj2_past):
     return disty, distx
 
 
-def convert_rgb_to_names(rgb_tuple):
+def convert_rgb_to_names(gameobject):
+    rgb_tuple = gameobject.rgb
     # a dictionary of all the hex and their respective names in css3
     css3_db = CSS2_HEX_TO_NAMES
     names = []
@@ -58,7 +72,7 @@ def convert_rgb_to_names(rgb_tuple):
         rgb_values.append(hex_to_rgb(color_hex))
     kdt_db = KDTree(rgb_values)
     distance, index = kdt_db.query(rgb_tuple)
-    return f'closest match: {names[index]}'
+    return f'closest match: {names[index]}', index
 
 
 # helper function to convert env info into custom list
@@ -68,27 +82,32 @@ def calc_preset_mifs(game_objects):
     features = []
     for i in game_objects:
         current_gameobject = game_objects[i]
-        obj1, obj1_past = current_gameobject.get_coords()
         # append vel
-        features.append(get_velocity(obj1, obj1_past))
-        # loop over all other objects
+        features.append(get_velocity(current_gameobject))
+        _, color_index = convert_rgb_to_names(current_gameobject)
+        features.append(color_index)
+        # loop for axis distances
         for j in game_objects:
             # apped all manhattan distances to all other objects
             # which are not already calculated
             if j > i:
-                current_second_go = game_objects[j]
-                obj2, _ = current_second_go.get_coords()
                 # get and append distances
-                distx, disty = calc_distances(obj1, obj2)
+                distx, disty = calc_distances(current_gameobject, game_objects[j])
                 features.append(distx) # append x dist
                 features.append(disty) # append y dist
+        # loop for euclidean distances
+        for j in game_objects:
+            # apped all euclidean distances to all other objects
+            # which are not already calculated
+            if j > i:
+                # get and append distances
+                features.append(calc_euclidean_distance(current_gameobject, game_objects[j]))
+        # loop for trajectories
         for j in game_objects:
             # calculate movement paths of all other objects
             # and calculate distance to its x and y intersection
             if i != j:
-                current_second_go = game_objects[j]
-                obj2, obj2_past = current_second_go.get_coords()
-                disty, distx = get_lin_traj_distance(obj1, obj2, obj2_past)
+                disty, distx = get_lin_traj_distance(current_gameobject, game_objects[j])
                 features.append(disty)
                 features.append(distx)
     #print(features)
