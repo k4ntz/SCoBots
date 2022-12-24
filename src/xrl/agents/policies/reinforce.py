@@ -115,11 +115,12 @@ def calc_fr(features):
 
 
 def normalize_features(features, max_observed):
+    print(features)
     max_value = max(features)
     if max_observed < max_value:
-        return features / max_value, max_value
+        return features, max_value      # dont normalize on the fly for now
     else:
-        return features / max_observed, max_observed
+        return features, max_observed
 
 
 def train(cfg, agent):
@@ -137,10 +138,10 @@ def train(cfg, agent):
     n_actions = env.action_space.n
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
-    obs, _, _, info = env.step(1)
+    obs, _, _, _, info = env.step(1)
     raw_features = agent.image_to_feature(obs, info, gametype)
     features = agent.feature_to_mf(raw_features)
-    print('Action space: ' + str(env.unwrapped.get_action_meanings()))
+    print('Action space: ' + str(env._env.unwrapped.get_action_meanings()))
 
     # init policy net
     print("Make hidden layer in nn:", cfg.train.make_hidden)
@@ -201,7 +202,7 @@ def train(cfg, agent):
 
 
             policy.saved_log_probs.append(log_prob)
-            _, natural_reward, done, info = env.step(action)
+            _, natural_reward, terminated, truncated, info = env.step(action)
             # reward <- distance(player, ball)
             # reward_list.append((reward_distance, 0.7)) in the future probably
             raw_features = agent.image_to_feature(info, last_raw_features, gametype) #TODO doublecheck para order
@@ -247,7 +248,7 @@ def train(cfg, agent):
             last_raw_features = raw_features
             last_features = features
             t += 1
-            if done:
+            if terminated:
                 break
 
         # S: not used for optimization, just for logging
@@ -360,7 +361,7 @@ def eval_load(cfg, agent):
     env = env_manager.make(cfg)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, info = env.step(1)
+    obs, _, _, _, info = env.step(1)
     raw_features = agent.image_to_feature(obs, info, xutils.get_gametype(env))
     features = agent.feature_to_mf(raw_features)
     print("Make hidden layer in nn:", cfg.train.make_hidden)

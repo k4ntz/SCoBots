@@ -1,0 +1,121 @@
+ENVIRONMENT: Pong-v4
+AVAILABLE_CONCEPTS:
+  objects:
+  - player
+  - enemy
+  - ball
+  actions:
+  - UP
+  - DOWN
+  - FIRE
+  - NOOP
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - COLORNAME:
+      in:
+      - RGB
+      description: closest colorname of rgb value
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+SELECTION:
+  objects:
+  - player
+  - enemy
+  - ball
+  actions:
+  - UP
+  - DOWN
+  - FIRE
+  - NOOP
+  properties:
+  - POSITION: player
+  - POSITION: enemy
+  - POSITION: ball
+  - POSITION_HISTORY: player
+  - POSITION_HISTORY: enemy
+  - POSITION_HISTORY: ball
+  - RGB: player
+  - RGB: enemy
+  - RGB: ball
+  functions:
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: ball
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: ball
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: ball
+  - DISTANCE:
+    - POSITION: player
+    - POSITION: enemy
+  - DISTANCE:
+    - POSITION: player
+    - POSITION: ball
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: player
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: ball
+  - DISTANCE:
+    - POSITION: ball
+    - POSITION: player
+  - DISTANCE:
+    - POSITION: ball
+    - POSITION: enemy
+  - COLORNAME:
+    - RGB: player
+  - COLORNAME:
+    - RGB: enemy
+  - COLORNAME:
+    - RGB: ball
+  - VELOCITY:
+    - POSITION_HISTORY: player
+  - VELOCITY:
+    - POSITION_HISTORY: enemy
+  - VELOCITY:
+    - POSITION_HISTORY: ball

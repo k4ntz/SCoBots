@@ -1,0 +1,81 @@
+AVAILABLE_CONCEPTS:
+  objects:
+  - player
+  - enemy
+  - ball
+  actions:
+  - UP
+  - DOWN
+  - FIRE
+  - NOOP
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between to coordinates
+  - COLORNAME:
+      in:
+      - RGB
+      description: closest colorname of rgb value
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+SELECTION:
+  objects:
+  - player
+  - enemy
+  - ball
+  actions:
+  - UP
+  - DOWN
+  - FIRE
+  properties:
+  - POSITION: player
+  - POSITION_HISTORY: player
+  - RGB: player
+  - POSITION: enemy
+  - RGB: enemy
+  - POSITION: ball
+  - RGB: ball
+  functions:
+  - DISTANCE:
+    - POSITION: player
+    - POSITION: ball
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: player
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: ball
+  - COLORNAME:
+    - RGB: player
+  - COLORNAME:
+    - RGB: enemy
+  - COLORNAME:
+    - RGB: ball
+  - VELOCITY:
+    - POSITION_HISTORY: player
+  - VELOCITY:
+    - POSITION_HISTORY: enemy
+  - VELOCITY:
+    - POSITION_HISTORY: ball
