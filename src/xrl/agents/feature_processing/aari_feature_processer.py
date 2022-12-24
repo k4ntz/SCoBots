@@ -3,13 +3,34 @@
 
 import numpy as np
 import math
-
+import inspect
 from scipy.spatial import KDTree
 from webcolors import CSS2_HEX_TO_NAMES, hex_to_rgb
 
+FUNCTIONS = dict()
+
+# decorator to register available functions
+def register(*args, **kwargs):
+    def inner(func):
+        sig = inspect.signature(func)
+        sig_list = list(sig.parameters.keys())
+        params = kwargs["params"]
+        map_dict = {}
+        if len(sig_list) == len(params):
+            for i in range(len(params)):
+                map_dict[sig_list[i]] = params[i]
+        else:
+            print("id error")
+        name = kwargs["name"]
+        if name in FUNCTIONS.keys():
+            print("name already registered")
+        else:
+            FUNCTIONS[kwargs["name"]] = (func, map_dict)
+    return inner
+
 
 # helper function to calc linear equation
-def get_lineq_param(obj1, obj2):
+def _get_lineq_param(obj1, obj2):
     x = obj1
     y = obj2
     A = np.vstack([x, np.ones(len(x))]).T
@@ -18,14 +39,20 @@ def get_lineq_param(obj1, obj2):
 
 
 # function to get x and y distances between 2 objects
+<<<<<<< HEAD
 def calc_distances(gameobject1, gameobject2):
     obj1, _ = gameobject1.get_coords()
     obj2, _ = gameobject2.get_coords()
+=======
+@register(name="DISTANCE", params=["OBJECT", "OBJECT"])
+def calc_distances(obj1, obj2):
+>>>>>>> focus file support first version
     distx = obj2[0] - obj1[0]
     disty = obj2[1] - obj1[1]
     return distx, disty
 
 
+<<<<<<< HEAD
 # function for calculating euclidean distances between objects
 def calc_euclidean_distance(gameobject1, gameobject2):
     obj1, _ = gameobject1.get_coords()
@@ -34,6 +61,9 @@ def calc_euclidean_distance(gameobject1, gameobject2):
     return dist
 
 
+=======
+@register(name="VELOCITY", params=["OBJECT", "OBJECT"])
+>>>>>>> focus file support first version
 # function to return velocity
 def get_velocity(gameobject):
     obj, obj_past = gameobject.get_coords()
@@ -52,7 +82,7 @@ def get_lin_traj_distance(gameobject1, gameobject2):
     # if other object has moved
     if obj2_past is not None and not (obj2[0] == obj2_past[0] and obj2[1] == obj2_past[1]):
         # append trajectory cutting points
-        m, c = get_lineq_param(obj2, obj2_past)
+        m, c = _get_lineq_param(obj2, obj2_past)
         # now calc target pos
         # y = mx + c substracted from its y pos
         disty = np.int16(m * obj1[0] + c) - obj1[1]

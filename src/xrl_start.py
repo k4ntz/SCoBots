@@ -59,13 +59,6 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
     return action
 
 
-def normalize_features(features, max_observed):
-    max_value = features.max()
-    if max_observed < max_value:
-        return features / max_value, max_value
-    else:
-        return features / max_observed, max_observed
-
 # function to test agent loaded via main switch
 def play_agent(agent, cfg):
     # init env
@@ -167,6 +160,7 @@ def use_minidreamer(cfg, mode):
 # init agent function
 def init_agent(cfg):
     focus_mode = cfg.focus_mode
+    focus_file = cfg.focus_file
     print("Focus mode:", focus_mode)
     # init correct raw features extractor
     rfe = None
@@ -182,6 +176,7 @@ def init_agent(cfg):
     if focus_mode == "scobot":
         None
     elif focus_mode == "iscobot":
+        focus_file
         print("Not implemented, sorry :(")
         exit(1)
     elif focus_mode == "iscobot-preset":

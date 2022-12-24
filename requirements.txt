@@ -23,4 +23,5 @@ yacs
 atari_py
 termcolor
 webcolors
+graphviz
 git+https://github.com/mila-iqia/atari-representation-learning.git
