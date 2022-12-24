@@ -1,6 +1,6 @@
 env_name: 'Pong-v4'
 focus_mode: iscobot
-focus_file: 'focus-pong.yaml'
+
 
 rl_algo: 1
 
@@ -10,7 +10,7 @@ logdir: '/xrl/relogs/'
 
 
 video_steps: 100
-exp_name: 'pong-no-feedback1'
+exp_name: 'iscobot-re-pong'
 
 seed: 42
 
