@@ -7,8 +7,10 @@ try:
     from ocatari.core import OCAtari
 except ImportError as imp_err:
     print(colored("OC-Atari Not found, please install it:", "red"))
-    print(colored("https://github.com/k4ntz/OC_Atari:", "blue"))
-    raise imp_err
+    print(colored("https://github.com/k4ntz/OC_Atari", "blue"))
+    #print("test")
+    exit()
+    #raise imp_err
 
 
 def make(env_name, notify=False):

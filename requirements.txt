@@ -1,3 +1,4 @@
+wheel
 captum
 gym==0.17.2
 imageio
@@ -19,5 +20,8 @@ torchinfo
 torchvision
 tqdm
 yacs
-atari_py==0.2.6
+atari_py
 termcolor
+webcolors
+graphviz
+git+https://github.com/mila-iqia/atari-representation-learning.git

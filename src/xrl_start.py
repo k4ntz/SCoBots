@@ -40,6 +40,7 @@ from xrl.agents.feature_processing.aari_feature_processer import calc_preset_mif
 # agent class
 from xrl.agents import Agent
 import xrl.utils.pruner as pruner
+from xrl.utils.focus import Focus
 
 
 # helper function to select action from loaded agent
@@ -56,7 +57,6 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
         action = sampler.sample()
     else:
         action = random.randint(0, n_actions - 1)
-    # return action
     return action
 
 
@@ -121,7 +121,8 @@ def use_reinforce(cfg, mode, agent):
         if mode == "eval":
             play_agent(agent=agent, cfg=cfg)
         elif mode == "explain":
-            explain(agent=agent, cfg=cfg)
+            pass
+            # explain(agent=agent, cfg=cfg)
 
 
 # function to call deep neuroevolution algorithm
@@ -134,7 +135,8 @@ def use_genetic(cfg, mode, agent):
         if mode == "eval":
             play_agent(agent=agent, cfg=cfg)
         elif mode == "explain":
-            explain(agent=agent, cfg=cfg)
+            pass
+            # explain(agent=agent, cfg=cfg)
 
 
 # function to call dreamerv2
@@ -171,11 +173,17 @@ def init_agent(cfg):
         rfe = ColorExtractor(game=game, load=False)
     # set correct mifs
     # and set agent
-    if focus_mode == "scobot":
-        None
-    elif focus_mode == "iscobot":
-        print("Not implemented, sorry :(")
-        exit(1)
+    if focus_mode in ["scobot", "iscobot"]:
+        dummy_agent = Agent(f1=rfe, f2=calc_preset_mifs)
+        env = env_manager.make(cfg, True)
+        #n_actions = env.action_space.n
+        actions = env._env.unwrapped.get_action_meanings()
+        gametype = xutils.get_gametype(env)
+        _, _ = env.reset(), 0
+        obs, _, _, _, info = env.step(1)
+        raw_features = dummy_agent.image_to_feature(obs, info, gametype)
+        focus = Focus(cfg, raw_features, actions)
+        return Agent(f1=rfe, f2=focus.get_feature_vector)
     elif focus_mode == "iscobot-preset":
         return Agent(f1=rfe, f2=calc_preset_mifs)
     else:
