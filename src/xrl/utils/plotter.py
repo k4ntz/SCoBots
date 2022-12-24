@@ -37,7 +37,7 @@ def plot_screen(env, episode, step, second_img=None):
 
 
 # function to get feature titles
-def get_feature_titles(n_raw_features = 3):
+def get_feature_titles_old(n_raw_features = 3):
     feature_titles = []
     for i in range(0, n_raw_features):
         feature_titles.append(str("obj" +  str(i) + " vel"))
