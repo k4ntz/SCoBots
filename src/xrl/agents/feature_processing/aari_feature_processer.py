@@ -6,27 +6,99 @@ import math
 import inspect
 from scipy.spatial import KDTree
 from webcolors import CSS2_HEX_TO_NAMES, hex_to_rgb
+from typing import Tuple
+from xrl.agents.game_object import GameObject
 
 FUNCTIONS = dict()
+PROPERTIES = dict()
+eps = np.finfo(np.float32).eps.item()
 
-# decorator to register available functions
+# decorator to register properties and functions 
 def register(*args, **kwargs):
+
     def inner(func):
         sig = inspect.signature(func)
-        sig_list = list(sig.parameters.keys())
-        params = kwargs["params"]
-        map_dict = {}
-        if len(sig_list) == len(params):
-            for i in range(len(params)):
-                map_dict[sig_list[i]] = params[i]
+        ret_ano = sig.return_annotation
+        sig_list = sig.parameters
+        param_descs = kwargs["params"]
+        ret_desc = kwargs["desc"]
+        sig_dict = {"object": func, "expects": [], "returns": None}
+        sig_dict["returns"] = (ret_ano, ret_desc)
+        if len(sig_list) == len(param_descs):
+            for k in sig_list.keys():
+                desc = param_descs.pop(0)
+                sig_dict["expects"].append((sig_list[k], desc))
         else:
             print("id error")
         name = kwargs["name"]
         if name in FUNCTIONS.keys():
             print("name already registered")
         else:
-            FUNCTIONS[kwargs["name"]] = (func, map_dict)
+            if kwargs["type"] == "F": # function
+                FUNCTIONS[kwargs["name"]] = sig_dict
+            elif kwargs["type"] == "P": # property
+                PROPERTIES[kwargs["name"]] = sig_dict
+            else:
+                print("unknown type")
     return inner
+
+
+# REGISTERED PROPERTIES
+@register(type="P", name="POSITION", params= ["OBJECT"], desc="get the position for given object")
+def get_position(obj: GameObject) -> Tuple[int, int]:
+    return tuple(obj.get_coords()[0])
+
+@register(type="P", name="POSITION_HISTORY", params= ["OBJECT"], desc="get the current and last position for given object")
+def get_position_history(obj: GameObject) -> Tuple[int, int, int, int]:
+    coords = obj.get_coords()
+    return tuple(coords[0] + coords[1])
+
+@register(type="P", name="RGB", params= ["OBJECT"], desc="get the rgb value for given object")
+def get_rgb(obj: GameObject) -> Tuple[int, int, int]:
+    return tuple(obj.rgb)
+
+
+# REGISTERED FUNCTIONS
+@register(type="F", name="LINEAR_TRAJECTORY", params=["POSITION", "POSITION_HISTORY"], desc="x, y distance to trajectory")
+def calc_lin_traj(a_position: Tuple[int, int], b_history: Tuple[int, int, int, int]) -> Tuple[int, int]:
+    obj1 = a_position
+    obj2 = b_history[0:2]
+    obj2_past = b_history[2:4]
+    # append trajectory cutting points
+    m, c = _get_lineq_param(obj2, obj2_past)
+    # now calc target pos
+    # y = mx + c substracted from its y pos
+    disty = np.int16(m * obj1[0] + c) - obj1[1]
+    # x = (y - c)/m substracted from its x pos
+    distx = np.int16((obj1[1] - c) / (m+eps))  - obj1[0]
+    return disty, distx
+
+@register(type="F", name="DISTANCE", params=["POSITION", "POSITION"], desc="distance between two coordinates")
+def calc_distance(a_position: Tuple[int, int], b_position: Tuple[int, int]) -> Tuple[int, int]:
+    distx = b_position[0] - a_position[0]
+    disty = b_position[1] - a_position[1]
+    return distx, disty
+
+#TODO: SeSzt: not registered for now since it returns str
+#@register(type="F", name="COLORNAME", params=["RGB"], desc="closest colorname of rgb value")
+def get_colorname(rgb: Tuple[int, int, int]) -> str:
+    # a dictionary of all the hex and their respective names in css3
+    css3_db = CSS2_HEX_TO_NAMES
+    names = []
+    rgb_values = []
+    for color_hex, color_name in css3_db.items():
+        names.append(color_name)
+        rgb_values.append(hex_to_rgb(color_hex))
+    kdt_db = KDTree(rgb_values)
+    distance, index = kdt_db.query(rgb)
+    return f'closest match: {names[index]}'
+
+@register(type="F", name="VELOCITY", params=["POSITION_HISTORY"], desc="velocity of object")
+def get_velocity(pos_history: Tuple[int, int, int, int]) -> float:
+    obj = pos_history[0:2]
+    obj_past = pos_history[2:4]
+    vel = math.sqrt((obj_past[0] - obj[0])**2 + (obj_past[1] - obj[1])**2)
+    return vel
 
 
 # helper function to calc linear equation
@@ -37,142 +109,6 @@ def _get_lineq_param(obj1, obj2):
     m, c = np.linalg.lstsq(A, y, rcond=None)[0]
     return m, c
 
-
-# function to get x and y distances between 2 objects
-<<<<<<< HEAD
-def calc_distances(gameobject1, gameobject2):
-    obj1, _ = gameobject1.get_coords()
-    obj2, _ = gameobject2.get_coords()
-=======
-@register(name="DISTANCE", params=["OBJECT", "OBJECT"])
-def calc_distances(obj1, obj2):
->>>>>>> focus file support first version
-    distx = obj2[0] - obj1[0]
-    disty = obj2[1] - obj1[1]
-    return distx, disty
-
-
-<<<<<<< HEAD
-# function for calculating euclidean distances between objects
-def calc_euclidean_distance(gameobject1, gameobject2):
-    obj1, _ = gameobject1.get_coords()
-    obj2, _ = gameobject2.get_coords()
-    dist = math.sqrt((obj2[1] - obj1[1])**2 + (obj2[0] - obj1[0])**2)
-    return dist
-
-
-=======
-@register(name="VELOCITY", params=["OBJECT", "OBJECT"])
->>>>>>> focus file support first version
-# function to return velocity
-def get_velocity(gameobject):
-    obj, obj_past = gameobject.get_coords()
-    vel = 0
-    if obj_past is not None and not (obj[0] == obj_past[0] and obj[1] == obj_past[1]):
-        vel = math.sqrt((obj_past[0] - obj[0])**2 + (obj_past[1] - obj[1])**2)
-    return vel
-
-
-# function to get dist to lin trajectory of one object
-def get_lin_traj_distance(gameobject1, gameobject2):
-    obj1, obj1_past = gameobject1.get_coords()
-    obj2, obj2_past = gameobject2.get_coords()
-    distx = 0
-    disty = 0
-    # if other object has moved
-    if obj2_past is not None and not (obj2[0] == obj2_past[0] and obj2[1] == obj2_past[1]):
-        # append trajectory cutting points
-        m, c = _get_lineq_param(obj2, obj2_past)
-        # now calc target pos
-        # y = mx + c substracted from its y pos
-        disty = np.int16(m * obj1[0] + c) - obj1[1]
-        # x = (y - c)/m substracted from its x pos
-        distx = np.int16((obj1[1] - c) / m)  - obj1[0]
-    return disty, distx
-
-
-def convert_rgb_to_names(gameobject):
-    rgb_tuple = gameobject.rgb
-    # a dictionary of all the hex and their respective names in css3
-    css3_db = CSS2_HEX_TO_NAMES
-    names = []
-    rgb_values = []
-    for color_hex, color_name in css3_db.items():
-        names.append(color_name)
-        rgb_values.append(hex_to_rgb(color_hex))
-    kdt_db = KDTree(rgb_values)
-    distance, index = kdt_db.query(rgb_tuple)
-    #print(gameobject.name, names[index])
-    return f'closest match: {names[index]}', index
-
-
-# just returns center of two game objects
-def get_center(gameobject1, gameobject2):
-    obj1, _ = gameobject1.get_coords()
-    obj2, _ = gameobject2.get_coords()
-    return (obj1[0] + obj2[0])/2, (obj1[1] + obj2[1])/2
-
-
-# helper function to convert env info into custom list
-# raw_features contains player x, y, ball x, y, oldplayer x, y, oldball x, y, etc...
-# features are processed stuff for policy
-def calc_preset_mifs(game_objects):
-    features = []
-    for i in game_objects:
-        current_gameobject = game_objects[i]
-        # append vel
-        features.append(get_velocity(current_gameobject))
-        _, color_index = convert_rgb_to_names(current_gameobject)
-        features.append(color_index)
-        # loop for axis distances
-        for j in game_objects:
-            # apped all manhattan distances to all other objects
-            # which are not already calculated
-            if j > i:
-                # get and append distances
-                distx, disty = calc_distances(current_gameobject, game_objects[j])
-                features.append(distx) # append x dist
-                features.append(disty) # append y dist
-        # loop for euclidean distances
-        for j in game_objects:
-            # apped all euclidean distances to all other objects
-            # which are not already calculated
-            if j > i:
-                # get and append distances
-                features.append(calc_euclidean_distance(current_gameobject, game_objects[j]))
-        # loop for trajectories
-        for j in game_objects:
-            # calculate movement paths of all other objects
-            # and calculate distance to its x and y intersection
-            if i != j:
-                disty, distx = get_lin_traj_distance(current_gameobject, game_objects[j])
-                features.append(disty)
-                features.append(distx)
-        # loop for centers
-        for j in game_objects:
-            # apped all axis centers to all other objects
-            # which are not already calculated
-            if j > i:
-                # get and append distances
-                cx, cy = get_center(current_gameobject, game_objects[j])
-                features.append(cx) # append x dist
-                features.append(cy) # append y dist
-    #print(features)
-    return features
-
-
-# function getting list of functions and objects to calculate all from it
-# objects: list with x and y and past x and y
-# functions: TODO!!!!
-def calc_given_mifs(objects, functions):
-    i = 0
-    features = []
-    while i < len(objects):
-        None
-    return features
-
-
-
-
-
-
+# TODO: remove dummy function
+def calc_preset_mifs(temp):
+    return temp

@@ -40,6 +40,7 @@ from xrl.agents.feature_processing.aari_feature_processer import calc_preset_mif
 # agent class
 from xrl.agents import Agent
 import xrl.utils.pruner as pruner
+from xrl.utils.focus import Focus
 
 
 # helper function to select action from loaded agent
@@ -160,7 +161,6 @@ def use_minidreamer(cfg, mode):
 # init agent function
 def init_agent(cfg):
     focus_mode = cfg.focus_mode
-    focus_file = cfg.focus_file
     print("Focus mode:", focus_mode)
     # init correct raw features extractor
     rfe = None
@@ -173,12 +173,17 @@ def init_agent(cfg):
         rfe = ColorExtractor(game=game, load=False)
     # set correct mifs
     # and set agent
-    if focus_mode == "scobot":
-        None
-    elif focus_mode == "iscobot":
-        focus_file
-        print("Not implemented, sorry :(")
-        exit(1)
+    if focus_mode in ["scobot", "iscobot"]:
+        dummy_agent = Agent(f1=rfe, f2=calc_preset_mifs)
+        env = env_manager.make(cfg, True)
+        #n_actions = env.action_space.n
+        actions = env._env.unwrapped.get_action_meanings()
+        gametype = xutils.get_gametype(env)
+        _, _ = env.reset(), 0
+        obs, _, _, _, info = env.step(1)
+        raw_features = dummy_agent.image_to_feature(obs, info, gametype)
+        focus = Focus(cfg, raw_features, actions)
+        return Agent(f1=rfe, f2=focus.get_feature_vector)
     elif focus_mode == "iscobot-preset":
         return Agent(f1=rfe, f2=calc_preset_mifs)
     else:

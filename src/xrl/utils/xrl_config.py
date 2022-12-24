@@ -31,6 +31,7 @@ cfg = CfgNode({
     'device_ids': [0, 1, 2, 3],
     'device': 'cpu',
     'logdir': '/xrl/logs/',
+    'focusdir': 'xrl/focusfiles/',
 
     'make_video': False,
     'video_steps': 10,

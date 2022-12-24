@@ -33,9 +33,8 @@ model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pt
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-
 def select_action(features, policy, random_tr = -1, n_actions=3):
-    input = torch.tensor(features).unsqueeze(0).float()
+    input = torch.tensor(features).unsqueeze(0).float().to(dev)
     probs = policy(input)
     #print(list(np.around(probs.detach().numpy(), 3)))
     sampler = Categorical(probs)
@@ -124,6 +123,7 @@ def normalize_features(features, max_observed):
 
 
 def train(cfg, agent):
+    cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
     with open(os.getcwd() + cfg.logdir + cfg.exp_name+'.csv', 'w+', newline='') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         csv_writer.writerow(["episode", "steps", "natural_reward", "feedback_reward", "combined_reward",
@@ -131,7 +131,6 @@ def train(cfg, agent):
     print('Experiment name:', cfg.exp_name)
     torch.manual_seed(cfg.seed)
     print('Seed:', torch.initial_seed())
-    cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
     # init env to get params for policy net
     env = env_manager.make(cfg, True)
@@ -145,7 +144,9 @@ def train(cfg, agent):
 
     # init policy net
     print("Make hidden layer in nn:", cfg.train.make_hidden)
+    print("Feature vector length:", len(features))
     policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
+    policy.to(dev)
     optimizer = optim.Adam(policy.parameters(), lr=cfg.train.learning_rate)
     eps = np.finfo(np.float32).eps.item()
     i_episode = 1
@@ -197,29 +198,29 @@ def train(cfg, agent):
            # features = np.random.random_sample((6))
             #print(">>>>" + str(features))
 
-            features, max_feature_value_observed = normalize_features(features, max_feature_value_observed) #normalize feature
+            #features, max_feature_value_observed = normalize_features(features, max_feature_value_observed) #normalize feature
             action, log_prob, probs = agent.mf_to_action(features, agent.model, cfg.train.random_action_p, n_actions)
 
 
             policy.saved_log_probs.append(log_prob)
-            _, natural_reward, terminated, truncated, info = env.step(action)
+            obs, natural_reward, terminated, truncated, info = env.step(action)
             # reward <- distance(player, ball)
             # reward_list.append((reward_distance, 0.7)) in the future probably
-            raw_features = agent.image_to_feature(info, last_raw_features, gametype) #TODO doublecheck para order
+            raw_features = agent.image_to_feature(obs, info, gametype) #TODO doublecheck para order
             features = agent.feature_to_mf(raw_features)
 
             # distance delta of player<->ball between present and past
-            b_p_distance_now = calc_fr(features)
-            b_p_distance_past = calc_fr(last_features)
-            if b_p_distance_now > max_distance_observed:
-                max_distance_observed = b_p_distance_now
+            #b_p_distance_now = calc_fr(features)
+          #  b_p_distance_past = calc_fr(last_features)
+            #if b_p_distance_now > max_distance_observed:
+            #    max_distance_observed = b_p_distance_now
 
             # difference of potentials scale to max_distance
             # feedback_reward = feedback_alpha * ((-b_p_distance_now - -b_p_distance_past ) / max_distance_observed)
             # comb_reward = natural_reward + feedback_reward
 
             # normalize to [0,1]. convex feedback_reward handling
-            feedback_reward = -(b_p_distance_now / max_distance_observed )
+            feedback_reward = 0 #-(b_p_distance_now / max_distance_observed )
             comb_reward = natural_reward + (feedback_alpha * feedback_reward)
             # alpha = feedback_alpha
             # comb_reward = (1 - alpha) * natural_reward + alpha * feedback_reward
@@ -238,6 +239,8 @@ def train(cfg, agent):
             #    feedback_reward = 0
             # reward weights
             #comb_reward = float(feedback_reward)
+            
+            # NOTE: no impact if entropy set to 0 in yaml
             entropy = -np.sum(list(map(lambda p : p * (np.log(p) / np.log(n_actions)) if p[0] != 0 else 0, probs)))
             #print(entropy)
             policy.rewards.append(comb_reward)
@@ -251,13 +254,13 @@ def train(cfg, agent):
             if terminated:
                 break
 
-        # S: not used for optimization, just for logging
+        # SeSzt: not used for optimization, just for logging
         # only optimize when t < max ep steps
         if t >= cfg.train.max_steps:
             ep_comb_reward = -21 #TODO: change to automatically game specific
         # replace first running reward with last reward for loaded models
 
-        # S:  this reward is just for tracking purposes, not used for training
+        # SeSzt:  this reward is just for tracking purposes, not used for training
         if running_reward is None:
             running_reward = ep_comb_reward
         else:
@@ -304,7 +307,7 @@ def train(cfg, agent):
                 elif feedback_alpha == 1.0:
                     sign = -1
 
-
+                # NOTE: no impact when feedback set to 0 in config yaml
                 if change < cfg.train.stale_threshold:
                     feedback_alpha+= sign * delta
                     #print(sign)

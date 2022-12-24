@@ -10,7 +10,7 @@ logdir: '/xrl/relogs/'
 
 
 video_steps: 100
-exp_name: 'pong-no-feedback1'
+exp_name: 'iscobot-re-pong-custom'
 
 seed: 42
 
