@@ -6,7 +6,7 @@ import math
 import inspect
 from typing import Tuple
 from xrl.agents.game_object import GameObject
-from utils_color_categorisation import _colordist, COLOR_TO_CATEGORY, \
+from xrl.agents.feature_processing.utils_color_categorisation import _colordist, COLOR_TO_CATEGORY, \
     colors_matrices
 
 

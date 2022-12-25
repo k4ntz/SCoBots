@@ -1,0 +1,657 @@
+ENVIRONMENT: TennisDeterministic-v4
+AVAILABLE_CONCEPTS:
+  objects:
+  - logo
+  - enemy
+  - player
+  - enemy_scores
+  - player_score
+  - ball
+  - ball_shadow
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+SELECTION:
+  objects:
+  - logo
+  - enemy
+  - player
+  - enemy_scores
+  - player_score
+  - ball
+  - ball_shadow
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
+  properties:
+  - POSITION: logo
+  - POSITION: enemy
+  - POSITION: player
+  - POSITION: enemy_scores
+  - POSITION: player_score
+  - POSITION: ball
+  - POSITION: ball_shadow
+  - POSITION_HISTORY: logo
+  - POSITION_HISTORY: enemy
+  - POSITION_HISTORY: player
+  - POSITION_HISTORY: enemy_scores
+  - POSITION_HISTORY: player_score
+  - POSITION_HISTORY: ball
+  - POSITION_HISTORY: ball_shadow
+  - RGB: logo
+  - RGB: enemy
+  - RGB: player
+  - RGB: enemy_scores
+  - RGB: player_score
+  - RGB: ball
+  - RGB: ball_shadow
+  functions:
+  - LINEAR_TRAJECTORY:
+    - POSITION: logo
+    - POSITION_HISTORY: logo
+  - LINEAR_TRAJECTORY:
+    - POSITION: logo
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: logo
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: logo
+    - POSITION_HISTORY: enemy_scores
+  - LINEAR_TRAJECTORY:
+    - POSITION: logo
+    - POSITION_HISTORY: player_score
+  - LINEAR_TRAJECTORY:
+    - POSITION: logo
+    - POSITION_HISTORY: ball
+  - LINEAR_TRAJECTORY:
+    - POSITION: logo
+    - POSITION_HISTORY: ball_shadow
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: logo
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: enemy_scores
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: player_score
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: ball
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy
+    - POSITION_HISTORY: ball_shadow
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: logo
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: enemy_scores
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: player_score
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: ball
+  - LINEAR_TRAJECTORY:
+    - POSITION: player
+    - POSITION_HISTORY: ball_shadow
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy_scores
+    - POSITION_HISTORY: logo
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy_scores
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy_scores
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy_scores
+    - POSITION_HISTORY: enemy_scores
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy_scores
+    - POSITION_HISTORY: player_score
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy_scores
+    - POSITION_HISTORY: ball
+  - LINEAR_TRAJECTORY:
+    - POSITION: enemy_scores
+    - POSITION_HISTORY: ball_shadow
+  - LINEAR_TRAJECTORY:
+    - POSITION: player_score
+    - POSITION_HISTORY: logo
+  - LINEAR_TRAJECTORY:
+    - POSITION: player_score
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: player_score
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: player_score
+    - POSITION_HISTORY: enemy_scores
+  - LINEAR_TRAJECTORY:
+    - POSITION: player_score
+    - POSITION_HISTORY: player_score
+  - LINEAR_TRAJECTORY:
+    - POSITION: player_score
+    - POSITION_HISTORY: ball
+  - LINEAR_TRAJECTORY:
+    - POSITION: player_score
+    - POSITION_HISTORY: ball_shadow
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: logo
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: enemy_scores
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: player_score
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: ball
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball
+    - POSITION_HISTORY: ball_shadow
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball_shadow
+    - POSITION_HISTORY: logo
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball_shadow
+    - POSITION_HISTORY: enemy
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball_shadow
+    - POSITION_HISTORY: player
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball_shadow
+    - POSITION_HISTORY: enemy_scores
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball_shadow
+    - POSITION_HISTORY: player_score
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball_shadow
+    - POSITION_HISTORY: ball
+  - LINEAR_TRAJECTORY:
+    - POSITION: ball_shadow
+    - POSITION_HISTORY: ball_shadow
+  - DISTANCE:
+    - POSITION: logo
+    - POSITION: enemy
+  - DISTANCE:
+    - POSITION: logo
+    - POSITION: player
+  - DISTANCE:
+    - POSITION: logo
+    - POSITION: enemy_scores
+  - DISTANCE:
+    - POSITION: logo
+    - POSITION: player_score
+  - DISTANCE:
+    - POSITION: logo
+    - POSITION: ball
+  - DISTANCE:
+    - POSITION: logo
+    - POSITION: ball_shadow
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: logo
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: player
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: enemy_scores
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: player_score
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: ball
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: ball_shadow
+  - DISTANCE:
+    - POSITION: player
+    - POSITION: logo
+  - DISTANCE:
+    - POSITION: player
+    - POSITION: enemy
+  - DISTANCE:
+    - POSITION: player
+    - POSITION: enemy_scores
+  - DISTANCE:
+    - POSITION: player
+    - POSITION: player_score
+  - DISTANCE:
+    - POSITION: player
+    - POSITION: ball
+  - DISTANCE:
+    - POSITION: player
+    - POSITION: ball_shadow
+  - DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: logo
+  - DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: enemy
+  - DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: player
+  - DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: player_score
+  - DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: ball
+  - DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: ball_shadow
+  - DISTANCE:
+    - POSITION: player_score
+    - POSITION: logo
+  - DISTANCE:
+    - POSITION: player_score
+    - POSITION: enemy
+  - DISTANCE:
+    - POSITION: player_score
+    - POSITION: player
+  - DISTANCE:
+    - POSITION: player_score
+    - POSITION: enemy_scores
+  - DISTANCE:
+    - POSITION: player_score
+    - POSITION: ball
+  - DISTANCE:
+    - POSITION: player_score
+    - POSITION: ball_shadow
+  - DISTANCE:
+    - POSITION: ball
+    - POSITION: logo
+  - DISTANCE:
+    - POSITION: ball
+    - POSITION: enemy
+  - DISTANCE:
+    - POSITION: ball
+    - POSITION: player
+  - DISTANCE:
+    - POSITION: ball
+    - POSITION: enemy_scores
+  - DISTANCE:
+    - POSITION: ball
+    - POSITION: player_score
+  - DISTANCE:
+    - POSITION: ball
+    - POSITION: ball_shadow
+  - DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: logo
+  - DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: enemy
+  - DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: player
+  - DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: enemy_scores
+  - DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: player_score
+  - DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: ball
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: logo
+    - POSITION: enemy
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: logo
+    - POSITION: player
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: logo
+    - POSITION: enemy_scores
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: logo
+    - POSITION: player_score
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: logo
+    - POSITION: ball
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: logo
+    - POSITION: ball_shadow
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy
+    - POSITION: logo
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy
+    - POSITION: player
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy
+    - POSITION: enemy_scores
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy
+    - POSITION: player_score
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy
+    - POSITION: ball
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy
+    - POSITION: ball_shadow
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player
+    - POSITION: logo
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player
+    - POSITION: enemy
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player
+    - POSITION: enemy_scores
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player
+    - POSITION: player_score
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player
+    - POSITION: ball
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player
+    - POSITION: ball_shadow
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: logo
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: enemy
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: player
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: player_score
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: ball
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: enemy_scores
+    - POSITION: ball_shadow
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player_score
+    - POSITION: logo
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player_score
+    - POSITION: enemy
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player_score
+    - POSITION: player
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player_score
+    - POSITION: enemy_scores
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player_score
+    - POSITION: ball
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: player_score
+    - POSITION: ball_shadow
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball
+    - POSITION: logo
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball
+    - POSITION: enemy
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball
+    - POSITION: player
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball
+    - POSITION: enemy_scores
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball
+    - POSITION: player_score
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball
+    - POSITION: ball_shadow
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: logo
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: enemy
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: player
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: enemy_scores
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: player_score
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: ball_shadow
+    - POSITION: ball
+  - CENTER:
+    - POSITION: logo
+    - POSITION: enemy
+  - CENTER:
+    - POSITION: logo
+    - POSITION: player
+  - CENTER:
+    - POSITION: logo
+    - POSITION: enemy_scores
+  - CENTER:
+    - POSITION: logo
+    - POSITION: player_score
+  - CENTER:
+    - POSITION: logo
+    - POSITION: ball
+  - CENTER:
+    - POSITION: logo
+    - POSITION: ball_shadow
+  - CENTER:
+    - POSITION: enemy
+    - POSITION: logo
+  - CENTER:
+    - POSITION: enemy
+    - POSITION: player
+  - CENTER:
+    - POSITION: enemy
+    - POSITION: enemy_scores
+  - CENTER:
+    - POSITION: enemy
+    - POSITION: player_score
+  - CENTER:
+    - POSITION: enemy
+    - POSITION: ball
+  - CENTER:
+    - POSITION: enemy
+    - POSITION: ball_shadow
+  - CENTER:
+    - POSITION: player
+    - POSITION: logo
+  - CENTER:
+    - POSITION: player
+    - POSITION: enemy
+  - CENTER:
+    - POSITION: player
+    - POSITION: enemy_scores
+  - CENTER:
+    - POSITION: player
+    - POSITION: player_score
+  - CENTER:
+    - POSITION: player
+    - POSITION: ball
+  - CENTER:
+    - POSITION: player
+    - POSITION: ball_shadow
+  - CENTER:
+    - POSITION: enemy_scores
+    - POSITION: logo
+  - CENTER:
+    - POSITION: enemy_scores
+    - POSITION: enemy
+  - CENTER:
+    - POSITION: enemy_scores
+    - POSITION: player
+  - CENTER:
+    - POSITION: enemy_scores
+    - POSITION: player_score
+  - CENTER:
+    - POSITION: enemy_scores
+    - POSITION: ball
+  - CENTER:
+    - POSITION: enemy_scores
+    - POSITION: ball_shadow
+  - CENTER:
+    - POSITION: player_score
+    - POSITION: logo
+  - CENTER:
+    - POSITION: player_score
+    - POSITION: enemy
+  - CENTER:
+    - POSITION: player_score
+    - POSITION: player
+  - CENTER:
+    - POSITION: player_score
+    - POSITION: enemy_scores
+  - CENTER:
+    - POSITION: player_score
+    - POSITION: ball
+  - CENTER:
+    - POSITION: player_score
+    - POSITION: ball_shadow
+  - CENTER:
+    - POSITION: ball
+    - POSITION: logo
+  - CENTER:
+    - POSITION: ball
+    - POSITION: enemy
+  - CENTER:
+    - POSITION: ball
+    - POSITION: player
+  - CENTER:
+    - POSITION: ball
+    - POSITION: enemy_scores
+  - CENTER:
+    - POSITION: ball
+    - POSITION: player_score
+  - CENTER:
+    - POSITION: ball
+    - POSITION: ball_shadow
+  - CENTER:
+    - POSITION: ball_shadow
+    - POSITION: logo
+  - CENTER:
+    - POSITION: ball_shadow
+    - POSITION: enemy
+  - CENTER:
+    - POSITION: ball_shadow
+    - POSITION: player
+  - CENTER:
+    - POSITION: ball_shadow
+    - POSITION: enemy_scores
+  - CENTER:
+    - POSITION: ball_shadow
+    - POSITION: player_score
+  - CENTER:
+    - POSITION: ball_shadow
+    - POSITION: ball
+  - VELOCITY:
+    - POSITION_HISTORY: logo
+  - VELOCITY:
+    - POSITION_HISTORY: enemy
+  - VELOCITY:
+    - POSITION_HISTORY: player
+  - VELOCITY:
+    - POSITION_HISTORY: enemy_scores
+  - VELOCITY:
+    - POSITION_HISTORY: player_score
+  - VELOCITY:
+    - POSITION_HISTORY: ball
+  - VELOCITY:
+    - POSITION_HISTORY: ball_shadow
