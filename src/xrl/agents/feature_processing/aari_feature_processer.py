@@ -74,11 +74,23 @@ def calc_lin_traj(a_position: Tuple[int, int], b_history: Tuple[int, int, int, i
     distx = np.int16((obj1[1] - c) / (m+eps))  - obj1[0]
     return disty, distx
 
+
 @register(type="F", name="DISTANCE", params=["POSITION", "POSITION"], desc="distance between two coordinates")
 def calc_distance(a_position: Tuple[int, int], b_position: Tuple[int, int]) -> Tuple[int, int]:
     distx = b_position[0] - a_position[0]
     disty = b_position[1] - a_position[1]
     return distx, disty
+
+
+@register(type="F", name="EUCLIDEAN_DISTANCE", params=["POSITION", "POSITION"], desc="euclidean distance between two coordinates")
+def calc_euclidean_distance(a_position: Tuple[int, int], b_position: Tuple[int, int]) -> float:
+    dist = math.sqrt((b_position[1] - a_position[1])**2 + (b_position[0] - a_position[0])**2)
+    return dist
+
+
+@register(type="F", name="CENTER", params=["POSITION", "POSITION"], desc="center position of two objects")
+def get_center(a_position: Tuple[int, int], b_position: Tuple[int, int]) -> Tuple[int, int]:
+    return (a_position[0] + b_position[0])/2, (a_position[1] + b_position[1])/2
 
 
 @register(type="F", name="VELOCITY", params=["POSITION_HISTORY"], desc="velocity of object")
