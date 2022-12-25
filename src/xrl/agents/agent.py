@@ -47,7 +47,9 @@ class Agent():
                 self.game_objects[key] = GameObject(key, rgb, wh)
         # add coordinates and color
         for key in self.game_objects:
-            self.game_objects[key].update_coords(gameobject_info[key][0],gameobject_info[key][1])
+            if key in gameobject_info:
+                self.game_objects[key].rgb = [gameobject_info[key][4], gameobject_info[key][5], gameobject_info[key][6]]
+                self.game_objects[key].update_coords(gameobject_info[key][0],gameobject_info[key][1])
         return self.game_objects
 
     def feature_to_mf(self, feature):

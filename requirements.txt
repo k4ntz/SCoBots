@@ -9,6 +9,7 @@ opencv_python
 scikit-build
 packaging
 pandas
+colormath
 Pillow
 rtpt
 scikit_learn
