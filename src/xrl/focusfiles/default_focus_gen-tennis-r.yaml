@@ -65,6 +65,10 @@ AVAILABLE_CONCEPTS:
       in:
       - POSITION_HISTORY
       description: velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
 SELECTION:
   objects:
   - logo
@@ -655,3 +659,17 @@ SELECTION:
     - POSITION_HISTORY: ball
   - VELOCITY:
     - POSITION_HISTORY: ball_shadow
+  - COLOR:
+    - RGB: logo
+  - COLOR:
+    - RGB: enemy
+  - COLOR:
+    - RGB: player
+  - COLOR:
+    - RGB: enemy_scores
+  - COLOR:
+    - RGB: player_score
+  - COLOR:
+    - RGB: ball
+  - COLOR:
+    - RGB: ball_shadow

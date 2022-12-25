@@ -6,7 +6,7 @@ import math
 import inspect
 from typing import Tuple
 from xrl.agents.game_object import GameObject
-from xrl.agents.feature_processing.utils_color_categorisation import _colordist, COLOR_TO_CATEGORY, \
+from xrl.agents.feature_processing.utils_color_categorisation import _colordist, COLOR_TO_INT, \
     colors_matrices
 
 
@@ -114,7 +114,8 @@ def calc_preset_mifs(temp):
     return temp
 
 
-def get_color_name(rgb: Tuple[int, int, int]) -> str:
+@register(type="F", name="COLOR", params=["RGB"], desc="Index of colorname")
+def get_color_name(rgb: Tuple[int, int, int]) -> int:
     comp_list = [(c[0], _colordist(rgb, c[1])) for c in colors_matrices.items()]
     comp_list2 = sorted(comp_list, key=lambda el: el[1])
-    return COLOR_TO_CATEGORY[comp_list2[0][0]]
+    return COLOR_TO_INT[comp_list2[0][0]]
