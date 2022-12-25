@@ -1,6 +1,5 @@
 env_name: 'SkiingDeterministic-v4'
 
-raw_features_extractor: "CE"
 rl_algo: 1
 
 parallel: False
