@@ -4,16 +4,17 @@
 import numpy as np
 import math
 import inspect
-from scipy.spatial import KDTree
-from webcolors import CSS2_HEX_TO_NAMES, hex_to_rgb
 from typing import Tuple
 from xrl.agents.game_object import GameObject
+from utils_color_categorisation import _colordist, COLOR_TO_CATEGORY, \
+    colors_matrices
+
 
 FUNCTIONS = dict()
 PROPERTIES = dict()
 eps = np.finfo(np.float32).eps.item()
 
-# decorator to register properties and functions 
+# decorator to register properties and functions
 def register(*args, **kwargs):
 
     def inner(func):
@@ -79,19 +80,6 @@ def calc_distance(a_position: Tuple[int, int], b_position: Tuple[int, int]) -> T
     disty = b_position[1] - a_position[1]
     return distx, disty
 
-#TODO: SeSzt: not registered for now since it returns str
-#@register(type="F", name="COLORNAME", params=["RGB"], desc="closest colorname of rgb value")
-def get_colorname(rgb: Tuple[int, int, int]) -> str:
-    # a dictionary of all the hex and their respective names in css3
-    css3_db = CSS2_HEX_TO_NAMES
-    names = []
-    rgb_values = []
-    for color_hex, color_name in css3_db.items():
-        names.append(color_name)
-        rgb_values.append(hex_to_rgb(color_hex))
-    kdt_db = KDTree(rgb_values)
-    distance, index = kdt_db.query(rgb)
-    return f'closest match: {names[index]}'
 
 @register(type="F", name="VELOCITY", params=["POSITION_HISTORY"], desc="velocity of object")
 def get_velocity(pos_history: Tuple[int, int, int, int]) -> float:
@@ -112,3 +100,9 @@ def _get_lineq_param(obj1, obj2):
 # TODO: remove dummy function
 def calc_preset_mifs(temp):
     return temp
+
+
+def get_color_name(rgb: Tuple[int, int, int]) -> str:
+    comp_list = [(c[0], _colordist(rgb, c[1])) for c in colors_matrices.items()]
+    comp_list2 = sorted(comp_list, key=lambda el: el[1])
+    return COLOR_TO_CATEGORY[comp_list2[0][0]]
