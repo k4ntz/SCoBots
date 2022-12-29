@@ -251,7 +251,7 @@ def train(cfg, agent):
             last_raw_features = raw_features
             last_features = features
             t += 1
-            if terminated:
+            if terminated or truncated:
                 break
 
         # SeSzt: not used for optimization, just for logging
