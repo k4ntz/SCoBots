@@ -32,6 +32,19 @@ model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pt
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+# timing wrapper
+import time
+from functools import wraps
+def timeit(func):
+    @wraps(func)
+    def timeit_wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        total_time = end_time - start_time
+        print(f"function: '{func.__name__}' | duration: {total_time:.4f}s")
+        return result
+    return timeit_wrapper
 
 def select_action(features, policy, random_tr = -1, n_actions=3):
     input = torch.tensor(features).unsqueeze(0).float().to(dev)
@@ -206,8 +219,9 @@ def train(cfg, agent):
             obs, natural_reward, terminated, truncated, info = env.step(action)
             # reward <- distance(player, ball)
             # reward_list.append((reward_distance, 0.7)) in the future probably
+
             raw_features = agent.image_to_feature(obs, info, gametype) #TODO doublecheck para order
-            features = agent.feature_to_mf(raw_features)
+            features = agent.feature_to_mf(raw_features) #0.05s without, 0.0007s with color_memory for rgb function
 
             # distance delta of player<->ball between present and past
             #b_p_distance_now = calc_fr(features)

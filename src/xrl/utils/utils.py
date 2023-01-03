@@ -4,6 +4,7 @@ import math
 import torch
 import cv2
 import argparse
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,6 +20,7 @@ from scipy.stats import entropy
 
 from argparse import ArgumentParser
 from xrl.utils.xrl_config import cfg
+from functools import wraps
 
 import xrl.agents.env_steps as env_steps
 
@@ -183,3 +185,16 @@ def get_gametype(env):
     elif "Skiing" in name:
         gametype = 5
     return gametype
+
+
+# timing wrapper
+def timeit(func):
+    @wraps(func)
+    def timeit_wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        total_time = end_time - start_time
+        print(f"function: '{func.__name__}' | duration: {total_time:.4f}s")
+        return result
+    return timeit_wrapper
