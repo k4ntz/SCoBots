@@ -76,7 +76,7 @@ def finish_episode(policy, optimizer, eps, cfg):
     for log_prob, R in zip(policy.saved_log_probs, returns):
         policy_loss.append((-log_prob * R))
     optimizer.zero_grad()
-    policy_loss = torch.cat(policy_loss).mean() #was sum
+    policy_loss = torch.cat(policy_loss).sum() #was mean
     policy_loss.backward()
     optimizer.step()
     episode_entropy = np.mean(policy.entropies)
