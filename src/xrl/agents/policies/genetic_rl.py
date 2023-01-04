@@ -92,7 +92,7 @@ def run_agents(env, rl_agent, agents, cfg):
         gametype = xutils.get_gametype(env)
         n_actions = env.action_space.n
         _ = env.reset()
-        obs, _, done, info = env.step(1)
+        obs, _, done, done2, info = env.step(1)
         raw_features = rl_agent.image_to_feature(obs, info, gametype)
         features = rl_agent.feature_to_mf(raw_features)
         r = 0
@@ -101,7 +101,7 @@ def run_agents(env, rl_agent, agents, cfg):
             if cfg.train.use_raw_features:
                 features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent, cfg.train.random_action_p, n_actions)
-            obs, reward, done, info = env.step(action)
+            obs, reward, done, done2, info = env.step(action)
             #plt.imshow(obs, interpolation='none')
             #plt.plot()
             #plt.pause(0.001)  # pause a bit so that plots are updated
@@ -109,7 +109,7 @@ def run_agents(env, rl_agent, agents, cfg):
             raw_features = rl_agent.image_to_feature(obs, info, gametype)
             features = rl_agent.feature_to_mf(raw_features)
             r = r + reward
-            if(done):
+            if done or done2:
                 break
             t += 1
         if t == cfg.train.max_steps:
@@ -251,7 +251,7 @@ def train(cfg, rl_agent):
     n_actions = env.action_space.n
     gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
-    obs, _, _, info = env.step(1)
+    obs, _, _, _, info = env.step(1)
     raw_features = rl_agent.image_to_feature(obs, info, gametype)
     features = rl_agent.feature_to_mf(raw_features)
     if cfg.train.use_raw_features:
