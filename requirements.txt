@@ -1,6 +1,6 @@
 wheel
 captum
-gym==0.17.2
+gym
 imageio
 joblib
 matplotlib

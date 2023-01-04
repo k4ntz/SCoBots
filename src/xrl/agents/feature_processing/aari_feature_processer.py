@@ -10,8 +10,10 @@ from xrl.agents.feature_processing.utils_color_categorisation import _colordist,
     colors_matrices
 
 
+
 FUNCTIONS = dict()
 PROPERTIES = dict()
+COLOR_INT_MEMORY = dict()
 eps = np.finfo(np.float32).eps.item()
 
 # decorator to register properties and functions
@@ -101,6 +103,19 @@ def get_velocity(pos_history: Tuple[int, int, int, int]) -> float:
     return vel
 
 
+@register(type="F", name="COLOR", params=["RGB"], desc="Index of colorname")
+def get_color_name(rgb: Tuple[int, int, int]) -> int:
+    # only calc distances if new unseen rgb value
+    if rgb in COLOR_INT_MEMORY.keys():
+        return COLOR_INT_MEMORY[rgb]
+    else:
+        comp_list = [(c[0], _colordist(rgb, c[1])) for c in colors_matrices.items()] 
+        comp_list2 = sorted(comp_list, key=lambda el: el[1])
+        color_int = COLOR_TO_INT[comp_list2[0][0]]
+        COLOR_INT_MEMORY[rgb] = color_int
+        return color_int
+
+
 # helper function to calc linear equation
 def _get_lineq_param(obj1, obj2):
     x = obj1
@@ -109,13 +124,9 @@ def _get_lineq_param(obj1, obj2):
     m, c = np.linalg.lstsq(A, y, rcond=None)[0]
     return m, c
 
+
 # TODO: remove dummy function
 def calc_preset_mifs(temp):
     return temp
 
 
-@register(type="F", name="COLOR", params=["RGB"], desc="Index of colorname")
-def get_color_name(rgb: Tuple[int, int, int]) -> int:
-    comp_list = [(c[0], _colordist(rgb, c[1])) for c in colors_matrices.items()]
-    comp_list2 = sorted(comp_list, key=lambda el: el[1])
-    return COLOR_TO_INT[comp_list2[0][0]]
