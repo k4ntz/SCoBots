@@ -1,29 +1,20 @@
-import imp
-from operator import mod
-import gym
 import numpy as np
 import os
 import random
-import math 
-import csv
 import random
+import time
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.nn.modules import module
 import torch.optim as optim
+import xrl.utils.utils as xutils
 from torch.utils.tensorboard import SummaryWriter
 from torch.distributions import Categorical
 from tqdm import tqdm
-
 from rtpt import RTPT
-
-import xrl.utils.utils as xutils
 from xrl.environments import env_manager
 from xrl.agents.policies.policy_model import policy_net as Policy
-
 from xrl.agents import Agent
 
+EPS = np.finfo(np.float32).eps.item()
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):
     os.makedirs(PATH_TO_OUTPUTS)
@@ -32,19 +23,6 @@ model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pt
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-# timing wrapper
-import time
-from functools import wraps
-def timeit(func):
-    @wraps(func)
-    def timeit_wrapper(*args, **kwargs):
-        start_time = time.perf_counter()
-        result = func(*args, **kwargs)
-        end_time = time.perf_counter()
-        total_time = end_time - start_time
-        print(f"function: '{func.__name__}' | duration: {total_time:.4f}s")
-        return result
-    return timeit_wrapper
 
 def select_action(features, policy, random_tr = -1, n_actions=3):
     input = torch.tensor(features).unsqueeze(0).float().to(dev)
@@ -62,27 +40,26 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
     return action, log_prob, probs.detach().cpu().numpy()
 
 
-def finish_episode(policy, optimizer, eps, cfg):
+def finish_episode(policy, optimizer, cfg, log_probs, rewards, entropies):
     R = 0
-    entropy_alpha = cfg.train.entropy_alpha
+    entropy_alpha = cfg.train.entropy_alpha #0 if not set in cfg
     policy_loss = []
     returns = []
-    for r, e in zip(policy.rewards[::-1], policy.entropies[::-1]):
+    for r, e in zip(rewards[::-1], entropies[::-1]):
         # discounted reward including entropy regularization
         R = r + entropy_alpha * e + cfg.train.gamma * R 
         returns.insert(0, R)
+
     returns = torch.tensor(returns, device=dev)
-    returns = (returns - returns.mean()) / (returns.std() + eps)
-    for log_prob, R in zip(policy.saved_log_probs, returns):
+    returns = (returns - returns.mean()) / (returns.std() + EPS)
+    for log_prob, R in zip(log_probs, returns):
         policy_loss.append((-log_prob * R))
     optimizer.zero_grad()
+
     policy_loss = torch.cat(policy_loss).sum() #was mean
     policy_loss.backward()
     optimizer.step()
-    episode_entropy = np.mean(policy.entropies)
-    del policy.rewards[:]
-    del policy.saved_log_probs[:]
-    del policy.entropies[:]
+    episode_entropy = np.mean(entropies)
     return policy, optimizer, policy_loss, episode_entropy
 
 
@@ -110,64 +87,35 @@ def load_model(model_path, policy, optimizer=None):
     return policy, optimizer, i_episode
 
 
-def calc_fr(features):
-        if features is None:
-            return 0
-        p_coords = features[0:2]
-        e_coords = features[2:4]
-        b_coords = features[4:6]
-        p_b_distance = math.sqrt((p_coords[0] - b_coords[0])**2 + (p_coords[1] - b_coords[1])**2)
-        # if not raw_features[3] is None:
-        #    p_b_distance_past = math.sqrt((p_coords_past[0] - b_coords_past[0])**2 + (p_coords_past[1] - b_coords_past[1])**2)
-        # else:
-        #    p_b_distance_past = 9000 #random high number for first step
-        # features.append(p_b_distance_now)
-        # features.append(p_b_distance_past)
-        return p_b_distance
-
-
-def normalize_features(features, max_observed):
-    print(features)
-    max_value = max(features)
-    if max_observed < max_value:
-        return features, max_value      # dont normalize on the fly for now
-    else:
-        return features, max_observed
-
-
 def train(cfg, agent):
     cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
-    with open(os.getcwd() + cfg.logdir + cfg.exp_name+'.csv', 'w+', newline='') as csvfile:
-        csv_writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        csv_writer.writerow(["episode", "steps", "natural_reward", "feedback_reward", "combined_reward",
-         "feedback_alpha", "policy_net_loss", "policy_net_entropy"])
     print('Experiment name:', cfg.exp_name)
     torch.manual_seed(cfg.seed)
     print('Seed:', torch.initial_seed())
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
+
     # init env to get params for policy net
     env = env_manager.make(cfg, True)
     n_actions = env.action_space.n
     gametype = xutils.get_gametype(env)
-    _, ep_reward = env.reset(), 0
+    env.reset()
     obs, _, _, _, info = env.step(1)
     raw_features = agent.image_to_feature(obs, info, gametype)
     features = agent.feature_to_mf(raw_features)
     print('Action space: ' + str(env._env.unwrapped.get_action_meanings()))
+    print("Feature Vector Length:", len(features))
+    print("Hidden Layer:", cfg.train.make_hidden)
 
-    # init policy net
-    print("Make hidden layer in nn:", cfg.train.make_hidden)
-    print("Feature vector length:", len(features))
-    policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
-    policy.to(dev)
+    # init fresh policy and optimizer
+    policy = Policy(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden).to(dev)
     optimizer = optim.Adam(policy.parameters(), lr=cfg.train.learning_rate)
-    eps = np.finfo(np.float32).eps.item()
     i_episode = 1
-
-    # load saved model if exists
+    # overwrite if checkpoint exists
     model_path = model_name(cfg.exp_name)
     if os.path.isfile(model_path):
         policy, optimizer, i_episode = load_model(model_path, policy, optimizer)
+        i_episode += 1
+
     print('Episodes:', cfg.train.num_episodes)
     print('Current episode:', i_episode)
     print("Random Action probability:", cfg.train.random_action_p)
@@ -178,191 +126,79 @@ def train(cfg, agent):
     agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
     # setup last variables for init
     running_reward = None
-    cr_buffer = 0
     nr_buffer = 0
-    fb_buffer = 0
     pnl_buffer = 0
     pne_buffer = 0
     step_buffer = 0
-    ig_sum = []
-    nr_history = []
-    cr_history = []
-    max_distance_observed = 1 #change to a generic approach
-    max_feature_value_observed = 0 #TODO: think about what to persist when continuing from checkpoint
-
-    feedback_alpha = cfg.train.feedback_alpha
-    delta = cfg.train.feedback_delta
-    sign = -1
 
     # training loop
-    rtpt = RTPT(name_initials='SeSz', experiment_name=cfg.exp_name,
-                    max_iterations=cfg.train.num_episodes)
+    rtpt = RTPT(name_initials='SeSz', experiment_name=cfg.exp_name, max_iterations=cfg.train.num_episodes)
     rtpt.start()
-    #pbar = tqdm(initial = i_episode, total = cfg.train.num_episodes)
-    while i_episode < cfg.train.num_episodes: #TODO: name to trajectories
-        # init env
-        _, ep_comb_reward, ep_natural_reward, ep_feedback_reward = env.reset(), 0, 0, 0
-        # env loop
+    while i_episode < cfg.train.num_episodes:
+        env.reset()
+        rewards = []
+        entropies = []
+        log_probs = []
+        ep_natural_reward = 0
+        int_duration = 0
         t = 0
-        last_raw_features = None
-        last_features = None
-        while t < cfg.train.max_steps:  # Don't infinite loop while learning TODO: naming
-  #          if t == 10: exit()
-           # features = np.random.random_sample((6))
-            #print(">>>>" + str(features))
-
-            #features, max_feature_value_observed = normalize_features(features, max_feature_value_observed) #normalize feature
+        start_time = time.perf_counter()
+        while t < cfg.train.max_steps:
+            # interaction
+            int_s_time = time.perf_counter()
             action, log_prob, probs = agent.mf_to_action(features, agent.model, cfg.train.random_action_p, n_actions)
-
-
-            policy.saved_log_probs.append(log_prob)
             obs, natural_reward, terminated, truncated, info = env.step(action)
-            # reward <- distance(player, ball)
-            # reward_list.append((reward_distance, 0.7)) in the future probably
+            raw_features = agent.image_to_feature(obs, info, gametype)
+            features = agent.feature_to_mf(raw_features)
+            int_duration += time.perf_counter() - int_s_time
 
-            raw_features = agent.image_to_feature(obs, info, gametype) #TODO doublecheck para order
-            features = agent.feature_to_mf(raw_features) #0.05s without, 0.0007s with color_memory for rgb function
-
-            # distance delta of player<->ball between present and past
-            #b_p_distance_now = calc_fr(features)
-          #  b_p_distance_past = calc_fr(last_features)
-            #if b_p_distance_now > max_distance_observed:
-            #    max_distance_observed = b_p_distance_now
-
-            # difference of potentials scale to max_distance
-            # feedback_reward = feedback_alpha * ((-b_p_distance_now - -b_p_distance_past ) / max_distance_observed)
-            # comb_reward = natural_reward + feedback_reward
-
-            # normalize to [0,1]. convex feedback_reward handling
-            feedback_reward = 0 #-(b_p_distance_now / max_distance_observed )
-            comb_reward = natural_reward + (feedback_alpha * feedback_reward)
-            # alpha = feedback_alpha
-            # comb_reward = (1 - alpha) * natural_reward + alpha * feedback_reward
-            
-            # difference of potentials normalized with max_distance_observed
-            # feedback_reward = (- b_p_distance_now + b_p_distance_past) / max_distance_observed # -distance - -distance
-            # comb_reward = reward + feedback_reward
-
-            # distance_delta = features[-2] - features[-1] 
-            # reward distance reduction
-            #if distance_delta < 0:
-            #    feedback_reward = 1
-            #elif distance_delta > 0:
-            #    feedback_reward = -1
-            #else:
-            #    feedback_reward = 0
-            # reward weights
-            #comb_reward = float(feedback_reward)
-            
-            # NOTE: no impact if entropy set to 0 in yaml
+            # collection
             entropy = -np.sum(list(map(lambda p : p * (np.log(p) / np.log(n_actions)) if p[0] != 0 else 0, probs)))
-            #print(entropy)
-            policy.rewards.append(comb_reward)
-            policy.entropies.append(entropy)
-            ep_comb_reward += comb_reward
+            log_probs.append(log_prob)
+            rewards.append(natural_reward)
+            entropies.append(entropy)
             ep_natural_reward += natural_reward
-            ep_feedback_reward += feedback_reward
-            last_raw_features = raw_features
-            last_features = features
             t += 1
             if terminated or truncated:
                 break
+        # policy update
+        bp_s_time = time.perf_counter()
+        policy, optimizer, loss, ep_entropy = finish_episode(policy, optimizer, cfg, log_probs, rewards, entropies)
+        bp_duration = time.perf_counter() - bp_s_time
 
-        # SeSzt: not used for optimization, just for logging
-        # only optimize when t < max ep steps
-        if t >= cfg.train.max_steps:
-            ep_comb_reward = -21 #TODO: change to automatically game specific
-        # replace first running reward with last reward for loaded models
+        # checkpointing
+        if (i_episode) % cfg.train.save_every == 0:
+            save_policy(cfg.exp_name, policy, i_episode, optimizer)
 
-        # SeSzt:  this reward is just for tracking purposes, not used for training
+        # update logging data
+        ep_duration = time.perf_counter() - start_time
         if running_reward is None:
-            running_reward = ep_comb_reward
+            running_reward = ep_natural_reward
         else:
-            running_reward = 0.05 * ep_comb_reward + (1 - 0.05) * running_reward
-
-        cr_buffer += ep_comb_reward
+            running_reward = 0.05 * ep_natural_reward + (1 - 0.05) * running_reward
         nr_buffer += ep_natural_reward
-        fb_buffer += ep_feedback_reward
-
-        policy, optimizer, loss, ep_entropy = finish_episode(policy, optimizer, eps, cfg)
-        print('Episode {}\tLast reward: {:.2f}\tRunning reward: {:.2f}\tNR: {:.2f}\tEntropy: {:.2f}\tSteps: {}       '.format(
-            i_episode, ep_comb_reward, running_reward, ep_natural_reward, ep_entropy, t)) #, end="\r")
-        
-        pnl_buffer += loss
+        pnl_buffer += loss.detach()
         pne_buffer += ep_entropy
         step_buffer += t
 
-        # turn feedback reward alpha up or down when natural reward is stuck
-        # TODO: make reward histories persistent to be able to continue training after aborting
-        cr_history.append(ep_comb_reward)
-        nr_history.append(ep_natural_reward)
-        first_probe_ep = cfg.train.stale_window + cfg.train.stale_probe_window
-        if i_episode >= first_probe_ep and len(nr_history) >= first_probe_ep:
-            if (i_episode % cfg.train.stale_window == cfg.train.stale_probe_window):
-                # cr_past = cr_history[-cfg.train.stale_window]
-                present_probe_start = - cfg.train.stale_probe_window
-                present_probe_end = -1
-                present_window =  nr_history[present_probe_start : present_probe_end]
-                present_avg = sum(present_window) / len(present_window)
-                past_probe_start = -cfg.train.stale_window - cfg.train.stale_probe_window
-                past_probe_end = -cfg.train.stale_window 
-                past_window = nr_history[past_probe_start : past_probe_end]
-                #print(past_probe_start)
-                #print(past_probe_end)
-                #print(past_window)
-                past_avg = sum(past_window) / len(past_window)
-                change = (present_avg - past_avg) / (abs(past_avg) + eps)
-                #print("")
-                #print(str(past_avg) + " " + str(present_avg) + " " + str(change))
-
-                #print("")
-                if feedback_alpha == 0:
-                    sign = 1
-                elif feedback_alpha == 1.0:
-                    sign = -1
-
-                # NOTE: no impact when feedback set to 0 in config yaml
-                if change < cfg.train.stale_threshold:
-                    feedback_alpha+= sign * delta
-                    #print(sign)
-
-                #print("")
-
-        # TODO: handle pausing and resuming training
-        # fine grained csv logging
-        with open(os.getcwd() + cfg.logdir + cfg.exp_name+'.csv', 'a', newline='') as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            loss_np = loss.detach().cpu().numpy()
-            csv_writer.writerow([i_episode, t, ep_natural_reward, ep_feedback_reward, ep_comb_reward, feedback_alpha, loss_np, ep_entropy])
-    
+        # episode stats
+        print('Episode {}\tLast reward: {:.2f}\tRunning reward: {:.2f}\tEntropy: {:.2f}\tSteps: {}\tDuration: {:.2f} [ENV: {:.2f} | BP: {:.2f}]'.format(
+            i_episode, ep_natural_reward, running_reward, ep_entropy, t, ep_duration, int_duration, bp_duration))
         # tfboard logging
         if i_episode % cfg.train.log_steps == 0:
-            avg_r = cr_buffer / cfg.train.log_steps
             avg_nr = nr_buffer / cfg.train.log_steps
-            avg_fb = fb_buffer / cfg.train.log_steps
             avg_pnl = pnl_buffer / cfg.train.log_steps
             avg_pne = pne_buffer / cfg.train.log_steps
             avg_step = step_buffer / cfg.train.log_steps
             writer.add_scalar('rewards/avg natural', avg_nr, i_episode)
-            writer.add_scalar('rewards/avg combined', avg_r, i_episode)
-            writer.add_scalar('rewards/avg feedback', avg_fb, i_episode)
-            writer.add_scalar('rewards/feedback_alpha', feedback_alpha, i_episode)
             writer.add_scalar('loss/avg_policy_net', avg_pnl, i_episode)
             writer.add_scalar('loss/avg_policy_net_entropy', avg_pne, i_episode)
             writer.add_scalar('various/avg_steps', avg_step, i_episode)
-            cr_buffer = 0
             nr_buffer = 0
-            fb_buffer = 0
             pnl_buffer = 0
             pne_buffer = 0
             step_buffer = 0
-      
-        # checkpointing
-        if (i_episode + 1) % cfg.train.save_every == 0:
-            save_policy(cfg.exp_name, policy, i_episode + 1, optimizer)
-        # finish episode
         i_episode += 1
-        #pbar.update(1)
         rtpt.step()
 
 
