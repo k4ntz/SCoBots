@@ -42,6 +42,8 @@ from xrl.agents import Agent
 import xrl.utils.pruner as pruner
 from xrl.utils.focus import Focus
 
+dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 
 # helper function to select action from loaded agent
 # has random probability parameter to test stability of agents
@@ -51,7 +53,8 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
     sample = random.random()
     if sample > random_tr:
         # calculate probabilities of taking each action
-        probs = policy(torch.tensor(features).unsqueeze(0).float())
+        f = torch.tensor(features).unsqueeze(0).float().to(dev)
+        probs = policy(f)
         # sample an action from that set of probs
         sampler = Categorical(probs)
         action = sampler.sample()
@@ -70,23 +73,25 @@ def play_agent(agent, cfg):
     obs, _, _, _, info = env.step(1)
     raw_features = agent.image_to_feature(obs, info, gametype)
     features = agent.feature_to_mf(raw_features)
+
     # init objects
     summary(agent.model, input_size=(1, len(features)), device=cfg.device)
     # make multiple runs for eval
-    runs = 5
+    runs = 10
     print("Runs:", runs)
     rewards = []
     rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name + "_EVAL",
                 max_iterations=runs)
     rtpt.start()
+    agent.model.to(dev)
     for run in tqdm(range(runs)):
         # env loop
         t = 0
         ep_reward = 0
         env.reset()
         while t < cfg.train.max_steps:  # Don't infinite loop while playing
+            #features = torch.tensor(features).unsqueeze(0).float()
             action = agent.mf_to_action(features, agent.model, -1, n_actions)
-            features = torch.tensor(features).unsqueeze(0).float()
             if cfg.liveplot:
                 plt.imshow(obs, interpolation='none')
                 plt.plot()
