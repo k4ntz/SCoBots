@@ -1,6 +1,6 @@
 wheel
 captum
-gym
+gymnasium[atari]
 imageio
 joblib
 matplotlib
