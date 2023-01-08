@@ -12,7 +12,9 @@ EPS = np.finfo(np.float32).eps.item()
 def init():
     pass
 
-# REGISTERED PROPERTIES
+##########################
+# PROPERTIES TO REGISTER
+##########################
 @register(type="P", name="POSITION", params= ["OBJECT"], desc="get the position for given object")
 def get_position(obj: GameObject) -> Tuple[int, int]:
     return tuple(obj.get_coords()[0])
@@ -27,20 +29,18 @@ def get_rgb(obj: GameObject) -> Tuple[int, int, int]:
     return tuple(obj.rgb)
 
 
-# REGISTERED FUNCTIONS
+##########################
+# FUNCTIONS TO REGISTER
+##########################
 @register(type="F", name="LINEAR_TRAJECTORY", params=["POSITION", "POSITION_HISTORY"], desc="x, y distance to trajectory")
 def calc_lin_traj(a_position: Tuple[int, int], b_history: Tuple[int, int, int, int]) -> Tuple[int, int]:
     obj1 = a_position
     obj2 = b_history[0:2]
     obj2_past = b_history[2:4]
-    # append trajectory cutting points
     x, y = obj2, obj2_past
     A = np.vstack([x, np.ones(len(x))]).T
     m, c = np.linalg.lstsq(A, y, rcond=None)[0]
-    # now calc target pos
-    # y = mx + c substracted from its y pos
     disty = np.int16(m * obj1[0] + c) - obj1[1]
-    # x = (y - c)/m substracted from its x pos
     distx = np.int16((obj1[1] - c) / (m+EPS))  - obj1[0]
     return disty, distx
 

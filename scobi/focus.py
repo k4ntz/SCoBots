@@ -4,6 +4,7 @@ from pathlib import Path
 from itertools import permutations
 from scobi.concepts import init as concept_init
 from scobi.utils.decorators import FUNCTIONS, PROPERTIES
+from termcolor import colored
 
 # TODO: restrict actions, define rewards, more verbose output when using focus files
 class FocusFileParserError(Exception):
@@ -13,14 +14,14 @@ class FocusFileParserError(Exception):
 
 
 class Focus():
-    def __init__(self, cfg, raw_features, actions):
+    def __init__(self, env_name, interactive, fodir, fofile, raw_features, actions):
         concept_init()
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
         self.OBJECTS = raw_features.values()
         self.OBJECT_NAMES = [x.name for x in self.OBJECTS]
         self.ACTIONS = actions
-        self.ENV_NAME = cfg["env_name"]
+        self.ENV_NAME = env_name
         self.PARSED_OBJECTS = []
         self.PARSED_ACTIONS = []
         self.PARSED_PROPERTIES = []
@@ -30,38 +31,42 @@ class Focus():
         self.generate_property_set()
         self.generate_function_set()
 
-        if cfg["focus_mode"] == "scobot":
-            if cfg["focus_file"]:
-                print("> Specified focus file ignored, because non interactive scobot mode. Using default.")
-            fpath = Path.cwd() / Path(cfg["focusdir"]) / Path("default_focus_" + cfg["exp_name"] + ".yaml")
-            if not fpath.exists():
-                self.generate_fresh_yaml(fpath)
-            self.FOCUSFILEPATH = fpath
-            print("> Default focus file: '%s'" % fpath.name)
-            self.load_focus_file(self.FOCUSFILEPATH)
-
-        elif cfg["focus_mode"] == "iscobot":
-            if cfg["focus_file"]:
-                fpath = Path.cwd() / Path(cfg["focusdir"])  / Path(cfg["focus_file"])
+        # rework the control flow here, keep interactive mode or not?
+        if interactive == True:
+            print(colored("scobi >", "blue"),  "Interactive Mode")
+            if fofile:
+                fpath = Path.cwd() / Path(fodir)  / Path(fofile)
                 if fpath.exists():
                     self.load_focus_file(fpath)
-                    print("> Successfully loaded custom focus file '%s'" % fpath.name)
+                    print(colored("scobi >", "blue"), "Successfully loaded custom focus file %s." % colored(fpath.name, "light_green"))
                     self.FOCUSFILEPATH = fpath
                 else:
-                    raise FocusFileParserError("> Specified focus file not found!")
+                    print(colored("scobi >", "light_red"), "Specified focus file %s not found!" %  colored(fpath.name, "light_green"))
+                    exit()
             else:
-                fpath = Path.cwd() / Path(cfg["focusdir"]) / Path("default_focus_" + cfg["exp_name"] + ".yaml")
+                fpath = Path.cwd() / Path(fodir) / Path("default_focus_" + env_name + ".yaml")
                 if fpath.exists():
                     self.FOCUSFILEPATH = fpath
-                    print("> No focus file specified, but found the auto-generated default. You can edit it now. Rename to continue. '%s'" % fpath.name)
+                    print(colored("scobi >", "light_red"), "No focus file specified, but found an auto-generated default. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
                     exit()
                 else:
                     self.generate_fresh_yaml(fpath)
-                    print("> No focus file specified! Auto-generated a default iscobot focus file. You can edit it now. Rename to continue. '%s'" % fpath.name)
+                    print(colored("scobi >", "light_red"), "No focus file specified! Auto-generated a default focus file. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
                     exit()
         else:
-            print("> Invalid focus_mode. Available modes: 'scobot' or 'iscobot'")
-            exit()
+            print(colored("scobi >", "blue"),  "Non-Interactive Mode")
+            if fofile:
+                print(colored("scobi >", "blue"), "Specified focus file ignored, because in non-interactive scobi mode. Using default.")
+            fpath = Path.cwd() / Path(fodir)  / Path("default_focus_" + env_name + ".yaml")
+            if not fpath.exists():
+                self.generate_fresh_yaml(fpath)
+                print(colored("scobi >", "blue"), "No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
+            self.FOCUSFILEPATH = fpath
+            print(colored("scobi >", "blue"), "Using focus file %s." % colored(fpath.name, "light_green"))
+            self.load_focus_file(self.FOCUSFILEPATH)
+
+
+
 
     def generate_property_set(self):
         for k, v in PROPERTIES.items():
