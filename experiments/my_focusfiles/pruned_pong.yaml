@@ -76,7 +76,7 @@ SELECTION:
     - POSITION: enemy
   - EUCLIDEAN_DISTANCE:
     - POSITION: ball
-    - POSITION: player
+    - POSIION: player
   - EUCLIDEAN_DISTANCE:
     - POSITION: enemy
     - POSITION: ball
