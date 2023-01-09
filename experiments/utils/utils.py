@@ -15,7 +15,7 @@ from sklearn.decomposition import PCA
 from scipy.stats import entropy
 
 from argparse import ArgumentParser
-from xrl.utils.xrl_config import cfg
+from utils.xrl_config import cfg
 from functools import wraps
 
 

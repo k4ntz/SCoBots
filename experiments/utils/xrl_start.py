@@ -1,46 +1,26 @@
 # main file for all rl algos
 
 import random
-from sklearn import tree
 import torch
-import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 
 from captum.attr import IntegratedGradients
 from torch.distributions import Categorical
 from torchinfo import summary
-from termcolor import colored
 from tqdm import tqdm
 from rtpt import RTPT
 
-from xrl.agents.policies import reinforce
-from xrl.agents.policies import genetic_rl as genetic
-from xrl.agents.policies import dreamer_v2
-from xrl.agents.policies import minidreamer
+from algos import reinforce
+#from algos import genetic_rl as genetic
+
 
 #import xrl.utils.plotter as xplt
-import xrl.utils.video_logger as vlogger
-import xrl.utils.utils as xutils
-import xrl.utils.plotter as xplt
-import xrl.utils.tree_explainer as tx
-
-# otherwise genetic loading model doesnt work, torch bug?
-from xrl.agents.policies.policy_model import policy_net
-from xrl.environments import env_manager
-
-# all extractor and processor to later select with infos from config file
-# feature extractor functions
-from xrl.agents.image_extractors.aari_raw_features_extractor import get_labels
-from xrl.agents.image_extractors.color_extractor import ColorExtractor
-from xrl.agents.image_extractors.interactive_color_extractor import IColorExtractor
-
-# feature processing functions
-from xrl.agents.feature_processing.aari_feature_processer import calc_preset_mifs
+import utils.video_logger as vlogger
+import utils.utils as xutils
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
 # agent class
-from xrl.agents import Agent
-import xrl.utils.pruner as pruner
-from xrl.utils.focus import Focus
+#from agent import Agent
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -115,13 +95,13 @@ def play_agent(agent, cfg):
 
 
 # function to call reinforce algorithm
-def use_reinforce(cfg, mode, agent):
-    print("Selected algorithm: REINFORCE")
+def use_reinforce(cfg, mode):
     if mode == "train":
-        reinforce.train(cfg, agent)
+        reinforce.train(cfg)
     else:
-        policy = reinforce.eval_load(cfg, agent)
+        policy = reinforce.eval_load(cfg)
         # reinit agent with loaded model and eval function
+        # TODO: agent class for every algo?
         agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
         if mode == "eval":
             play_agent(agent=agent, cfg=cfg)
@@ -142,25 +122,6 @@ def use_genetic(cfg, mode, agent):
         elif mode == "explain":
             pass
             # explain(agent=agent, cfg=cfg)
-
-
-# function to call dreamerv2
-def use_dreamerv2(cfg, mode):
-    print("Selected algorithm: DreamerV2")
-    print("Implementation has errors, terminating ...")
-    #if cfg.mode == "train":
-    #    dreamer_v2.train(cfg)
-    #elif cfg.mode == "eval":
-    #    dreamer_v2.eval(cfg)
-
-
-# function to call minidreamer
-def use_minidreamer(cfg, mode):
-    print("Selected algorithm: Minidreamer")
-    if mode == "train":
-        minidreamer.train(cfg)
-    elif mode == "eval":
-        print("Eval not implemented ...")
 
 
 # init agent function
@@ -200,22 +161,12 @@ def init_agent(cfg):
 # main function
 # switch for each algo
 def xrl(cfg, mode):
-    # init agent without third part of pipeline
-    agent = init_agent(cfg)
     # algo selection
     # 1: REINFORCE
     # 2: Deep Neuroevolution
-    # 3: DreamerV2
-    # 4: Minidreamer
     if cfg.rl_algo == 1:
-        use_reinforce(cfg, mode, agent)
+        use_reinforce(cfg, mode)
     elif cfg.rl_algo == 2:
-        use_genetic(cfg, mode, agent)
-    elif cfg.rl_algo == 3:
-        raise RuntimeError("Pls don't use, not working :( ...")
-        use_dreamerv2(cfg, mode)
-    elif cfg.rl_algo == 4:
-        raise RuntimeError("Pls don't use, Minidreamer not finished :( ...")
-        use_minidreamer(cfg, mode)
+        use_genetic(cfg, mode)
     else:
         print("Unknown algorithm selected")
