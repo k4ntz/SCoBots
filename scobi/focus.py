@@ -6,11 +6,13 @@ from scobi.concepts import init as concept_init
 from scobi.utils.decorators import FUNCTIONS, PROPERTIES
 from termcolor import colored
 
+
 # TODO: restrict actions, define rewards, more verbose output when using focus files
-class FocusFileParserError(Exception):
-    def __init__(self, message):
-        self.message = message
-        super().__init__(self.message)
+def FocusFileParserError(msg):
+    print(colored("scobi >", "light_red"), "Parser Error: "+msg)
+    exit()
+
+       
 
 
 class Focus():
@@ -209,14 +211,15 @@ class Focus():
     def validate_properties_signatures(self, propslist):
         for p in propslist:
             if p[1] not in self.OBJECT_NAMES:
-                raise FocusFileParserError("Unknown object in properties selection: %s" % p[1])
+               FocusFileParserError("Unknown object in properties selection: %s" % p[1])
             if p[0] not in PROPERTIES.keys():
-                raise FocusFileParserError("Unknown object in properties selection: %s" % p[0])
+                FocusFileParserError("Unknown object in properties selection: %s" % p[0])
             prop_definition = PROPERTIES[p[0]]
             o = self.get_object_by_name(p[1], self.OBJECTS)
             prop_sig = prop_definition["expects"][0][0].annotation
             if type(o) != prop_sig:
-                raise FocusFileParserError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
+                print(colored("scobi >", "light_red"), "Parser Error")
+                FocusFileParserError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
         return True
 
 
@@ -224,23 +227,23 @@ class Focus():
         for f in funclist:
             parsed_para_sig = []
             if f[0] not in FUNCTIONS.keys():
-                raise FocusFileParserError("Unknown function in function selection: %s" % f[0])
+                FocusFileParserError("Unknown function in function selection: %s" % f[0])
             for para in f[1]:
                 if para[0] not in PROPERTIES.keys():
-                    raise FocusFileParserError("Unknown property in functions selection: %s" % para[0])
+                    FocusFileParserError("Unknown property in functions selection: %s" % para[0])
                 if para[1] not in self.OBJECT_NAMES:
-                    raise FocusFileParserError("Unknown object in functions selection: %s" % para[1])
+                    FocusFileParserError("Unknown object in functions selection: %s" % para[1])
                 prop_definition = PROPERTIES[para[0]]
                 o = self.get_object_by_name(para[1], self.OBJECTS)
                 prop_sig = prop_definition["expects"][0][0].annotation
                 parsed_para_sig.append(prop_definition["returns"][0])
                 if type(o) != prop_sig:
-                    raise FocusFileParserError("Signature mismatch in functions selection. Property '%s' expects '%s'" % (para[0], prop_sig))
+                    FocusFileParserError("Signature mismatch in functions selection. Property '%s' expects '%s'" % (para[0], prop_sig))
             func_definition = FUNCTIONS[f[0]]
             function_sig = [x[0].annotation for x in func_definition["expects"]]
             sig_desc = [x[1] for x in func_definition["expects"]]
             if function_sig != parsed_para_sig:
-                raise FocusFileParserError("Signature mismatch in functions selection. Function '%s' expects '%s'" % (f[0], sig_desc))
+                FocusFileParserError("Signature mismatch in functions selection. Function '%s' expects '%s'" % (f[0], sig_desc))
         return True
 
 
@@ -248,13 +251,13 @@ class Focus():
         if self.validate_objects(objs):
             return objs
         else:
-            raise FocusFileParserError("Invalid objects specified in objects selection!")
+            FocusFileParserError("Invalid objects specified in objects selection!")
 
     def import_actions(self, acts):
         if self.validate_actions(acts):
             return acts
         else:
-            raise FocusFileParserError("Invalid actions specified in actions selection!")
+            FocusFileParserError("Invalid actions specified in actions selection!")
 
     def import_properties(self, props):
         out = []
@@ -293,7 +296,7 @@ class Focus():
             in_dict = yaml.safe_load(f)
         parsed_env_name = in_dict["ENVIRONMENT"]
         if self.ENV_NAME != parsed_env_name:
-            raise FocusFileParserError("Env and focus file env do not match: %s, %s" % (self.ENV_NAME, parsed_env_name))
+            FocusFileParserError("Env and focus file env do not match: %s, %s" % (self.ENV_NAME, parsed_env_name))
         sdict = in_dict["SELECTION"]
         self.PARSED_OBJECTS = self.import_objects(sdict["objects"])
         self.PARSED_ACTIONS = self.import_actions(sdict["actions"])

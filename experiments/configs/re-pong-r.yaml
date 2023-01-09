@@ -1,7 +1,6 @@
 env_name: 'PongDeterministic-v4'
 
 rl_algo: 1
-
 parallel: False
 
 logdir: '/relogs/'
