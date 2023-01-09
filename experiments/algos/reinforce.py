@@ -96,7 +96,7 @@ def train(cfg):
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
 
     # init env to get params for policy net
-    env = Environment(cfg.env_name, focus_dir="focusfiles")
+    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, info = env.step(1)

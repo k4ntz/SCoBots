@@ -12,5 +12,5 @@ def make(env_name, notify=False):
         import scobi.environments.ocgym as ocgym
         env = ocgym.make(env_name, notify)
         # TODO: get env name from OC_atari instance
-        print(colored("scobi >", "blue"), "Environment %s specified. Compatibale object extractor %s loaded." % (colored(env_name, "yellow"),colored("OC_Atari", "yellow")))
+        print(colored("scobi >", "blue"), "Environment %s specified. Compatible object extractor %s loaded." % (colored(env_name, "light_cyan"),colored("OC_Atari", "light_cyan")))
         return env

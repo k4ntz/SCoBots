@@ -4,7 +4,7 @@ rl_algo: 2
 
 parallel: False
 
-logdir: '/xrl/genlogs/'
+logdir: '/genlogs/'
 
 video_steps: 100
 

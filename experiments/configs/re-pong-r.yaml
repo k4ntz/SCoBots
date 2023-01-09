@@ -15,7 +15,7 @@ train:
 
   num_episodes: 50000
   max_steps: 50000
-  
+
   log_steps: 25
   # save every is for episodes
   save_every: 100
