@@ -1,3 +1,4 @@
+from termcolor import colored
 # TODO: make nonstatic
 OCATARI_AVAILABLE_GAMES = ["Boxing", "Breakout", "Skiing", "Pong", "Seaquest", "Tennis"]
 
@@ -9,4 +10,7 @@ def make(env_name, notify=False):
         print("Env Name:", env_name)
     if True: # check if game is available and delegate
         import scobi.environments.ocgym as ocgym
-        return ocgym.make(env_name, notify)
+        env = ocgym.make(env_name, notify)
+        # TODO: get env name from OC_atari instance
+        print(colored("scobi >", "blue"), "Environment %s specified. Compatibale object extractor %s loaded." % (colored(env_name, "yellow"),colored("OC_Atari", "yellow")))
+        return env

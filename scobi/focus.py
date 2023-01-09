@@ -37,8 +37,9 @@ class Focus():
             if fofile:
                 fpath = Path.cwd() / Path(fodir)  / Path(fofile)
                 if fpath.exists():
+                    print(colored("scobi >", "blue"), "Focus file %s found." % colored(fpath.name, "light_green"))
                     self.load_focus_file(fpath)
-                    print(colored("scobi >", "blue"), "Successfully loaded custom focus file %s." % colored(fpath.name, "light_green"))
+                    print(colored("scobi >", "blue"), "File is valid. Imported.")
                     self.FOCUSFILEPATH = fpath
                 else:
                     print(colored("scobi >", "light_red"), "Specified focus file %s not found!" %  colored(fpath.name, "light_green"))
@@ -61,10 +62,10 @@ class Focus():
             if not fpath.exists():
                 self.generate_fresh_yaml(fpath)
                 print(colored("scobi >", "blue"), "No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
+            print(colored("scobi >", "blue"), "Focus file %s found." % colored(fpath.name, "light_green"))
+            self.load_focus_file(fpath)
+            print(colored("scobi >", "blue"), "File is valid. Imported.")
             self.FOCUSFILEPATH = fpath
-            print(colored("scobi >", "blue"), "Using focus file %s." % colored(fpath.name, "light_green"))
-            self.load_focus_file(self.FOCUSFILEPATH)
-
 
 
 

@@ -78,4 +78,5 @@ def get_color_name(rgb: Tuple[int, int, int]) -> int:
         return COLOR_INT_MEMORY[rgb]
     else:
         _, col_int = get_closest_color(rgb)
+        COLOR_INT_MEMORY[rgb] = col_int
         return col_int

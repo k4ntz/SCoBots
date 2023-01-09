@@ -4,7 +4,7 @@ rl_algo: 1
 
 parallel: False
 
-logdir: '/xrl/relogs/'
+logdir: '/relogs/'
 
 video_steps: 100
 

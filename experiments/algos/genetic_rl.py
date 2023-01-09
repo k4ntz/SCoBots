@@ -6,7 +6,9 @@ import os
 import copy
 import multiprocessing
 import random
-
+import sys
+from os import path
+sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -21,7 +23,7 @@ from captum.attr import IntegratedGradients
 
 from rtpt import RTPT
 
-import xrl.utils.utils as xutils
+import utils.utils as xutils
 from xrl.environments import env_manager
 import xrl.utils.pruner as pruner
 
@@ -38,7 +40,7 @@ model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pt
 
 # TODO: Fix serialization problem and decomment after,
 # look at other genetic_rl.py file for details!
-from xrl.agents.policies.policy_model import policy_net
+from networks import policy_net
 
 
 def init_weights(m):

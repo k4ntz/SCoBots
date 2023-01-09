@@ -3,6 +3,7 @@ import numpy as np
 from scobi.environments.drivers import ocatari_step
 from scobi.focus import Focus
 from gymnasium import spaces
+from termcolor import colored
 
 
 class Environment():
@@ -22,6 +23,7 @@ class Environment():
         # TODO: scale observation space to actual vector size (defined by f signatures) without using scobi step
         # TODO: define lower and upper bounds in scobi
         self.observation_space = spaces.Box(low=-1000, high=1000, shape=(len(self.observation_space_description),), dtype=np.float32)
+
 
 
     def step(self, action):
