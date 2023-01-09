@@ -57,11 +57,11 @@ class Focus():
         else:
             print(colored("scobi >", "blue"),  "Non-Interactive Mode")
             if fofile:
-                print(colored("scobi >", "blue"), "Specified focus file ignored, because in non-interactive scobi mode. Using default.")
+                print(colored("scobi >", "yellow"), "Specified focus file ignored, because in non-interactive scobi mode. Using default.")
             fpath = Path.cwd() / Path(fodir)  / Path("default_focus_" + env_name + ".yaml")
             if not fpath.exists():
                 self.generate_fresh_yaml(fpath)
-                print(colored("scobi >", "blue"), "No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
+                print(colored("scobi >", "yellow"), "No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
             print(colored("scobi >", "blue"), "Focus file %s found." % colored(fpath.name, "light_green"))
             self.load_focus_file(fpath)
             print(colored("scobi >", "blue"), "File is valid. Imported.")
