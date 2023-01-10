@@ -23,7 +23,7 @@ from . import networks
 
 logging.SILENT = True #scobi silent
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
-PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
+PATH_TO_OUTPUTS = os.getcwd() + "/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):
     os.makedirs(PATH_TO_OUTPUTS)
 
@@ -155,7 +155,7 @@ def mutate(agent):
 
 
 # function to add elite to childs 
-def add_elite(rl_agent, agents, sorted_parent_indexes, cfg, elite_index=None, only_consider_top_n=10):
+def add_elite(agents, sorted_parent_indexes, cfg, elite_index=None, only_consider_top_n=10):
     candidate_elite_index = sorted_parent_indexes[:only_consider_top_n]
     if(elite_index is not None):
         candidate_elite_index = np.append(candidate_elite_index,[elite_index]) 
@@ -165,7 +165,7 @@ def add_elite(rl_agent, agents, sorted_parent_indexes, cfg, elite_index=None, on
     cpu_cores = min(100, max(multiprocessing.cpu_count(), only_consider_top_n))
     # elite runs from config
     elite_runs = cfg.train.elite_n_runs
-    scores = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(rl_agent, agents[i], runs=elite_runs, cfg=cfg) for i in tqdmcandidate_elite_index)
+    scores = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(agents[i], runs=elite_runs, cfg=cfg) for i in tqdmcandidate_elite_index)
     for i, score in enumerate(scores):
         i = candidate_elite_index[i]
         print("Score for elite i ", i, " is ", score)
@@ -181,14 +181,14 @@ def add_elite(rl_agent, agents, sorted_parent_indexes, cfg, elite_index=None, on
 
 
 # function to create and return children from given parent agents
-def return_children(rl_agent, agents, sorted_parent_indexes, elite_index, cfg):  
+def return_children(agents, sorted_parent_indexes, elite_index, cfg):  
     children_agents = []
     #first take selected parents from sorted_parent_indexes and generate N-1 children
     for i in range(len(agents) - 1):
         selected_agent_index = sorted_parent_indexes[np.random.randint(len(sorted_parent_indexes))]
         children_agents.append(mutate(agents[selected_agent_index]))
     #now add one elite
-    elite_child = add_elite(rl_agent, agents, sorted_parent_indexes, cfg, elite_index)
+    elite_child = add_elite(agents, sorted_parent_indexes, cfg, elite_index)
     children_agents.append(elite_child)
     elite_index = len(children_agents) - 1 #it is the last one
     return children_agents, elite_index
@@ -308,7 +308,7 @@ def train(cfg):
 
 
 # function to eval best agent of last generation
-def eval_load(cfg, agent):
+def eval_load(cfg):
     print('Experiment name:', cfg.exp_name)
     print('Evaluating Mode')
     torch.manual_seed(cfg.seed)
@@ -319,13 +319,12 @@ def eval_load(cfg, agent):
     torch.set_grad_enabled(False)
     # init env
     env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
-    n_actions = env._env.action_space.n
+    n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, info = env.step(1)
-    raw_features = agent.image_to_feature(obs, info, xutils.get_gametype(env))
-    features = agent.feature_to_mf(raw_features)
-    if cfg.train.use_raw_features:
-        features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
+    features = obs
+   # if cfg.train.use_raw_features:
+    #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # initialize N number of agents
     num_agents = 500
     print('Number of agents:', num_agents)
@@ -348,7 +347,6 @@ def eval_load(cfg, agent):
     dummy.load_state_dict(elite_agent.state_dict())
     elite_agent = dummy
     #print("Agent reward:", run_agents(env, agent, [elite_agent], cfg))
-    agent.model = elite_agent
-    agent.mf_to_action = select_action
-    return agent
+    model = elite_agent
+    return model, select_action
 
