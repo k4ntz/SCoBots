@@ -24,6 +24,7 @@ class Focus():
         self.FOCUSFILEPATH = None
         self.PROPERTY_COMPUTE_LAYER = []
         self.FUNC_COMPUTE_LAYER = []
+        self.FEATURE_VECTOR_SIZE = 0
 
         self.generate_property_set()
         self.generate_function_set()
@@ -40,17 +41,14 @@ class Focus():
                     self.FOCUSFILEPATH = fpath
                 else:
                     GeneralError("Specified focus file %s not found!" %  colored(fpath.name, "light_green"))
-                    exit()
             else:
                 fpath = Path.cwd() / Path(fodir) / Path("default_focus_" + env_name + ".yaml")
                 if fpath.exists():
                     self.FOCUSFILEPATH = fpath
                     GeneralError("No focus file specified, but found an auto-generated default. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
-                    exit()
                 else:
                     self.generate_fresh_yaml(fpath)
                     GeneralError("No focus file specified! Auto-generated a default focus file. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
-                    exit()
         else:
             GeneralInfo( "Non-Interactive Mode")
             if fofile:
@@ -213,8 +211,7 @@ class Focus():
             o = self.get_object_by_name(p[1], self.OBJECTS)
             prop_sig = prop_definition["expects"][0][0].annotation
             if type(o) != prop_sig:
-                GeneralError("Parser Error")
-                FocusFileParserError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
+                GeneralError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
         return True
 
 
@@ -326,6 +323,7 @@ class Focus():
                 f_in = [prop_results[i] for i in idxs]
                 return f(*f_in)
             self.FUNC_COMPUTE_LAYER.append(func)
+        self.FEATURE_VECTOR_SIZE = len(np.hstack(self.PROPERTY_COMPUTE_LAYER + self.FUNC_COMPUTE_LAYER).tolist())
 
     
     def get_feature_vector(self, inc_objects_dict):
