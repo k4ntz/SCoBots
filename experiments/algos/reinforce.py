@@ -213,7 +213,7 @@ def eval_load(cfg):
     env.reset()
     obs, _, _, _, info = env.step(1)
     print("Make hidden layer in nn:", cfg.train.make_hidden)
-    policy = networks.FC_Normed_Net(len(obs), cfg.train.hidden_layer_size, n_actions)
+    policy = networks.FC_Normed_Net(len(obs), cfg.train.hidden_layer_size, n_actions).to(dev)
     # load if exists
     model_path = model_name(cfg.exp_name + "-seed" + str(cfg.seed))
     if os.path.isfile(model_path):
