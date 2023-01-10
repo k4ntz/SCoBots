@@ -13,11 +13,11 @@ video_steps: 100
 train:
   random_action_p: 0.05
   gamma: 0.97
-  learning_rate: 0.0001
+  learning_rate: 0.001
 
   num_episodes: 50000
   max_steps: 50000
-  hidden_layer_size: 64
+  hidden_layer_size : 128
 
   log_steps: 25
   # save every is for episodes

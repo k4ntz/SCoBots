@@ -165,3 +165,5 @@ experiments/gdlogs/
 experiments/relogs/
 experiments/video/
 experiments/mdrlogs/
+experiments/joblogs/
+experiments/focusfiles/default_*

@@ -1,37 +1,28 @@
 # deep neuroevolution as a genetic rl algo
-
-import gymnasium as gym
 import numpy as np
 import os
 import copy
 import multiprocessing
 import random
 import sys
+import warnings
 from os import path
 sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import utils.utils as xutils
 from torch.distributions import Categorical
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from joblib import Parallel, delayed
-
-from itertools import count
-from PIL import Image
-from captum.attr import IntegratedGradients
-
 from rtpt import RTPT
 
-import utils.utils as xutils
-from xrl.environments import env_manager
-import xrl.utils.pruner as pruner
+from scobi import Environment
+from scobi.utils import logging
+from . import networks
 
-from xrl.agents import Agent
-
-import matplotlib.pyplot as plt
-
-
+logging.SILENT = True #scobi silent
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
 PATH_TO_OUTPUTS = os.getcwd() + "/xrl/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):
     os.makedirs(PATH_TO_OUTPUTS)
@@ -40,7 +31,8 @@ model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pt
 
 # TODO: Fix serialization problem and decomment after,
 # look at other genetic_rl.py file for details!
-from networks import policy_net
+
+dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def init_weights(m):
@@ -58,12 +50,13 @@ def init_weights(m):
 # function to create random agents of given count
 def return_random_agents(n_inputs, num_agents, n_actions, cfg):
     agents = []
+    # TODO: SeSz: still relevant? latest network definitions didnt use this parameter
     if cfg.train.make_hidden:
         print("Agents have", n_inputs, "input nodes,", cfg.train.hidden_layer_size, "hidden nodes and", n_actions, "output nodes")
     else:
         print("Linear model, no hidden layer! Policy net has", n_inputs, "input nodes and", n_actions, "output nodes")
     for _ in range(num_agents):
-        agent = policy_net(n_inputs, cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
+        agent = networks.FC_Normed_Net(n_inputs, cfg.train.hidden_layer_size, n_actions).to(dev)
         for param in agent.parameters():
             param.requires_grad = False
         init_weights(agent)
@@ -76,10 +69,10 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
     sample = random.random()
     if sample > random_tr:
         # calculate probabilities of taking each action
-        probs = policy(torch.tensor(features).unsqueeze(0).float())
+        probs = policy(torch.tensor(features).unsqueeze(0).float().to(dev))
         # sample an action from that set of probs
         sampler = Categorical(probs)
-        action = sampler.sample()
+        action = sampler.sample().item()
     else:
         action = random.randint(0, n_actions - 1)
     # return action
@@ -87,29 +80,26 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
 
 
 # function to run list of agents in given env
-def run_agents(env, rl_agent, agents, cfg):
+def run_agents(env, agents, cfg):
     reward_agents = []
     for agent in agents:
         agent.eval()
-        gametype = xutils.get_gametype(env)
         n_actions = env.action_space.n
         _ = env.reset()
         obs, _, done, done2, info = env.step(1)
-        raw_features = rl_agent.image_to_feature(obs, info, gametype)
-        features = rl_agent.feature_to_mf(raw_features)
+        features = obs
         r = 0
         t = 0
         while t < cfg.train.max_steps:
-            if cfg.train.use_raw_features:
-                features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
+            #if cfg.train.use_raw_features:
+            #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent, cfg.train.random_action_p, n_actions)
             obs, reward, done, done2, info = env.step(action)
             #plt.imshow(obs, interpolation='none')
             #plt.plot()
             #plt.pause(0.001)  # pause a bit so that plots are updated
             #plt.clf()
-            raw_features = rl_agent.image_to_feature(obs, info, gametype)
-            features = rl_agent.feature_to_mf(raw_features)
+            features = obs
             r = r + reward
             if done or done2:
                 break
@@ -121,25 +111,25 @@ def run_agents(env, rl_agent, agents, cfg):
 
 
 # returns average score of given agent when it runs n times
-def return_average_score(rl_agent, agent, runs, cfg):
+def return_average_score(agent, runs, cfg):
     score = 0.
-    env = env_manager.make(cfg)
+    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name,
                     max_iterations=runs)
     rtpt.start()
     for i in range(runs):
-        score += run_agents(env, rl_agent, [agent], cfg)[0]
+        score += run_agents(env, [agent], cfg)[0]
         rtpt.step()
     avg_score = score/runs
     return avg_score
 
 
 # gets avg score of every agent running n runs 
-def run_agents_n_times(rl_agent, agents, runs, cfg):
+def run_agents_n_times(agents, runs, cfg):
     avg_score = []
     agents = tqdm(agents)
     cpu_cores = min(multiprocessing.cpu_count(), 100)
-    avg_score = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(rl_agent, agent, runs, cfg) for agent in agents)
+    avg_score = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(agent, runs, cfg) for agent in agents)
     return avg_score
 
 
@@ -232,7 +222,7 @@ def load_agents(model_path):
 
 
 # train main function
-def train(cfg, rl_agent):
+def train(cfg):
     print('Experiment name:', cfg.exp_name)
     torch.manual_seed(cfg.seed)
     print('Seed:', torch.initial_seed())
@@ -249,15 +239,13 @@ def train(cfg, rl_agent):
     torch.set_grad_enabled(False)
 
     # init env to get actions count and features space
-    env = env_manager.make(cfg, True)
+    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
-    gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     obs, _, _, _, info = env.step(1)
-    raw_features = rl_agent.image_to_feature(obs, info, gametype)
-    features = rl_agent.feature_to_mf(raw_features)
-    if cfg.train.use_raw_features:
-        features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
+    features = obs
+    #if cfg.train.use_raw_features:
+    #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # initialize N number of agents
     num_agents = 500
     print('Number of agents:', num_agents)
@@ -286,7 +274,7 @@ def train(cfg, rl_agent):
     while generation < generations:
         print("Starting generation", generation)
         # return rewards of agents
-        rewards = run_agents_n_times(rl_agent, agents, n_gen_runs, cfg) #return average of 3 runs
+        rewards = run_agents_n_times(agents, n_gen_runs, cfg) #return average of 3 runs
  
         # sort by rewards
         # reverses and gives top values (argsort sorts by ascending by default) https://stackoverflow.com/questions/16486252/is-it-possible-to-use-argsort-in-descending-order
@@ -304,7 +292,7 @@ def train(cfg, rl_agent):
         print("Rewards for top: ",top_rewards)
         
         # setup an empty list for containing children agents
-        children_agents, elite_index = return_children(rl_agent, agents, sorted_parent_indexes, elite_index, cfg)
+        children_agents, elite_index = return_children(agents, sorted_parent_indexes, elite_index, cfg)
  
         # kill all agents, and replace them with their children
         agents = children_agents
@@ -330,7 +318,7 @@ def eval_load(cfg, agent):
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
-    env = env_manager.make(cfg)
+    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     n_actions = env._env.action_space.n
     env.reset()
     obs, _, _, _, info = env.step(1)
@@ -355,7 +343,7 @@ def eval_load(cfg, agent):
     print('Selected elite agent:', elite_index)
     elite_agent = agents[elite_index]
     # print nn structure
-    dummy = policy_net(len(features), cfg.train.hidden_layer_size, n_actions, cfg.train.make_hidden)
+    dummy = networks.FC_Normed_Net(len(features), cfg.train.hidden_layer_size, n_actions).to(dev)
     # because old trained runs does not have make_hidden param
     dummy.load_state_dict(elite_agent.state_dict())
     elite_agent = dummy

@@ -2,10 +2,11 @@ import scobi.environments.env_manager as em
 import numpy as np
 from scobi.environments.drivers import ocatari_step
 from scobi.focus import Focus
+from scobi.utils.logging import GeneralError
 from gymnasium import spaces
 from termcolor import colored
 
-
+# TODO: high prio: time env step durations. there might be a bottleneck here
 class Environment():
     def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None):
         self.oc_env = em.make(env_name)
@@ -28,7 +29,7 @@ class Environment():
 
     def step(self, action):
         if not self.did_reset:
-            raise Exception("scobi> Cannot call env.step() before calling env.reset()")
+            GeneralError("Cannot call env.step() before calling env.reset()")
         if self.action_space.contains(action):
             obs, reward, truncated, terminated, info = ocatari_step(self.oc_env.step(action))
             sco_obs = self.focus.get_feature_vector(obs)
@@ -38,7 +39,7 @@ class Environment():
             sco_info = info
             return sco_obs, sco_reward, sco_truncated, sco_terminated, sco_info
         else:
-            raise ValueError("scobi> Action not in action space")
+            raise ValueError("scobi> Action not in action space "+action)
 
     def reset(self):
         self.did_reset = True

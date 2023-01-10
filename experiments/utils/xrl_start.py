@@ -11,7 +11,7 @@ from tqdm import tqdm
 from rtpt import RTPT
 
 from algos import reinforce
-#from algos import genetic_rl as genetic
+from algos import genetic_rl as genetic
 
 
 #import xrl.utils.plotter as xplt
@@ -111,10 +111,10 @@ def use_reinforce(cfg, mode):
 
 
 # function to call deep neuroevolution algorithm
-def use_genetic(cfg, mode, agent):
+def use_genetic(cfg, mode):
     print("Selected algorithm: Deep Neuroevolution")
     if mode == "train":
-        genetic.train(cfg, agent)
+        genetic.train(cfg)
     else:
         agent = genetic.eval_load(cfg, agent)
         if mode == "eval":
