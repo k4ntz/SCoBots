@@ -10,14 +10,14 @@ you need ocatari
 raw -> object bottleneck -> concept bottleneck -> env
 
 silent mode:
-```
+```python
 from scobi.utils import logging
 logging.SILENT = True
 ```
 
 ## How to use (example)
 
-```
+```python
 from scobi import Environment
 
 # Minimal init, not interactive, no focus dir/file specified
@@ -45,7 +45,7 @@ atm observation_space innacurate, but no implications for learning now
 
 
 
-```
+```bash
 # for training
 python train.py --config path/to/config/file.yaml
 
@@ -62,6 +62,6 @@ plus focus files
 
 Parameters set in the config file can be overwritten by calling the parameter and its new value in the command. For example:
 
-```
+```bash
 python src/train.py --config path/to/config/file.yaml device "cpu"
 ```
