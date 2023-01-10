@@ -18,10 +18,9 @@ from joblib import Parallel, delayed
 from rtpt import RTPT
 
 from scobi import Environment
-from scobi.utils import logging
 from . import networks
 
-logging.SILENT = True #scobi silent
+
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 PATH_TO_OUTPUTS = os.getcwd() + "/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):
