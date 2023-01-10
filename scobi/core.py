@@ -39,7 +39,7 @@ class Environment():
             sco_info = info
             return sco_obs, sco_reward, sco_truncated, sco_terminated, sco_info
         else:
-            raise ValueError("scobi> Action not in action space "+action)
+            raise ValueError("scobi> Action not in action space")
 
     def reset(self):
         self.did_reset = True

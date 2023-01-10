@@ -4,7 +4,6 @@ import random
 import torch
 import matplotlib.pyplot as plt
 
-from captum.attr import IntegratedGradients
 from torch.distributions import Categorical
 from torchinfo import summary
 from tqdm import tqdm
@@ -12,7 +11,7 @@ from rtpt import RTPT
 
 from algos import reinforce
 from algos import genetic_rl as genetic
-
+from scobi import Environment
 
 #import xrl.utils.plotter as xplt
 import utils.video_logger as vlogger
@@ -42,28 +41,31 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
         action = random.randint(0, n_actions - 1)
     return action
 
+def re_select_action(*args, **kwargs):
+    return reinforce.select_action(*args, **kwargs)[0]
+
+
 
 # function to test agent loaded via main switch
-def play_agent(agent, cfg):
+def play_agent(cfg, model, select_action_func):
     # init env
-    env = env_manager.make(cfg, True)
-    n_actions = env._env.action_space.n
-    gametype = xutils.get_gametype(env)
+
+    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
+    n_actions = env.action_space.n
+    #gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     obs, _, _, _, info = env.step(1)
-    raw_features = agent.image_to_feature(obs, info, gametype)
-    features = agent.feature_to_mf(raw_features)
+    features = obs
 
     # init objects
-    summary(agent.model, input_size=(1, len(features)), device=cfg.device)
+    summary(model, input_size=(1, len(features)), device=cfg.device)
     # make multiple runs for eval
     runs = 10
     print("Runs:", runs)
     rewards = []
-    rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name + "_EVAL",
-                max_iterations=runs)
+    rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name + "_EVAL", max_iterations=runs)
     rtpt.start()
-    agent.model.to(dev)
+    model.to(dev)
     for run in tqdm(range(runs)):
         # env loop
         t = 0
@@ -71,7 +73,7 @@ def play_agent(agent, cfg):
         env.reset()
         while t < cfg.train.max_steps:  # Don't infinite loop while playing
             #features = torch.tensor(features).unsqueeze(0).float()
-            action = agent.mf_to_action(features, agent.model, -1, n_actions)
+            action = select_action_func(features, model, -1, n_actions)
             if cfg.liveplot:
                 plt.imshow(obs, interpolation='none')
                 plt.plot()
@@ -80,8 +82,7 @@ def play_agent(agent, cfg):
             #print('Reward: {:.2f}\t Step: {:.2f}'.format(
             #        ep_reward, t), end="\r")
             obs, reward, done, done2, info = env.step(action)
-            raw_features = agent.image_to_feature(obs, info, gametype)
-            features = agent.feature_to_mf(raw_features)
+            features = obs
             ep_reward += reward
             t += 1
             if done or done2:
@@ -99,12 +100,9 @@ def use_reinforce(cfg, mode):
     if mode == "train":
         reinforce.train(cfg)
     else:
-        policy = reinforce.eval_load(cfg)
-        # reinit agent with loaded model and eval function
-        # TODO: agent class for every algo?
-        agent = Agent(f1=agent.feature_extractor, f2=agent.feature_to_mf, m=policy, f3=select_action)
         if mode == "eval":
-            play_agent(agent=agent, cfg=cfg)
+            model = reinforce.eval_load(cfg)
+            play_agent(cfg, model, re_select_action)
         elif mode == "explain":
             pass
             # explain(agent=agent, cfg=cfg)
