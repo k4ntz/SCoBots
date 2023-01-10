@@ -20,10 +20,9 @@ class Environment():
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
         self.observation_space_description = self.focus.PARSED_PROPERTIES + self.focus.PARSED_FUNCTIONS
-
-        # TODO: scale observation space to actual vector size (defined by f signatures) without using scobi step
-        # TODO: define lower and upper bounds in scobi
-        self.observation_space = spaces.Box(low=-1000, high=1000, shape=(len(self.observation_space_description),), dtype=np.float32)
+        # TODO: define lower and upper bounds in scobi, -1000 to 1000 for now
+        # TODO: inacurrate for now, counts the func entries, not the output of the functions, maybe use dummy object dict to evaluate once?
+        self.observation_space = spaces.Box(low=-1000, high=1000, shape=(self.focus.FEATURE_VECTOR_SIZE,), dtype=np.float32)
 
 
 

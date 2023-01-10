@@ -7,9 +7,40 @@ TODO: SeSz REWORK ME
 ## What is happening here?
 you need ocatari
 
-
 raw -> object bottleneck -> concept bottleneck -> env
 
+silent mode:
+```
+from scobi.utils import logging
+logging.SILENT = True
+```
+
+## How to use (example)
+
+```
+from scobi import Environment
+
+# Minimal init, not interactive, no focus dir/file specified
+env = Environment(env_name='PongDeterministic-v4')
+env.reset()
+obs, reward, truncated, terminated, info = env.step(1)
+env.action_space                    # Discrete(6)
+env.action_space_description        # ['NOOP', 'FIRE', 'RIGHT', 'LEFT', 'RIGHTFIRE', 'LEFTFIRE']
+env.observation_space               # Box(-1000.0, 1000.0, (81,), float32)
+env.observation_space_description   # [['POSITION', 'ball'], ['POSITION', 'enemy'], ['POSITION', 'player'], ...
+env.close()
+
+# Extensive init, interactive, custom fcous dir and focus file
+env = Environment(env_name='PongDeterministic-v4', interactive=True, focus_dir="experiments/my_focusfiles", focus_file="pruned_pong.yaml")
+env.reset()
+obs, reward, truncated, terminated, info = env.step(1)
+env.action_space                    # Discrete(4)
+env.action_space_description        # ['NOOP', 'FIRE', 'RIGHT', 'LEFT']
+env.observation_space               # Box(-1000.0, 1000.0, (12,), float32)
+env.observation_space_description   # [['POSITION', 'ball'], ['POSITION', 'enemy'], ['POSITION', 'player'], ...
+env.close()
+```
+atm observation_space innacurate, but no implications for learning now
 ## How to simple call
 
 
