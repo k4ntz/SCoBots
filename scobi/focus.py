@@ -4,15 +4,8 @@ from pathlib import Path
 from itertools import permutations
 from scobi.concepts import init as concept_init
 from scobi.utils.decorators import FUNCTIONS, PROPERTIES
+from scobi.utils.logging import GeneralError, GeneralInfo, GeneralWarning, FocusFileParserError
 from termcolor import colored
-
-
-# TODO: restrict actions, define rewards, more verbose output when using focus files
-def FocusFileParserError(msg):
-    print(colored("scobi >", "light_red"), "Parser Error: "+msg)
-    exit()
-
-       
 
 
 class Focus():
@@ -29,44 +22,46 @@ class Focus():
         self.PARSED_PROPERTIES = []
         self.PARSED_FUNCTIONS = []
         self.FOCUSFILEPATH = None
+        self.PROPERTY_COMPUTE_LAYER = []
+        self.FUNC_COMPUTE_LAYER = []
 
         self.generate_property_set()
         self.generate_function_set()
 
         # rework the control flow here, keep interactive mode or not?
         if interactive == True:
-            print(colored("scobi >", "blue"),  "Interactive Mode")
+            GeneralInfo("Interactive Mode")
             if fofile:
                 fpath = Path.cwd() / Path(fodir)  / Path(fofile)
                 if fpath.exists():
-                    print(colored("scobi >", "blue"), "Focus file %s found." % colored(fpath.name, "light_green"))
+                    GeneralInfo("Focus file %s found." % colored(fpath.name, "light_green"))
                     self.load_focus_file(fpath)
-                    print(colored("scobi >", "blue"), "File is valid. Imported.")
+                    GeneralInfo("File is valid. Imported.")
                     self.FOCUSFILEPATH = fpath
                 else:
-                    print(colored("scobi >", "light_red"), "Specified focus file %s not found!" %  colored(fpath.name, "light_green"))
+                    GeneralError("Specified focus file %s not found!" %  colored(fpath.name, "light_green"))
                     exit()
             else:
                 fpath = Path.cwd() / Path(fodir) / Path("default_focus_" + env_name + ".yaml")
                 if fpath.exists():
                     self.FOCUSFILEPATH = fpath
-                    print(colored("scobi >", "light_red"), "No focus file specified, but found an auto-generated default. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
+                    GeneralError("No focus file specified, but found an auto-generated default. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
                     exit()
                 else:
                     self.generate_fresh_yaml(fpath)
-                    print(colored("scobi >", "light_red"), "No focus file specified! Auto-generated a default focus file. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
+                    GeneralError("No focus file specified! Auto-generated a default focus file. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
                     exit()
         else:
-            print(colored("scobi >", "blue"),  "Non-Interactive Mode")
+            GeneralInfo( "Non-Interactive Mode")
             if fofile:
-                print(colored("scobi >", "yellow"), "Specified focus file ignored, because in non-interactive scobi mode. Using default.")
+                GeneralWarning("Specified focus file ignored, because in non-interactive scobi mode. Using default.")
             fpath = Path.cwd() / Path(fodir)  / Path("default_focus_" + env_name + ".yaml")
             if not fpath.exists():
                 self.generate_fresh_yaml(fpath)
-                print(colored("scobi >", "yellow"), "No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
-            print(colored("scobi >", "blue"), "Focus file %s found." % colored(fpath.name, "light_green"))
+                GeneralWarning("No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
+            GeneralInfo("Focus file %s found." % colored(fpath.name, "light_green"))
             self.load_focus_file(fpath)
-            print(colored("scobi >", "blue"), "File is valid. Imported.")
+            GeneralInfo("File is valid. Imported.")
             self.FOCUSFILEPATH = fpath
 
 
@@ -211,14 +206,14 @@ class Focus():
     def validate_properties_signatures(self, propslist):
         for p in propslist:
             if p[1] not in self.OBJECT_NAMES:
-               FocusFileParserError("Unknown object in properties selection: %s" % p[1])
+                FocusFileParserError("Unknown object in properties selection: %s" % p[1])
             if p[0] not in PROPERTIES.keys():
                 FocusFileParserError("Unknown object in properties selection: %s" % p[0])
             prop_definition = PROPERTIES[p[0]]
             o = self.get_object_by_name(p[1], self.OBJECTS)
             prop_sig = prop_definition["expects"][0][0].annotation
             if type(o) != prop_sig:
-                print(colored("scobi >", "light_red"), "Parser Error")
+                GeneralError("Parser Error")
                 FocusFileParserError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
         return True
 
@@ -291,6 +286,7 @@ class Focus():
         else:
             return None
 
+
     def load_focus_file(self, fpath):
         with open(fpath, "r") as f:
             in_dict = yaml.safe_load(f)
@@ -303,28 +299,43 @@ class Focus():
         self.PARSED_PROPERTIES = self.import_properties(sdict["properties"])
         self.PARSED_FUNCTIONS = self.import_functions(sdict["functions"])
 
-
-    def get_feature_vector(self, inc_objects):
-        fv = []
+        # based on the focus file selection,
+        # construct a 2 layer computation graph for the feature vector:
+        # 1     PROPERTY_COMPUTE_LAYER 
+        # 2     FUNC_COMPUTE_LAYER
+        prop_name_obj_name_pairs = []
         for p in self.PARSED_PROPERTIES:
-            property = p[0]
-            obj = p[1]
-            prop = PROPERTIES[property]["object"]
-            o = self.get_object_by_name(obj, inc_objects)
-            feature = prop(o)
-            fv.append(feature)
+            property_name = p[0]
+            object_name = p[1]
+            prop_name_obj_name_pairs.append((property_name, object_name))
+            prop_func = PROPERTIES[property_name]["object"]
+            def prop(input_dict, prop_func=prop_func, object_name=object_name):
+                func = prop_func
+                return func(input_dict[object_name])
+            self.PROPERTY_COMPUTE_LAYER.append(prop)
         for f in self.PARSED_FUNCTIONS:
-            func = f[0]
+            func_name = f[0]
             input_props = f[1]
-            property_results = []
+            property_result_idxs = []
             for p in input_props:
-                property = p[0]
-                obj = p[1]
-                prop = PROPERTIES[property]["object"]
-                o = self.get_object_by_name(obj, inc_objects)
-                res = prop(o)
-                property_results.append(res)
-            f = FUNCTIONS[func]["object"]
-            feature = f(*property_results)
-            fv.append(feature)
-        return np.hstack(fv).tolist()
+                property_name = p[0]
+                object_name = p[1]
+                property_result_idxs.append(prop_name_obj_name_pairs.index((property_name, object_name)))
+            f = FUNCTIONS[func_name]["object"]
+            def func(prop_results, f=f, idxs=property_result_idxs):
+                f_in = [prop_results[i] for i in idxs]
+                return f(*f_in)
+            self.FUNC_COMPUTE_LAYER.append(func)
+
+    
+    def get_feature_vector(self, inc_objects_dict):
+        # evaluate a 2 layer computation graph for the feature vector:
+        # IN    object_dict
+        # 1     PROPERTY_COMPUTE_LAYER 
+        #       property_values
+        # 2     FUNC_COMPUTE_LAYER
+        #       function_values
+        # OUT   HSTACK(CONCAT(property_values, function_values))
+        props = [f(inc_objects_dict) for f in self.PROPERTY_COMPUTE_LAYER]
+        funcs = [f(props) for f in self.FUNC_COMPUTE_LAYER]
+        return(np.hstack(props + funcs).tolist())

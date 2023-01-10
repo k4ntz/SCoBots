@@ -67,16 +67,13 @@ SELECTION:
   - POSITION: ball
   - POSITION: enemy
   - POSITION: player
-  - POSITION_HISTORY: ball
-  - POSITION_HISTORY: enemy
-  - POSITION_HISTORY: player
   functions:
   - EUCLIDEAN_DISTANCE:
     - POSITION: ball
     - POSITION: enemy
   - EUCLIDEAN_DISTANCE:
     - POSITION: ball
-    - POSIION: player
+    - POSITION: player
   - EUCLIDEAN_DISTANCE:
     - POSITION: enemy
     - POSITION: ball
@@ -89,9 +86,3 @@ SELECTION:
   - EUCLIDEAN_DISTANCE:
     - POSITION: player
     - POSITION: enemy
-  - VELOCITY:
-    - POSITION_HISTORY: ball
-  - VELOCITY:
-    - POSITION_HISTORY: enemy
-  - VELOCITY:
-    - POSITION_HISTORY: player

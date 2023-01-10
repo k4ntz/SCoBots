@@ -1,4 +1,5 @@
 from termcolor import colored
+from scobi.utils.logging import GeneralInfo
 # TODO: make nonstatic
 OCATARI_AVAILABLE_GAMES = ["Boxing", "Breakout", "Skiing", "Pong", "Seaquest", "Tennis"]
 
@@ -12,5 +13,5 @@ def make(env_name, notify=False):
         import scobi.environments.ocgym as ocgym
         env = ocgym.make(env_name, notify)
         # TODO: get env name from OC_atari instance
-        print(colored("scobi >", "blue"), "Environment %s specified. Compatible object extractor %s loaded." % (colored(env_name, "light_cyan"),colored("OC_Atari", "light_cyan")))
+        GeneralInfo("Environment %s specified. Compatible object extractor %s loaded." % (colored(env_name, "light_cyan"),colored("OC_Atari", "light_cyan")))
         return env
