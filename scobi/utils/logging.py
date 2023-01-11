@@ -1,23 +1,25 @@
 from termcolor import colored
 
-SILENT = False
-
 # TODO: replace with python logging, too lazy for now
 # TODO: make silent mode ENV class var and parameter
-def FocusFileParserError(msg):
-    print(colored("scobi >", "light_red"), "Parser Error: "+msg)
-    exit()
+class Logger():
+    def __init__(self, silent=False):
+        self.SILENT = silent
 
-def GeneralInfo(msg):
-    if SILENT:
-        return
-    print(colored("scobi >", "blue"), msg)
+    def FocusFileParserError(self, msg):
+        print(colored("scobi >", "light_red"), "Parser Error: "+msg)
+        exit()
 
-def GeneralError(msg):
-    print(colored("scobi >", "light_red"), msg)
-    exit()
+    def GeneralInfo(self, msg):
+        if self.SILENT:
+            return
+        print(colored("scobi >", "blue"), msg)
 
-def GeneralWarning(msg):
-    if SILENT:
-        return
-    print(colored("scobi >", "yellow"), msg)
+    def GeneralError(self, msg):
+        print(colored("scobi >", "light_red"), msg)
+        exit()
+
+    def GeneralWarning(self, msg):
+        if self.SILENT:
+            return
+        print(colored("scobi >", "yellow"), msg)
