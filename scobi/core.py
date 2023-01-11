@@ -12,7 +12,7 @@ class Environment():
         self.oc_env = em.make(env_name, self.logger)
         actions = self.oc_env._env.unwrapped.get_action_meanings() # TODO: oc envs should answer this, not the raw env
         self.oc_env.reset()
-        obs, _, _, _, _ = ocatari_step(self.oc_env.step(1))
+        obs, _, _, _, _, _ = ocatari_step(self.oc_env.step(1))
         self.running_stats = []
         self.did_reset = False
         self.focus = Focus(env_name, interactive, focus_dir, focus_file, obs, actions, obs_normalized, self.logger)
@@ -29,13 +29,13 @@ class Environment():
         if not self.did_reset:
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         if self.action_space.contains(action):
-            obs, reward, truncated, terminated, info = ocatari_step(self.oc_env.step(action))
+            obs, reward, truncated, terminated, info, obs_raw = ocatari_step(self.oc_env.step(action))
             sco_obs = self.focus.get_feature_vector(obs)
             sco_reward = reward #reward shaping here
             sco_truncated = truncated
             sco_terminated = terminated
             sco_info = info
-            return sco_obs, sco_reward, sco_truncated, sco_terminated, sco_info
+            return sco_obs, sco_reward, sco_truncated, sco_terminated, sco_info, obs_raw
         else:
             raise ValueError("scobi> Action not in action space")
 
