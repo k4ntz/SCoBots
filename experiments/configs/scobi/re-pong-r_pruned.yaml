@@ -1,0 +1,24 @@
+env_name: 'PongDeterministic-v4'
+scobi_interactive: True
+scobi_focus_dir: 'my_focusfiles'
+scobi_focus_file: 'pruned_pong.yaml' 
+rl_algo: 1
+
+parallel: False
+
+logdir: '/relogs/'
+
+video_steps: 100
+
+train:
+  random_action_p: 0.05
+  gamma: 0.97
+  learning_rate: 0.001
+
+  num_episodes: 50000
+  max_steps: 50000
+  hidden_layer_size : 128
+
+  log_steps: 25
+  # save every is for episodes
+  save_every: 100
