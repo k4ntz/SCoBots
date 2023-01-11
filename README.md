@@ -10,7 +10,7 @@ raw -> object bottleneck -> concept bottleneck -> env
 ```python
 from scobi import Environment
 
-# Minimal init, not interactive, no focus dir/file specified
+# Minimal init, not interactive, no focus dir/file specified, empirical observation space normalization active
 env = Environment(env_name='PongDeterministic-v4')
 env.reset()
 obs, reward, truncated, terminated, info = env.step(1)
@@ -20,8 +20,8 @@ env.observation_space               # Box(-1000.0, 1000.0, (81,), float32)
 env.observation_space_description   # [['POSITION', 'ball'], ['POSITION', 'enemy'], ['POSITION', 'player'], ...
 env.close()
 
-# Extensive init, interactive, custom fcous dir and focus file
-env = Environment(env_name='PongDeterministic-v4', interactive=True, focus_dir="experiments/my_focusfiles", focus_file="pruned_pong.yaml")
+# Extensive init, interactive, custom fcous dir and focus file, empirical observation space normalization not active
+env = Environment(env_name='PongDeterministic-v4', interactive=True, focus_dir="experiments/my_focusfiles", focus_file="pruned_pong.yaml", obs_normalized=False)
 env.reset()
 obs, reward, truncated, terminated, info = env.step(1)
 env.action_space                    # Discrete(4)
