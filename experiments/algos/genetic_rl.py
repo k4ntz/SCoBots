@@ -10,7 +10,6 @@ from os import path
 sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
 import torch
 import torch.nn as nn
-import utils.utils as xutils
 from torch.distributions import Categorical
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm

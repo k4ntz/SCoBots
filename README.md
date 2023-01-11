@@ -1,19 +1,9 @@
 # scobi
 Successive Concepet Bottleneck Interface
 
-
-TODO: SeSz REWORK ME
-
-## What is happening here?
 you need ocatari
 
 raw -> object bottleneck -> concept bottleneck -> env
-
-silent mode:
-```python
-from scobi.utils import logging
-logging.SILENT = True
-```
 
 ## How to use (example)
 
@@ -40,11 +30,20 @@ env.observation_space               # Box(-1000.0, 1000.0, (12,), float32)
 env.observation_space_description   # [['POSITION', 'ball'], ['POSITION', 'enemy'], ['POSITION', 'player'], ...
 env.close()
 ```
-atm observation_space innacurate, but no implications for learning now
+
+## TODO
+### Major
+- unify tensoboard logging across algos (+ finegrained logging?)
+- script to generate graphs, tables over experiment seeds
+- A3C
+- implement so scobi returns a correct supported environments list
+- correct env.observation_space after env init (probably by constructing the f-vector with dummy objects)
+### Minor
+- fix silent mode so it works per env init
+- split up focus.py
+- rework terminal output with python logging
+
 ## How to simple call
-
-
-
 ```bash
 # for training
 python train.py --config path/to/config/file.yaml

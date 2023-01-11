@@ -57,7 +57,8 @@ class Focus():
             if not fpath.exists():
                 self.generate_fresh_yaml(fpath)
                 GeneralWarning("No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
-            GeneralInfo("Focus file %s found." % colored(fpath.name, "light_green"))
+            GeneralInfo("Focus file %s found. Making sure it's up-to-date." % colored(fpath.name, "light_green"))
+            self.generate_fresh_yaml(fpath)
             self.load_focus_file(fpath)
             GeneralInfo("File is valid. Imported.")
             self.FOCUSFILEPATH = fpath
