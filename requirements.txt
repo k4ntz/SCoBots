@@ -1,6 +1,6 @@
 wheel
 captum
-gymnasium[atari]
+gymnasium[atari, accept-rom-license]
 imageio
 joblib
 matplotlib
@@ -26,3 +26,4 @@ termcolor
 webcolors
 graphviz
 git+https://github.com/mila-iqia/atari-representation-learning.git
+git+https://github.com/k4ntz/OC_Atari
