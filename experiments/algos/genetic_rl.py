@@ -111,7 +111,7 @@ def run_agents(env, agents, cfg):
 # returns average score of given agent when it runs n times
 def return_average_score(agent, runs, cfg):
     score = 0.
-    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
+    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True)
     rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name,
                     max_iterations=runs)
     rtpt.start()
@@ -126,7 +126,7 @@ def return_average_score(agent, runs, cfg):
 def run_agents_n_times(agents, runs, cfg):
     avg_score = []
     agents = tqdm(agents)
-    cpu_cores = min(multiprocessing.cpu_count(), 100)
+    cpu_cores =4#= min(multiprocessing.cpu_count(), 100)
     avg_score = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(agent, runs, cfg) for agent in agents)
     return avg_score
 
@@ -237,7 +237,7 @@ def train(cfg):
     torch.set_grad_enabled(False)
 
     # init env to get actions count and features space
-    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
+    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True)
     n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
     obs, _, _, _, info = env.step(1)
