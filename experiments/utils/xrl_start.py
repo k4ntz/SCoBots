@@ -8,7 +8,6 @@ from rtpt import RTPT
 from algos import reinforce
 from algos import genetic_rl as genetic
 from scobi import Environment
-from scobi.utils import logging
 
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
@@ -84,9 +83,9 @@ def use_reinforce(cfg, mode):
 
 # function to call deep neuroevolution algorithm
 def use_genetic(cfg, mode):
-    logging.SILENT = True #scobi silent
     print("Selected algorithm: Deep Neuroevolution")
     if mode == "train":
+        #TODO: silent mode not working for genetic only
         genetic.train(cfg)
     else:
         model, gen_select_action = genetic.eval_load(cfg)
