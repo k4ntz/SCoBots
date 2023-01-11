@@ -2,12 +2,7 @@ from operator import contains
 import os
 import argparse
 import time
-
-import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sn
-import pandas as pd
-import seaborn as sns
 
 # Use Agg backend for canvas
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
