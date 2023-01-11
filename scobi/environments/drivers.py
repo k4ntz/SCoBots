@@ -6,7 +6,7 @@ oc_game_objects = {}
 
 # OC_Atari step wrapper
 def ocatari_step(ocatari_step_return):
-    _, reward, truncated, terminated, info = ocatari_step_return
+    obs_raw, reward, truncated, terminated, info = ocatari_step_return
     gameobject_info = info["objects"]
     for key in gameobject_info:
         if not (key in oc_game_objects):
@@ -18,4 +18,4 @@ def ocatari_step(ocatari_step_return):
         if key in gameobject_info:
             oc_game_objects[key].rgb = [gameobject_info[key][4], gameobject_info[key][5], gameobject_info[key][6]]
             oc_game_objects[key].update_coords(gameobject_info[key][0],gameobject_info[key][1])
-    return oc_game_objects, reward, truncated, terminated, info
+    return oc_game_objects, reward, truncated, terminated, info, obs_raw
