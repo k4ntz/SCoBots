@@ -126,7 +126,7 @@ def return_average_score(agent, runs, cfg):
 def run_agents_n_times(agents, runs, cfg):
     avg_score = []
     agents = tqdm(agents)
-    cpu_cores =4#= min(multiprocessing.cpu_count(), 100)
+    cpu_cores = min(multiprocessing.cpu_count(), cfg.max_cpu_cores)
     avg_score = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(agent, runs, cfg) for agent in agents)
     return avg_score
 
@@ -160,7 +160,7 @@ def add_elite(agents, sorted_parent_indexes, cfg, elite_index=None, only_conside
     top_score = None
     top_elite_index = None
     tqdmcandidate_elite_index = tqdm(candidate_elite_index)
-    cpu_cores = min(100, max(multiprocessing.cpu_count(), only_consider_top_n))
+    cpu_cores = min(cfg.max_cpu_cores, max(multiprocessing.cpu_count(), only_consider_top_n))
     # elite runs from config
     elite_runs = cfg.train.elite_n_runs
     scores = Parallel(n_jobs=cpu_cores)(delayed(return_average_score)(agents[i], runs=elite_runs, cfg=cfg) for i in tqdmcandidate_elite_index)
