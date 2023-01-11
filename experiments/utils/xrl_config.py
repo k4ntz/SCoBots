@@ -32,6 +32,9 @@ cfg = CfgNode({
     'device': 'cpu',
     'logdir': '/xrl/logs/',
 
+    # max cpu cores to use for multithreading
+    'max_cpu_cores': 32,
+
     'make_video': False,
     'video_steps': 10,
 
