@@ -107,7 +107,7 @@ def train(cfg):
     print("Feature Vector Length:", len(obs))
 
     # init fresh policy and optimizer
-    policy = networks.FC_Normed_Net(len(obs), cfg.train.hidden_layer_size, n_actions).to(dev)
+    policy = networks.FC_Net(len(obs), cfg.train.hidden_layer_size, n_actions).to(dev)
     optimizer = optim.Adam(policy.parameters(), lr=cfg.train.learning_rate)
     i_episode = 1
     # overwrite if checkpoint exists
@@ -213,7 +213,7 @@ def eval_load(cfg):
     env.reset()
     obs, _, _, _, info = env.step(1)
     print("Make hidden layer in nn:", cfg.train.make_hidden)
-    policy = networks.FC_Normed_Net(len(obs), cfg.train.hidden_layer_size, n_actions).to(dev)
+    policy = networks.FC_Net(len(obs), cfg.train.hidden_layer_size, n_actions).to(dev)
     # load if exists
     model_path = model_name(cfg.exp_name + "-seed" + str(cfg.seed))
     if os.path.isfile(model_path):
