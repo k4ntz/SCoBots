@@ -4,7 +4,7 @@ from scobi.environments.drivers import ocatari_step
 from scobi.focus import Focus
 from scobi.utils.logging import GeneralError
 from gymnasium import spaces
-from termcolor import colored
+
 
 # TODO: high prio: time env step durations. there might be a bottleneck here
 class Environment():
