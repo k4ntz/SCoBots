@@ -167,3 +167,5 @@ experiments/video/
 experiments/mdrlogs/
 experiments/joblogs/
 experiments/focusfiles/default_*
+experiments/run_batch.sh
+experiments/kill_batch.sh
