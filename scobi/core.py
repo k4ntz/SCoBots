@@ -8,14 +8,14 @@ from gymnasium import spaces
 
 # TODO: high prio: time env step durations. there might be a bottleneck here
 class Environment():
-    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None):
+    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, obs_normalized=True):
         self.oc_env = em.make(env_name)
         actions = self.oc_env._env.unwrapped.get_action_meanings() # TODO: oc envs should answer this, not the raw env
         self.oc_env.reset()
         obs, _, _, _, _ = ocatari_step(self.oc_env.step(1))
-
+        self.running_stats = []
         self.did_reset = False
-        self.focus = Focus(env_name, interactive, focus_dir, focus_file, obs, actions)
+        self.focus = Focus(env_name, interactive, focus_dir, focus_file, obs, actions, obs_normalized)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS

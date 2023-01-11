@@ -4,12 +4,13 @@ from pathlib import Path
 from itertools import permutations
 from scobi.concepts import init as concept_init
 from scobi.utils.decorators import FUNCTIONS, PROPERTIES
+from scobi.utils.calcs import RunningStats
 from scobi.utils.logging import GeneralError, GeneralInfo, GeneralWarning, FocusFileParserError
 from termcolor import colored
 
 
 class Focus():
-    def __init__(self, env_name, interactive, fodir, fofile, raw_features, actions):
+    def __init__(self, env_name, interactive, fodir, fofile, raw_features, actions, normalized):
         concept_init()
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
@@ -25,7 +26,10 @@ class Focus():
         self.PROPERTY_COMPUTE_LAYER = []
         self.FUNC_COMPUTE_LAYER = []
         self.FEATURE_VECTOR_SIZE = 0
-
+        self.running_stats = []
+        self.normalized = False
+        if normalized:
+            self.normalized = True
         self.generate_property_set()
         self.generate_function_set()
 
@@ -326,7 +330,19 @@ class Focus():
             self.FUNC_COMPUTE_LAYER.append(func)
         self.FEATURE_VECTOR_SIZE = len(np.hstack(self.PROPERTY_COMPUTE_LAYER + self.FUNC_COMPUTE_LAYER).tolist())
 
-    
+    def _running_normalization(self, vec):
+        out = []
+        if not self.running_stats:
+            for i in vec:
+                self.running_stats.append(RunningStats())
+        for rs, i in zip(self.running_stats, vec):
+            rs.push(i)
+            mean = rs.mean()
+            std = rs.standard_deviation()
+            normed = (i - mean) / max(std, 1e-6)
+            out.append(normed)
+        return out
+
     def get_feature_vector(self, inc_objects_dict):
         # evaluate a 2 layer computation graph for the feature vector:
         # IN    object_dict
@@ -337,4 +353,8 @@ class Focus():
         # OUT   HSTACK(CONCAT(property_values, function_values))
         props = [f(inc_objects_dict) for f in self.PROPERTY_COMPUTE_LAYER]
         funcs = [f(props) for f in self.FUNC_COMPUTE_LAYER]
-        return(np.hstack(props + funcs).tolist())
+        out = np.hstack(props + funcs).tolist()
+        if self.normalized:
+            return(self._running_normalization(out))
+        else:
+            return out
