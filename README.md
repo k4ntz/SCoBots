@@ -39,7 +39,6 @@ env.close()
 - implement so scobi returns a correct supported environments list
 - correct env.observation_space after env init (probably by constructing the f-vector with dummy objects)
 ### Minor
-- fix silent mode so it works per env init
 - split up focus.py
 - rework terminal output with python logging
 
