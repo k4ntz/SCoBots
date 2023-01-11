@@ -5,12 +5,11 @@ from itertools import permutations
 from scobi.concepts import init as concept_init
 from scobi.utils.decorators import FUNCTIONS, PROPERTIES
 from scobi.utils.calcs import RunningStats
-from scobi.utils.logging import GeneralError, GeneralInfo, GeneralWarning, FocusFileParserError
 from termcolor import colored
 
 
 class Focus():
-    def __init__(self, env_name, interactive, fodir, fofile, raw_features, actions, normalized):
+    def __init__(self, env_name, interactive, fodir, fofile, raw_features, actions, normalized, l):
         concept_init()
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
@@ -28,6 +27,7 @@ class Focus():
         self.FEATURE_VECTOR_SIZE = 0
         self.running_stats = []
         self.normalized = False
+        self.l = l
         if normalized:
             self.normalized = True
         self.generate_property_set()
@@ -35,36 +35,36 @@ class Focus():
 
         # rework the control flow here, keep interactive mode or not?
         if interactive == True:
-            GeneralInfo("Interactive Mode")
+            l.GeneralInfo("Interactive Mode")
             if fofile:
                 fpath = Path.cwd() / Path(fodir)  / Path(fofile)
                 if fpath.exists():
-                    GeneralInfo("Focus file %s found." % colored(fpath.name, "light_green"))
+                    l.GeneralInfo("Focus file %s found." % colored(fpath.name, "light_green"))
                     self.load_focus_file(fpath)
-                    GeneralInfo("File is valid. Imported.")
+                    l.GeneralInfo("File is valid. Imported.")
                     self.FOCUSFILEPATH = fpath
                 else:
-                    GeneralError("Specified focus file %s not found!" %  colored(fpath.name, "light_green"))
+                    l.GeneralError("Specified focus file %s not found!" %  colored(fpath.name, "light_green"))
             else:
                 fpath = Path.cwd() / Path(fodir) / Path("default_focus_" + env_name + ".yaml")
                 if fpath.exists():
                     self.FOCUSFILEPATH = fpath
-                    GeneralError("No focus file specified, but found an auto-generated default. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
+                    l.GeneralError("No focus file specified, but found an auto-generated default. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
                 else:
                     self.generate_fresh_yaml(fpath)
-                    GeneralError("No focus file specified! Auto-generated a default focus file. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
+                    l.GeneralError("No focus file specified! Auto-generated a default focus file. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
         else:
-            GeneralInfo( "Non-Interactive Mode")
+            l.GeneralInfo( "Non-Interactive Mode")
             if fofile:
-                GeneralWarning("Specified focus file ignored, because in non-interactive scobi mode. Using default.")
+                l.GeneralWarning("Specified focus file ignored, because in non-interactive scobi mode. Using default.")
             fpath = Path.cwd() / Path(fodir)  / Path("default_focus_" + env_name + ".yaml")
             if not fpath.exists():
                 self.generate_fresh_yaml(fpath)
-                GeneralWarning("No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
-            GeneralInfo("Focus file %s found. Making sure it's up-to-date." % colored(fpath.name, "light_green"))
+                l.GeneralWarning("No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
+            l.GeneralInfo("Focus file %s found. Making sure it's up-to-date." % colored(fpath.name, "light_green"))
             self.generate_fresh_yaml(fpath)
             self.load_focus_file(fpath)
-            GeneralInfo("File is valid. Imported.")
+            l.GeneralInfo("File is valid. Imported.")
             self.FOCUSFILEPATH = fpath
 
 
@@ -209,14 +209,14 @@ class Focus():
     def validate_properties_signatures(self, propslist):
         for p in propslist:
             if p[1] not in self.OBJECT_NAMES:
-                FocusFileParserError("Unknown object in properties selection: %s" % p[1])
+                self.l.FocusFileParserError("Unknown object in properties selection: %s" % p[1])
             if p[0] not in PROPERTIES.keys():
-                FocusFileParserError("Unknown object in properties selection: %s" % p[0])
+                self.l.FocusFileParserError("Unknown object in properties selection: %s" % p[0])
             prop_definition = PROPERTIES[p[0]]
             o = self.get_object_by_name(p[1], self.OBJECTS)
             prop_sig = prop_definition["expects"][0][0].annotation
             if type(o) != prop_sig:
-                GeneralError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
+                 self.l.GeneralError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
         return True
 
 
@@ -224,23 +224,23 @@ class Focus():
         for f in funclist:
             parsed_para_sig = []
             if f[0] not in FUNCTIONS.keys():
-                FocusFileParserError("Unknown function in function selection: %s" % f[0])
+                self.l.FocusFileParserError("Unknown function in function selection: %s" % f[0])
             for para in f[1]:
                 if para[0] not in PROPERTIES.keys():
-                    FocusFileParserError("Unknown property in functions selection: %s" % para[0])
+                    self.l.FocusFileParserError("Unknown property in functions selection: %s" % para[0])
                 if para[1] not in self.OBJECT_NAMES:
-                    FocusFileParserError("Unknown object in functions selection: %s" % para[1])
+                    self.l.FocusFileParserError("Unknown object in functions selection: %s" % para[1])
                 prop_definition = PROPERTIES[para[0]]
                 o = self.get_object_by_name(para[1], self.OBJECTS)
                 prop_sig = prop_definition["expects"][0][0].annotation
                 parsed_para_sig.append(prop_definition["returns"][0])
                 if type(o) != prop_sig:
-                    FocusFileParserError("Signature mismatch in functions selection. Property '%s' expects '%s'" % (para[0], prop_sig))
+                    self.l.FocusFileParserError("Signature mismatch in functions selection. Property '%s' expects '%s'" % (para[0], prop_sig))
             func_definition = FUNCTIONS[f[0]]
             function_sig = [x[0].annotation for x in func_definition["expects"]]
             sig_desc = [x[1] for x in func_definition["expects"]]
             if function_sig != parsed_para_sig:
-                FocusFileParserError("Signature mismatch in functions selection. Function '%s' expects '%s'" % (f[0], sig_desc))
+                self.l.FocusFileParserError("Signature mismatch in functions selection. Function '%s' expects '%s'" % (f[0], sig_desc))
         return True
 
 
@@ -248,13 +248,13 @@ class Focus():
         if self.validate_objects(objs):
             return objs
         else:
-            FocusFileParserError("Invalid objects specified in objects selection!")
+            self.l.FocusFileParserError("Invalid objects specified in objects selection!")
 
     def import_actions(self, acts):
         if self.validate_actions(acts):
             return acts
         else:
-            FocusFileParserError("Invalid actions specified in actions selection!")
+            self.l.FocusFileParserError("Invalid actions specified in actions selection!")
 
     def import_properties(self, props):
         out = []
@@ -294,7 +294,7 @@ class Focus():
             in_dict = yaml.safe_load(f)
         parsed_env_name = in_dict["ENVIRONMENT"]
         if self.ENV_NAME != parsed_env_name:
-            FocusFileParserError("Env and focus file env do not match: %s, %s" % (self.ENV_NAME, parsed_env_name))
+            self.l.FocusFileParserError("Env and focus file env do not match: %s, %s" % (self.ENV_NAME, parsed_env_name))
         sdict = in_dict["SELECTION"]
         self.PARSED_OBJECTS = self.import_objects(sdict["objects"])
         self.PARSED_ACTIONS = self.import_actions(sdict["actions"])
