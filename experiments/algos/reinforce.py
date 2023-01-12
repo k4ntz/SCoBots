@@ -61,6 +61,7 @@ def finish_episode(policy, optimizer, cfg, log_probs, rewards, entropies):
 
     policy_loss = torch.cat(policy_loss).sum()
     policy_loss.backward()
+    torch.nn.utils.clip_grad_norm_(policy.parameters(), cfg.train.clip_norm)
     optimizer.step()
     episode_entropy = np.mean(entropies)
     return policy, optimizer, policy_loss, episode_entropy
@@ -99,7 +100,7 @@ def train(cfg):
     env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, info = env.step(1)
+    obs, _, _, _, info, _ = env.step(1)
     print("Selected algorithm: REINFORCE")
     print('Experiment name:', cfg.exp_name)
     print('Seed:', torch.initial_seed())
@@ -146,7 +147,7 @@ def train(cfg):
         while t < cfg.train.max_steps:
             # interaction
             action, log_prob, probs = select_action(obs, policy, cfg.train.random_action_p, n_actions)
-            obs, natural_reward, terminated, truncated, info = env.step(action)
+            obs, natural_reward, terminated, truncated, info, _ = env.step(action)
 
             # collection
             entropy = -np.sum(list(map(lambda p : p * (np.log(p) / np.log(n_actions)) if p[0] != 0 else 0, probs)))
@@ -211,7 +212,7 @@ def eval_load(cfg):
     env = Environment(cfg.env_name, focus_dir="focusfiles")
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, info = env.step(1)
+    obs, _, _, _, info, _ = env.step(1)
     print("Make hidden layer in nn:", cfg.train.make_hidden)
     policy = networks.FC_Net(len(obs), cfg.train.hidden_layer_size, n_actions).to(dev)
     # load if exists

@@ -84,7 +84,7 @@ def run_agents(env, agents, cfg):
         agent.eval()
         n_actions = env.action_space.n
         _ = env.reset()
-        obs, _, done, done2, info = env.step(1)
+        obs, _, done, done2, info, _ = env.step(1)
         features = obs
         r = 0
         t = 0
@@ -92,7 +92,7 @@ def run_agents(env, agents, cfg):
             #if cfg.train.use_raw_features:
             #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent, cfg.train.random_action_p, n_actions)
-            obs, reward, done, done2, info = env.step(action)
+            obs, reward, done, done2, info, _ = env.step(action)
             #plt.imshow(obs, interpolation='none')
             #plt.plot()
             #plt.pause(0.001)  # pause a bit so that plots are updated
@@ -240,12 +240,12 @@ def train(cfg):
     env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True)
     n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
-    obs, _, _, _, info = env.step(1)
+    obs, _, _, _, info, _ = env.step(1)
     features = obs
     #if cfg.train.use_raw_features:
     #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # initialize N number of agents
-    num_agents = 500
+    num_agents = 5
     print('Number of agents:', num_agents)
     agents = return_random_agents(len(features), num_agents, n_actions, cfg)
     generation = 0
@@ -256,7 +256,7 @@ def train(cfg):
         agents, generation, _ = load_agents(model_path)
 
     # How many top agents to consider as parents
-    top_limit = 20
+    top_limit = 2
     print('Number of top agents:', top_limit)
 
     # runs per generation
@@ -319,7 +319,7 @@ def eval_load(cfg):
     env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, info = env.step(1)
+    obs, _, _, _, info, _ = env.step(1)
     features = obs
    # if cfg.train.use_raw_features:
     #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
