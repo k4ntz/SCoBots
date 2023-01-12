@@ -61,6 +61,7 @@ def finish_episode(policy, optimizer, cfg, log_probs, rewards, entropies):
 
     policy_loss = torch.cat(policy_loss).sum()
     policy_loss.backward()
+    torch.nn.utils.clip_grad_norm_(policy.parameters(), cfg.train.clip_norm)
     optimizer.step()
     episode_entropy = np.mean(entropies)
     return policy, optimizer, policy_loss, episode_entropy
