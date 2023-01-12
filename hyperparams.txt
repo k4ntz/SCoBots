@@ -1,7 +1,8 @@
+on policy hyperparameters selection:
 https://arxiv.org/pdf/2006.05990.pdf
 
 input normalization                 True
-gradclip                            0.5
+gradclip_norm                       0.5
 policy mlp depth                    2
 policy mlp width                    128
 policy mlp activation function      tanh
