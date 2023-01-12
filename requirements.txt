@@ -13,4 +13,4 @@ pyyaml
 colormath
 yacs
 git+https://github.com/mila-iqia/atari-representation-learning.git
-git+https://github.com/k4ntz/OC_Atari
+ocatari @ git+https://github.com/k4ntz/OC_Atari

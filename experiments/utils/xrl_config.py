@@ -76,16 +76,15 @@ cfg = CfgNode({
 
         'memory_size': 50000,
         'memory_min_size': 25000,
+        'max_steps_per_trajectory': 100000,
 
-        'num_episodes': 1000,
-        'max_steps': 100000,
+        'num_episodes': 100,
+        'steps_per_episode': 250000,
+        'log_steps': 20000,
+        # save every is for episodes
+        'save_every': 1,
 
         'skip_frames': 1,
-
-        'log_steps': 500,
-        # save every is for episodes
-        'save_every': 5,
-
         'feedback_alpha': 0,
         'feedback_delta': 0,
 
