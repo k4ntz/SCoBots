@@ -11,7 +11,6 @@ video_steps: 100
 train:
   random_action_p: 0.05
   gamma: 0.97
-  learning_rate: 0.0001
 
   num_episodes: 50000
   max_steps: 50000

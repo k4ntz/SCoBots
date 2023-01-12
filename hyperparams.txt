@@ -1,0 +1,8 @@
+https://arxiv.org/pdf/2006.05990.pdf
+
+input normalization                 True
+gradclip                            0.5
+policy mlp depth                    2
+policy mlp width                    128
+policy mlp activation function      tanh
+adam lr                             0.0003
