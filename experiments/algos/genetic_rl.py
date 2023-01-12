@@ -245,7 +245,7 @@ def train(cfg):
     #if cfg.train.use_raw_features:
     #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
     # initialize N number of agents
-    num_agents = 500
+    num_agents = 5
     print('Number of agents:', num_agents)
     agents = return_random_agents(len(features), num_agents, n_actions, cfg)
     generation = 0
@@ -256,7 +256,7 @@ def train(cfg):
         agents, generation, _ = load_agents(model_path)
 
     # How many top agents to consider as parents
-    top_limit = 20
+    top_limit = 2
     print('Number of top agents:', top_limit)
 
     # runs per generation
