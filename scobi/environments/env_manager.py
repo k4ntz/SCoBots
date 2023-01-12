@@ -1,5 +1,4 @@
 from termcolor import colored
-from scobi.utils.logging import Logger
 # TODO: make nonstatic
 OCATARI_AVAILABLE_GAMES = ["Boxing", "Breakout", "Skiing", "Pong", "Seaquest", "Tennis"]
 

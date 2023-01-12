@@ -72,7 +72,7 @@ def save_policy(training_name, policy, episode, optimizer):
     if not os.path.exists(PATH_TO_OUTPUTS):
         os.makedirs(PATH_TO_OUTPUTS)
     model_path = model_name(training_name)
-    print("Saving {}".format(model_path))
+    #print("Saving {}".format(model_path))
     torch.save({
             'policy': policy.state_dict(),
             'episode': episode,
@@ -101,102 +101,148 @@ def train(cfg):
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, info, _ = env.step(1)
-    print("Selected algorithm: REINFORCE")
-    print('Experiment name:', cfg.exp_name)
-    print('Seed:', torch.initial_seed())
-    print('Action space: ' + str(env.action_space_description))
-    print("Feature Vector Length:", len(obs))
+    print("EXPERIMENT")
+    print(">> Selected algorithm: REINFORCE")
+    print('>> Experiment name:', cfg.exp_name)
+    print('>> Seed:', torch.initial_seed())
+    print(">> Random Action probability:", cfg.train.random_action_p)
+    print('>> Gamma:', cfg.train.gamma)
+    print('>> Learning rate:', cfg.train.learning_rate)
+    print("ENVIRONMENT")
+    print('>> Action space: ' + str(env.action_space_description))
+    print(">> Observation Vector Length:", len(obs))
 
     # init fresh policy and optimizer
     policy = networks.FC_Net(len(obs), cfg.train.hidden_layer_size, n_actions).to(dev)
     optimizer = optim.Adam(policy.parameters(), lr=cfg.train.learning_rate)
-    i_episode = 1
+    i_epoch = 1
     # overwrite if checkpoint exists
     model_path = model_name(cfg.exp_name)
     if os.path.isfile(model_path):
-        policy, optimizer, i_episode = load_model(model_path, policy, optimizer)
-        i_episode += 1
+        policy, optimizer, i_epoch = load_model(model_path, policy, optimizer)
+        i_epoch += 1
 
-    print('Episodes:', cfg.train.num_episodes)
-    print('Current episode:', i_episode)
-    print("Random Action probability:", cfg.train.random_action_p)
-    print('Max Steps per Episode:', cfg.train.max_steps)
-    print('Gamma:', cfg.train.gamma)
-    print('Learning rate:', cfg.train.learning_rate)
-    print("Starting...")
+    print("TRAINING")
+    print('>> Epochs:', cfg.train.num_episodes)
+    print('>> Steps per Epoch:', cfg.train.steps_per_episode)
+    print('>> Logging Interval (Steps):', cfg.train.log_steps)
+    print('>> Checkpoint Interval (Epochs):', cfg.train.save_every)
+    print('>> Current Epoch:', i_epoch)
+    print("Training started...")
     # reinit agent with loaded policy model
     running_return = None
-    # logging vars
-    nr_buffer = 0
-    pnl_buffer = 0
-    pne_buffer = 0
-    step_buffer = 0
+    # tfboard logging buffer
+    tfb_nr_buffer = 0
+    tfb_pnl_buffer = 0
+    tfb_pne_buffer = 0
+    tfb_step_buffer = 0
+    tfb_policy_updates_counter = 0
+
 
     # training loop
     rtpt = RTPT(name_initials='SeSz', experiment_name=cfg.exp_name, max_iterations=cfg.train.num_episodes)
     rtpt.start()
-    while i_episode < cfg.train.num_episodes:
-        env.reset()
-        rewards = []
-        entropies = []
-        log_probs = []
-        ep_return = 0
-        int_duration = 0
-        t = 0
-        int_s_time = time.perf_counter()
-        while t < cfg.train.max_steps:
-            # interaction
-            action, log_prob, probs = select_action(obs, policy, cfg.train.random_action_p, n_actions)
-            obs, natural_reward, terminated, truncated, info, _ = env.step(action)
+    while i_epoch <= cfg.train.num_episodes:
+        stdout_nr_buffer = 0
+        stdout_pnl_buffer = 0
+        stdout_pne_buffer = 0
+        stdout_step_buffer = 0
+        stdout_policy_updates_counter = 0
+        sum_ep_duration = 0
+        sum_int_duration = 0
+        sum_pol_duration = 0
+        i_episode_step = 0
+        while i_episode_step < cfg.train.steps_per_episode:
+            env.reset()
+            rewards = []
+            entropies = []
+            log_probs = []
+            ep_return = 0
+            int_duration = 0
+            i_trajectory_step = 0
+            incomplete_traj = False
+            int_s_time = time.perf_counter()
+            while i_trajectory_step < cfg.train.max_steps_per_trajectory:
+                # interaction
+                action, log_prob, probs = select_action(obs, policy, cfg.train.random_action_p, n_actions)
+                obs, natural_reward, terminated, truncated, info, _ = env.step(action)
 
-            # collection
-            entropy = -np.sum(list(map(lambda p : p * (np.log(p) / np.log(n_actions)) if p[0] != 0 else 0, probs)))
-            log_probs.append(log_prob)
-            rewards.append(natural_reward)
-            entropies.append(entropy)
-            ep_return += natural_reward
-            t += 1
-            if terminated or truncated:
-                break
-        # policy update
-        int_duration += time.perf_counter() - int_s_time
-        pol_s_time = time.perf_counter()
-        policy, optimizer, loss, ep_entropy = finish_episode(policy, optimizer, cfg, log_probs, rewards, entropies)
-        pol_duration = time.perf_counter() - pol_s_time
+                # collection
+                entropy = -np.sum(list(map(lambda p : p * (np.log(p) / np.log(n_actions)) if p[0] != 0 else 0, probs)))
+                log_probs.append(log_prob)
+                rewards.append(natural_reward)
+                entropies.append(entropy)
+                ep_return += natural_reward
+                i_trajectory_step += 1
+                i_episode_step += 1
+
+                # tfboard logging
+                if i_episode_step % cfg.train.log_steps == 0 and tfb_policy_updates_counter > 0:
+                    global_step = (i_epoch - 1) * cfg.train.steps_per_episode + i_episode_step
+                    avg_nr = tfb_nr_buffer / tfb_policy_updates_counter
+                    avg_pnl = tfb_pnl_buffer / tfb_policy_updates_counter
+                    avg_pne = tfb_pne_buffer / tfb_policy_updates_counter
+                    avg_step = tfb_step_buffer / tfb_policy_updates_counter
+                    writer.add_scalar('rewards/avg_return', avg_nr, global_step)
+                    writer.add_scalar('loss/avg_policy_net', avg_pnl, global_step)
+                    writer.add_scalar('loss/avg_policy_net_entropy', avg_pne, global_step)
+                    writer.add_scalar('various/avg_steps', avg_step, global_step)
+                    tfb_nr_buffer = 0
+                    tfb_pnl_buffer = 0
+                    tfb_pne_buffer = 0
+                    tfb_step_buffer = 0
+                    tfb_policy_updates_counter = 0
+
+                # break conditions
+                if terminated or truncated:
+                    break
+                if i_episode_step == cfg.train.steps_per_episode:
+                    incomplete_traj = True
+                    break
+            
+            # policy update
+            int_duration += time.perf_counter() - int_s_time
+            pol_s_time = time.perf_counter()
+            policy, optimizer, loss, ep_entropy = finish_episode(policy, optimizer, cfg, log_probs, rewards, entropies)
+            pol_duration = time.perf_counter() - pol_s_time
+            ep_duration = int_duration + pol_duration
+
+            if not incomplete_traj:
+                tfb_policy_updates_counter += 1
+                tfb_nr_buffer += ep_return
+                tfb_pnl_buffer += loss.detach()
+                tfb_pne_buffer += ep_entropy
+                tfb_step_buffer += i_trajectory_step
+
+                stdout_policy_updates_counter += 1
+                stdout_nr_buffer += ep_return
+                stdout_pnl_buffer += loss.detach()
+                stdout_pne_buffer += ep_entropy
+                stdout_step_buffer += i_trajectory_step
+
+                sum_ep_duration += ep_duration
+                sum_int_duration += int_duration
+                sum_pol_duration += pol_duration
+                # update logging data
+                if running_return is None:
+                    running_return = ep_return
+                else:
+                    running_return = 0.05 * ep_return + (1 - 0.05) * running_return
+
+
 
         # checkpointing
-        if (i_episode) % cfg.train.save_every == 0:
-            save_policy(cfg.exp_name, policy, i_episode, optimizer)
-
-        # update logging data
-        ep_duration = int_duration + pol_duration
-        if running_return is None:
-            running_return = ep_return
-        else:
-            running_return = 0.05 * ep_return + (1 - 0.05) * running_return
-        nr_buffer += ep_return
-        pnl_buffer += loss.detach()
-        pne_buffer += ep_entropy
-        step_buffer += t
+        checkpoint_str = ""
+        if i_epoch % cfg.train.save_every == 0:
+            save_policy(cfg.exp_name, policy, i_epoch, optimizer)
+            checkpoint_str = "checkpoint"
 
         # episode stats
-        print('Episode {}\tRunning Return: {:.2f}\tReturn: {:.2f}\tEntropy: {:.2f}\tObjFuncValue: {:.2f}\tSteps: {}\tDuration: {:.2f} [ENV: {:.2f} | P_UPDATE: {:.2f}]'.format(
-            i_episode, running_return, ep_return, ep_entropy, loss, t, ep_duration, int_duration, pol_duration))
-        # tfboard logging
-        if i_episode % cfg.train.log_steps == 0:
-            avg_nr = nr_buffer / cfg.train.log_steps
-            avg_pnl = pnl_buffer / cfg.train.log_steps
-            avg_pne = pne_buffer / cfg.train.log_steps
-            avg_step = step_buffer / cfg.train.log_steps
-            writer.add_scalar('rewards/avg_return', avg_nr, i_episode)
-            writer.add_scalar('loss/avg_policy_net', avg_pnl, i_episode)
-            writer.add_scalar('loss/avg_policy_net_entropy', avg_pne, i_episode)
-            writer.add_scalar('various/avg_steps', avg_step, i_episode)
-            nr_buffer = 0
-            pnl_buffer = 0
-            pne_buffer = 0
-            step_buffer = 0
-        i_episode += 1
+        c = stdout_policy_updates_counter
+        print('Epoch {}:\tRunning Return: {:.2f}\tavgReturn: {:.2f}\tavgEntropy: {:.2f}\tavgObjFuncValue: {:.2f}\tavgSteps: {:.2f}\tDuration: {:.2f} [ENV: {:.2f} | P_UPDATE: {:.2f}]\t{}'.format(
+            i_epoch, running_return, stdout_nr_buffer / c, stdout_pne_buffer / c, loss / c, stdout_step_buffer / c, sum_ep_duration, sum_int_duration, sum_pol_duration, checkpoint_str))
+        
+        i_epoch += 1
         rtpt.step()
 
 
