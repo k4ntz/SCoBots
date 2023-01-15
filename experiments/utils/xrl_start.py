@@ -29,7 +29,6 @@ def play_agent(cfg, model, select_action_func):
     _, ep_reward = env.reset(), 0
     obs, _, _, _, info = env.step(1)
     features = obs
-
     # init objects
     summary(model, input_size=(1, len(features)), device=cfg.device)
     # make multiple runs for eval
@@ -44,7 +43,7 @@ def play_agent(cfg, model, select_action_func):
         t = 0
         ep_reward = 0
         env.reset()
-        while t < cfg.train.max_steps:  # Don't infinite loop while playing
+        while t < cfg.train.max_steps_per_trajectory:  # Don't infinite loop while playing
             #features = torch.tensor(features).unsqueeze(0).float()
             action = select_action_func(features, model, -1, n_actions)
             if cfg.liveplot:
