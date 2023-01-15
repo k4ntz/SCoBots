@@ -27,7 +27,7 @@ def play_agent(cfg, model, select_action_func):
     n_actions = env.action_space.n
     #gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
-    obs, _, _, _, info = env.step(1)
+    obs, _, _, _, info, obs_raw = env.step(1)
     features = obs
     # init objects
     summary(model, input_size=(1, len(features)), device=cfg.device)
@@ -47,13 +47,13 @@ def play_agent(cfg, model, select_action_func):
             #features = torch.tensor(features).unsqueeze(0).float()
             action = select_action_func(features, model, -1, n_actions)
             if cfg.liveplot:
-                plt.imshow(obs, interpolation='none')
+                plt.imshow(obs_raw, interpolation='none')
                 plt.plot()
                 plt.pause(0.001)  # pause a bit so that plots are updated
                 plt.clf()
             #print('Reward: {:.2f}\t Step: {:.2f}'.format(
             #        ep_reward, t), end="\r")
-            obs, reward, done, done2, info = env.step(action)
+            obs, reward, done, done2, info, obs_raw = env.step(action)
             features = obs
             ep_reward += reward
             t += 1

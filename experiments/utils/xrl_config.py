@@ -61,8 +61,10 @@ cfg = CfgNode({
         'eps_start': 1.0,
         'eps_end': 0.01,
         'eps_decay': 100000,
-        'learning_rate': 0.00025,
+        'learning_rate': 0.0003,
         'random_action_p': 0.05,
+        
+        'clip_norm': 0.5,
 
         'use_raw_features': False,
 
@@ -74,16 +76,15 @@ cfg = CfgNode({
 
         'memory_size': 50000,
         'memory_min_size': 25000,
+        'max_steps_per_trajectory': 100000,
 
-        'num_episodes': 1000,
-        'max_steps': 100000,
+        'num_episodes': 100,
+        'steps_per_episode': 250000,
+        'log_steps': 20000,
+        # save every is for episodes
+        'save_every': 1,
 
         'skip_frames': 1,
-
-        'log_steps': 500,
-        # save every is for episodes
-        'save_every': 5,
-
         'feedback_alpha': 0,
         'feedback_delta': 0,
 
@@ -95,7 +96,7 @@ cfg = CfgNode({
 
         ### XRL SPECIFIC
         'make_hidden': True,
-        'hidden_layer_size': 256,
+        'hidden_layer_size': 128,
     },
 })
 

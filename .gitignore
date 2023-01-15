@@ -160,12 +160,8 @@ src/visualisation/xdt*
 experiments/checkpoints/
 experiments/logs/
 experiments/genlogs/
-experiments/drlogs/
-experiments/gdlogs/
 experiments/relogs/
 experiments/video/
-experiments/mdrlogs/
 experiments/joblogs/
 experiments/focusfiles/default_*
-experiments/run_batch.sh
-experiments/kill_batch.sh
+experiments/*_batch.sh
