@@ -1,4 +1,5 @@
 import torch.nn as nn
+from torch import tanh
 import torch.nn.functional as F
 
 
@@ -7,8 +8,8 @@ class FC_Net(nn.Module):
     def __init__(self, input_size, hidden_size, output_size): 
 
         super().__init__()
-        self.h = nn.Linear(input_size, hidden_size)
-        self.dropout = nn.Dropout(p=0.6)
+        self.h1 = nn.Linear(input_size, hidden_size)
+        self.h2 = nn.Linear(hidden_size, hidden_size)
         self.out = nn.Linear(hidden_size, output_size)
 
         # xavier normal and bias 0 init
@@ -23,8 +24,9 @@ class FC_Net(nn.Module):
         nn.init.zeros_(self.out.bias)
 
     def forward(self, x):
-        x = self.h(x)
-        x = self.dropout(x)
-        x = F.relu(x)
+        x = self.h1(x)
+        x = tanh(x)
+        x = self.h2(x)
+        x = tanh(x)
         x = self.out(x)
         return F.softmax(x, dim=1)

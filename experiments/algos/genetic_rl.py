@@ -84,15 +84,15 @@ def run_agents(env, agents, cfg):
         agent.eval()
         n_actions = env.action_space.n
         _ = env.reset()
-        obs, _, done, done2, info = env.step(1)
+        obs, _, done, done2, info, _ = env.step(1)
         features = obs
         r = 0
         t = 0
-        while t < cfg.train.max_steps:
+        while t < cfg.train.max_steps_per_trajectory:
             #if cfg.train.use_raw_features:
             #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent, cfg.train.random_action_p, n_actions)
-            obs, reward, done, done2, info = env.step(action)
+            obs, reward, done, done2, info, _ = env.step(action)
             #plt.imshow(obs, interpolation='none')
             #plt.plot()
             #plt.pause(0.001)  # pause a bit so that plots are updated
@@ -102,7 +102,7 @@ def run_agents(env, agents, cfg):
             if done or done2:
                 break
             t += 1
-        if t == cfg.train.max_steps:
+        if t == cfg.train.max_steps_per_trajectory:
             r = -25
         reward_agents.append(r)
     return reward_agents
@@ -230,7 +230,7 @@ def train(cfg):
 
     generations = cfg.train.num_episodes
     print('Generations:', generations)
-    print('Max Steps per Episode:', cfg.train.max_steps)
+    print('Max Steps per Episode:', cfg.train.max_steps_per_trajectory)
     print("Random Action probability:", cfg.train.random_action_p)
 
     # disable gradients as we will not use them
@@ -240,7 +240,7 @@ def train(cfg):
     env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True)
     n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
-    obs, _, _, _, info = env.step(1)
+    obs, _, _, _, info, _ = env.step(1)
     features = obs
     #if cfg.train.use_raw_features:
     #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
@@ -319,7 +319,7 @@ def eval_load(cfg):
     env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, info = env.step(1)
+    obs, _, _, _, info, _ = env.step(1)
     features = obs
    # if cfg.train.use_raw_features:
     #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
