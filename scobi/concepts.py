@@ -34,15 +34,11 @@ def get_rgb(obj: GameObject) -> Tuple[int, int, int]:
 ##########################
 @register(type="F", name="LINEAR_TRAJECTORY", params=["POSITION", "POSITION_HISTORY"], desc="x, y distance to trajectory")
 def calc_lin_traj(a_position: Tuple[int, int], b_history: Tuple[int, int, int, int]) -> Tuple[int, int]:
-    obj1 = a_position
-    obj2 = b_history[0:2]
-    obj2_past = b_history[2:4]
-    x, y = obj2, obj2_past
-    A = np.vstack([x, np.ones(len(x))]).T
-    m, c = np.linalg.lstsq(A, y, rcond=None)[0]
-    disty = np.int16(m * obj1[0] + c) - obj1[1]
-    distx = np.int16((obj1[1] - c) / (m+EPS))  - obj1[0]
-    return disty, distx
+    m = (b_history[3] - b_history[1]) / (b_history[2] - b_history[0] + EPS)  # slope  m = (y2 - y1) / (x2 - x1)
+    b = b_history[1] - m * b_history[0] # b = y - mx
+    disty = (m * a_position[0] + b) - a_position[1] # delta_y = y_a - (m * x_a + b)
+    distx = ((a_position[1] - b) / (m + EPS)) - a_position[0] # delta_x = x_a - (y_a - b) / m
+    return distx, disty
 
 
 @register(type="F", name="DISTANCE", params=["POSITION", "POSITION"], desc="distance between two coordinates")
