@@ -204,19 +204,20 @@ def train(cfg):
             int_duration += time.perf_counter() - int_s_time
             pol_s_time = time.perf_counter()
             policy, optimizer, loss, ep_entropy = finish_episode(policy, optimizer, cfg, log_probs, rewards, entropies)
+            loss = loss.detach()
             pol_duration = time.perf_counter() - pol_s_time
             ep_duration = int_duration + pol_duration
 
             if not incomplete_traj:
                 tfb_policy_updates_counter += 1
                 tfb_nr_buffer += ep_return
-                tfb_pnl_buffer += loss.detach()
+                tfb_pnl_buffer += loss
                 tfb_pne_buffer += ep_entropy
                 tfb_step_buffer += i_trajectory_step
 
                 stdout_policy_updates_counter += 1
                 stdout_nr_buffer += ep_return
-                stdout_pnl_buffer += loss.detach()
+                stdout_pnl_buffer += loss
                 stdout_pne_buffer += ep_entropy
                 stdout_step_buffer += i_trajectory_step
 
