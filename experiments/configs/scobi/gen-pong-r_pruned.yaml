@@ -19,7 +19,7 @@ train:
   num_episodes: 1500
   max_steps: 50000
   
-  hidden_layer_size : 128
+  policy_h_size : 128
 
   log_steps: 500
   # save every is for episodes

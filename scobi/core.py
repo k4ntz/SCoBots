@@ -7,9 +7,10 @@ from gymnasium import spaces
 
 
 class Environment():
-    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, obs_normalized=True, silent=False):
+    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, obs_normalized=True, obs_clipped=True, silent=False):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
+        self.clip = obs_clipped
         actions = self.oc_env._env.unwrapped.get_action_meanings() # TODO: oc envs should answer this, not the raw env
         self.oc_env.reset()
         obs, _, _, _, _, _ = ocatari_step(self.oc_env.step(1))
@@ -31,6 +32,8 @@ class Environment():
         if self.action_space.contains(action):
             obs, reward, truncated, terminated, info, obs_raw = ocatari_step(self.oc_env.step(action))
             sco_obs = self.focus.get_feature_vector(obs)
+            if self.clip:
+                sco_obs = np.clip(sco_obs, -1.0, 1.0).tolist() #TODO: performance
             sco_reward = reward #reward shaping here
             sco_truncated = truncated
             sco_terminated = terminated

@@ -50,11 +50,11 @@ def return_random_agents(n_inputs, num_agents, n_actions, cfg):
     agents = []
     # TODO: SeSz: still relevant? latest network definitions didnt use this parameter
     if cfg.train.make_hidden:
-        print("Agents have", n_inputs, "input nodes,", cfg.train.hidden_layer_size, "hidden nodes and", n_actions, "output nodes")
+        print("Agents have", n_inputs, "input nodes,", cfg.train.policy_h_size, "hidden nodes and", n_actions, "output nodes")
     else:
         print("Linear model, no hidden layer! Policy net has", n_inputs, "input nodes and", n_actions, "output nodes")
     for _ in range(num_agents):
-        agent = networks.FC_Net(n_inputs, cfg.train.hidden_layer_size, n_actions).to(dev)
+        agent = networks.PolicyNet(n_inputs, cfg.train.policy_h_size, n_actions).to(dev)
         for param in agent.parameters():
             param.requires_grad = False
         init_weights(agent)
@@ -340,7 +340,7 @@ def eval_load(cfg):
     print('Selected elite agent:', elite_index)
     elite_agent = agents[elite_index]
     # print nn structure
-    dummy = networks.FC_Net(len(features), cfg.train.hidden_layer_size, n_actions).to(dev)
+    dummy = networks.PolicyNet(len(features), cfg.train.policy_h_size, n_actions).to(dev)
     # because old trained runs does not have make_hidden param
     dummy.load_state_dict(elite_agent.state_dict())
     elite_agent = dummy
