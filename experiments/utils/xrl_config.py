@@ -96,7 +96,8 @@ cfg = CfgNode({
 
         ### XRL SPECIFIC
         'make_hidden': True,
-        'hidden_layer_size': 128,
+        'policy_h_size': 64,
+        'value_h_size': 128,
     },
 })
 

@@ -19,3 +19,5 @@ train:
   max_steps_per_trajectory: 100000
   log_steps: 20000
   save_every: 1 # episode
+  policy_h_size: 64
+  value_h_size: 128
