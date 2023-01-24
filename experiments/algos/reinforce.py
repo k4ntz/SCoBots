@@ -15,7 +15,6 @@ from rtpt import RTPT
 from scobi import Environment
 from . import networks
 
-#from agent import Agent
 
 EPS = np.finfo(np.float32).eps.item()
 PATH_TO_OUTPUTS = os.getcwd() + "/checkpoints/"
@@ -185,7 +184,6 @@ def train(cfg):
                 }, val_model_path)
 
     def update_models(data):
-        torch.autograd.set_detect_anomaly(True)
         obss, rets, advs, logps, vals =  data["obs"], data["rets"], data["advs"], data["logps"], data["vals"]
 
         policy_optimizer.zero_grad()
@@ -215,17 +213,13 @@ def train(cfg):
         stdout_pne_buffer = 0
         stdout_step_buffer = 0
         stdout_policy_updates_counter = 0
-        sum_ep_duration = 0
-        sum_int_duration = 0
-        sum_pol_duration = 0
         i_episode_step = 0
+        epoch_s_time = time.perf_counter()
         while i_episode_step < cfg.train.steps_per_episode:
             entropies = []
             ep_return = 0
-            int_duration = 0
             i_trajectory_step = 0
             incomplete_traj = False
-            int_s_time = time.perf_counter()
             while i_trajectory_step < cfg.train.max_steps_per_trajectory:
                 
                 # interaction
@@ -272,18 +266,14 @@ def train(cfg):
             
             buffer.finalize()
             # policy update
-            int_duration += time.perf_counter() - int_s_time
-            pol_s_time = time.perf_counter()
             data = buffer.get()
             policy_loss, value_loss = update_models(data)
             buffer.reset()
             env.reset()
-            pol_duration = time.perf_counter() - pol_s_time
+
             policy_loss = policy_loss.detach()
             value_loss = value_loss.detach()
-
             ep_entropy = np.mean(entropies)
-            ep_duration = int_duration + pol_duration
 
             if not incomplete_traj:
                 tfb_policy_updates_counter += 1
@@ -300,9 +290,6 @@ def train(cfg):
                 stdout_pne_buffer += ep_entropy
                 stdout_step_buffer += i_trajectory_step
 
-                sum_ep_duration += ep_duration
-                sum_int_duration += int_duration
-                sum_pol_duration += pol_duration
                 # update logging data
                 if running_return is None:
                     running_return = ep_return
@@ -310,7 +297,7 @@ def train(cfg):
                     running_return = 0.05 * ep_return + (1 - 0.05) * running_return
 
 
-
+        epoch_duration = time.perf_counter() - epoch_s_time
         # checkpointing
         checkpoint_str = ""
         if i_epoch % cfg.train.save_every == 0:
@@ -319,8 +306,8 @@ def train(cfg):
 
         # episode stats
         c = stdout_policy_updates_counter
-        print('Epoch {}:\tRunning Return: {:.2f}\tavgReturn: {:.2f}\tavgEntropy: {:.2f}\tavgValueNetLoss: {:.2f}\tavgSteps: {:.2f}\tDuration: {:.2f} [ENV: {:.2f} | P_UPDATE: {:.2f}]\t{}'.format(
-            i_epoch, running_return, stdout_nr_buffer / c, stdout_pne_buffer / c, stdout_vnl_buffer / c, stdout_step_buffer / c, sum_ep_duration, sum_int_duration, sum_pol_duration, checkpoint_str))
+        print('Epoch {}:\tRunning Return: {:.2f}\tavgReturn: {:.2f}\tavgEntropy: {:.2f}\tavgValueNetLoss: {:.2f}\tavgSteps: {:.2f}\tDuration: {:.2f} \t{}'.format(
+            i_epoch, running_return, stdout_nr_buffer / c, stdout_pne_buffer / c, stdout_vnl_buffer / c, stdout_step_buffer / c, epoch_duration, checkpoint_str))
         
 
         i_epoch += 1
