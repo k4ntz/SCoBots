@@ -109,7 +109,11 @@ def train(cfg):
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
 
     # init env to get params for policy net
-    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
+    env = Environment(cfg.env_name,
+                      interactive=cfg.scobi_interactive,
+                      focus_dir=cfg.scobi_focus_dir,
+                      focus_file=cfg.scobi_focus_file,
+                      clip_value=cfg.train.input_clip_value)
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, info, _ = env.step(1)
@@ -192,8 +196,7 @@ def train(cfg):
         torch.nn.utils.clip_grad_norm_(policy_net.parameters(), cfg.train.clip_norm)
         policy_optimizer.step()
 
-        ep_len = len(rets)
-        val_iters = max(1, int(ep_len / 50))
+        val_iters = cfg.train.value_iters
         for i in range(val_iters):
             value_optimizer.zero_grad()
             value_loss = ((rets - vals)**2).mean()
@@ -309,7 +312,6 @@ def train(cfg):
         print('Epoch {}:\tRunning Return: {:.2f}\tavgReturn: {:.2f}\tavgEntropy: {:.2f}\tavgValueNetLoss: {:.2f}\tavgSteps: {:.2f}\tDuration: {:.2f} \t{}'.format(
             i_epoch, running_return, stdout_nr_buffer / c, stdout_pne_buffer / c, stdout_vnl_buffer / c, stdout_step_buffer / c, epoch_duration, checkpoint_str))
         
-
         i_epoch += 1
         rtpt.step()
 

@@ -12,7 +12,6 @@ train:
   random_action_p: 0.05
   gamma: 0.97
   learning_rate: 0.0003
-  random_action_p: 0.05
   clip_norm: 0.5
   num_episodes: 200
   steps_per_episode: 250000
