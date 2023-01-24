@@ -12,12 +12,9 @@ train:
   random_action_p: 0.05
   gamma: 0.97
   learning_rate: 0.0003
-  random_action_p: 0.05
   clip_norm: 0.5
   num_episodes: 200
-  steps_per_episode: 250000
+  steps_per_episode: 25000
   max_steps_per_trajectory: 100000
-  log_steps: 20000
+  log_steps: 2000
   save_every: 1 # episode
-  policy_h_size: 64
-  value_h_size: 128

@@ -63,6 +63,7 @@ cfg = CfgNode({
         'eps_decay': 100000,
         'learning_rate': 0.0003,
         'random_action_p': 0.05,
+        'input_clip_value': 5,
         
         'clip_norm': 0.5,
 
@@ -97,7 +98,8 @@ cfg = CfgNode({
         ### XRL SPECIFIC
         'make_hidden': True,
         'policy_h_size': 64,
-        'value_h_size': 128,
+        'value_h_size': 64,
+        'value_iters': 50,
     },
 })
 
