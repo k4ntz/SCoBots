@@ -1,16 +1,27 @@
-ENVIRONMENT: PongDeterministic-v4
+ENVIRONMENT: BoxingDeterministic-v4
 AVAILABLE_CONCEPTS:
   objects:
-  - ball
-  - enemy
   - player
+  - enemy
   actions:
   - NOOP
   - FIRE
+  - UP
   - RIGHT
   - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
   - RIGHTFIRE
   - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
   properties:
   - POSITION:
       in:
@@ -55,68 +66,24 @@ AVAILABLE_CONCEPTS:
       description: Index of colorname
 SELECTION:
   objects:
-  - ball
-  - enemy
   - player
+  - enemy
   actions:
+  - UP
   - RIGHT
   - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
   properties:
-  - POSITION: ball
-  - POSITION: enemy
   - POSITION: player
-  - POSITION_HISTORY: ball
-  - POSITION_HISTORY: enemy
-  - POSITION_HISTORY: player
+  - POSITION: enemy
   functions:
-  - LINEAR_TRAJECTORY:
-    - POSITION: ball
-    - POSITION_HISTORY: ball
-  - LINEAR_TRAJECTORY:
-    - POSITION: ball
-    - POSITION_HISTORY: enemy
-  - LINEAR_TRAJECTORY:
-    - POSITION: ball
-    - POSITION_HISTORY: player
-  - LINEAR_TRAJECTORY:
-    - POSITION: enemy
-    - POSITION_HISTORY: ball
-  - LINEAR_TRAJECTORY:
-    - POSITION: enemy
-    - POSITION_HISTORY: enemy
-  - LINEAR_TRAJECTORY:
-    - POSITION: enemy
-    - POSITION_HISTORY: player
-  - LINEAR_TRAJECTORY:
-    - POSITION: player
-    - POSITION_HISTORY: ball
-  - LINEAR_TRAJECTORY:
-    - POSITION: player
-    - POSITION_HISTORY: enemy
-  - LINEAR_TRAJECTORY:
-    - POSITION: player
-    - POSITION_HISTORY: player
-  - DISTANCE:
-    - POSITION: ball
-    - POSITION: enemy
-  - DISTANCE:
-    - POSITION: ball
-    - POSITION: player
-  - DISTANCE:
-    - POSITION: enemy
-    - POSITION: ball
-  - DISTANCE:
-    - POSITION: enemy
-    - POSITION: player
-  - DISTANCE:
-    - POSITION: player
-    - POSITION: ball
   - DISTANCE:
     - POSITION: player
     - POSITION: enemy
-  - VELOCITY:
-    - POSITION_HISTORY: ball
-  - VELOCITY:
-    - POSITION_HISTORY: enemy
-  - VELOCITY:
-    - POSITION_HISTORY: player
+  - DISTANCE:
+    - POSITION: enemy
+    - POSITION: player
