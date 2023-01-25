@@ -59,6 +59,8 @@ SELECTION:
   - enemy
   - player
   actions:
+  - NOOP
+  - FIRE
   - RIGHT
   - LEFT
   properties:
