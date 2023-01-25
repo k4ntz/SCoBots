@@ -69,6 +69,8 @@ SELECTION:
   - player
   - enemy
   actions:
+  - NOOP
+  - FIRE
   - UP
   - RIGHT
   - LEFT
