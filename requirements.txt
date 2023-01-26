@@ -1,6 +1,5 @@
 gymnasium[atari, accept-rom-license]
 rtpt
-atari_py
 termcolor
 torch
 torchinfo
@@ -12,5 +11,4 @@ tqdm
 pyyaml
 colormath
 yacs
-git+https://github.com/mila-iqia/atari-representation-learning.git
-git+https://github.com/k4ntz/OC_Atari@0c1ace2b945153b90efce47e9b830dcf397b3e89
+git+https://github.com/k4ntz/OC_Atari@develop

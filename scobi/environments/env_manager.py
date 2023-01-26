@@ -1,6 +1,6 @@
 from termcolor import colored
 # TODO: make nonstatic
-OCATARI_AVAILABLE_GAMES = ["Boxing", "Breakout", "Skiing", "Pong", "Seaquest", "Tennis"]
+OCATARI_AVAILABLE_GAMES = ["Boxing", "Skiing", "Pong",]
 
 
 

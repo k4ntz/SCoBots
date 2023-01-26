@@ -13,8 +13,8 @@ class Focus():
         concept_init()
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
-        self.OBJECTS = raw_features.values()
-        self.OBJECT_NAMES = [x.name for x in self.OBJECTS]
+        self.OBJECTS = raw_features
+        self.OBJECT_NAMES = [x.category for x in self.OBJECTS]
         self.ACTIONS = actions
         self.ENV_NAME = env_name
         self.PARSED_OBJECTS = []
@@ -73,7 +73,7 @@ class Focus():
         for k, v in PROPERTIES.items():
             for o in self.OBJECTS:
                 if type(o) == v["expects"][0][0].annotation: #assume only one input from property
-                    e = [k, o.name]
+                    e = [k, o.category]
                     self.PROPERTY_LIST.append(e)
 
     def generate_function_set(self):
@@ -86,15 +86,15 @@ class Focus():
                 if combi_sig == function_sig:
                     self.FUNCTION_LIST.append([k, list(combi)])
 
-    def get_object_by_name(self, name, objs):
+    def get_object_by_category(self, category, objs):
         if type(objs) == dict:
             for o in objs.values():
-                if o.name == name:
+                if o.category == category:
                     return o
             return None
         else:
             for o in objs:
-                if o.name == name:
+                if o.category == category:
                     return o
             return None
 
@@ -155,20 +155,18 @@ class Focus():
             }
         }
 
-        #print(self.PROPERTY_LIST)
         yaml_dict["ENVIRONMENT"] = self.ENV_NAME
         avail = yaml_dict["AVAILABLE_CONCEPTS"]
-        avail["objects"] = [x.name for x in self.OBJECTS]
+        avail["objects"] = [x.category for x in self.OBJECTS]
         avail["actions"] = [x for x in self.ACTIONS]
         avail["properties"] = [self.avail_to_yaml_dict(k, v) for k, v in PROPERTIES.items()]
         avail["functions"] =  [self.avail_to_yaml_dict(k, v) for k, v in FUNCTIONS.items()]
 
         use = yaml_dict["SELECTION"]
-        use["objects"] = [x.name for x in self.OBJECTS]
+        use["objects"] = [x.category for x in self.OBJECTS]
         use["actions"] = [x for x in self.ACTIONS]
         use["properties"] = [self.proplist_to_yaml_dict(x) for x in self.PROPERTY_LIST]
         use["functions"] = [self.funclist_to_yaml_dict(x) for x in self.FUNCTION_LIST]
-        #print(yaml_dict)
 
         with open(fpath, "w") as f:
             yaml.dump(yaml_dict, f, sort_keys=False)
@@ -213,7 +211,7 @@ class Focus():
             if p[0] not in PROPERTIES.keys():
                 self.l.FocusFileParserError("Unknown object in properties selection: %s" % p[0])
             prop_definition = PROPERTIES[p[0]]
-            o = self.get_object_by_name(p[1], self.OBJECTS)
+            o = self.get_object_by_category(p[1], self.OBJECTS)
             prop_sig = prop_definition["expects"][0][0].annotation
             if type(o) != prop_sig:
                  self.l.GeneralError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
@@ -231,7 +229,7 @@ class Focus():
                 if para[1] not in self.OBJECT_NAMES:
                     self.l.FocusFileParserError("Unknown object in functions selection: %s" % para[1])
                 prop_definition = PROPERTIES[para[0]]
-                o = self.get_object_by_name(para[1], self.OBJECTS)
+                o = self.get_object_by_category(para[1], self.OBJECTS)
                 prop_sig = prop_definition["expects"][0][0].annotation
                 parsed_para_sig.append(prop_definition["returns"][0])
                 if type(o) != prop_sig:
@@ -343,7 +341,7 @@ class Focus():
             out.append(normed)
         return out
 
-    def get_feature_vector(self, inc_objects_dict):
+    def get_feature_vector(self, inc_objects_list):
         # evaluate a 2 layer computation graph for the feature vector:
         # IN    object_dict
         # 1     PROPERTY_COMPUTE_LAYER 
@@ -351,7 +349,12 @@ class Focus():
         # 2     FUNC_COMPUTE_LAYER
         #       function_values
         # OUT   HSTACK(CONCAT(property_values, function_values))
-        props = [f(inc_objects_dict) for f in self.PROPERTY_COMPUTE_LAYER]
+
+        #TODO: important part: how to handle when incoming obj list smaller than dict (k instances stuff)
+        input_dict = {}
+        for obj in inc_objects_list:
+            input_dict[obj.category] = obj 
+        props = [f(input_dict) for f in self.PROPERTY_COMPUTE_LAYER]
         funcs = [f(props) for f in self.FUNC_COMPUTE_LAYER]
         out = np.hstack(props + funcs).tolist()
         if self.normalized:

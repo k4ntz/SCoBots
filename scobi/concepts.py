@@ -1,12 +1,12 @@
 import numpy as np
 import math
 from typing import Tuple
-from scobi.utils.game_object import GameObject
+from scobi.utils.game_object import get_wrapper_class
 from scobi.utils.colors import get_closest_color
 from scobi.utils.decorators import register
-
 COLOR_INT_MEMORY = dict()
 EPS = np.finfo(np.float32).eps.item()
+GameObject = get_wrapper_class()
 
 # dummy init 
 def init():
@@ -17,11 +17,11 @@ def init():
 ##########################
 @register(type="P", name="POSITION", params= ["OBJECT"], desc="get the position for given object")
 def get_position(obj: GameObject) -> Tuple[int, int]:
-    return tuple(obj.get_coords()[0])
+    return tuple(obj.xy)
 
 @register(type="P", name="POSITION_HISTORY", params= ["OBJECT"], desc="get the current and last position for given object")
 def get_position_history(obj: GameObject) -> Tuple[int, int, int, int]:
-    coords = obj.get_coords()
+    coords = obj.h_coords
     return tuple(coords[0] + coords[1])
 
 @register(type="P", name="RGB", params= ["OBJECT"], desc="get the rgb value for given object")
