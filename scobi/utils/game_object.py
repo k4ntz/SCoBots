@@ -1,23 +1,44 @@
-# class for game objects
-# containing current and past coordinates
-# and rgb values
+# game object interface
+# switch depending on object extractor
+# hardoced to ocatari for now
+from scobi.utils.interfaces import GameObjectInterface
+
+from ocatari.ram.game_objects import GameObject as Ocatari_GameObject
+
+OBJ_EXTRACTOR = "OC_Atari" #TODO: pass or fetch from global env
 
 
-class GameObject():
-    def __init__(self, name, rgb=[0,0,0], wh=[0,0]):
-        self.name = name
-        # contains current and old coords
-        self.coord_now = [0, 0]
-        self.coord_past = [0, 0]
-        self.rgb = rgb
-        self.wh = wh
-        self.category = "None"
-    # set new coords
-    def update_coords(self, x, y):
-        self.coord_past = self.coord_now
-        self.coord_now[0] = x
-        self.coord_now[1] = y
+def get_wrapper_class():
+    if OBJ_EXTRACTOR == "OC_Atari":
+        return OCAGameObject
+    # add other object extractors here and its wrapper classe below
 
-    # returns 2 lists with current and past coords
-    def get_coords(self):
-        return self.coord_now, self.coord_past
+
+# OC Atari GameObject wrapper classes implementing scobi GameObjectInterface
+class OCAGameObject(GameObjectInterface):
+    def __init__(self, ocgo):
+        if issubclass(type(ocgo), Ocatari_GameObject):
+            self.ocgo = ocgo
+        else:
+            incoming_type = type(ocgo)
+            raise ValueError("Incompatible Wrapper, expects OC_Atari GameObject. Got: "+str(incoming_type))
+
+    @property
+    def category(self):
+        return self.ocgo.category
+    
+    @property
+    def xy(self):
+        return self.ocgo.xy
+
+    @xy.setter
+    def xy(self, xy):
+        self.ocgo.xy = xy
+
+    @property
+    def h_coords(self):
+        return self.ocgo.h_coords
+    
+    @property
+    def rgb(self):
+        return self.ocgo.rgb

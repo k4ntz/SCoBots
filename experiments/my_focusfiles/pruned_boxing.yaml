@@ -1,8 +1,8 @@
 ENVIRONMENT: BoxingDeterministic-v4
 AVAILABLE_CONCEPTS:
   objects:
-  - player
-  - enemy
+  - Player
+  - Enemy
   actions:
   - NOOP
   - FIRE
@@ -66,8 +66,8 @@ AVAILABLE_CONCEPTS:
       description: Index of colorname
 SELECTION:
   objects:
-  - player
-  - enemy
+  - Player
+  - Enemy
   actions:
   - NOOP
   - FIRE
@@ -80,12 +80,12 @@ SELECTION:
   - DOWNRIGHT
   - DOWNLEFT
   properties:
-  - POSITION: player
-  - POSITION: enemy
+    - POSITION: Player
+    - POSITION: Enemy
   functions:
   - DISTANCE:
-    - POSITION: player
-    - POSITION: enemy
+    - POSITION: Player
+    - POSITION: Enemy
   - DISTANCE:
-    - POSITION: enemy
-    - POSITION: player
+    - POSITION: Enemy
+    - POSITION: Player

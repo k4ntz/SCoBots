@@ -1,9 +1,9 @@
 ENVIRONMENT: PongDeterministic-v4
 AVAILABLE_CONCEPTS:
   objects:
-  - ball
-  - enemy
-  - player
+  - Ball
+  - Enemy
+  - Player
   actions:
   - NOOP
   - FIRE
@@ -55,70 +55,70 @@ AVAILABLE_CONCEPTS:
       description: Index of colorname
 SELECTION:
   objects:
-  - ball
-  - enemy
-  - player
+  - Ball
+  - Enemy
+  - Player
   actions:
   - NOOP
   - FIRE
   - RIGHT
   - LEFT
   properties:
-  - POSITION: ball
-  - POSITION: enemy
-  - POSITION: player
-  - POSITION_HISTORY: ball
-  - POSITION_HISTORY: enemy
-  - POSITION_HISTORY: player
+  - POSITION: Ball
+  - POSITION: Enemy
+  - POSITION: Player
+  - POSITION_HISTORY: Ball
+  - POSITION_HISTORY: Enemy
+  - POSITION_HISTORY: Player
   functions:
   - LINEAR_TRAJECTORY:
-    - POSITION: ball
-    - POSITION_HISTORY: ball
+    - POSITION: Ball
+    - POSITION_HISTORY: Ball
   - LINEAR_TRAJECTORY:
-    - POSITION: ball
-    - POSITION_HISTORY: enemy
+    - POSITION: Ball
+    - POSITION_HISTORY: Enemy
   - LINEAR_TRAJECTORY:
-    - POSITION: ball
-    - POSITION_HISTORY: player
+    - POSITION: Ball
+    - POSITION_HISTORY: Player
   - LINEAR_TRAJECTORY:
-    - POSITION: enemy
-    - POSITION_HISTORY: ball
+    - POSITION: Enemy
+    - POSITION_HISTORY: Ball
   - LINEAR_TRAJECTORY:
-    - POSITION: enemy
-    - POSITION_HISTORY: enemy
+    - POSITION: Enemy
+    - POSITION_HISTORY: Enemy
   - LINEAR_TRAJECTORY:
-    - POSITION: enemy
-    - POSITION_HISTORY: player
+    - POSITION: Enemy
+    - POSITION_HISTORY: Player
   - LINEAR_TRAJECTORY:
-    - POSITION: player
-    - POSITION_HISTORY: ball
+    - POSITION: Player
+    - POSITION_HISTORY: Ball
   - LINEAR_TRAJECTORY:
-    - POSITION: player
-    - POSITION_HISTORY: enemy
+    - POSITION: Player
+    - POSITION_HISTORY: Enemy
   - LINEAR_TRAJECTORY:
-    - POSITION: player
-    - POSITION_HISTORY: player
+    - POSITION: Player
+    - POSITION_HISTORY: Player
   - DISTANCE:
-    - POSITION: ball
-    - POSITION: enemy
+    - POSITION: Ball
+    - POSITION: Enemy
   - DISTANCE:
-    - POSITION: ball
-    - POSITION: player
+    - POSITION: Ball
+    - POSITION: Player
   - DISTANCE:
-    - POSITION: enemy
-    - POSITION: ball
+    - POSITION: Enemy
+    - POSITION: Ball
   - DISTANCE:
-    - POSITION: enemy
-    - POSITION: player
+    - POSITION: Enemy
+    - POSITION: Player
   - DISTANCE:
-    - POSITION: player
-    - POSITION: ball
+    - POSITION: Player
+    - POSITION: Ball
   - DISTANCE:
-    - POSITION: player
-    - POSITION: enemy
+    - POSITION: Player
+    - POSITION: Enemy
   - VELOCITY:
-    - POSITION_HISTORY: ball
+    - POSITION_HISTORY: Ball
   - VELOCITY:
-    - POSITION_HISTORY: enemy
+    - POSITION_HISTORY: Enemy
   - VELOCITY:
-    - POSITION_HISTORY: player
+    - POSITION_HISTORY: Player
