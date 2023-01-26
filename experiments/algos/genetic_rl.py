@@ -3,7 +3,6 @@ import numpy as np
 import os
 import copy
 import multiprocessing
-import random
 import sys
 import warnings
 from os import path
@@ -64,7 +63,7 @@ def return_random_agents(n_inputs, num_agents, n_actions, cfg):
 
 # function to select action by given features
 def select_action(features, policy, random_tr = -1, n_actions=3):
-    sample = random.random()
+    sample = np.random.random()
     if sample > random_tr:
         # calculate probabilities of taking each action
         probs = policy(torch.tensor(features).unsqueeze(0).float().to(dev))
@@ -72,7 +71,7 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
         sampler = Categorical(probs)
         action = sampler.sample().item()
     else:
-        action = random.randint(0, n_actions - 1)
+        action = np.random.random_integers(0, n_actions - 1)
     # return action
     return action
 
