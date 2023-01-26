@@ -1,7 +1,5 @@
 import numpy as np
 import os
-import random
-import random
 import time
 import torch
 import torch.optim as optim
@@ -92,8 +90,8 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
     action = sampler.sample()
     log_prob = sampler.log_prob(action)
     # select action when no random action should be selected
-    if random.random() <= random_tr:
-       action = random.randint(0, n_actions - 1)
+    if np.random.random() <= random_tr:
+       action = np.random.random_integers(0, n_actions - 1)
     else:
         action = action.item()
     # return action and log prob
