@@ -222,6 +222,7 @@ def load_agents(model_path):
 def train(cfg):
     print('Experiment name:', cfg.exp_name)
     torch.manual_seed(cfg.seed)
+    np.random.seed(cfg.seed)
     print('Seed:', torch.initial_seed())
     cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
 
