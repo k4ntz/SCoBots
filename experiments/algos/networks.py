@@ -24,7 +24,7 @@ class PolicyNet(nn.Module):
     def forward(self, x):
         x = self.h1(x)
         x = tanh(x)
-        self.out(x)
+        x = self.out(x)
         return F.softmax(x, dim=1)
 
 
