@@ -1,16 +1,27 @@
 on policy hyperparameters selection:
 https://arxiv.org/pdf/2006.05990.pdf
 
-running obs normalization           True
-input clipping value               -5, 5
-gradclip_norm                       0.5
-policy mlp depth                    1
-policy mlp width                    64
-policy mlp activations              tanh
-value mlp depth                     1
-value mlp width                     64
-value mlp activations               tanh
-adam lr                             0.0003
+date                                        25.1.23                 XX.1.23
+envs                                        pong boxing
+modes                                       scobi + iscobi
+seeds                                       0 1 2
+
+running obs normalization                   True
+input clipping value                        -5, 5
+gradclip_norm                               0.5
+policy mlp depth                            1
+policy mlp width                            64
+policy mlp activations                      tanh
+policy mlp init last layer weight scaling   1                       0.01
+value mlp depth                             1
+value mlp width                             64
+value mlp activations                       tanh
+adam lr                                     0.0003
 
 REINFORCE:
-value net backprops                 50
+value net backprops                         50
+
+
+comments                                    boxing-1 crashed        seeded
+                                            random action was
+                                            not seeded

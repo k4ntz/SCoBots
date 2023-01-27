@@ -18,12 +18,13 @@ class PolicyNet(nn.Module):
 
 
         nn.init.xavier_normal_(self.out.weight)
+        self.out.weight.data /= 100
         nn.init.zeros_(self.out.bias)
 
     def forward(self, x):
         x = self.h1(x)
         x = tanh(x)
-        x = self.out(x)
+        self.out(x)
         return F.softmax(x, dim=1)
 
 

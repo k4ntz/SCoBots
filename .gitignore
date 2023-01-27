@@ -166,3 +166,4 @@ experiments/joblogs/
 experiments/focusfiles/default_*
 experiments/*_batch.sh
 analysis.txt
+hyperparams.txt
