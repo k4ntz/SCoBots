@@ -31,10 +31,13 @@ class Focus():
         self.generate_function_set()
 
         # rework the control flow here, keep interactive mode or not?
+        fdir = Path.cwd() / Path(fodir)
+        fdir.mkdir(exist_ok=True)
+        
         if interactive == True:
             l.GeneralInfo("Interactive Mode")
             if fofile:
-                fpath = Path.cwd() / Path(fodir)  / Path(fofile)
+                fpath = fdir / Path(fofile)
                 if fpath.exists():
                     l.GeneralInfo("Focus file %s found." % colored(fpath.name, "light_green"))
                     self.load_focus_file(fpath)
@@ -54,7 +57,7 @@ class Focus():
             l.GeneralInfo( "Non-Interactive Mode")
             if fofile:
                 l.GeneralWarning("Specified focus file ignored, because in non-interactive scobi mode. Using default.")
-            fpath = Path.cwd() / Path(fodir)  / Path("default_focus_" + env_name + ".yaml")
+            fpath = fdir / Path("default_focus_" + env_name + ".yaml")
             if not fpath.exists():
                 self.generate_fresh_yaml(fpath)
                 l.GeneralWarning("No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
