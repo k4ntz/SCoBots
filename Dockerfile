@@ -6,13 +6,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3-pip pyt
 RUN python3 -m venv .venv
 ENV PATH="/workdir/.venv/bin:$PATH"
 
-COPY boca boca
+
 COPY requirements.txt requirements.txt
 RUN pip install -U pip
-RUN pip install boca/
 RUN pip install -r requirements.txt
 RUN pip install opencv-python-headless
 
+COPY boca boca
+RUN pip install boca/
 COPY experiments experiments
 COPY scobi scobi
 CMD ["cd", "experiments"]
