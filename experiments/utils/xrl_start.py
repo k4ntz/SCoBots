@@ -20,10 +20,13 @@ def re_select_action(*args, **kwargs):
 
 
 # function to test agent loaded via main switch
-def play_agent(cfg, model, select_action_func):
+def play_agent(cfg, model, select_action_func, normalizer):
     # init env
 
-    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
+    env = Environment(cfg.env_name,
+                      interactive=cfg.scobi_interactive,
+                      focus_dir=cfg.scobi_focus_dir,
+                      focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     #gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
@@ -45,6 +48,7 @@ def play_agent(cfg, model, select_action_func):
         env.reset()
         while t < cfg.train.max_steps_per_trajectory:  # Don't infinite loop while playing
             #features = torch.tensor(features).unsqueeze(0).float()
+            features = normalizer.normalize(features)
             action = select_action_func(features, model, -1, n_actions)
             if cfg.liveplot:
                 plt.imshow(obs_raw, interpolation='none')
@@ -73,8 +77,8 @@ def use_reinforce(cfg, mode):
         reinforce.train(cfg)
     else:
         if mode == "eval":
-            model = reinforce.eval_load(cfg)
-            play_agent(cfg, model, re_select_action)
+            model, normalizer = reinforce.eval_load(cfg)
+            play_agent(cfg, model, re_select_action, normalizer)
         elif mode == "explain":
             pass
             # explain(agent=agent, cfg=cfg)

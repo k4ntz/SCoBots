@@ -7,18 +7,15 @@ from gymnasium import spaces
 
 
 class Environment():
-    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, obs_normalized=True, clip_value=None, silent=False):
+    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, silent=False):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
         self.GameObjectWrapper = get_wrapper_class() #TODO: tie to em.make
-        self.clip = bool(clip_value)
-        self.clip_v = clip_value
         actions = self.oc_env._env.unwrapped.get_action_meanings() # TODO: oc envs should answer this, not the raw env
         self.oc_env.reset()
         objects = [self.GameObjectWrapper(o) for o in  self.oc_env.objects] # TODO: implement obj instances for skiing
-        self.running_stats = []
         self.did_reset = False
-        self.focus = Focus(env_name, interactive, focus_dir, focus_file, objects, actions, obs_normalized, self.logger)
+        self.focus = Focus(env_name, interactive, focus_dir, focus_file, objects, actions, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
@@ -34,8 +31,6 @@ class Environment():
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
             objects = [self.GameObjectWrapper(o) for o in  self.oc_env.objects]
             sco_obs = self.focus.get_feature_vector(objects)
-            if self.clip:
-                sco_obs = np.clip(sco_obs, -self.clip_v, self.clip_v).tolist()
             sco_reward = reward #reward shaping here
             sco_truncated = truncated
             sco_terminated = terminated

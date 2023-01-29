@@ -4,14 +4,16 @@ import time
 import torch
 import torch.optim as optim
 import sys
+import datetime
 from os import path
 sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
 from torch.utils.tensorboard import SummaryWriter
 from torch.distributions import Categorical
-from tqdm import tqdm
 from rtpt import RTPT
 from scobi import Environment
-from . import networks
+from experiments.algos import networks
+from experiments.utils import normalizer, utils
+from termcolor import colored
 
 
 EPS = np.finfo(np.float32).eps.item()
@@ -110,8 +112,7 @@ def train(cfg):
     env = Environment(cfg.env_name,
                       interactive=cfg.scobi_interactive,
                       focus_dir=cfg.scobi_focus_dir,
-                      focus_file=cfg.scobi_focus_file,
-                      clip_value=cfg.train.input_clip_value)
+                      focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, info, _ = env.step(1)
@@ -131,21 +132,24 @@ def train(cfg):
     value_net = networks.ValueNet(len(obs), cfg.train.value_h_size, 1).to(dev)
     policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
     value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
+    input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value)
     i_epoch = 1
     # overwrite if checkpoint exists
-    model_path = model_name("val_" + cfg.exp_name)
+    model_path = model_name("val_" + cfg.exp_name) # load value net
     if os.path.isfile(model_path):
         print("{} does exist, loading ... ".format(model_path))
         checkpoint = torch.load(model_path)
         value_net.load_state_dict(checkpoint['value'])
         value_optimizer.load_state_dict(checkpoint['optimizer'])
         i_epoch = checkpoint['episode']
-    model_path = model_name("pol_" + cfg.exp_name)
+
+    model_path = model_name("pol_" + cfg.exp_name) # load policy net
     if os.path.isfile(model_path):
         print("{} does exist, loading ... ".format(model_path))
         checkpoint = torch.load(model_path)
         policy_net.load_state_dict(checkpoint['policy'])
         policy_optimizer.load_state_dict(checkpoint['optimizer'])
+        input_normalizer.set_state(checkpoint["normalizer_state"])
         i_epoch = checkpoint['episode']
         i_epoch += 1
 
@@ -156,8 +160,6 @@ def train(cfg):
     print('>> Checkpoint Interval (Epochs):', cfg.train.save_every)
     print('>> Current Epoch:', i_epoch)
     print("Training started...")
-    # reinit agent with loaded policy model
-    running_return = None
     # tfboard logging buffer
     tfb_nr_buffer = 0
     tfb_pnl_buffer = 0
@@ -165,6 +167,7 @@ def train(cfg):
     tfb_pne_buffer = 0
     tfb_step_buffer = 0
     tfb_policy_updates_counter = 0
+    last_stdout_nr_buffer = -1000000
     buffer = ExperienceBuffer(cfg.train.max_steps_per_trajectory, cfg.train.gamma)
 
     # save model helper function
@@ -173,16 +176,19 @@ def train(cfg):
             os.makedirs(PATH_TO_OUTPUTS)
         pol_model_path = model_name("pol_" + training_name)
         val_model_path = model_name("val_" + training_name)
+
         #print("Saving {}".format(model_path))
         torch.save({
                 'policy': policy_net.state_dict(),
                 'episode': episode,
-                'optimizer': policy_optimizer.state_dict()
+                'optimizer': policy_optimizer.state_dict(),
+                'normalizer_state' : input_normalizer.get_state()
                 }, pol_model_path)
         torch.save({
                 'value': value_net.state_dict(),
                 'episode': episode,
-                'optimizer': value_optimizer.state_dict()
+                'optimizer': value_optimizer.state_dict(),
+                'normalizer_state' : input_normalizer.get_state()
                 }, val_model_path)
 
     def update_models(data):
@@ -224,6 +230,7 @@ def train(cfg):
             while i_trajectory_step < cfg.train.max_steps_per_trajectory:
                 
                 # interaction
+                obs = input_normalizer.normalize(obs)
                 action, log_prob, probs = select_action(obs, policy_net, cfg.train.random_action_p, n_actions)
                 value_net_input = torch.tensor(obs, device=dev).unsqueeze(0)     
                 value_estimation = torch.squeeze(value_net(value_net_input), -1)
@@ -291,25 +298,26 @@ def train(cfg):
                 stdout_pne_buffer += ep_entropy
                 stdout_step_buffer += i_trajectory_step
 
-                # update logging data
-                if running_return is None:
-                    running_return = ep_return
-                else:
-                    running_return = 0.05 * ep_return + (1 - 0.05) * running_return
-
 
         epoch_duration = time.perf_counter() - epoch_s_time
         # checkpointing
         checkpoint_str = ""
         if i_epoch % cfg.train.save_every == 0:
             save_models(cfg.exp_name, i_epoch)
-            checkpoint_str = "checkpoint"
+            checkpoint_str = "✔"
 
         # episode stats
         c = stdout_policy_updates_counter
-        print('Epoch {}:\tRunning Return: {:.2f}\tavgReturn: {:.2f}\tavgEntropy: {:.2f}\tavgValueNetLoss: {:.2f}\tavgSteps: {:.2f}\tDuration: {:.2f} \t{}'.format(
-            i_epoch, running_return, stdout_nr_buffer / c, stdout_pne_buffer / c, stdout_vnl_buffer / c, stdout_step_buffer / c, epoch_duration, checkpoint_str))
+        t = datetime.datetime.now()
+        time_str = t.strftime("%H:%M:%S")
+
+        avg_return_str = utils.color_me(stdout_nr_buffer / c, last_stdout_nr_buffer)
+        epoch_count_str = "{:03d}".format(i_epoch)
+        epoch_str = colored(time_str+" Epoch "+epoch_count_str+" >", "blue")
+        print('{} \tavgReturn: {}\tavgEntropy: {:.2f}\tavgValueNetLoss: {:.2f}\tavgSteps: {:.2f}\tDuration: {:.2f}   {}'.format(
+            epoch_str, avg_return_str, stdout_pne_buffer / c, stdout_vnl_buffer / c, stdout_step_buffer / c, epoch_duration, checkpoint_str))
         
+        last_stdout_nr_buffer = stdout_nr_buffer / c
         i_epoch += 1
         rtpt.step()
 
@@ -323,7 +331,10 @@ def eval_load(cfg):
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
-    env = Environment(cfg.env_name, focus_dir="focusfiles")
+    env = Environment(cfg.env_name,
+                      interactive=cfg.scobi_interactive,
+                      focus_dir=cfg.scobi_focus_dir,
+                      focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, info, _ = env.step(1)
@@ -331,11 +342,14 @@ def eval_load(cfg):
     policy_net = networks.PolicyNet(len(obs), cfg.train.policy_h_size, n_actions).to(dev)
     # load if exists
     model_path = model_name("pol_" + cfg.exp_name + "-seed" + str(cfg.seed))
+    normalizer_state = []
     if os.path.isfile(model_path):
         print("{} does exist, loading ... ".format(model_path))
         checkpoint = torch.load(model_path)
         policy_net.load_state_dict(checkpoint['policy'])
+        normalizer_state = checkpoint["normalizer_state"]
         i_epoch = checkpoint['episode']
         print('Epochs trained:', i_epoch)
+    input_normalizer = normalizer.Normalizer(v_size=len(obs), clip_value=cfg.train.input_clip_value, stats=normalizer_state)
     policy_net.eval()
-    return policy_net
+    return policy_net, input_normalizer

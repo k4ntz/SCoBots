@@ -12,7 +12,7 @@ from scipy.stats import entropy
 from argparse import ArgumentParser
 from utils.xrl_config import cfg
 from functools import wraps
-
+from termcolor import colored
 
 # player enemy ball
 features_names = [
@@ -152,3 +152,11 @@ def timeit(func):
         print(f"function: '{func.__name__}' | duration: {total_time:.4f}s")
         return result
     return timeit_wrapper
+
+
+def color_me(new, old):
+    if new > old:
+            col = "light_green"
+    else:
+            col = "light_red"
+    return colored("{:.2f}".format(new), col)
