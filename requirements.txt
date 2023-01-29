@@ -11,4 +11,5 @@ tqdm
 pyyaml
 colormath
 yacs
-git+https://github.com/k4ntz/OC_Atari@develop
+ocatari @ git+ssh://git@github.com/k4ntz/boca.git
+#git+ssh://github.com:k4ntz/OC_Atari.git@develop

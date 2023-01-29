@@ -1,10 +1,11 @@
 on policy hyperparameters selection:
 https://arxiv.org/pdf/2006.05990.pdf
 
-date                                        25.1.23                 XX.1.23
+date                                        25.1.23                 29.1.23
+git tag                                     ex01
 envs                                        pong boxing
 modes                                       scobi + iscobi
-seeds                                       0 1 2
+seeds                                       0 1 2                   7 8 9
 
 running obs normalization                   True
 input clipping value                        -5, 5
@@ -22,6 +23,6 @@ REINFORCE:
 value net backprops                         50
 
 
-comments                                    boxing-1 crashed        seeded
+comments                                    boxing-1 crashed        fully seeded
                                             random action was
                                             not seeded
