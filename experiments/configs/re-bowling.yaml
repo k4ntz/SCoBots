@@ -13,7 +13,7 @@ train:
   learning_rate: 0.0003
   clip_norm: 0.5
   num_episodes: 200
-  steps_per_episode: 25000
+  steps_per_episode: 250000
   max_steps_per_trajectory: 100000
-  log_steps: 2000
+  log_steps: 20000
   save_every: 1 # episode
