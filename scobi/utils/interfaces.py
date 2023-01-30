@@ -28,7 +28,31 @@ class GameObjectInterface(ABC):
     @abstractmethod
     def rgb(self):
         pass
+    
+    @property
+    @abstractmethod
+    def number(self):
+        pass
+    
+    @number.setter
+    @abstractmethod
+    def number(self, number):
+        pass
 
+    @property
+    @abstractmethod
+    def visible(self):
+        pass
+
+    # default behaviour
+    @property
+    def name(self):
+        return str(self.category) + str(self.number)
+    
+    def __repr__(self):
+        visible_status = "V" if self.visible else "H"
+        return f"{self.name}({visible_status}) at ({self.xy[0]}, {self.xy[1]})"
+    
     # @property
     # @abstractmethod
     # def dx(self):

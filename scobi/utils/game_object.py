@@ -1,6 +1,6 @@
 # game object interface
 # switch depending on object extractor
-# hardoced to ocatari for now
+# only ocatari implemented for now
 from scobi.utils.interfaces import GameObjectInterface
 
 from ocatari.ram.game_objects import GameObject as Ocatari_GameObject
@@ -17,15 +17,25 @@ def get_wrapper_class():
 # OC Atari GameObject wrapper classes implementing scobi GameObjectInterface
 class OCAGameObject(GameObjectInterface):
     def __init__(self, ocgo):
+        self._number = 1
         if issubclass(type(ocgo), Ocatari_GameObject):
             self.ocgo = ocgo
         else:
             incoming_type = type(ocgo)
             raise ValueError("Incompatible Wrapper, expects OC_Atari GameObject. Got: "+str(incoming_type))
 
+
     @property
     def category(self):
         return self.ocgo.category
+    
+    @property
+    def number(self):
+        return self._number
+        
+    @number.setter
+    def number(self, number):
+        self._number = number
     
     @property
     def xy(self):
@@ -42,3 +52,7 @@ class OCAGameObject(GameObjectInterface):
     @property
     def rgb(self):
         return self.ocgo.rgb
+    
+    @property
+    def visible(self):
+        return self.ocgo.visible

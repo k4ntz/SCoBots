@@ -13,7 +13,7 @@ class Focus():
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
         self.OBJECTS = raw_features
-        self.OBJECT_NAMES = [x.category for x in self.OBJECTS]
+        self.OBJECT_NAMES = [x.name for x in self.OBJECTS]
         self.ACTIONS = actions
         self.ENV_NAME = env_name
         self.PARSED_OBJECTS = []
@@ -25,10 +25,11 @@ class Focus():
         self.FUNC_COMPUTE_LAYER = []
         self.FEATURE_VECTOR_SIZE = 0
         self.running_stats = []
-        self.normalized = False
         self.l = l
         self.generate_property_set()
         self.generate_function_set()
+        self.last_obs_vector = []
+        self.first_pass = True
 
         # rework the control flow here, keep interactive mode or not?
         fdir = Path.cwd() / Path(fodir)
@@ -73,7 +74,7 @@ class Focus():
         for k, v in PROPERTIES.items():
             for o in self.OBJECTS:
                 if type(o) == v["expects"][0][0].annotation: #assume only one input from property
-                    e = [k, o.category]
+                    e = [k, o.name]
                     self.PROPERTY_LIST.append(e)
 
     def generate_function_set(self):
@@ -86,15 +87,15 @@ class Focus():
                 if combi_sig == function_sig:
                     self.FUNCTION_LIST.append([k, list(combi)])
 
-    def get_object_by_category(self, category, objs):
+    def get_object_by_name(self, name, objs):
         if type(objs) == dict:
             for o in objs.values():
-                if o.category == category:
+                if o.name == name:
                     return o
             return None
         else:
             for o in objs:
-                if o.category == category:
+                if o.name == name:
                     return o
             return None
 
@@ -157,13 +158,13 @@ class Focus():
 
         yaml_dict["ENVIRONMENT"] = self.ENV_NAME
         avail = yaml_dict["AVAILABLE_CONCEPTS"]
-        avail["objects"] = [x.category for x in self.OBJECTS]
+        avail["objects"] = [x.name for x in self.OBJECTS]
         avail["actions"] = [x for x in self.ACTIONS]
         avail["properties"] = [self.avail_to_yaml_dict(k, v) for k, v in PROPERTIES.items()]
         avail["functions"] =  [self.avail_to_yaml_dict(k, v) for k, v in FUNCTIONS.items()]
 
         use = yaml_dict["SELECTION"]
-        use["objects"] = [x.category for x in self.OBJECTS]
+        use["objects"] = [x.name for x in self.OBJECTS]
         use["actions"] = [x for x in self.ACTIONS]
         use["properties"] = [self.proplist_to_yaml_dict(x) for x in self.PROPERTY_LIST]
         use["functions"] = [self.funclist_to_yaml_dict(x) for x in self.FUNCTION_LIST]
@@ -211,7 +212,7 @@ class Focus():
             if p[0] not in PROPERTIES.keys():
                 self.l.FocusFileParserError("Unknown object in properties selection: %s" % p[0])
             prop_definition = PROPERTIES[p[0]]
-            o = self.get_object_by_category(p[1], self.OBJECTS)
+            o = self.get_object_by_name(p[1], self.OBJECTS)
             prop_sig = prop_definition["expects"][0][0].annotation
             if type(o) != prop_sig:
                  self.l.GeneralError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
@@ -229,7 +230,7 @@ class Focus():
                 if para[1] not in self.OBJECT_NAMES:
                     self.l.FocusFileParserError("Unknown object in functions selection: %s" % para[1])
                 prop_definition = PROPERTIES[para[0]]
-                o = self.get_object_by_category(para[1], self.OBJECTS)
+                o = self.get_object_by_name(para[1], self.OBJECTS)
                 prop_sig = prop_definition["expects"][0][0].annotation
                 parsed_para_sig.append(prop_definition["returns"][0])
                 if type(o) != prop_sig:
@@ -298,7 +299,6 @@ class Focus():
         self.PARSED_ACTIONS = self.import_actions(sdict["actions"])
         self.PARSED_PROPERTIES = self.import_properties(sdict["properties"])
         self.PARSED_FUNCTIONS = self.import_functions(sdict["functions"])
-
         # based on the focus file selection,
         # construct a 2 layer computation graph for the feature vector:
         # 1     PROPERTY_COMPUTE_LAYER 
@@ -341,8 +341,22 @@ class Focus():
         #TODO: important part: how to handle when incoming obj list smaller than dict (k instances stuff)
         input_dict = {}
         for obj in inc_objects_list:
-            input_dict[obj.category] = obj 
+            input_dict[obj.name] = obj 
         props = [f(input_dict) for f in self.PROPERTY_COMPUTE_LAYER]
         funcs = [f(props) for f in self.FUNC_COMPUTE_LAYER]
         out = np.hstack(props + funcs).tolist()
+
+        # freeze feature entries that are derived from invisible objects
+        # objects are distinguished by order, not id
+        # if object id=1 on position 1 becomes invisible, and obj id=2, pos=2 remains visible
+        # obj with id=2 will be pos=1 and objc id=1 will be first position of hidden objects
+        if self.first_pass:
+            self.first_pass = False
+            for e in out:
+                item = 0.0 if e is None else e
+                self.last_obs_vector.append(item)
+            return self.last_obs_vector
+        for i in range(len(out)): 
+            if out[i] is None:
+                out[i] = self.last_obs_vector[i]
         return out
