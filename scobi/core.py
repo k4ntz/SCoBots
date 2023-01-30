@@ -13,7 +13,8 @@ class Environment():
         self.GameObjectWrapper = get_wrapper_class() #TODO: tie to em.make
         actions = self.oc_env._env.unwrapped.get_action_meanings() # TODO: oc envs should answer this, not the raw env
         self.oc_env.reset()
-        objects = [self.GameObjectWrapper(o) for o in  self.oc_env.objects] # TODO: implement obj instances for skiing
+        objects = self._wrap_map_order_game_objects(self.oc_env.objects)
+        print(objects)
         self.did_reset = False
         self.focus = Focus(env_name, interactive, focus_dir, focus_file, objects, actions, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
@@ -29,8 +30,9 @@ class Environment():
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         if self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
-            objects = [self.GameObjectWrapper(o) for o in  self.oc_env.objects]
+            objects = self._wrap_map_order_game_objects(self.oc_env.objects)
             sco_obs = self.focus.get_feature_vector(objects)
+            #print(sco_obs[0:100])
             sco_reward = reward #reward shaping here
             sco_truncated = truncated
             sco_terminated = terminated
@@ -47,3 +49,32 @@ class Environment():
     def close(self):
         # additional scobi close steps here
         self.oc_env.close()
+
+    def _wrap_map_order_game_objects(self, oc_obj_list):
+        visible = []
+        invisible = []
+        out = []
+        counter_dict = {}
+        # order
+        for oc_obj in oc_obj_list:
+            if not oc_obj.visible:
+                invisible.append(oc_obj)
+            else:
+                visible.append(oc_obj)
+
+        for obj in visible + invisible:
+                # wrap
+                scobi_obj = self.GameObjectWrapper(obj)
+                # map
+                if not scobi_obj.category in counter_dict.keys():
+                    counter_dict[scobi_obj.category] = 1
+                else:
+                    counter_dict[scobi_obj.category] +=1
+                scobi_obj.number = counter_dict[scobi_obj.category]
+                out.append(scobi_obj)
+        # returns full objectlist [closest_visible : farest_visible] + [closest_invisible : farest invisibe]
+        # if focus file specifies for example top3 closest objects (by selecting pin1, pin2, pin3), 
+        # the features vector is always calculated based on the 3 closest visible objects of category pin.
+        # so if for example pin1 becomes invisible during training, the top3 list is filled accordingly with closest visible objects of category pin
+        # if there is none to fill, pin2 and pin3 are the closest visible and all derived features for the third pin (which is invisble) are frozen
+        return out
