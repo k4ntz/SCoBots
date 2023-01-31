@@ -64,7 +64,7 @@ class ExperienceBuffer():
     def get(self):
         mean = self.advantages.mean()
         std = self.advantages.std()
-        self.advantages = (self.advantages - mean) / std
+        self.advantages = (self.advantages - mean) / (std + EPS)
 
         data = { "obs"  : torch.as_tensor(self.observations, device=dev),
                  "rets" : torch.as_tensor(self.returns, device=dev),
