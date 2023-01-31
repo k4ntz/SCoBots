@@ -14,7 +14,6 @@ class Environment():
         actions = self.oc_env._env.unwrapped.get_action_meanings() # TODO: oc envs should answer this, not the raw env
         self.oc_env.reset()
         objects = self._wrap_map_order_game_objects(self.oc_env.objects)
-        print(objects)
         self.did_reset = False
         self.focus = Focus(env_name, interactive, focus_dir, focus_file, objects, actions, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
