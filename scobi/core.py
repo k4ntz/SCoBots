@@ -54,17 +54,26 @@ class Environment():
         invisible = []
         out = []
         counter_dict = {}
-        # order
-        for oc_obj in oc_obj_list:
-            if not oc_obj.visible:
-                invisible.append(oc_obj)
-            else:
-                visible.append(oc_obj)
+        player_obj = None
 
-        for obj in visible + invisible:
-                # wrap
-                scobi_obj = self.GameObjectWrapper(obj)
-                # map
+        # wrap
+        scobi_obj_list = [self.GameObjectWrapper(obj) for obj in oc_obj_list]
+
+        # order
+        for scobi_obj in scobi_obj_list:
+
+            if "Player" in scobi_obj.name:
+                player_obj = scobi_obj
+                break
+        scobi_obj_list = sorted(scobi_obj_list, key=lambda a : a.distance(player_obj))
+
+        # map
+        for scobi_obj in scobi_obj_list:
+            if not scobi_obj.visible:
+                invisible.append(scobi_obj)
+            else:
+                visible.append(scobi_obj)
+        for scobi_obj in visible + invisible:
                 if not scobi_obj.category in counter_dict.keys():
                     counter_dict[scobi_obj.category] = 1
                 else:

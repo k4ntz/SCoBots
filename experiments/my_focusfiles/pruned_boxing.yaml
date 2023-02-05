@@ -79,9 +79,19 @@ SELECTION:
   - UPLEFT
   - DOWNRIGHT
   - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
   properties:
     - POSITION: Player1
     - POSITION: Enemy1
+    - POSITION_HISTORY: Player1
+    - POSITION_HISTORY: Enemy1
   functions:
   - DISTANCE:
     - POSITION: Player1
