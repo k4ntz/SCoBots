@@ -1,6 +1,6 @@
 # game object interface
 from abc import ABC, abstractmethod
-
+import math
 
 class GameObjectInterface(ABC):
     
@@ -49,6 +49,9 @@ class GameObjectInterface(ABC):
     def name(self):
         return str(self.category) + str(self.number)
     
+    def distance(self, game_object ):
+        return math.sqrt((self.xy[0] - game_object.xy[0])**2 + (self.xy[1] - game_object.xy[1])**2)
+
     def __repr__(self):
         visible_status = "V" if self.visible else "H"
         return f"{self.name}({visible_status}) at ({self.xy[0]}, {self.xy[1]})"
