@@ -12,8 +12,6 @@ RUN pip install -U pip
 RUN pip install -r requirements.txt
 RUN pip install opencv-python-headless
 
-COPY boca boca
-RUN pip install boca/
 COPY experiments experiments
 COPY scobi scobi
 CMD ["cd", "experiments"]
