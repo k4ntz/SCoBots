@@ -50,8 +50,6 @@ class Environment():
         self.oc_env.close()
 
     def _wrap_map_order_game_objects(self, oc_obj_list):
-        visible = []
-        invisible = []
         out = []
         counter_dict = {}
         player_obj = None
@@ -61,7 +59,6 @@ class Environment():
 
         # order
         for scobi_obj in scobi_obj_list:
-
             if "Player" in scobi_obj.name:
                 player_obj = scobi_obj
                 break
@@ -69,11 +66,6 @@ class Environment():
 
         # map
         for scobi_obj in scobi_obj_list:
-            if not scobi_obj.visible:
-                invisible.append(scobi_obj)
-            else:
-                visible.append(scobi_obj)
-        for scobi_obj in visible + invisible:
                 if not scobi_obj.category in counter_dict.keys():
                     counter_dict[scobi_obj.category] = 1
                 else:
