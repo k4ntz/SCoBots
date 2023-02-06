@@ -338,10 +338,12 @@ class Focus():
         #       function_values
         # OUT   HSTACK(CONCAT(property_values, function_values))
 
-        #TODO: important part: how to handle when incoming obj list smaller than dict (k instances stuff)
         input_dict = {}
         for obj in inc_objects_list:
             input_dict[obj.name] = obj 
+        for name in self.OBJECT_NAMES: # fill missing objects with none 
+            if not name in input_dict.keys():
+                input_dict[name] = None
         props = [f(input_dict) for f in self.PROPERTY_COMPUTE_LAYER]
         funcs = [f(props) for f in self.FUNC_COMPUTE_LAYER]
         out = np.hstack(props + funcs).tolist()
