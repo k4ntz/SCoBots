@@ -1,27 +1,22 @@
-import numpy as np
+""" Reinforce Algorithm"""
 import os
 import time
-import torch
-import torch.optim as optim
-import sys
 import datetime
-from os import path
-sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
 from torch.utils.tensorboard import SummaryWriter
 from torch.distributions import Categorical
 from rtpt import RTPT
+from termcolor import colored
+import numpy as np
+import torch
+from torch import optim
 from scobi import Environment
 from experiments.algos import networks
 from experiments.utils import normalizer, utils
-from termcolor import colored
-
 
 EPS = np.finfo(np.float32).eps.item()
 PATH_TO_OUTPUTS = os.getcwd() + "/checkpoints/"
 if not os.path.exists(PATH_TO_OUTPUTS):
     os.makedirs(PATH_TO_OUTPUTS)
-
-model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pth"
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -53,10 +48,10 @@ class ExperienceBuffer():
     def finalize(self):
         self.rewards = np.array(self.rewards)
         vals = torch.cat(self.values).detach().cpu().numpy()
-        R = 0
-        for r in self.rewards[::-1]:
-            R = r + self.gamma * R 
-            self.returns.insert(0, R)
+        ret = 0
+        for reward in self.rewards[::-1]:
+            ret = reward + self.gamma * ret
+            self.returns.insert(0, ret)
         self.returns = np.array(self.returns)
         self.advantages = self.returns - vals
 
@@ -73,7 +68,7 @@ class ExperienceBuffer():
                  "vals" : torch.cat(self.values)
                                         }
         return data
-    
+
 
     def reset(self):
         self.ptr = 0
@@ -85,20 +80,23 @@ class ExperienceBuffer():
         self.advantages = []
 
 
+def model_name(training_name):
+    return PATH_TO_OUTPUTS + training_name + "_model.pth"
+
+
 def select_action(features, policy, random_tr = -1, n_actions=3):
-    input = torch.tensor(features, device=dev).unsqueeze(0)     
-    probs = policy(input)
+    feature_tensor = torch.tensor(features, device=dev).unsqueeze(0)
+    probs = policy(feature_tensor)
     sampler = Categorical(probs)
     action = sampler.sample()
     log_prob = sampler.log_prob(action)
     # select action when no random action should be selected
     if np.random.random() <= random_tr:
-       action = np.random.random_integers(0, n_actions - 1)
+        action = np.random.random_integers(0, n_actions - 1)
     else:
         action = action.item()
     # return action and log prob
     return action, log_prob, probs.detach().cpu().numpy()
-
 
 
 
@@ -115,16 +113,16 @@ def train(cfg):
                       focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, info, _ = env.step(1)
+    obs, _, _, _, _, _ = env.step(1)
     print("EXPERIMENT")
     print(">> Selected algorithm: REINFORCE")
-    print('>> Experiment name:', cfg.exp_name)
-    print('>> Seed:', torch.initial_seed())
+    print(">> Experiment name:", cfg.exp_name)
+    print(">> Seed:", torch.initial_seed())
     print(">> Random Action probability:", cfg.train.random_action_p)
-    print('>> Gamma:', cfg.train.gamma)
-    print('>> Learning rate:', cfg.train.learning_rate)
+    print(">> Gamma:", cfg.train.gamma)
+    print(">> Learning rate:", cfg.train.learning_rate)
     print("ENVIRONMENT")
-    print('>> Action space: ' + str(env.action_space_description))
+    print(">> Action space: " + str(env.action_space_description))
     print(">> Observation Vector Length:", len(obs))
 
     # init fresh policy and optimizer
@@ -132,33 +130,33 @@ def train(cfg):
     value_net = networks.ValueNet(len(obs), cfg.train.value_h_size, 1).to(dev)
     policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
     value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
-    input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value)
+    input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value) #
     i_epoch = 1
     # overwrite if checkpoint exists
     model_path = model_name("val_" + cfg.exp_name) # load value net
     if os.path.isfile(model_path):
-        print("{} does exist, loading ... ".format(model_path))
+        print(f"{model_path} does exist, loading ... ")
         checkpoint = torch.load(model_path)
-        value_net.load_state_dict(checkpoint['value'])
-        value_optimizer.load_state_dict(checkpoint['optimizer'])
-        i_epoch = checkpoint['episode']
+        value_net.load_state_dict(checkpoint["value"])
+        value_optimizer.load_state_dict(checkpoint["optimizer"])
+        i_epoch = checkpoint["episode"]
 
     model_path = model_name("pol_" + cfg.exp_name) # load policy net
     if os.path.isfile(model_path):
-        print("{} does exist, loading ... ".format(model_path))
+        print(f"{model_path} does exist, loading ... ")
         checkpoint = torch.load(model_path)
-        policy_net.load_state_dict(checkpoint['policy'])
-        policy_optimizer.load_state_dict(checkpoint['optimizer'])
+        policy_net.load_state_dict(checkpoint["policy"])
+        policy_optimizer.load_state_dict(checkpoint["optimizer"])
         input_normalizer.set_state(checkpoint["normalizer_state"])
-        i_epoch = checkpoint['episode']
+        i_epoch = checkpoint["episode"]
         i_epoch += 1
 
     print("TRAINING")
-    print('>> Epochs:', cfg.train.num_episodes)
-    print('>> Steps per Epoch:', cfg.train.steps_per_episode)
-    print('>> Logging Interval (Steps):', cfg.train.log_steps)
-    print('>> Checkpoint Interval (Epochs):', cfg.train.save_every)
-    print('>> Current Epoch:', i_epoch)
+    print(">> Epochs:", cfg.train.num_episodes)
+    print(">> Steps per Epoch:", cfg.train.steps_per_episode)
+    print(">> Logging Interval (Steps):", cfg.train.log_steps)
+    print(">> Checkpoint Interval (Epochs):", cfg.train.save_every)
+    print(">> Current Epoch:", i_epoch)
     print("Training started...")
     # tfboard logging buffer
     tfb_nr_buffer = 0
@@ -179,20 +177,21 @@ def train(cfg):
 
         #print("Saving {}".format(model_path))
         torch.save({
-                'policy': policy_net.state_dict(),
-                'episode': episode,
-                'optimizer': policy_optimizer.state_dict(),
-                'normalizer_state' : input_normalizer.get_state()
+                "policy": policy_net.state_dict(),
+                "episode": episode,
+                "optimizer": policy_optimizer.state_dict(),
+                "normalizer_state" : input_normalizer.get_state() 
                 }, pol_model_path)
         torch.save({
-                'value': value_net.state_dict(),
-                'episode': episode,
-                'optimizer': value_optimizer.state_dict(),
-                'normalizer_state' : input_normalizer.get_state()
+                "value": value_net.state_dict(),
+                "episode": episode,
+                "optimizer": value_optimizer.state_dict(),
+                "normalizer_state" : input_normalizer.get_state()
                 }, val_model_path)
 
     def update_models(data):
-        obss, rets, advs, logps, vals =  data["obs"], data["rets"], data["advs"], data["logps"], data["vals"]
+        obss, rets, advs, = data["obs"], data["rets"], data["advs"]
+        logps, vals = data["logps"], data["vals"]
 
         policy_optimizer.zero_grad()
         policy_loss = (-logps * advs).mean()
@@ -201,17 +200,19 @@ def train(cfg):
         policy_optimizer.step()
 
         val_iters = cfg.train.value_iters
-        for i in range(val_iters):
+        for _ in range(val_iters):
             value_optimizer.zero_grad()
             value_loss = ((rets - vals)**2).mean()
             value_loss.backward()
             torch.nn.utils.clip_grad_norm_(policy_net.parameters(), cfg.train.clip_norm)
             value_optimizer.step()
-            vals = torch.squeeze(value_net(obss.unsqueeze(0)), -1)
+            vals = torch.squeeze(value_net.forward(obss.unsqueeze(0)), -1)
         return policy_loss, value_loss
 
     # training loop
-    rtpt = RTPT(name_initials='SeSz', experiment_name=cfg.exp_name, max_iterations=cfg.train.num_episodes)
+    rtpt = RTPT(name_initials="SeSz",
+                experiment_name=cfg.exp_name,
+                max_iterations=cfg.train.num_episodes)
     rtpt.start()
     while i_epoch <= cfg.train.num_episodes:
         stdout_nr_buffer = 0
@@ -228,13 +229,15 @@ def train(cfg):
             i_trajectory_step = 0
             incomplete_traj = False
             while i_trajectory_step < cfg.train.max_steps_per_trajectory:
-                
+
                 # interaction
                 obs = input_normalizer.normalize(obs)
-                action, log_prob, probs = select_action(obs, policy_net, cfg.train.random_action_p, n_actions)
-                value_net_input = torch.tensor(obs, device=dev).unsqueeze(0)     
-                value_estimation = torch.squeeze(value_net(value_net_input), -1)
-                new_obs, natural_reward, terminated, truncated, info, _ = env.step(action)
+                action, log_prob, probs = select_action(obs, policy_net,
+                                                        cfg.train.random_action_p,
+                                                        n_actions)
+                value_net_input = torch.tensor(obs, device=dev).unsqueeze(0)
+                value_estimation = torch.squeeze(value_net.forward(value_net_input), -1)
+                new_obs, natural_reward, terminated, truncated, _, _ = env.step(action)
 
                 # collection
                 entropy = -np.sum(list(map(lambda p : p * (np.log(p) / np.log(n_actions)) if p[0] != 0 else 0, probs)))
@@ -253,11 +256,11 @@ def train(cfg):
                     avg_vnl = tfb_vnl_buffer / tfb_policy_updates_counter
                     avg_pne = tfb_pne_buffer / tfb_policy_updates_counter
                     avg_step = tfb_step_buffer / tfb_policy_updates_counter
-                    writer.add_scalar('rewards/avg_return', avg_nr, global_step)
-                    writer.add_scalar('loss/avg_policy_net', avg_pnl, global_step)
-                    writer.add_scalar('loss/avg_value_net', avg_vnl, global_step)
-                    writer.add_scalar('loss/avg_policy_net_entropy', avg_pne, global_step)
-                    writer.add_scalar('various/avg_steps', avg_step, global_step)
+                    writer.add_scalar("rewards/avg_return", avg_nr, global_step)
+                    writer.add_scalar("loss/avg_policy_net", avg_pnl, global_step)
+                    writer.add_scalar("loss/avg_value_net", avg_vnl, global_step)
+                    writer.add_scalar("loss/avg_policy_net_entropy", avg_pne, global_step)
+                    writer.add_scalar("various/avg_steps", avg_step, global_step)
                     tfb_nr_buffer = 0
                     tfb_pnl_buffer = 0
                     tfb_vnl_buffer = 0
@@ -271,7 +274,7 @@ def train(cfg):
                 if i_episode_step == cfg.train.steps_per_episode:
                     incomplete_traj = True
                     break
-            
+
             buffer.finalize()
             # policy update
             data = buffer.get()
@@ -307,26 +310,32 @@ def train(cfg):
             checkpoint_str = "✔"
 
         # episode stats
-        c = stdout_policy_updates_counter
-        t = datetime.datetime.now()
-        time_str = t.strftime("%H:%M:%S")
+        pcounter = stdout_policy_updates_counter
+        tstamp = datetime.datetime.now()
+        time_str = tstamp.strftime("%H:%M:%S")
 
-        avg_return_str = utils.color_me(stdout_nr_buffer / c, last_stdout_nr_buffer)
-        epoch_count_str = "{:03d}".format(i_epoch)
+        avg_return_str = utils.color_me(stdout_nr_buffer / pcounter, last_stdout_nr_buffer)
+        epoch_count_str = f"{i_epoch:03d}"
         epoch_str = colored(time_str+" Epoch "+epoch_count_str+" >", "blue")
-        print('{} \tavgReturn: {}\tavgEntropy: {:.2f}\tavgValueNetLoss: {:.2f}\tavgSteps: {:.2f}\tDuration: {:.2f}   {}'.format(
-            epoch_str, avg_return_str, stdout_pne_buffer / c, stdout_vnl_buffer / c, stdout_step_buffer / c, epoch_duration, checkpoint_str))
-        
-        last_stdout_nr_buffer = stdout_nr_buffer / c
+        pne_out = stdout_pne_buffer / pcounter
+        vnl_out = stdout_vnl_buffer / pcounter
+        step_out = stdout_step_buffer / pcounter
+        print(f"{epoch_str} \
+              \tavgReturn: {avg_return_str} \
+              \tavgEntropy: {pne_out:.2f} \
+              \tavgValueNetLoss: {vnl_out:.2f} \
+              \tavgSteps: {step_out:.2f} \
+              \tDuration: {epoch_duration:.2f}   {checkpoint_str}")
+        last_stdout_nr_buffer = stdout_nr_buffer / pcounter
         i_epoch += 1
         rtpt.step()
 
 
 # eval function, returns trained model
 def eval_load(cfg):
-    print('Experiment name:', cfg.exp_name)
-    print('Evaluating Mode')
-    print('Seed:', cfg.seed)
+    print("Experiment name:", cfg.exp_name)
+    print("Evaluating Mode")
+    print("Seed:", cfg.seed)
     print("Random Action probability:", cfg.train.random_action_p)
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
@@ -337,19 +346,21 @@ def eval_load(cfg):
                       focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, info, _ = env.step(1)
+    obs, _, _, _, _, _ = env.step(1)
     print("Make hidden layer in nn:", cfg.train.make_hidden)
     policy_net = networks.PolicyNet(len(obs), cfg.train.policy_h_size, n_actions).to(dev)
     # load if exists
     model_path = model_name("pol_" + cfg.exp_name + "-seed" + str(cfg.seed))
     normalizer_state = []
     if os.path.isfile(model_path):
-        print("{} does exist, loading ... ".format(model_path))
+        print(f"{model_path} does exist, loading ... ")
         checkpoint = torch.load(model_path)
-        policy_net.load_state_dict(checkpoint['policy'])
+        policy_net.load_state_dict(checkpoint["policy"])
         normalizer_state = checkpoint["normalizer_state"]
-        i_epoch = checkpoint['episode']
-        print('Epochs trained:', i_epoch)
-    input_normalizer = normalizer.Normalizer(v_size=len(obs), clip_value=cfg.train.input_clip_value, stats=normalizer_state)
+        i_epoch = checkpoint["episode"]
+        print("Epochs trained:", i_epoch)
+    input_normalizer = normalizer.Normalizer(v_size=len(obs),
+                                             clip_value=cfg.train.input_clip_value,
+                                             stats=normalizer_state)
     policy_net.eval()
     return policy_net, input_normalizer

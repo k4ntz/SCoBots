@@ -301,7 +301,7 @@ class Focus():
         self.PARSED_FUNCTIONS = self.import_functions(sdict["functions"])
         # based on the focus file selection,
         # construct a 2 layer computation graph for the feature vector:
-        # 1     PROPERTY_COMPUTE_LAYER 
+        # 1     PROPERTY_COMPUTE_LAYER
         # 2     FUNC_COMPUTE_LAYER
         prop_name_obj_name_pairs = []
         for p in self.PARSED_PROPERTIES:
