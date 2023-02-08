@@ -1,10 +1,7 @@
 ENVIRONMENT: BowlingDeterministic-v4
 AVAILABLE_CONCEPTS:
   objects:
-  - PlayerShoes1
-  - PlayerTorso1
-  - PlayerHead1
-  - Ball1
+  - Player1
   - Pin1
   - Pin2
   - Pin3
@@ -15,6 +12,7 @@ AVAILABLE_CONCEPTS:
   - Pin8
   - Pin9
   - Pin10
+  - Ball1
   actions:
   - NOOP
   - FIRE
@@ -66,14 +64,12 @@ AVAILABLE_CONCEPTS:
       description: Index of colorname
 SELECTION:
   objects:
-  - PlayerShoes1
-  - PlayerTorso1
-  - PlayerHead1
-  - Ball1
+  - Player1
   - Pin1
   - Pin2
   - Pin3
   - Pin4
+  - Ball1
   actions:
   - NOOP
   - FIRE
@@ -82,119 +78,37 @@ SELECTION:
   - UPFIRE
   - DOWNFIRE
   properties:
-  - POSITION: PlayerShoes1
-  - POSITION: PlayerTorso1
-  - POSITION: PlayerHead1
-  - POSITION: Ball1
+  - POSITION: Player1
   - POSITION: Pin1
   - POSITION: Pin2
   - POSITION: Pin3
   - POSITION: Pin4
-  - POSITION_HISTORY: PlayerShoes1
-  - POSITION_HISTORY: PlayerTorso1
-  - POSITION_HISTORY: PlayerHead1
-  - POSITION_HISTORY: Ball1
+  - POSITION: Ball1
+  - POSITION_HISTORY: Player1
   - POSITION_HISTORY: Pin1
   - POSITION_HISTORY: Pin2
   - POSITION_HISTORY: Pin3
   - POSITION_HISTORY: Pin4
+  - POSITION_HISTORY: Ball1
   functions:
   - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerShoes1
-    - POSITION: PlayerTorso1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerShoes1
-    - POSITION: PlayerHead1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerShoes1
-    - POSITION: Ball1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerShoes1
+    - POSITION: Player1
     - POSITION: Pin1
   - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerShoes1
+    - POSITION: Player1
     - POSITION: Pin2
   - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerShoes1
+    - POSITION: Player1
     - POSITION: Pin3
   - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerShoes1
+    - POSITION: Player1
     - POSITION: Pin4
   - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerTorso1
-    - POSITION: PlayerShoes1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerTorso1
-    - POSITION: PlayerHead1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerTorso1
+    - POSITION: Player1
     - POSITION: Ball1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerTorso1
-    - POSITION: Pin1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerTorso1
-    - POSITION: Pin2
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerTorso1
-    - POSITION: Pin3  
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerTorso1
-    - POSITION: Pin4
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerHead1
-    - POSITION: PlayerShoes1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerHead1
-    - POSITION: PlayerTorso1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerHead1
-    - POSITION: Ball1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerHead1
-    - POSITION: Pin1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerHead1
-    - POSITION: Pin2
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerHead1
-    - POSITION: Pin3
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: PlayerHead1
-    - POSITION: Pin4
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Ball1
-    - POSITION: PlayerShoes1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Ball1
-    - POSITION: PlayerTorso1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Ball1
-    - POSITION: PlayerHead1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Ball1
-    - POSITION: Pin1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Ball1
-    - POSITION: Pin2
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Ball1
-    - POSITION: Pin3
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Ball1
-    - POSITION: Pin4
   - EUCLIDEAN_DISTANCE:
     - POSITION: Pin1
-    - POSITION: PlayerShoes1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin1
-    - POSITION: PlayerTorso1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin1
-    - POSITION: PlayerHead1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin1
-    - POSITION: Ball1
+    - POSITION: Player1
   - EUCLIDEAN_DISTANCE:
     - POSITION: Pin1
     - POSITION: Pin2
@@ -205,17 +119,11 @@ SELECTION:
     - POSITION: Pin1
     - POSITION: Pin4
   - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin2
-    - POSITION: PlayerShoes1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin2
-    - POSITION: PlayerTorso1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin2
-    - POSITION: PlayerHead1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin2
+    - POSITION: Pin1
     - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Player1
   - EUCLIDEAN_DISTANCE:
     - POSITION: Pin2
     - POSITION: Pin1
@@ -226,17 +134,11 @@ SELECTION:
     - POSITION: Pin2
     - POSITION: Pin4
   - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin3
-    - POSITION: PlayerShoes1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin3
-    - POSITION: PlayerTorso1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin3
-    - POSITION: PlayerHead1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin3
+    - POSITION: Pin2
     - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Player1
   - EUCLIDEAN_DISTANCE:
     - POSITION: Pin3
     - POSITION: Pin1
@@ -247,17 +149,11 @@ SELECTION:
     - POSITION: Pin3
     - POSITION: Pin4
   - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin4
-    - POSITION: PlayerShoes1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin4
-    - POSITION: PlayerTorso1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin4
-    - POSITION: PlayerHead1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Pin4
+    - POSITION: Pin3
     - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Player1
   - EUCLIDEAN_DISTANCE:
     - POSITION: Pin4
     - POSITION: Pin1
@@ -267,3 +163,21 @@ SELECTION:
   - EUCLIDEAN_DISTANCE:
     - POSITION: Pin4
     - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin4
