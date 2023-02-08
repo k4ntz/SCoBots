@@ -38,7 +38,7 @@ class OCAGameObject(GameObjectInterface):
         self._number = number
     
     @property
-    def xy(self) -> tuple[float, float]:
+    def xy(self):
         if len(self.ocgo.xy) != 2:
             raise ValueError(f"Bad xy dimension from ocatari: {self.name} : {self.ocgo.xy}") #TODO: generalize and improve dimension checks
         return self.ocgo.xy
