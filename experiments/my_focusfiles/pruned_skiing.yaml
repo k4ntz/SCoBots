@@ -1,27 +1,11 @@
-ENVIRONMENT: BoxingDeterministic-v4
+ENVIRONMENT: SkiingDeterministic-v4
 AVAILABLE_CONCEPTS:
   objects:
   - Player1
-  - Enemy1
   actions:
   - NOOP
-  - FIRE
-  - UP
   - RIGHT
   - LEFT
-  - DOWN
-  - UPRIGHT
-  - UPLEFT
-  - DOWNRIGHT
-  - DOWNLEFT
-  - UPFIRE
-  - RIGHTFIRE
-  - LEFTFIRE
-  - DOWNFIRE
-  - UPRIGHTFIRE
-  - UPLEFTFIRE
-  - DOWNRIGHTFIRE
-  - DOWNLEFTFIRE
   properties:
   - POSITION:
       in:
@@ -67,30 +51,19 @@ AVAILABLE_CONCEPTS:
 SELECTION:
   objects:
   - Player1
-  - Enemy1
   actions:
   - NOOP
-  - FIRE
-  - UP
   - RIGHT
   - LEFT
-  - DOWN
-  - UPRIGHT
-  - UPLEFT
-  - DOWNRIGHT
-  - DOWNLEFT
-  - UPFIRE
-  - RIGHTFIRE
-  - LEFTFIRE
-  - DOWNFIRE
-  - UPRIGHTFIRE
-  - UPLEFTFIRE
-  - DOWNRIGHTFIRE
-  - DOWNLEFTFIRE
   properties:
-    - POSITION: Player1
-    - POSITION: Enemy1
+  - POSITION: Player1
+  - POSITION_HISTORY: Player1
+  - RGB: Player1
   functions:
-  - DISTANCE:
+  - LINEAR_TRAJECTORY:
     - POSITION: Player1
-    - POSITION: Enemy1
+    - POSITION_HISTORY: Player1
+  - VELOCITY:
+    - POSITION_HISTORY: Player1
+  - COLOR:
+    - RGB: Player1

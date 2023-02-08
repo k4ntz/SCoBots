@@ -19,9 +19,9 @@ class Environment():
         actions = self.oc_env._env.unwrapped.get_action_meanings()
 
         self.oc_env.reset()
-        objects = self._wrap_map_order_game_objects(self.oc_env.objects)
+        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects)
         self.did_reset = False
-        self.focus = Focus(env_name, interactive, focus_dir, focus_file, objects, actions, self.logger)
+        self.focus = Focus(env_name, interactive, focus_dir, focus_file, max_objects, actions, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
@@ -85,3 +85,4 @@ class Environment():
         # so if for example pin1 becomes invisible during training, the top3 list is filled accordingly with closest visible objects of category pin
         # if there is none to fill, pin2 and pin3 are the closest visible and all derived features for the third pin (which is invisble) are frozen
         return out
+

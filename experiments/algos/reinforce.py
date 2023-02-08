@@ -168,6 +168,16 @@ def train(cfg):
     last_stdout_nr_buffer = -1000000
     buffer = ExperienceBuffer(cfg.train.max_steps_per_trajectory, cfg.train.gamma)
 
+   # def entropy(n_actions, probs):
+   #     print(probs)
+   #     out = []
+   #     for prob in probs:
+   #         if prob[0] != 0:
+   #             out.append(prob * (np.log(prob) / np.log(n_actions)))
+   #         else:
+   #             out.append(0)
+   #     return(-np.sum(out))
+    
     # save model helper function
     def save_models(training_name, episode):
         if not os.path.exists(PATH_TO_OUTPUTS):

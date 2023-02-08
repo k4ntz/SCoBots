@@ -2,7 +2,7 @@
 # switch depending on object extractor
 # only ocatari implemented for now
 from scobi.utils.interfaces import GameObjectInterface
-
+from typing import Tuple
 from ocatari.ram.game_objects import GameObject as Ocatari_GameObject
 
 OBJ_EXTRACTOR = "OC_Atari" #TODO: pass or fetch from global env
@@ -38,19 +38,28 @@ class OCAGameObject(GameObjectInterface):
         self._number = number
     
     @property
-    def xy(self):
+    def xy(self) -> tuple[float, float]:
+        if len(self.ocgo.xy) != 2:
+            raise ValueError(f"Bad xy dimension from ocatari: {self.name} : {self.ocgo.xy}") #TODO: generalize and improve dimension checks
         return self.ocgo.xy
 
     @xy.setter
     def xy(self, xy):
+        if len(self.ocgo.xy) != 2:
+            raise ValueError(f"Bad xy dimension from ocatari: {self.name} : {self.ocgo.xy}")
         self.ocgo.xy = xy
 
     @property
     def h_coords(self):
+        shc = self.ocgo.h_coords
+        if len(shc) != 2 or len([*shc[0], *shc[1]]) != 4:
+            raise ValueError(f"Bad h_coords dimension from ocatari: {self.name} : {self.ocgo.h_coords}")
         return self.ocgo.h_coords
     
     @property
     def rgb(self):
+        if len(self.ocgo.rgb) != 3:
+            raise ValueError(f"Bad rgb dimension from ocatari: {self.name} : {self.ocgo.rgb}")
         return self.ocgo.rgb
     
     @property
