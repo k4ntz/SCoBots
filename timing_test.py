@@ -76,7 +76,7 @@ env_str='PongDeterministic-v4'
 raw_env = gym.make(env_str)
 oc_env =  OCAtari(env_name=env_str, mode="revised")
 scobi_env = Environment(env_name=env_str)
-scobi_pruned_env =  Environment(env_name='PongDeterministic-v4', interactive=True, focus_dir="experiments/my_focusfiles", focus_file="pruned_pong.yaml")
+scobi_pruned_env =  Environment(env_name='BowlingDeterministic-v4', interactive=True, focus_dir="experiments/my_focusfiles", focus_file="pruned_bowling.yaml")
 
 raw_env.reset()
 oc_env.reset()
@@ -107,3 +107,13 @@ def scobi_step():
 # all                   10000 loops, best of 5: 692 usec per loop       new: 10000 loops, best of 5: 340 usec per loop
 def scobi_pruned_step():
     scobi_pruned_env.step(0)
+
+#import cProfile, pstats
+#profiler = cProfile.Profile()
+#profiler.enable()
+#for _ in range(10000):
+#    scobi_step()
+#profiler.disable()
+#stats = pstats.Stats(profiler).sort_stats('tottime')
+#stats.print_stats()
+#exit()

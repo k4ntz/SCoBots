@@ -5,7 +5,7 @@ from itertools import permutations
 from scobi.concepts import init as concept_init
 from scobi.utils.decorators import FUNCTIONS, PROPERTIES
 from termcolor import colored
-
+from collections.abc import Iterable
 
 class Focus():
     def __init__(self, env_name, interactive, fodir, fofile, raw_features, actions, l):
@@ -16,14 +16,26 @@ class Focus():
         self.OBJECT_NAMES = [x.name for x in self.OBJECTS]
         self.ACTIONS = actions
         self.ENV_NAME = env_name
+        self.FOCUSFILEPATH = None
         self.PARSED_OBJECTS = []
         self.PARSED_ACTIONS = []
         self.PARSED_PROPERTIES = []
         self.PARSED_FUNCTIONS = []
-        self.FOCUSFILEPATH = None
+       
         self.PROPERTY_COMPUTE_LAYER = []
         self.FUNC_COMPUTE_LAYER = []
+        self.PROPERTY_COMPUTE_LAYER_SIZE = 0
+        self.FUNC_COMPUTE_LAYER_SIZE = 0
+        self.CURRENT_PROPERTY_COMPUTE_LAYER = []
+        self.CURRENT_FUNC_COMPUTE_LAYER = []
+        
         self.FEATURE_VECTOR_SIZE = 0
+        self.CURRENT_FEATURE_VECTOR = []
+        self.FEATURE_VECTOR_PROPS_SIZE = 0
+        self.CURRENT_FEATURE_VECTOR_PROPS = []
+        self.FEATURE_VECTOR_FUNCS_SIZE = 0
+        self.CURRENT_FEATURE_VECTOR_FUNCS = []
+
         self.running_stats = []
         self.l = l
         self.generate_property_set()
@@ -322,12 +334,18 @@ class Focus():
                 object_name = p[1]
                 property_result_idxs.append(prop_name_obj_name_pairs.index((property_name, object_name)))
             f = FUNCTIONS[func_name]["object"]
-            def func(prop_results, f=f, idxs=property_result_idxs):
-                f_in = [prop_results[i] for i in idxs]
+            ol = [0 for _ in range(len(property_result_idxs))]
+            def func(prop_results, f=f, idxs=property_result_idxs, outlist=ol):
+                f_in = outlist
+                for i, j in enumerate(idxs):
+                    f_in[i] = prop_results[j]
                 return f(*f_in)
             self.FUNC_COMPUTE_LAYER.append(func)
-        self.FEATURE_VECTOR_SIZE = len(np.hstack(self.PROPERTY_COMPUTE_LAYER + self.FUNC_COMPUTE_LAYER).tolist())
-
+        # init compute layer lists
+        self.PROPERTY_COMPUTE_LAYER_SIZE = len(self.PROPERTY_COMPUTE_LAYER)
+        self.FUNC_COMPUTE_LAYER_SIZE = len(self.FUNC_COMPUTE_LAYER)
+        self.CURRENT_PROPERTY_COMPUTE_LAYER = [0 for _ in range(self.PROPERTY_COMPUTE_LAYER_SIZE)]
+        self.CURRENT_FUNC_COMPUTE_LAYER = [0 for _ in range(self.FUNC_COMPUTE_LAYER_SIZE)]
 
     def get_feature_vector(self, inc_objects_list):
         # evaluate a 2 layer computation graph for the feature vector:
@@ -338,27 +356,76 @@ class Focus():
         #       function_values
         # OUT   HSTACK(CONCAT(property_values, function_values))
 
+        # fill missing objects as None
         input_dict = {}
         for obj in inc_objects_list:
             input_dict[obj.name] = obj 
-        for name in self.OBJECT_NAMES: # fill missing objects with none 
+        for name in self.OBJECT_NAMES:
             if not name in input_dict.keys():
                 input_dict[name] = None
-        props = [f(input_dict) for f in self.PROPERTY_COMPUTE_LAYER]
-        funcs = [f(props) for f in self.FUNC_COMPUTE_LAYER]
-        out = np.hstack(props + funcs).tolist()
 
-        # freeze feature entries that are derived from invisible objects
-        # objects are distinguished by order, not id
-        # if object id=1 on position 1 becomes invisible, and obj id=2, pos=2 remains visible
-        # obj with id=2 will be pos=1 and objc id=1 will be first position of hidden objects
+        # calc property layer
+        for i in range(self.PROPERTY_COMPUTE_LAYER_SIZE):
+            f = self.PROPERTY_COMPUTE_LAYER[i]
+            self.CURRENT_PROPERTY_COMPUTE_LAYER[i] = f(input_dict)
+
+        # calc function layer
+        for i in range(self.FUNC_COMPUTE_LAYER_SIZE):
+            f = self.FUNC_COMPUTE_LAYER[i]
+            self.CURRENT_FUNC_COMPUTE_LAYER[i] = f(self.CURRENT_PROPERTY_COMPUTE_LAYER)
+
         if self.first_pass:
             self.first_pass = False
+            props = [i for e in self.CURRENT_PROPERTY_COMPUTE_LAYER for i in e]
+            funcs = [i for e in self.CURRENT_FUNC_COMPUTE_LAYER for i in e]
+            out = props + funcs
+            self.FEATURE_VECTOR_SIZE = len(out)
+            self.FEATURE_VECTOR_PROPS_SIZE = len(props)
+            self.FEATURE_VECTOR_FUNCS_SIZE = len(funcs)
+            self.CURRENT_FEATURE_VECTOR_PROPS = [0 for _ in range(self.FEATURE_VECTOR_PROPS_SIZE)]
+            self.CURRENT_FEATURE_VECTOR_FUNCS = [0 for _ in range(self.FEATURE_VECTOR_FUNCS_SIZE)]
+
+            # unpack property layer
+            idx = 0
+            for f in self.CURRENT_PROPERTY_COMPUTE_LAYER:
+                for ff in f:
+                    self.CURRENT_FEATURE_VECTOR_PROPS[idx] = ff
+                    idx += 1
+            
+            # unpack function layer
+            idx = 0
+            for f in self.CURRENT_FUNC_COMPUTE_LAYER:
+                for ff in f:
+                    self.CURRENT_FEATURE_VECTOR_FUNCS[idx] = ff
+                    idx += 1
+
+            out = self.CURRENT_FEATURE_VECTOR_PROPS + self.CURRENT_FEATURE_VECTOR_FUNCS
             for e in out:
                 item = 0.0 if e is None else e
                 self.last_obs_vector.append(item)
             return self.last_obs_vector
-        for i in range(len(out)): 
+
+        # unpack property layer
+        idx = 0
+        for f in self.CURRENT_PROPERTY_COMPUTE_LAYER:
+            for ff in f:
+                self.CURRENT_FEATURE_VECTOR_PROPS[idx] = ff
+                idx += 1
+        
+        # unpack function layer
+        idx = 0
+        for f in self.CURRENT_FUNC_COMPUTE_LAYER:
+            for ff in f:
+                self.CURRENT_FEATURE_VECTOR_FUNCS[idx] = ff
+                idx += 1
+
+        out = self.CURRENT_FEATURE_VECTOR_PROPS + self.CURRENT_FEATURE_VECTOR_FUNCS
+        # freeze feature entries that are derived from invisible objects
+        # objects are distinguished by order, not id
+        # if object id=1 on position 1 becomes invisible, and obj id=2, pos=2 remains visible
+        # obj with id=2 will be pos=1 and objc id=1 will be first position of hidden objects
+        for i in range(self.FEATURE_VECTOR_SIZE): 
             if out[i] is None:
                 out[i] = self.last_obs_vector[i]
+        self.last_obs_vector = out
         return out

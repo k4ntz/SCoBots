@@ -114,6 +114,7 @@ def train(cfg):
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, _, _ = env.step(1)
+    hidden_layer_size = int(2/3 * (n_actions + len(obs)))
     print("EXPERIMENT")
     print(">> Selected algorithm: REINFORCE")
     print(">> Experiment name:", cfg.exp_name)
@@ -121,13 +122,15 @@ def train(cfg):
     print(">> Random Action probability:", cfg.train.random_action_p)
     print(">> Gamma:", cfg.train.gamma)
     print(">> Learning rate:", cfg.train.learning_rate)
+    print(">> Hidden Layer size:", str(hidden_layer_size))
     print("ENVIRONMENT")
     print(">> Action space: " + str(env.action_space_description))
     print(">> Observation Vector Length:", len(obs))
 
     # init fresh policy and optimizer
-    policy_net = networks.PolicyNet(len(obs), cfg.train.policy_h_size, n_actions).to(dev)
-    value_net = networks.ValueNet(len(obs), cfg.train.value_h_size, 1).to(dev)
+
+    policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions).to(dev)
+    value_net = networks.ValueNet(len(obs), hidden_layer_size, 1).to(dev)
     policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
     value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
     input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value) #
