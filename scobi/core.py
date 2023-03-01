@@ -66,7 +66,7 @@ class Environment():
 
         # order
         for scobi_obj in scobi_obj_list:
-            if "Player" in scobi_obj.name:
+            if "Player" in scobi_obj.name or "Chicken" in scobi_obj.name:
                 player_obj = scobi_obj
                 break
         scobi_obj_list = sorted(scobi_obj_list, key=lambda a : a.distance(player_obj))
