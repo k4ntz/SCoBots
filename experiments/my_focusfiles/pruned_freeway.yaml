@@ -1,0 +1,222 @@
+ENVIRONMENT: FreewayDeterministic-v4
+AVAILABLE_CONCEPTS:
+  objects:
+  - Chicken1
+  - Car1
+  - Car2
+  - Car3
+  - Car4
+  actions:
+  - NOOP
+  - UP
+  - DOWN
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Chicken1
+  - Car1
+  - Car2
+  - Car3
+  - Car4
+  actions:
+  - NOOP
+  - UP
+  - DOWN
+  properties:
+  - POSITION: Chicken1
+  - POSITION: Car1
+  - POSITION: Car2
+  - POSITION: Car3
+  - POSITION: Car4
+  - POSITION_HISTORY: Chicken1
+  - POSITION_HISTORY: Car1
+  - POSITION_HISTORY: Car2
+  - POSITION_HISTORY: Car3
+  - POSITION_HISTORY: Car4
+  functions:
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car4
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car3
+  - VELOCITY:
+    - POSITION_HISTORY: Chicken1
+  - VELOCITY:
+    - POSITION_HISTORY: Car1
+  - VELOCITY:
+    - POSITION_HISTORY: Car2
+  - VELOCITY:
+    - POSITION_HISTORY: Car3
+  - VELOCITY:
+    - POSITION_HISTORY: Car4
