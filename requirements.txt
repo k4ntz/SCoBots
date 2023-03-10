@@ -11,4 +11,4 @@ tqdm
 pyyaml
 colormath
 yacs
-ocatari @ git+https://github.com/k4ntz/OC_Atari.git@max_objects
+ocatari @ git+https://github.com/k4ntz/OC_Atari.git

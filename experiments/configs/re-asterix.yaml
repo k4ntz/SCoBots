@@ -1,4 +1,4 @@
-env_name: 'TennisDeterministic-v4'
+env_name: 'AsterixDeterministic-v4'
 
 rl_algo: 1
 

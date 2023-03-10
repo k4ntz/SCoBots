@@ -360,8 +360,9 @@ def eval_load(cfg):
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, _, _ = env.step(1)
-    print("Make hidden layer in nn:", cfg.train.make_hidden)
-    policy_net = networks.PolicyNet(len(obs), cfg.train.policy_h_size, n_actions).to(dev)
+    hidden_layer_size = int(2/3 * (n_actions + len(obs)))
+    print("Make hidden layer in nn:", hidden_layer_size)
+    policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions).to(dev)
     # load if exists
     model_path = model_name("pol_" + cfg.exp_name + "-seed" + str(cfg.seed))
     normalizer_state = []
