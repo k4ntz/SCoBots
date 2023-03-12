@@ -13,9 +13,9 @@ video_steps: 100
 train:
   random_action_p: 0.05
   gamma: 0.99
-  learning_rate: 0.03
+  learning_rate: 0.1
   clip_norm: 0.5
-  num_episodes: 40
+  num_episodes: 80
   steps_per_episode: 250000
   max_steps_per_trajectory: 100000
   log_steps: 20000
