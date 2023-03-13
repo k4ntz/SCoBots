@@ -18,3 +18,4 @@ train:
   max_steps_per_trajectory: 50000
   log_steps: 500
   save_every: 100
+  policy_h_size: 38 # same as unpruned for now
