@@ -50,7 +50,7 @@ def return_random_agents(n_inputs, num_agents, n_actions, cfg):
     hidden_layer_size = int(2/3 * (n_actions + n_inputs))
     # TODO: SeSz: still relevant? latest network definitions didnt use this parameter
     if cfg.train.make_hidden:
-        print("Agents have", n_inputs, "input nodes,", cfg.train.policy_h_size, "hidden nodes and", n_actions, "output nodes")
+        print("Agents have", n_inputs, "input nodes,", hidden_layer_size, "hidden nodes and", n_actions, "output nodes")
     else:
         print("Linear model, no hidden layer! Policy net has", n_inputs, "input nodes and", n_actions, "output nodes")
     for _ in range(num_agents):
@@ -107,7 +107,7 @@ def run_agents(env, agents, cfg):
 # returns average score of given agent when it runs n times
 def return_average_score(agent, runs, cfg):
     score = 0.
-    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True)
+    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True, refresh_yaml=False)
     rtpt = RTPT(name_initials='SeSz', experiment_name=cfg.exp_name,
                     max_iterations=runs)
     rtpt.start()
@@ -234,7 +234,7 @@ def train(cfg):
     torch.set_grad_enabled(False)
 
     # init env to get actions count and features space
-    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True)
+    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
     obs, _, _, _, info, _ = env.step(1)
