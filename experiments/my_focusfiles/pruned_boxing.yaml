@@ -94,3 +94,6 @@ SELECTION:
   - DISTANCE:
     - POSITION: Player1
     - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Player1

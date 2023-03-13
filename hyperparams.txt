@@ -1,7 +1,7 @@
 on policy hyperparameters selection:
 https://arxiv.org/pdf/2006.05990.pdf
 
-date                                        25.1.23                 29.1.23                 ...                 08.3.23                 12.3.23
+date                                        25.1.23                 29.1.23                 ...                 08.3.23
 git tag                                     ex01
 envs                                        pong boxing
 modes                                       scobi + iscobi
@@ -17,7 +17,7 @@ policy mlp init last layer weight scaling   1                       0.01
 value mlp depth                             1
 value mlp width                             64                                                                  2/3 input + output
 value mlp activations                       tanh
-adam lr                                     0.0003                                                              3e-3: pong, freeway     1e-3: bowling, 0.1 boxing
+adam lr                                     0.0003                                                              googledoc
 
 REINFORCE:
 value net backprops                         50

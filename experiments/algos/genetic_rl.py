@@ -47,13 +47,14 @@ def init_weights(m):
 # function to create random agents of given count
 def return_random_agents(n_inputs, num_agents, n_actions, cfg):
     agents = []
+    hidden_layer_size = int(2/3 * (n_actions + len(n_inputs)))
     # TODO: SeSz: still relevant? latest network definitions didnt use this parameter
     if cfg.train.make_hidden:
         print("Agents have", n_inputs, "input nodes,", cfg.train.policy_h_size, "hidden nodes and", n_actions, "output nodes")
     else:
         print("Linear model, no hidden layer! Policy net has", n_inputs, "input nodes and", n_actions, "output nodes")
     for _ in range(num_agents):
-        agent = networks.PolicyNet(n_inputs, cfg.train.policy_h_size, n_actions).to(dev)
+        agent = networks.PolicyNet(n_inputs, hidden_layer_size, n_actions).to(dev)
         for param in agent.parameters():
             param.requires_grad = False
         init_weights(agent)
@@ -92,10 +93,6 @@ def run_agents(env, agents, cfg):
             #    features = np.array(np.array([[0,0] if x==None else x for x in raw_features]).tolist()).flatten()
             action = select_action(features, agent, cfg.train.random_action_p, n_actions)
             obs, reward, done, done2, info, _ = env.step(action)
-            #plt.imshow(obs, interpolation='none')
-            #plt.plot()
-            #plt.pause(0.001)  # pause a bit so that plots are updated
-            #plt.clf()
             features = obs
             r = r + reward
             if done or done2:
@@ -111,7 +108,7 @@ def run_agents(env, agents, cfg):
 def return_average_score(agent, runs, cfg):
     score = 0.
     env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True)
-    rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name,
+    rtpt = RTPT(name_initials='SeSz', experiment_name=cfg.exp_name,
                     max_iterations=runs)
     rtpt.start()
     for i in range(runs):
@@ -266,7 +263,7 @@ def train(cfg):
 
     elite_index = None
 
-    rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name,
+    rtpt = RTPT(name_initials='SeSz', experiment_name=cfg.exp_name,
                     max_iterations=generations)
     rtpt.start()
     while generation < generations:
@@ -340,7 +337,8 @@ def eval_load(cfg):
     print('Selected elite agent:', elite_index)
     elite_agent = agents[elite_index]
     # print nn structure
-    dummy = networks.PolicyNet(len(features), cfg.train.policy_h_size, n_actions).to(dev)
+    hidden_layer_size = int(2/3 * (n_actions + len(features)))
+    dummy = networks.PolicyNet(len(features), hidden_layer_size, n_actions).to(dev)
     # because old trained runs does not have make_hidden param
     dummy.load_state_dict(elite_agent.state_dict())
     elite_agent = dummy

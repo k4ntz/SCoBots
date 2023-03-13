@@ -1,6 +1,5 @@
 env_name: 'SkiingDeterministic-v4'
 
-
 rl_algo: 2
 
 parallel: False
