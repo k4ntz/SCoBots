@@ -1,5 +1,7 @@
-env_name: 'BoxingDeterministic-v4'
-
+env_name: 'TennisDeterministic-v4'
+scobi_interactive: True
+scobi_focus_dir: 'my_focusfiles'
+scobi_focus_file: 'pruned_tennis.yaml' 
 rl_algo: 2
 
 parallel: False
