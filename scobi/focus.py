@@ -8,7 +8,7 @@ from termcolor import colored
 from collections.abc import Iterable
 
 class Focus():
-    def __init__(self, env_name, interactive, fodir, fofile, raw_features, actions, l):
+    def __init__(self, env_name, interactive, fodir, fofile, raw_features, actions, refresh_yaml, l):
         concept_init()
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
@@ -74,8 +74,10 @@ class Focus():
             if not fpath.exists():
                 self.generate_fresh_yaml(fpath)
                 l.GeneralWarning("No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
-            l.GeneralInfo("Focus file %s found. Making sure it's up-to-date." % colored(fpath.name, "light_green"))
-            self.generate_fresh_yaml(fpath)
+            l.GeneralInfo("Focus file %s found." % colored(fpath.name, "light_green"))
+            if refresh_yaml:
+                l.GeneralInfo("Refreshing yaml to make sure it's up-to-date.")
+                self.generate_fresh_yaml(fpath)
             self.load_focus_file(fpath)
             l.GeneralInfo("File is valid. Imported.")
             self.FOCUSFILEPATH = fpath

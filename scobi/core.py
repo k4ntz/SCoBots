@@ -8,7 +8,7 @@ from scobi.utils.logging import Logger
 
 
 class Environment():
-    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, silent=False):
+    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, silent=False, refresh_yaml=True):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
 
@@ -21,7 +21,7 @@ class Environment():
         self.oc_env.reset()
         max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects)
         self.did_reset = False
-        self.focus = Focus(env_name, interactive, focus_dir, focus_file, max_objects, actions, self.logger)
+        self.focus = Focus(env_name, interactive, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
