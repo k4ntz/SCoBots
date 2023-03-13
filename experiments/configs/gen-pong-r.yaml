@@ -8,11 +8,12 @@ logdir: '/genlogs/'
 
 video_steps: 100
 
+max_cpu_cores : 32
+
 train:
   random_action_p: 0.05
-
-  num_episodes: 1500
+  num_episodes: 1000 # generations
   max_steps_per_trajectory: 50000
-  
   log_steps: 500
+  save_every: 100
 
