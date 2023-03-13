@@ -47,7 +47,9 @@ def init_weights(m):
 # function to create random agents of given count
 def return_random_agents(n_inputs, num_agents, n_actions, cfg):
     agents = []
-    hidden_layer_size = int(2/3 * (n_actions + n_inputs))
+    hidden_layer_size = cfg.train.policy_h_size
+    if hidden_layer_size == 0:
+        hidden_layer_size = int(2/3 * (n_actions + n_inputs))
     # TODO: SeSz: still relevant? latest network definitions didnt use this parameter
     if cfg.train.make_hidden:
         print("Agents have", n_inputs, "input nodes,", hidden_layer_size, "hidden nodes and", n_actions, "output nodes")
@@ -130,6 +132,7 @@ def run_agents_n_times(agents, runs, cfg):
 # function to mutate given agent to child agent
 def mutate(agent):
     child_agent = copy.deepcopy(agent)
+    # SeSz: paper says 0.002 for atari
     mutation_power = 0.02 #hyper-parameter, set from https://arxiv.org/pdf/1712.06567.pdf
     for param in child_agent.parameters():
         if(len(param.shape)==4): #weights of Conv2D
@@ -337,7 +340,9 @@ def eval_load(cfg):
     print('Selected elite agent:', elite_index)
     elite_agent = agents[elite_index]
     # print nn structure
-    hidden_layer_size = int(2/3 * (n_actions + len(features)))
+    hidden_layer_size = cfg.train.policy_h_size
+    if hidden_layer_size == 0:
+        hidden_layer_size = int(2/3 * (n_actions + len(features)))
     dummy = networks.PolicyNet(len(features), hidden_layer_size, n_actions).to(dev)
     # because old trained runs does not have make_hidden param
     dummy.load_state_dict(elite_agent.state_dict())

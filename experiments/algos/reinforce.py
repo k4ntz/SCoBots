@@ -114,7 +114,9 @@ def train(cfg):
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, _, _ = env.step(1)
-    hidden_layer_size = int(2/3 * (n_actions + len(obs)))
+    hidden_layer_size = cfg.train.policy_h_size
+    if hidden_layer_size == 0:
+        hidden_layer_size = int(2/3 * (n_actions + len(obs)))
     print("EXPERIMENT")
     print(">> Selected algorithm: REINFORCE")
     print(">> Experiment name:", cfg.exp_name)
@@ -360,7 +362,9 @@ def eval_load(cfg):
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, _, _ = env.step(1)
-    hidden_layer_size = int(2/3 * (n_actions + len(obs)))
+    hidden_layer_size = cfg.train.policy_h_size
+    if hidden_layer_size == 0:
+        hidden_layer_size = int(2/3 * (n_actions + len(obs)))
     print("Make hidden layer in nn:", hidden_layer_size)
     policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions).to(dev)
     # load if exists
