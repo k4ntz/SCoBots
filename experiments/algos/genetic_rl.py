@@ -29,7 +29,7 @@ model_name = lambda training_name : PATH_TO_OUTPUTS + training_name + "_model.pt
 # TODO: Fix serialization problem and decomment after,
 # look at other genetic_rl.py file for details!
 
-dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+dev = "cpu" #torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def init_weights(m):

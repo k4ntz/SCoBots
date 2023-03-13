@@ -10,7 +10,7 @@ logdir: '/relogs/'
 
 video_steps: 100
 
-max_cpu_cores : 32
+max_cpu_cores : 100
 
 
 train:
