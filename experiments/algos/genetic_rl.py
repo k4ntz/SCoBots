@@ -47,7 +47,7 @@ def init_weights(m):
 # function to create random agents of given count
 def return_random_agents(n_inputs, num_agents, n_actions, cfg):
     agents = []
-    hidden_layer_size = int(2/3 * (n_actions + len(n_inputs)))
+    hidden_layer_size = int(2/3 * (n_actions + n_inputs))
     # TODO: SeSz: still relevant? latest network definitions didnt use this parameter
     if cfg.train.make_hidden:
         print("Agents have", n_inputs, "input nodes,", cfg.train.policy_h_size, "hidden nodes and", n_actions, "output nodes")
