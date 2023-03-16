@@ -24,7 +24,8 @@ dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class ExperienceBuffer():
     def __init__(self, size, gamma):
         self.observations = []
-        self.rewards = []
+        self.env_rewards = []
+        self.sco_rewards = []
         self.values = []
         self.logprobs = []
 
@@ -39,20 +40,36 @@ class ExperienceBuffer():
             print("buffer error")
             exit()
         self.observations.append(observation)
-        self.rewards.append(reward)
+        self.env_rewards.append(reward[0])
+        self.sco_rewards.append(reward[1])
         self.values.append(value)
         self.logprobs.append(logprob)
         self.ptr += 1
 
 
     def finalize(self):
-        self.rewards = np.array(self.rewards)
-        vals = torch.cat(self.values).detach().cpu().numpy()
+        self.env_rewards = np.array(self.env_rewards)
+        self.sco_rewards = np.array(self.sco_rewards, dtype=float)
+
+        self.sco_rewards = np.absolute(self.sco_rewards)  #for "normal" distance
+        self.sco_rewards *= -1  #for "normal" distance
+        self.sco_rewards = np.insert(np.diff(self.sco_rewards), 0, 0) #calc deltas
+
+        min_rew = np.min(self.sco_rewards)
+        max_rew = np.max(self.sco_rewards)
+        #self.sco_rewards = np.clip(self.sco_rewards, 0, max_rew) #clip negative deltas, TODO: makes sense?
+        if max_rew != 0:
+            self.sco_rewards /= max(abs(max_rew), abs(min_rew)) # scale to one
+        self.sco_rewards *= 5 #was 0.5 scale with scaling parameter
+
+
         ret = 0
-        for reward in self.rewards[::-1]:
+        total_rewards = np.add(self.env_rewards, self.sco_rewards)
+        for reward in total_rewards[::-1]:
             ret = reward + self.gamma * ret
             self.returns.insert(0, ret)
         self.returns = np.array(self.returns)
+        vals = torch.cat(self.values).detach().cpu().numpy()
         self.advantages = self.returns - vals
 
 
@@ -73,7 +90,8 @@ class ExperienceBuffer():
     def reset(self):
         self.ptr = 0
         self.observations = []
-        self.rewards = []
+        self.env_rewards = []
+        self.sco_rewards = []
         self.values = []
         self.logprobs = []
         self.returns = []
@@ -113,7 +131,7 @@ def train(cfg):
                       focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, _, _ = env.step(1)
+    obs, _, _, _, _, _, _ = env.step(1)
     hidden_layer_size = cfg.train.policy_h_size
     if hidden_layer_size == 0:
         hidden_layer_size = int(2/3 * (n_actions + len(obs)))
@@ -252,11 +270,11 @@ def train(cfg):
                                                         n_actions)
                 value_net_input = torch.tensor(obs, device=dev).unsqueeze(0)
                 value_estimation = torch.squeeze(value_net.forward(value_net_input), -1)
-                new_obs, natural_reward, terminated, truncated, _, _ = env.step(action)
+                new_obs, natural_reward, scobi_reward, terminated, truncated, _, _ = env.step(action)
 
                 # collection
                 entropy = -np.sum(list(map(lambda p : p * (np.log(p) / np.log(n_actions)) if p[0] != 0 else 0, probs)))
-                buffer.add(obs, natural_reward, value_estimation, log_prob)
+                buffer.add(obs, (natural_reward, scobi_reward), value_estimation, log_prob)
                 entropies.append(entropy)
                 ep_return += natural_reward
                 i_trajectory_step += 1
@@ -361,7 +379,7 @@ def eval_load(cfg):
                       focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, _, _ = env.step(1)
+    obs, _, _, _, _, _, _ = env.step(1)
     hidden_layer_size = cfg.train.policy_h_size
     if hidden_layer_size == 0:
         hidden_layer_size = int(2/3 * (n_actions + len(obs)))

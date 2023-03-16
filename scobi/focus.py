@@ -36,6 +36,9 @@ class Focus():
         self.FEATURE_VECTOR_FUNCS_SIZE = 0
         self.CURRENT_FEATURE_VECTOR_FUNCS = []
 
+        self.REWARD_INFO = (-1, 0, -1) # function_layer index, multiplicator, result index
+        self.REWARD = 0.0
+
         self.running_stats = []
         self.l = l
         self.generate_property_set()
@@ -292,8 +295,25 @@ class Focus():
             para_list = [fname, []]
             for p in fparas:
                 para_tuple = list(p.items())[0]
-                properties_to_vali.append(para_tuple[0])
-                objects_to_vali.append(para_tuple[1])
+                if "REWARD" in para_tuple[0]: #case if reward is defined in a function selection
+                    try:
+                        result_index = int(para_tuple[0].split("-")[-1])
+                    except:
+                        self.l.FocusFileParserError("Result index of reward must be an integer!")
+                        result_index = 0
+                    if para_tuple[1] == "scale":
+                        multiplier = 1
+                    elif para_tuple[1] == "inverse":
+                        multiplier = -1
+                    else:
+                        self.l.FocusFileParserError("Invalid reward value found, must be 'scale' or 'inverse'!")
+                    if self.REWARD_INFO == (-1, 0, -1):
+                        self.REWARD_INFO = (len(out), multiplier, result_index) #set info where to get reward from
+                    else:
+                        self.l.FocusFileParserError("Reward already defined, there can only be one!")
+                    continue # dont append reward to para_list
+                properties_to_vali.append(para_tuple[0]) # not used ?
+                objects_to_vali.append(para_tuple[1]) # not used ?
                 para_list[1].append(list(para_tuple))
             out.append(para_list)
         if self.validate_functions_signatures(out):
@@ -375,6 +395,16 @@ class Focus():
         for i in range(self.FUNC_COMPUTE_LAYER_SIZE):
             f = self.FUNC_COMPUTE_LAYER[i]
             self.CURRENT_FUNC_COMPUTE_LAYER[i] = f(self.CURRENT_PROPERTY_COMPUTE_LAYER)
+            if i == self.REWARD_INFO[0]: # check if this func is tagged as reward
+                func_value = self.CURRENT_FUNC_COMPUTE_LAYER[i]
+                multiplier = self.REWARD_INFO[1]
+                # TODO: first version, this always takes the first tuple entry, therefore works for euclidean dist,
+                # but for a function return tuple > 1, such as distance, not
+                # TODO: expand
+                result_idx = self.REWARD_INFO[2] #take index from focus file
+                if 1 + result_idx > len(func_value):
+                    self.l.FocusFileParserError("Result index out of range!")
+                self.REWARD = multiplier * func_value[result_idx] 
 
         if self.first_pass:
             self.first_pass = False
@@ -405,7 +435,7 @@ class Focus():
             for e in out:
                 item = 0.0 if e is None else e
                 self.last_obs_vector.append(item)
-            return self.last_obs_vector
+            return self.last_obs_vector, self.REWARD
 
         # unpack property layer
         idx = 0
@@ -430,4 +460,4 @@ class Focus():
             if out[i] is None:
                 out[i] = self.last_obs_vector[i]
         self.last_obs_vector = out
-        return out
+        return out, self.REWARD
