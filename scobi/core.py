@@ -37,13 +37,13 @@ class Environment():
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
             objects = self._wrap_map_order_game_objects(self.oc_env.objects)
-            sco_obs = self.focus.get_feature_vector(objects)
+            sco_obs, sco_reward = self.focus.get_feature_vector(objects)
+            #print(sco_reward)
             #print(sco_obs[0:100])
-            sco_reward = reward #reward shaping here
             sco_truncated = truncated
             sco_terminated = terminated
             sco_info = info
-            return sco_obs, sco_reward, sco_truncated, sco_terminated, sco_info, obs
+            return sco_obs, reward, sco_reward, sco_truncated, sco_terminated, sco_info, obs # 7
         else:
             raise ValueError("scobi> Action not in action space")
 

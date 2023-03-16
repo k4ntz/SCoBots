@@ -30,7 +30,7 @@ def play_agent(cfg, model, select_action_func, normalizer):
     n_actions = env.action_space.n
     #gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
-    obs, _, _, _, info, obs_raw = env.step(1)
+    obs, _, _, _, _, info, obs_raw = env.step(1)
     features = obs
     # init objects
     summary(model, input_size=(1, len(features)), device=cfg.device)
@@ -57,7 +57,7 @@ def play_agent(cfg, model, select_action_func, normalizer):
                 plt.clf()
             #print('Reward: {:.2f}\t Step: {:.2f}'.format(
             #        ep_reward, t), end="\r")
-            obs, reward, done, done2, info, obs_raw = env.step(action)
+            obs, reward, scobi_reward, done, done2, info, obs_raw = env.step(action)
             features = obs
             ep_reward += reward
             t += 1
