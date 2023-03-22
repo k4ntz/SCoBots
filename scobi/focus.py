@@ -21,7 +21,8 @@ class Focus():
         self.PARSED_ACTIONS = []
         self.PARSED_PROPERTIES = []
         self.PARSED_FUNCTIONS = []
-       
+        self.FEATURE_VECTOR_BACKMAP = []
+
         self.PROPERTY_COMPUTE_LAYER = []
         self.FUNC_COMPUTE_LAYER = []
         self.PROPERTY_COMPUTE_LAYER_SIZE = 0
@@ -35,6 +36,7 @@ class Focus():
         self.CURRENT_FEATURE_VECTOR_PROPS = []
         self.FEATURE_VECTOR_FUNCS_SIZE = 0
         self.CURRENT_FEATURE_VECTOR_FUNCS = []
+        self.CURRENT_FREEZE_MASK = []
 
         self.REWARD_INFO = (-1, 0, -1) # function_layer index, multiplicator, result index
         self.REWARD = 0.0
@@ -84,7 +86,6 @@ class Focus():
             self.load_focus_file(fpath)
             l.GeneralInfo("File is valid. Imported.")
             self.FOCUSFILEPATH = fpath
-
 
 
     def generate_property_set(self):
@@ -338,11 +339,16 @@ class Focus():
         # 1     PROPERTY_COMPUTE_LAYER
         # 2     FUNC_COMPUTE_LAYER
         prop_name_obj_name_pairs = []
+        parsed_fv_index = 0
         for p in self.PARSED_PROPERTIES:
             property_name = p[0]
             object_name = p[1]
             prop_name_obj_name_pairs.append((property_name, object_name))
             prop_func = PROPERTIES[property_name]["object"]
+            return_len = len(PROPERTIES[property_name]["returns"][0].__args__)
+            for _ in range(return_len):
+                self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+            parsed_fv_index += 1
             def prop(input_dict, prop_func=prop_func, object_name=object_name):
                 func = prop_func
                 return func(input_dict[object_name])
@@ -356,6 +362,10 @@ class Focus():
                 object_name = p[1]
                 property_result_idxs.append(prop_name_obj_name_pairs.index((property_name, object_name)))
             f = FUNCTIONS[func_name]["object"]
+            return_len = len(FUNCTIONS[func_name]["returns"][0].__args__)
+            for _ in range(return_len):
+                self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+            parsed_fv_index += 1
             ol = [0 for _ in range(len(property_result_idxs))]
             def func(prop_results, f=f, idxs=property_result_idxs, outlist=ol):
                 f_in = outlist
@@ -416,6 +426,7 @@ class Focus():
             self.FEATURE_VECTOR_FUNCS_SIZE = len(funcs)
             self.CURRENT_FEATURE_VECTOR_PROPS = [0 for _ in range(self.FEATURE_VECTOR_PROPS_SIZE)]
             self.CURRENT_FEATURE_VECTOR_FUNCS = [0 for _ in range(self.FEATURE_VECTOR_FUNCS_SIZE)]
+            self.CURRENT_FREEZE_MASK = [1 for _ in range(self.FEATURE_VECTOR_SIZE)]
 
             # unpack property layer
             idx = 0
@@ -459,5 +470,15 @@ class Focus():
         for i in range(self.FEATURE_VECTOR_SIZE): 
             if out[i] is None:
                 out[i] = self.last_obs_vector[i]
+                self.CURRENT_FREEZE_MASK[i] = 0
+            else:
+                self.CURRENT_FREEZE_MASK[i] = 1
         self.last_obs_vector = out
         return out, self.REWARD
+    
+    def get_feature_vector_description(self):
+        fv = self.PARSED_PROPERTIES + self.PARSED_FUNCTIONS
+        return (fv, np.array(self.FEATURE_VECTOR_BACKMAP))
+    
+    def get_current_freeze_mask(self):
+        return self.CURRENT_FREEZE_MASK

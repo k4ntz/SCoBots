@@ -1,5 +1,6 @@
 import torch
 import matplotlib.pyplot as plt
+import numpy as np
 
 from torchinfo import summary
 from tqdm import tqdm
@@ -8,6 +9,7 @@ from rtpt import RTPT
 from algos import reinforce
 from algos import genetic_rl as genetic
 from scobi import Environment
+from captum.attr import IntegratedGradients
 
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
@@ -15,7 +17,9 @@ dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def re_select_action(*args, **kwargs):
-    return reinforce.select_action(*args, **kwargs)[0]
+    return reinforce.select_action(*args, **kwargs)
+
+
 
 
 
@@ -26,12 +30,14 @@ def play_agent(cfg, model, select_action_func, normalizer):
     env = Environment(cfg.env_name,
                       interactive=cfg.scobi_interactive,
                       focus_dir=cfg.scobi_focus_dir,
-                      focus_file=cfg.scobi_focus_file)
+                      focus_file=cfg.scobi_focus_file,
+                      draw_features=True)
     n_actions = env.action_space.n
     #gametype = xutils.get_gametype(env)
     _, ep_reward = env.reset(), 0
     obs, _, _, _, _, info, obs_raw = env.step(1)
     features = obs
+    last_features = features
     # init objects
     summary(model, input_size=(1, len(features)), device=cfg.device)
     # make multiple runs for eval
@@ -41,6 +47,7 @@ def play_agent(cfg, model, select_action_func, normalizer):
     rtpt = RTPT(name_initials='DV', experiment_name=cfg.exp_name + "_EVAL", max_iterations=runs)
     rtpt.start()
     model.to(dev)
+    ig = IntegratedGradients(model)
     for run in tqdm(range(runs)):
         # env loop
         t = 0
@@ -49,7 +56,10 @@ def play_agent(cfg, model, select_action_func, normalizer):
         while t < cfg.train.max_steps_per_trajectory:  # Don't infinite loop while playing
             #features = torch.tensor(features).unsqueeze(0).float()
             features = normalizer.normalize(features)
-            action = select_action_func(features, model, -1, n_actions)
+            action, _, probs = select_action_func(features, model, -1, n_actions)
+            input = torch.tensor(features, requires_grad=True).unsqueeze(0).to(dev)
+            output = int(np.argmax(probs[0]))
+            attris = ig.attribute(input, target=output, method="gausslegendre")
             if cfg.liveplot:
                 plt.imshow(obs_raw, interpolation='none')
                 plt.plot()
@@ -57,7 +67,9 @@ def play_agent(cfg, model, select_action_func, normalizer):
                 plt.clf()
             #print('Reward: {:.2f}\t Step: {:.2f}'.format(
             #        ep_reward, t), end="\r")
+            env.set_feature_attribution(attris.squeeze(0).detach().cpu().numpy())
             obs, reward, scobi_reward, done, done2, info, obs_raw = env.step(action)
+            last_features = features
             features = obs
             ep_reward += reward
             t += 1
