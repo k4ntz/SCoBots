@@ -69,6 +69,7 @@ def play_agent(cfg, model, select_action_func, normalizer):
             #        ep_reward, t), end="\r")
             env.set_feature_attribution(attris.squeeze(0).detach().cpu().numpy())
             obs, reward, scobi_reward, done, done2, info, obs_raw = env.step(action)
+            print(scobi_reward)
             last_features = features
             features = obs
             ep_reward += reward
