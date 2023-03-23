@@ -128,6 +128,7 @@ def train(cfg):
     env = Environment(cfg.env_name,
                       interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
+                      hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n

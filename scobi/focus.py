@@ -8,7 +8,7 @@ from termcolor import colored
 from collections.abc import Iterable
 
 class Focus():
-    def __init__(self, env_name, interactive, reward, fodir, fofile, raw_features, actions, refresh_yaml, l):
+    def __init__(self, env_name, interactive, reward, hide_properties, fodir, fofile, raw_features, actions, refresh_yaml, l):
         concept_init()
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
@@ -40,6 +40,8 @@ class Focus():
 
         self.REWARD_SHAPING = reward
         self.REWARD_FUNC = None
+
+        self.HIDE_PROPERTIES = hide_properties
 
         self.running_stats = []
         self.l = l
@@ -97,6 +99,10 @@ class Focus():
         else:
             l.GeneralInfo("Reward Shaping: %s." % colored("disabled", "light_yellow"))
 
+        if self.HIDE_PROPERTIES == True:
+            l.GeneralInfo("Object properties are %s from the observation vector." % colored("excluded", "light_yellow"))
+        else:
+            l.GeneralInfo("Object properties are %s in the observation vector." % colored("included", "light_green"))
 
 
     def generate_property_set(self):
@@ -435,7 +441,11 @@ class Focus():
                 reward = self.REWARD_FUNC(self.last_obs_vector)
             else:
                 reward = 0
-            return self.last_obs_vector, reward
+            
+            out = self.last_obs_vector
+            if self.HIDE_PROPERTIES:
+                out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
+            return out, reward
 
         # unpack property layer
         idx = 0
@@ -468,7 +478,8 @@ class Focus():
             reward = self.REWARD_FUNC(out)
         else:
             reward = 0
-        
+        if self.HIDE_PROPERTIES:
+            out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
         return out, reward
     
     def get_feature_vector_description(self):

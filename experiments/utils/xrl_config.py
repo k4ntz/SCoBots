@@ -44,6 +44,7 @@ cfg = CfgNode({
     # scobi settings
     'scobi_interactive': False,
     'scobi_reward_shaping': False,
+    'scobi_hide_properties': False,
     'scobi_focus_file': "",
     'scobi_focus_dir': "focusfiles",
 
