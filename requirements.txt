@@ -11,4 +11,5 @@ tqdm
 pyyaml
 colormath
 yacs
+captum
 ocatari @ git+https://github.com/k4ntz/OC_Atari.git
