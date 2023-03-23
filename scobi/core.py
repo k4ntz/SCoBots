@@ -8,7 +8,7 @@ from scobi.utils.logging import Logger
 from PIL import Image, ImageDraw
 
 class Environment():
-    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, silent=False, refresh_yaml=True, draw_features=False):
+    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, reward=False, silent=False, refresh_yaml=True, draw_features=False):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
 
@@ -21,7 +21,7 @@ class Environment():
         self.oc_env.reset()
         max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects)
         self.did_reset = False
-        self.focus = Focus(env_name, interactive, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
+        self.focus = Focus(env_name, interactive, reward, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
@@ -172,15 +172,12 @@ class Environment():
                 draw.ellipse(coords, fill=(10,100,10, alpha), outline=(0,0,0, alpha))
             elif feature_name == "DISTANCE":
                 delta = [fv_entries[0], fv_entries[1]]
-                #print(feature_signature[0])
-                #print(features[:10])
                 source_object_coords = feature_signature[0]
                 idx = -1
                 for f in features:
                     idx += 1
                     if f == source_object_coords:
                         break
-                #print(idx)
                 idxs = np.where(fv_backmap == idx)[0]
                 source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
                 vector = np.add(source_object_coord_values, delta).tolist()
