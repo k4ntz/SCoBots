@@ -136,85 +136,87 @@ class Environment():
         img_shape = obs_image.shape
         img = Image.fromarray(obs_image)
         draw = ImageDraw.Draw(img, "RGBA")
-        feature_attribution = (255*(self.feature_attribution - np.min(self.feature_attribution))/np.ptp(self.feature_attribution)).astype(int) 
-        for feature in features:
-            i += 1
-            idxs = np.where(fv_backmap == i-1)[0]
-            feature_name = feature[0]
-            feature_signature = feature[1]
-            fv_entries = feature_vector[idxs[0]:idxs[-1]+1]
-            fv_attribution = feature_attribution[idxs[0]:idxs[-1]+1]
-            fv_freeze_mask = freeze_mask[idxs[0]:idxs[-1]+1]
-            alpha = int(np.mean(fv_attribution))
-            if 0 in fv_freeze_mask:
-                continue
-            if feature_name == "POSITION":
-                radius = 2
-                alpha = 255
-                x = fv_entries[0]
-                y = fv_entries[1]
-                coords = (x - radius, y - radius, x + radius, y + radius)
-                draw.ellipse(coords, fill=(40,40,40,alpha), outline=(0,0,0,alpha))
-            elif feature_name == "TODO": # POSITION_HISTORY
-                radius = 2
-                x_n = fv_entries[0]
-                y_n = fv_entries[1]
-                x_t = fv_entries[2]
-                y_t = fv_entries[3]
-                coords_now = (x_n - radius, y_n - radius, x_n + radius, y_n + radius)
-                coords_then = (x_t - radius, y_t - radius, x_t + radius, y_t + radius)
-                draw.ellipse(coords_now, fill=(100,100,alpha), outline=(0,0,0, alpha))
-                draw.ellipse(coords_then, fill=(200,200,alpha), outline=(0,0,0, alpha))
-            elif feature_name == "CENTER":
-                x = fv_entries[0]
-                y = fv_entries[1]
-                coords = (x- radius, y - radius, x + radius, y + radius)
-                draw.ellipse(coords, fill=(10,100,10, alpha), outline=(0,0,0, alpha))
-            elif feature_name == "DISTANCE":
-                delta = [fv_entries[0], fv_entries[1]]
-                source_object_coords = feature_signature[0]
-                idx = -1
-                for f in features:
-                    idx += 1
-                    if f == source_object_coords:
-                        break
-                idxs = np.where(fv_backmap == idx)[0]
-                source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
-                vector = np.add(source_object_coord_values, delta).tolist()
-                draw.line(source_object_coord_values + vector, fill=(0,0,255,alpha), width=1)
-            elif feature_name == "EUCLIDEAN_DISTANCE":
-                source_object_coords = feature_signature[0]
-                target_object_coords = feature_signature[1]
-                
-                idx = -1
-                for f in features:
-                    idx += 1
-                    if f == source_object_coords:
-                        break
-                idxs = np.where(fv_backmap == idx)[0]
-                source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
+        if np.ptp(self.feature_attribution):
+            feature_attribution = (255*(self.feature_attribution - np.min(self.feature_attribution))/np.ptp(self.feature_attribution)).astype(int) 
+            for feature in features:
+                i += 1
+                idxs = np.where(fv_backmap == i-1)[0]
+                feature_name = feature[0]
+                feature_signature = feature[1]
+                fv_entries = feature_vector[idxs[0]:idxs[-1]+1]
+                fv_attribution = feature_attribution[idxs[0]:idxs[-1]+1]
+                fv_freeze_mask = freeze_mask[idxs[0]:idxs[-1]+1]
+                alpha = int(np.mean(fv_attribution)**2/255)
+                if 0 in fv_freeze_mask:
+                    continue
+                if feature_name == "POSITION":
+                    radius = 2
+                    alpha = 255
+                    x = fv_entries[0]
+                    y = fv_entries[1]
+                    coords = (x - radius, y - radius, x + radius, y + radius)
+                    draw.ellipse(coords, fill=(40,40,40,alpha), outline=(0,0,0,alpha))
+                elif feature_name == "TODO": # POSITION_HISTORY
+                    radius = 2
+                    x_n = fv_entries[0]
+                    y_n = fv_entries[1]
+                    x_t = fv_entries[2]
+                    y_t = fv_entries[3]
+                    coords_now = (x_n - radius, y_n - radius, x_n + radius, y_n + radius)
+                    coords_then = (x_t - radius, y_t - radius, x_t + radius, y_t + radius)
+                    draw.ellipse(coords_now, fill=(100,100,alpha), outline=(0,0,0, alpha))
+                    draw.ellipse(coords_then, fill=(200,200,alpha), outline=(0,0,0, alpha))
+                elif feature_name == "CENTER":
+                    x = fv_entries[0]
+                    y = fv_entries[1]
+                    coords = (x- radius, y - radius, x + radius, y + radius)
+                    draw.ellipse(coords, fill=(10,100,10, alpha), outline=(0,0,0, alpha))
+                elif feature_name == "DISTANCE":
+                    delta = [fv_entries[0], fv_entries[1]]
+                    source_object_coords = feature_signature[0]
+                    idx = -1
+                    for f in features:
+                        idx += 1
+                        if f == source_object_coords:
+                            break
+                    idxs = np.where(fv_backmap == idx)[0]
+                    source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
+                    vector = np.add(source_object_coord_values, delta).tolist()
+                    draw.line(source_object_coord_values + vector, fill=(0,0,255,alpha), width=1)
 
-                idx = -1
-                for f in features:
-                    idx += 1
-                    if f == target_object_coords:
-                        break
-                idxs = np.where(fv_backmap == idx)[0]
-                target_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
+                elif feature_name == "EUCLIDEAN_DISTANCE":
+                    source_object_coords = feature_signature[0]
+                    target_object_coords = feature_signature[1]
+                    
+                    idx = -1
+                    for f in features:
+                        idx += 1
+                        if f == source_object_coords:
+                            break
+                    idxs = np.where(fv_backmap == idx)[0]
+                    source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
 
-                draw.line(source_object_coord_values + target_object_coord_values , fill=(0,0,255,alpha), width=1)
-            elif feature_name == "TODO": # LINEAR_TRAJECTORY
-                delta = [fv_entries[0], fv_entries[1]]
-                source_object_coords = feature_signature[0]
-                idx = -1
-                for f in features:
-                    idx += 1
-                    if f == source_object_coords:
-                        break
-                idxs = np.where(fv_backmap == idx)[0]
-                source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
-                vector = np.add(source_object_coord_values, delta)#.tolist()
-                vector = vector / np.sqrt(np.sum(vector**2))
-                vector *= 100
-                draw.line(source_object_coord_values + vector.tolist(), fill=(0,155,155,alpha), width=1)
+                    idx = -1
+                    for f in features:
+                        idx += 1
+                        if f == target_object_coords:
+                            break
+                    idxs = np.where(fv_backmap == idx)[0]
+                    target_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
+
+                    draw.line(source_object_coord_values + target_object_coord_values , fill=(0,0,255,alpha), width=1)
+                elif feature_name == "TODO": # LINEAR_TRAJECTORY
+                    delta = [fv_entries[0], fv_entries[1]]
+                    source_object_coords = feature_signature[0]
+                    idx = -1
+                    for f in features:
+                        idx += 1
+                        if f == source_object_coords:
+                            break
+                    idxs = np.where(fv_backmap == idx)[0]
+                    source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
+                    vector = np.add(source_object_coord_values, delta)#.tolist()
+                    vector = vector / np.sqrt(np.sum(vector**2))
+                    vector *= 100
+                    draw.line(source_object_coord_values + vector.tolist(), fill=(0,155,155,alpha), width=1)
         return np.array(img)
