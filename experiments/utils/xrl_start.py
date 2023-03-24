@@ -29,6 +29,8 @@ def play_agent(cfg, model, select_action_func, normalizer):
 
     env = Environment(cfg.env_name,
                       interactive=cfg.scobi_interactive,
+                      reward=cfg.scobi_reward_shaping,
+                      hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file,
                       draw_features=True)
@@ -60,10 +62,10 @@ def play_agent(cfg, model, select_action_func, normalizer):
             input = torch.tensor(features, requires_grad=True).unsqueeze(0).to(dev)
             output = int(np.argmax(probs[0]))
             attris = ig.attribute(input, target=output, method="gausslegendre")
-            if cfg.liveplot:
+            if cfg.liveplot and t % 2 == 0:
                 plt.imshow(obs_raw, interpolation='none')
                 plt.plot()
-                plt.pause(0.001)  # pause a bit so that plots are updated
+                plt.pause(0.0001)  # pause a bit so that plots are updated
                 plt.clf()
             #print('Reward: {:.2f}\t Step: {:.2f}'.format(
             #        ep_reward, t), end="\r")

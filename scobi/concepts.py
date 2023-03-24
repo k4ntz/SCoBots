@@ -89,6 +89,17 @@ def get_velocity(pos_history: Tuple[int, int, int, int]) -> Tuple[float]:
     return vel,
 
 
+@register(type="F", name="DIR_VELOCITY", params=["POSITION_HISTORY"], desc="directional velocity of object")
+def get_dir_velocity(pos_history: Tuple[int, int, int, int]) -> Tuple[float, float]:
+    if None in pos_history:
+        return None, None
+    obj = pos_history[0:2]
+    obj_past = pos_history[2:4]
+    vel_x = obj_past[0] - obj[0]
+    vel_y = obj_past[1] - obj[1]
+    return vel_x, vel_y
+
+
 @register(type="F", name="COLOR", params=["RGB"], desc="Index of colorname")
 def get_color_name(rgb: Tuple[int, int, int]) -> Tuple[int]:
     if None in rgb:

@@ -1,5 +1,6 @@
 import yaml
 import numpy as np
+import math
 from pathlib import Path
 from itertools import permutations
 from scobi.concepts import init as concept_init
@@ -512,11 +513,12 @@ class Focus():
             # skiing reward function
             player_position_idxs = []
             flag_center_idxs = []
+            flag_velocity_idxs = []
             for feature in fv_description:
                 i += 1
                 feature_name = feature[0]
                 feature_signature = feature[1]
-                # distance between player1 and ball1, inverted
+                # distance between player1 and center(flag1, flag2), inverted
                 if feature_name == "CENTER":
                     input1 = feature_signature[0]
                     input2 = feature_signature[1]
@@ -524,12 +526,18 @@ class Focus():
                         flag_center_idxs = np.where(fv_backmap == i-1)[0]
                 if feature_name == "POSITION":
                     if feature_signature == "Player1":
-                        player_position_idxs = np.where(fv_backmap == i-1)[0]                        
-            def reward(fv, c_idxs=flag_center_idxs, p_idxs=player_position_idxs):
+                        player_position_idxs = np.where(fv_backmap == i-1)[0]
+                if feature_name == "DIR_VELOCITY":
+                    input = feature_signature[0]
+                    if input[0] == "POSITION_HISTORY" and input[1] == "Flag1":
+                        flag_velocity_idxs = np.where(fv_backmap == i-1)[0]
+            def reward(fv, c_idxs=flag_center_idxs, p_idxs=player_position_idxs, v_idxs=flag_velocity_idxs):
                 p_entries = fv[p_idxs[0]:p_idxs[-1]+1]
                 c_entries = fv[c_idxs[0]:c_idxs[-1]+1]
+                v_entries = fv[v_idxs[0]:v_idxs[-1]+1]
                 euc_dist = FUNCTIONS["EUCLIDEAN_DISTANCE"]["object"]
-                res = euc_dist(p_entries, c_entries)
-                return res[0] * -1 # untuple and invert
+                player_flag_distance = euc_dist(p_entries, c_entries)[0]
+                euc_velocity_flag = np.clip(math.sqrt((v_entries[0])**2 + (v_entries[1])**2), 0, 10) #clip to 10
+                return 10 * euc_velocity_flag + player_flag_distance * -1
             return reward
 
