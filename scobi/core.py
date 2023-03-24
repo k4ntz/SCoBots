@@ -182,7 +182,6 @@ class Environment():
                 source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
                 vector = np.add(source_object_coord_values, delta).tolist()
                 draw.line(source_object_coord_values + vector, fill=(0,0,255,alpha), width=1)
-
             elif feature_name == "EUCLIDEAN_DISTANCE":
                 source_object_coords = feature_signature[0]
                 target_object_coords = feature_signature[1]

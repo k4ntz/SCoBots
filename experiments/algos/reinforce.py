@@ -51,33 +51,34 @@ class ExperienceBuffer():
         self.env_rewards = np.array(self.env_rewards)
         self.sco_rewards = np.array(self.sco_rewards, dtype=float)
 
-        self.sco_rewards = np.absolute(self.sco_rewards)  #for "normal" distance
-        self.sco_rewards *= -1  #for "normal" distance
-        self.sco_rewards = np.insert(np.diff(self.sco_rewards), 0, 0) #calc deltas
+        #self.sco_rewards = np.absolute(self.sco_rewards)  #for "normal" distance
+       # self.sco_rewards *= -1  #for "normal" distance
+        #self.sco_rewards = np.insert(np.diff(self.sco_rewards), 0, 0) #calc deltas
 
-        min_rew = np.min(self.sco_rewards)
-        max_rew = np.max(self.sco_rewards)
+        #min_rew = np.min(self.sco_rewards)
+       # max_rew = np.max(self.sco_rewards)
         #self.sco_rewards = np.clip(self.sco_rewards, 0, max_rew) #clip negative deltas, TODO: makes sense?
-        if max_rew != 0:
-            self.sco_rewards /= max(abs(max_rew), abs(min_rew)) # scale to one
-        self.sco_rewards *= 5 #was 0.5 scale with scaling parameter
+        #if max_rew != 0:
+       #     self.sco_rewards /= max(abs(max_rew), abs(min_rew)) # scale to one
+        #self.sco_rewards *= 5 #was 0.5 scale with scaling parameter
 
 
         ret = 0
-        total_rewards = np.add(self.env_rewards, self.sco_rewards)
+        total_rewards =  self.sco_rewards # np.add(self.env_rewards, self.sco_rewards)
+        #print(total_rewards)
         for reward in total_rewards[::-1]:
             ret = reward + self.gamma * ret
             self.returns.insert(0, ret)
         self.returns = np.array(self.returns)
         vals = torch.cat(self.values).detach().cpu().numpy()
-        self.advantages = self.returns - vals
+        self.advantages = self.returns #- vals
 
 
     def get(self):
         mean = self.advantages.mean()
         std = self.advantages.std()
         self.advantages = (self.advantages - mean) / (std + EPS)
-
+        #print([np.min(self.advantages), np.max(self.advantages), np.average(self.advantages)])
         data = { "obs"  : torch.as_tensor(self.observations, device=dev),
                  "rets" : torch.as_tensor(self.returns, device=dev),
                  "advs" : torch.as_tensor(self.advantages, device=dev), 
@@ -377,6 +378,8 @@ def eval_load(cfg):
     # init env
     env = Environment(cfg.env_name,
                       interactive=cfg.scobi_interactive,
+                      reward=cfg.scobi_reward_shaping,
+                      hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
