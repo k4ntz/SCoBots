@@ -41,7 +41,7 @@ class Focus():
 
         self.REWARD_SHAPING = reward
         self.REWARD_FUNC = None
-
+        self.reward_history = [0, 0]
         self.HIDE_PROPERTIES = hide_properties
 
         self.running_stats = []
@@ -537,7 +537,11 @@ class Focus():
                 v_entries = fv[v_idxs[0]:v_idxs[-1]+1]
                 euc_dist = FUNCTIONS["EUCLIDEAN_DISTANCE"]["object"]
                 player_flag_distance = euc_dist(p_entries, c_entries)[0]
+                self.reward_history[0] = self.reward_history[1]
+                self.reward_history[1] = player_flag_distance
+                delta = self.reward_history[0] - self.reward_history[1]
+                player_flag_distance_delta = delta if delta > 0 else 0 #only give positives
                 euc_velocity_flag = np.clip(math.sqrt((v_entries[0])**2 + (v_entries[1])**2), 0, 10) #clip to 10
-                return 10 * euc_velocity_flag + player_flag_distance * -1
+                return euc_velocity_flag + 2 * player_flag_distance_delta
             return reward
 
