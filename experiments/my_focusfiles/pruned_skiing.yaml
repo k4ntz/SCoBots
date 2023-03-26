@@ -79,6 +79,7 @@ SELECTION:
   - POSITION: Flag2
   - POSITION: Tree1
   - POSITION: Tree2
+  - ORIENTATION: Player1
   - POSITION_HISTORY: Player1
   - POSITION_HISTORY: Flag1
   functions:

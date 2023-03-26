@@ -21,6 +21,16 @@ class GameObjectInterface(ABC):
 
     @property
     @abstractmethod
+    def orientation(self):
+        pass
+
+    @orientation.setter
+    @abstractmethod
+    def orientation(self, o):
+        pass
+
+    @property
+    @abstractmethod
     def h_coords(self):
         pass
 
@@ -49,10 +59,10 @@ class GameObjectInterface(ABC):
     def number(self, number):
         pass
 
-    @property
-    @abstractmethod
-    def visible(self):
-        pass
+    #@property
+    #@abstractmethod
+    #def visible(self):
+    #    pass
 
     # default behaviour
     @property

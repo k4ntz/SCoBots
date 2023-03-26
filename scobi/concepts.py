@@ -34,6 +34,14 @@ def get_position_history(obj: GameObject) -> Tuple[int, int, int, int]:
     return tuple(coords[0] + coords[1])
 
 
+@register(type="P", name="ORIENTATION", params= ["OBJECT"], desc="get the orientation for given object")
+def get_orientation(obj: GameObject) -> Tuple[int]:
+    if not obj:
+        return None,
+    orientation = obj.orientation
+    return orientation,
+
+
 @register(type="P", name="RGB", params= ["OBJECT"], desc="get the rgb value for given object")
 def get_rgb(obj: GameObject) -> Tuple[int, int, int]:
     if not obj:

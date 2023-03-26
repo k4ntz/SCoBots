@@ -50,22 +50,8 @@ class ExperienceBuffer():
     def finalize(self):
         self.env_rewards = np.array(self.env_rewards)
         self.sco_rewards = np.array(self.sco_rewards, dtype=float)
-
-        #self.sco_rewards = np.absolute(self.sco_rewards)  #for "normal" distance
-       # self.sco_rewards *= -1  #for "normal" distance
-        #self.sco_rewards = np.insert(np.diff(self.sco_rewards), 0, 0) #calc deltas
-
-        #min_rew = np.min(self.sco_rewards)
-       # max_rew = np.max(self.sco_rewards)
-        #self.sco_rewards = np.clip(self.sco_rewards, 0, max_rew) #clip negative deltas, TODO: makes sense?
-        #if max_rew != 0:
-       #     self.sco_rewards /= max(abs(max_rew), abs(min_rew)) # scale to one
-        #self.sco_rewards *= 5 #was 0.5 scale with scaling parameter
-
-
         ret = 0
-        total_rewards =  self.sco_rewards # np.add(self.env_rewards, self.sco_rewards)
-        #print(total_rewards)
+        total_rewards =  self.sco_rewards #np.add(self.env_rewards, self.sco_rewards)
         for reward in total_rewards[::-1]:
             ret = reward + self.gamma * ret
             self.returns.insert(0, ret)
@@ -186,6 +172,7 @@ def train(cfg):
     print("Training started...")
     # tfboard logging buffer
     tfb_nr_buffer = 0
+    tfb_sr_buffer = 0
     tfb_pnl_buffer = 0
     tfb_vnl_buffer = 0
     tfb_pne_buffer = 0
@@ -261,7 +248,8 @@ def train(cfg):
         epoch_s_time = time.perf_counter()
         while i_episode_step < cfg.train.steps_per_episode:
             entropies = []
-            ep_return = 0
+            ep_env_return = 0
+            ep_scobi_return = 0
             i_trajectory_step = 0
             incomplete_traj = False
             while i_trajectory_step < cfg.train.max_steps_per_trajectory:
@@ -279,7 +267,8 @@ def train(cfg):
                 entropy = -np.sum(list(map(lambda p : p * (np.log(p) / np.log(n_actions)) if p[0] != 0 else 0, probs)))
                 buffer.add(obs, (natural_reward, scobi_reward), value_estimation, log_prob)
                 entropies.append(entropy)
-                ep_return += natural_reward
+                ep_env_return += natural_reward
+                ep_scobi_return += scobi_reward
                 i_trajectory_step += 1
                 i_episode_step += 1
                 obs = new_obs
@@ -288,16 +277,19 @@ def train(cfg):
                 if i_episode_step % cfg.train.log_steps == 0 and tfb_policy_updates_counter > 0:
                     global_step = (i_epoch - 1) * cfg.train.steps_per_episode + i_episode_step
                     avg_nr = tfb_nr_buffer / tfb_policy_updates_counter
+                    avg_sr = tfb_sr_buffer / tfb_policy_updates_counter
                     avg_pnl = tfb_pnl_buffer / tfb_policy_updates_counter
                     avg_vnl = tfb_vnl_buffer / tfb_policy_updates_counter
                     avg_pne = tfb_pne_buffer / tfb_policy_updates_counter
                     avg_step = tfb_step_buffer / tfb_policy_updates_counter
-                    writer.add_scalar("rewards/avg_return", avg_nr, global_step)
+                    writer.add_scalar("rewards/avg_env_return", avg_nr, global_step)
+                    writer.add_scalar("rewards/avg_scobi_return", avg_sr, global_step)
                     writer.add_scalar("loss/avg_policy_net", avg_pnl, global_step)
                     writer.add_scalar("loss/avg_value_net", avg_vnl, global_step)
                     writer.add_scalar("loss/avg_policy_net_entropy", avg_pne, global_step)
                     writer.add_scalar("various/avg_steps", avg_step, global_step)
                     tfb_nr_buffer = 0
+                    tfb_sr_buffer = 0
                     tfb_pnl_buffer = 0
                     tfb_vnl_buffer = 0
                     tfb_pne_buffer = 0
@@ -324,14 +316,15 @@ def train(cfg):
 
             if not incomplete_traj:
                 tfb_policy_updates_counter += 1
-                tfb_nr_buffer += ep_return
+                tfb_nr_buffer += ep_env_return
+                tfb_sr_buffer += ep_scobi_return
                 tfb_pnl_buffer += policy_loss
                 tfb_vnl_buffer += value_loss
                 tfb_pne_buffer += ep_entropy
                 tfb_step_buffer += i_trajectory_step
 
                 stdout_policy_updates_counter += 1
-                stdout_nr_buffer += ep_return
+                stdout_nr_buffer += ep_env_return
                 stdout_pnl_buffer += policy_loss
                 stdout_vnl_buffer += value_loss
                 stdout_pne_buffer += ep_entropy

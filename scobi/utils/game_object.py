@@ -79,5 +79,5 @@ class OCAGameObject(GameObjectInterface):
         return self.ocgo.rgb
     
     @property
-    def visible(self):
-        return self.ocgo.visible
+    def orientation(self):
+        return self.ocgo.orientation

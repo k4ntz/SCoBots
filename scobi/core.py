@@ -5,7 +5,8 @@ import scobi.environments.env_manager as em
 from scobi.utils.game_object import get_wrapper_class
 from scobi.focus import Focus
 from scobi.utils.logging import Logger
-from PIL import Image, ImageDraw
+from pathlib import Path
+from PIL import Image, ImageDraw, ImageFont
 
 class Environment():
     def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, reward=False, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
@@ -29,6 +30,7 @@ class Environment():
         self.feature_vector_description = self.focus.get_feature_vector_description()
         self.draw_features = draw_features
         self.feature_attribution = []
+        self.render_font = ImageFont.truetype(str(Path(__file__).parent / 'resources' / 'Gidole-Regular.ttf'), size=24)
 
         # TODO: inacurrate for now, counts the func entries, not the output of the functions, maybe use dummy object dict to evaluate once?
         self.observation_space = spaces.Box(low=-1000, high=1000, shape=(self.focus.FEATURE_VECTOR_SIZE,), dtype=np.float32)
@@ -127,17 +129,32 @@ class Environment():
         image_array[y, x:right + 1] = color
         image_array[bottom, x:right + 1] = color
 
+
+    def _add_margin(self, pil_img, top, right, bottom, left, color):
+        width, height = pil_img.size
+        new_width = width + right + left
+        new_height = height + top + bottom
+        result = Image.new(pil_img.mode, (new_width, new_height), color)
+        result.paste(pil_img, (left, top))
+        return result
+
+
     def _draw_overlay(self, obs_image, feature_vector, freeze_mask):
+        scale = 4
+        img = Image.fromarray(obs_image)
+        draw = ImageDraw.Draw(img, "RGBA")
         if len(self.feature_attribution) == 0:
-                return obs_image
+            img = img.resize((img.size[0]*scale, img.size[1]*scale), resample=Image.BOX)
+            img = self._add_margin(img,0,img.size[0],0,0, (255,255,255))
+            return np.array(img)
         features = self.feature_vector_description[0]
         fv_backmap = self.feature_vector_description[1]
         i = 0
-        img_shape = obs_image.shape
-        img = Image.fromarray(obs_image)
-        draw = ImageDraw.Draw(img, "RGBA")
+        top_features_k = 5
+        top_features_names = ["" for _ in range(top_features_k)]
         if np.ptp(self.feature_attribution):
-            feature_attribution = (255*(self.feature_attribution - np.min(self.feature_attribution))/np.ptp(self.feature_attribution)).astype(int) 
+            feature_attribution = (255*(self.feature_attribution - np.min(self.feature_attribution))/np.ptp(self.feature_attribution)).astype(int)
+            top_features_idxs = np.argsort(feature_attribution)[-top_features_k:][::-1]
             for feature in features:
                 i += 1
                 idxs = np.where(fv_backmap == i-1)[0]
@@ -147,25 +164,24 @@ class Environment():
                 fv_attribution = feature_attribution[idxs[0]:idxs[-1]+1]
                 fv_freeze_mask = freeze_mask[idxs[0]:idxs[-1]+1]
                 alpha = int(np.mean(fv_attribution)**2/255)
+                for ii, idx in enumerate(idxs):
+                    if idx in top_features_idxs:
+                        k_idx = np.where(top_features_idxs == idx)[0][0]
+                        top_features_names[k_idx] = feature_name + "(" + str(feature_signature) + ")["+str(ii)+"]"
                 if 0 in fv_freeze_mask:
                     continue
                 if feature_name == "POSITION":
                     radius = 2
-                    alpha = 255
                     x = fv_entries[0]
                     y = fv_entries[1]
                     coords = (x - radius, y - radius, x + radius, y + radius)
-                    draw.ellipse(coords, fill=(40,40,40,alpha), outline=(0,0,0,alpha))
-                elif feature_name == "TODO": # POSITION_HISTORY
+                    draw.ellipse(coords, fill=(0,0,0,alpha), outline=(0,0,0,alpha))
+                elif feature_name == "POSITION_HISTORY":
                     radius = 2
-                    x_n = fv_entries[0]
-                    y_n = fv_entries[1]
                     x_t = fv_entries[2]
                     y_t = fv_entries[3]
-                    coords_now = (x_n - radius, y_n - radius, x_n + radius, y_n + radius)
                     coords_then = (x_t - radius, y_t - radius, x_t + radius, y_t + radius)
-                    draw.ellipse(coords_now, fill=(100,100,alpha), outline=(0,0,0, alpha))
-                    draw.ellipse(coords_then, fill=(200,200,alpha), outline=(0,0,0, alpha))
+                    draw.ellipse(coords_then, fill=(0,0,0,alpha), outline=(0,0,0, alpha))
                 elif feature_name == "CENTER":
                     x = fv_entries[0]
                     y = fv_entries[1]
@@ -183,11 +199,9 @@ class Environment():
                     source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
                     vector = np.add(source_object_coord_values, delta).tolist()
                     draw.line(source_object_coord_values + vector, fill=(0,0,255,alpha), width=1)
-
                 elif feature_name == "EUCLIDEAN_DISTANCE":
                     source_object_coords = feature_signature[0]
                     target_object_coords = feature_signature[1]
-                    
                     idx = -1
                     for f in features:
                         idx += 1
@@ -195,7 +209,6 @@ class Environment():
                             break
                     idxs = np.where(fv_backmap == idx)[0]
                     source_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
-
                     idx = -1
                     for f in features:
                         idx += 1
@@ -203,7 +216,6 @@ class Environment():
                             break
                     idxs = np.where(fv_backmap == idx)[0]
                     target_object_coord_values = feature_vector[idxs[0]:idxs[-1]+1]
-
                     draw.line(source_object_coord_values + target_object_coord_values , fill=(0,0,255,alpha), width=1)
                 elif feature_name == "TODO": # LINEAR_TRAJECTORY
                     delta = [fv_entries[0], fv_entries[1]]
@@ -219,4 +231,40 @@ class Environment():
                     vector = vector / np.sqrt(np.sum(vector**2))
                     vector *= 100
                     draw.line(source_object_coord_values + vector.tolist(), fill=(0,155,155,alpha), width=1)
+                elif feature_name == "DIR_VELOCITY":
+                    velocity_scaling = 4
+                    velocity_vector = [fv_entries[0], fv_entries[1]]
+                    velocity_vector = np.multiply(velocity_vector, velocity_scaling)
+                    source_object_phistory = feature_signature[0]
+                    idx = -1
+                    for f in features:
+                        idx += 1
+                        if f == source_object_phistory:
+                            break
+                    idxs = np.where(fv_backmap == idx)[0]
+                    source_object_phistory_values = feature_vector[idxs[0]:idxs[-1]+1]
+                    current_coords = source_object_phistory_values[:2]
+                    vector = np.add(current_coords, velocity_vector).tolist()
+                    draw.line(current_coords + vector, fill=(0,255,255,alpha), width=2)
+                elif feature_name == "VELOCITY":
+                    velocity_scaling = 2
+                    velocity_value = [0, fv_entries[0]] #draw velocity as vertical bar
+                    velocity_vector = np.multiply(velocity_value, velocity_scaling)
+                    source_object_phistory = feature_signature[0]
+                    idx = -1
+                    for f in features:
+                        idx += 1
+                        if f == source_object_phistory:
+                            break
+                    idxs = np.where(fv_backmap == idx)[0]
+                    source_object_phistory_values = feature_vector[idxs[0]:idxs[-1]+1]
+                    current_coords = source_object_phistory_values[:2]
+                    vector = np.subtract(current_coords, velocity_vector).tolist()
+                    draw.line(current_coords + vector, fill=(255,165,0,alpha), width=2)
+        #print(top_features_names)
+        img = img.resize((img.size[0]*scale, img.size[1]*scale), resample=Image.BOX)
+        img = self._add_margin(img,0,img.size[0],0,0, (255,255,255))
+        to_draw = "\n".join(top_features_names)
+        draw = ImageDraw.Draw(img, "RGBA")
+        draw.text((img.size[0]/2 +20,20), to_draw,(5, 5, 5), self.render_font )
         return np.array(img)
