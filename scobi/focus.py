@@ -499,15 +499,18 @@ class Focus():
                 i += 1
                 feature_name = feature[0]
                 feature_signature = feature[1]
-                # distance between player1 and ball1, inverted
                 if feature_name == "DISTANCE":
                     input1 = feature_signature[0]
                     input2 = feature_signature[1]
                     if input1[0] == "POSITION" and input1[1] == "Player1" and input2[0] == "POSITION" and input2[1] == "Ball1":
                         idxs = np.where(fv_backmap == i-1)[0]
+                        # reward when player decreases y-distance to ball
                         def reward(fv, idxs=idxs):
                             v_entries = fv[idxs[0]:idxs[-1]+1]
-                            return v_entries[1] * -1 # take y-distance and invert
+                            self.reward_history[0] = self.reward_history[1]
+                            self.reward_history[1] = abs(v_entries[1]) # absolute distance on y-axis
+                            delta = self.reward_history[0] - self.reward_history[1] #decrease in distance: positive sign
+                            return delta
                         return reward
         elif "Skiing" in env:
             # skiing reward function
@@ -518,7 +521,6 @@ class Focus():
                 i += 1
                 feature_name = feature[0]
                 feature_signature = feature[1]
-                # distance between player1 and center(flag1, flag2), inverted
                 if feature_name == "CENTER":
                     input1 = feature_signature[0]
                     input2 = feature_signature[1]
@@ -531,6 +533,7 @@ class Focus():
                     input = feature_signature[0]
                     if input[0] == "POSITION_HISTORY" and input[1] == "Flag1":
                         flag_velocity_idxs = np.where(fv_backmap == i-1)[0]
+            # reward for high player velocity and player decreases euc-distance to center of flag1 and flag2
             def reward(fv, c_idxs=flag_center_idxs, p_idxs=player_position_idxs, v_idxs=flag_velocity_idxs):
                 p_entries = fv[p_idxs[0]:p_idxs[-1]+1]
                 c_entries = fv[c_idxs[0]:c_idxs[-1]+1]
@@ -539,9 +542,9 @@ class Focus():
                 player_flag_distance = euc_dist(p_entries, c_entries)[0]
                 self.reward_history[0] = self.reward_history[1]
                 self.reward_history[1] = player_flag_distance
-                delta = self.reward_history[0] - self.reward_history[1]
+                delta = self.reward_history[0] - self.reward_history[1] #decrease in distance: positive sign
                 player_flag_distance_delta = delta if delta > 0 else 0 #only give positives
                 euc_velocity_flag = np.clip(math.sqrt((v_entries[0])**2 + (v_entries[1])**2), 0, 10) #clip to 10
-                return euc_velocity_flag + 2 * player_flag_distance_delta
+                return euc_velocity_flag + 4 * player_flag_distance_delta
             return reward
 
