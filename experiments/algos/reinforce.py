@@ -282,7 +282,7 @@ def train(cfg):
                     avg_vnl = tfb_vnl_buffer / tfb_policy_updates_counter
                     avg_pne = tfb_pne_buffer / tfb_policy_updates_counter
                     avg_step = tfb_step_buffer / tfb_policy_updates_counter
-                    writer.add_scalar("rewards/avg_env_return", avg_nr, global_step)
+                    writer.add_scalar("rewards/avg_return", avg_nr, global_step)
                     writer.add_scalar("rewards/avg_scobi_return", avg_sr, global_step)
                     writer.add_scalar("loss/avg_policy_net", avg_pnl, global_step)
                     writer.add_scalar("loss/avg_value_net", avg_vnl, global_step)

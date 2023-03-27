@@ -41,7 +41,7 @@ def play_agent(cfg, model, select_action_func, normalizer):
     obs, _, _, _, _, info, obs_raw = env.step(1)
     features = obs
     summary(model, input_size=(1, len(features)), device=cfg.device)
-    runs = 1
+    runs = 3
     print("Runs:", runs)
     rewards = []
     all_sco_rewards = []
@@ -52,18 +52,18 @@ def play_agent(cfg, model, select_action_func, normalizer):
     fps = 30
     frame_delta = 1.0 / fps
     px = 1/plt.rcParams['figure.dpi']  # pixel in inches
+    fsize = (obs_raw.shape[1]+0) * px, (obs_raw.shape[0]+ 0) * px
+    fig = plt.figure(figsize=fsize)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.axis("off")
+    img = ax.imshow(obs_raw, interpolation='none')
+    plt.ion()
     for run in tqdm(range(runs)):
         # env loop
         t = 0
         ep_reward = 0
         sco_reward = 0
         env.reset()
-        fsize = (obs_raw.shape[1]+0) * px, (obs_raw.shape[0]+ 0) * px
-        fig = plt.figure(figsize=fsize)
-        ax = fig.add_axes([0, 0, 1, 1])
-        ax.axis("off")
-        img = ax.imshow(obs_raw, interpolation='none')
-        plt.ion()
         while t < cfg.train.max_steps_per_trajectory:  # Don't infinite loop while playing
             features = normalizer.normalize(features)
             action, _, probs = select_action_func(features, model, -1, n_actions)
@@ -73,8 +73,6 @@ def play_agent(cfg, model, select_action_func, normalizer):
             if cfg.liveplot:
                 img.set_data(obs_raw)
                 plt.pause(frame_delta)  
-
-                
             env.set_feature_attribution(attris.squeeze(0).detach().cpu().numpy())
             obs, reward, scobi_reward, done, done2, info, obs_raw = env.step(action)
             features = obs
@@ -85,7 +83,6 @@ def play_agent(cfg, model, select_action_func, normalizer):
                 break
         rewards.append(ep_reward)
         all_sco_rewards.append(sco_reward)
-        #print('Final reward: {:.2f}\tSteps: {}'.format(ep_reward, t))
         rtpt.step()
     print(rewards)
     print(all_sco_rewards)
