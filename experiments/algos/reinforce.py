@@ -22,13 +22,13 @@ dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 class ExperienceBuffer():
-    def __init__(self, size, gamma):
+    def __init__(self, size, gamma, reward_shaping=False):
         self.observations = []
         self.env_rewards = []
         self.sco_rewards = []
         self.values = []
         self.logprobs = []
-
+        self.scobi_reward_shaping = reward_shaping
         self.returns = []
         self.advantages = []
         self.ptr, self.max_size = 0, size
@@ -51,13 +51,16 @@ class ExperienceBuffer():
         self.env_rewards = np.array(self.env_rewards)
         self.sco_rewards = np.array(self.sco_rewards, dtype=float)
         ret = 0
-        total_rewards =  self.sco_rewards #np.add(self.env_rewards, self.sco_rewards)
+        if self.scobi_reward_shaping:
+            total_rewards =  self.sco_rewards 
+        else: 
+            total_rewards = self.env_rewards
         for reward in total_rewards[::-1]:
             ret = reward + self.gamma * ret
             self.returns.insert(0, ret)
         self.returns = np.array(self.returns)
         vals = torch.cat(self.values).detach().cpu().numpy()
-        self.advantages = self.returns #- vals
+        self.advantages = self.returns - vals
 
 
     def get(self):
@@ -179,7 +182,7 @@ def train(cfg):
     tfb_step_buffer = 0
     tfb_policy_updates_counter = 0
     last_stdout_nr_buffer = -1000000
-    buffer = ExperienceBuffer(cfg.train.max_steps_per_trajectory, cfg.train.gamma)
+    buffer = ExperienceBuffer(cfg.train.max_steps_per_trajectory, cfg.train.gamma, cfg.scobi_reward_shaping)
 
    # def entropy(n_actions, probs):
    #     print(probs)
