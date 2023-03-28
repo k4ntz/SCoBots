@@ -167,3 +167,4 @@ experiments/focusfiles/default_*
 experiments/*_batch.sh
 analysis.txt
 experiments/plots/*
+experiments/results/*

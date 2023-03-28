@@ -95,13 +95,14 @@ def play_agent(cfg, model, select_action_func, normalizer):
 def use_reinforce(cfg, mode):
     if mode == "train":
         reinforce.train(cfg)
+    elif mode == "eval":
+        model, normalizer = reinforce.eval_load(cfg)
+        play_agent(cfg, model, re_select_action, normalizer)
+    elif mode == "discover":
+        reinforce.eval_reward_discovery(cfg)
     else:
-        if mode == "eval":
-            model, normalizer = reinforce.eval_load(cfg)
-            play_agent(cfg, model, re_select_action, normalizer)
-        elif mode == "explain":
-            pass
-            # explain(agent=agent, cfg=cfg)
+        pass
+        # explain(agent=agent, cfg=cfg)
 
 
 # function to call deep neuroevolution algorithm

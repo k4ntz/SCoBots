@@ -6,12 +6,15 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.distributions import Categorical
 from rtpt import RTPT
 from termcolor import colored
+from pathlib import Path
 import numpy as np
 import torch
+import pandas as pd
 from torch import optim
 from scobi import Environment
 from experiments.algos import networks
 from experiments.utils import normalizer, utils
+from tqdm import tqdm
 
 EPS = np.finfo(np.float32).eps.item()
 PATH_TO_OUTPUTS = os.getcwd() + "/checkpoints/"
@@ -361,6 +364,134 @@ def train(cfg):
         last_stdout_nr_buffer = stdout_nr_buffer / pcounter
         i_epoch += 1
         rtpt.step()
+
+
+def eval_reward_discovery(cfg):
+    pickle_path = Path(__file__).parent.parent / "results" / "reward_discovery.pkl"
+    csv_path = Path(__file__).parent.parent / "results" / "reward_discovery.csv"
+    milestones = [1,3,5,10,15,20,25,30]
+    seeds = [0,1,2,3,4]
+    max_frames_per_seed = 250000 #250k
+
+    df_header = [str(s) for s in milestones]
+
+    if not pickle_path.exists():
+        idx_header = ["env", "seed", "scobi-reward"]
+        header =  idx_header + df_header
+        df = pd.DataFrame(columns=header)
+        df = df.set_index(idx_header)
+        df.to_pickle(pickle_path)
+    df = pd.read_pickle(pickle_path)
+    results = np.zeros( (len(seeds), len(milestones)))
+    # init env to get params for policy net
+    env = Environment(cfg.env_name,
+                      interactive=cfg.scobi_interactive,
+                      reward=cfg.scobi_reward_shaping,
+                      hide_properties=cfg.scobi_hide_properties,
+                      focus_dir=cfg.scobi_focus_dir,
+                      focus_file=cfg.scobi_focus_file)
+    n_actions = env.action_space.n
+    env.reset()
+    obs, _, _, _, _, _, _ = env.step(1)
+    hidden_layer_size = cfg.train.policy_h_size
+    if hidden_layer_size == 0:
+        hidden_layer_size = int(2/3 * (n_actions + len(obs)))
+    print("REWARD DISCOVERY")
+    print(">> Selected algorithm: REINFORCE")
+    print(">> Random Action probability:", cfg.train.random_action_p)
+    print(">> Gamma:", cfg.train.gamma)
+    print(">> Learning rate:", cfg.train.learning_rate)
+    print(">> Hidden Layer size:", str(hidden_layer_size))
+    print("ENVIRONMENT")
+    print(">> Action space: " + str(env.action_space_description))
+    print(">> Observation Vector Length:", len(obs))
+    print("EVALUATION")
+    print(">> Seeds:", seeds)
+    print(">> Max Frames per Seed::", max_frames_per_seed)
+    print(">> Acc. Reward Milestones:", milestones)
+    print("Evaluation started...")
+
+    for run, seed in enumerate(seeds):
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        env.reset()
+        obs, _, _, _, _, _, _ = env.step(1)
+        # init fresh policy and optimizer
+        policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions).to(dev)
+        value_net = networks.ValueNet(len(obs), hidden_layer_size, 1).to(dev)
+        policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
+        value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
+        input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value) #
+        buffer = ExperienceBuffer(cfg.train.max_steps_per_trajectory, cfg.train.gamma, cfg.scobi_reward_shaping)
+        ms_counter = 0
+        current_milestones = milestones.copy()
+        env_info = cfg.env_name
+        seed_str = str(seed)
+        reward_info = str(cfg.scobi_reward_shaping)
+        def update_models(data):
+            obss, rets, advs, = data["obs"], data["rets"], data["advs"]
+            logps, vals = data["logps"], data["vals"]
+            policy_optimizer.zero_grad()
+            policy_loss = (-logps * advs).mean()
+            policy_loss.backward()
+            torch.nn.utils.clip_grad_norm_(policy_net.parameters(), cfg.train.clip_norm)
+            policy_optimizer.step()
+            val_iters = cfg.train.value_iters
+            for _ in range(val_iters):
+                value_optimizer.zero_grad()
+                value_loss = ((rets - vals)**2).mean()
+                value_loss.backward()
+                torch.nn.utils.clip_grad_norm_(policy_net.parameters(), cfg.train.clip_norm)
+                value_optimizer.step()
+                vals = torch.squeeze(value_net.forward(obss.unsqueeze(0)), -1)
+            return policy_loss, value_loss
+        
+        reward_counter = 0
+        pbar = tqdm(total=max_frames_per_seed)
+        pbar.set_description(f"Seed: {seed}, Remaining Milestones: {current_milestones}")
+        for frame in range(1, max_frames_per_seed+1):
+            # interaction
+            obs = input_normalizer.normalize(obs)
+            action, log_prob, _ = select_action(obs, policy_net,
+                                                    cfg.train.random_action_p,
+                                                    n_actions)
+            value_net_input = torch.tensor(obs, device=dev).unsqueeze(0)
+            value_estimation = torch.squeeze(value_net.forward(value_net_input), -1)
+            new_obs, natural_reward, scobi_reward, terminated, truncated, _, _ = env.step(action)
+
+            # collection
+            buffer.add(obs, (natural_reward, scobi_reward), value_estimation, log_prob)
+            obs = new_obs
+
+            if natural_reward != 0:
+                buffer.finalize()
+                # policy update
+                data = buffer.get()
+                _, _ = update_models(data)
+                buffer.reset()
+
+            if natural_reward > 0:
+                reward_counter += 1
+            if reward_counter in current_milestones:
+                results[run,ms_counter] = frame
+                ms_counter += 1
+                current_milestones.pop(0)
+                pbar.set_description(f"Seed: {seed}, Remaining Milestones: {current_milestones}")
+            pbar.update(1)
+            if len(current_milestones) == 0:
+                break
+
+            # break conditions
+            if terminated or truncated:
+                env.reset()
+        pbar.close()
+        df.loc[(env_info, seed_str, reward_info), df_header] = results[run]
+    mean = results.mean(axis=0).tolist()
+    df.loc[(env_info, "mean", reward_info), df_header] = mean
+    df.to_pickle(pickle_path)
+    df = df.reset_index()
+    print(df)
+    df.to_csv(str(csv_path))
 
 
 # eval function, returns trained model

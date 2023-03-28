@@ -8,6 +8,7 @@ opencv_python
 joblib
 tensorboard
 tqdm
+pandas
 pyyaml
 colormath
 yacs
