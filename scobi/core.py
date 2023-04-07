@@ -7,6 +7,8 @@ from scobi.focus import Focus
 from scobi.utils.logging import Logger
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
+from copy import deepcopy
+
 
 class Environment():
     def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, reward=False, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
@@ -30,7 +32,10 @@ class Environment():
         self.feature_vector_description = self.focus.get_feature_vector_description()
         self.draw_features = draw_features
         self.feature_attribution = []
-        self.render_font = ImageFont.truetype(str(Path(__file__).parent / 'resources' / 'Gidole-Regular.ttf'), size=24)
+        self.render_font = ImageFont.truetype(str(Path(__file__).parent / 'resources' / 'Gidole-Regular.ttf'), size=38)
+        self._obj_obs = None  # observation augmented with objects
+        self._rel_obs = None  # observation augmented with relations
+        self._top_features = []
 
         # TODO: inacurrate for now, counts the func entries, not the output of the functions, maybe use dummy object dict to evaluate once?
         self.observation_space = spaces.Box(low=-1000, high=1000, shape=(self.focus.FEATURE_VECTOR_SIZE,), dtype=np.float32)
@@ -50,7 +55,8 @@ class Environment():
             sco_terminated = terminated
             sco_info = info
             if self.draw_features:
-                obs = self._draw_overlay(obs, sco_obs, freeze_mask)
+                self._obj_obs = self._draw_objects_overlay(obs)
+                self._rel_obs = self._draw_relation_overlay(obs, sco_obs, freeze_mask, action)
             return sco_obs, reward, sco_reward, sco_truncated, sco_terminated, sco_info, obs # 7
         else:
             raise ValueError("scobi> Action not in action space")
@@ -106,28 +112,28 @@ class Environment():
             return [0, 0, 0]
         return [int(col * col_precent) for col in color]
 
-    def _mark_bb(self, image_array, bb, color=(255, 0, 0), surround=True):
-        """
-        marks a bounding box on the image
-        """
-        x, y, w, h = bb
-        x = int(x)
-        y = int(y)
-        if surround:
-            if x > 0:
-                x, w = x - 1, w + 1
-            else:
-                x, w = x, w
-            if y > 0:
-                y, h = y - 1, h + 1
-            else:
-                y, h = y, h
-        bottom = min(209, y + h)
-        right = min(159, x + w)
-        image_array[y:bottom + 1, x] = color
-        image_array[y:bottom + 1, right] = color
-        image_array[y, x:right + 1] = color
-        image_array[bottom, x:right + 1] = color
+    # def _mark_bb(self, image_array, bb, color=(255, 0, 0), surround=True):
+    #     """
+    #     marks a bounding box on the image
+    #     """
+    #     x, y, w, h = bb
+    #     x = int(x)
+    #     y = int(y)
+    #     if surround:
+    #         if x > 0:
+    #             x, w = x - 1, w + 1
+    #         else:
+    #             x, w = x, w
+    #         if y > 0:
+    #             y, h = y - 1, h + 1
+    #         else:
+    #             y, h = y, h
+    #     bottom = min(209, y + h)
+    #     right = min(159, x + w)
+    #     image_array[y:bottom + 1, x] = color
+    #     image_array[y:bottom + 1, right] = color
+    #     image_array[y, x:right + 1] = color
+    #     image_array[bottom, x:right + 1] = color
 
 
     def _add_margin(self, pil_img, top, right, bottom, left, color):
@@ -139,13 +145,20 @@ class Environment():
         return result
 
 
-    def _draw_overlay(self, obs_image, feature_vector, freeze_mask):
+    def _draw_objects_overlay(self, obs_image, action=None):
+        obs_mod = deepcopy(obs_image)
+        for obj in self.oc_env.objects:
+            mark_bb(obs_mod, obj.xywh, color=obj.rgb)
+        return obs_mod
+
+
+    def _draw_relation_overlay(self, obs_image, feature_vector, freeze_mask, action=None):
         scale = 4
         img = Image.fromarray(obs_image)
         draw = ImageDraw.Draw(img, "RGBA")
         if len(self.feature_attribution) == 0:
             img = img.resize((img.size[0]*scale, img.size[1]*scale), resample=Image.BOX)
-            img = self._add_margin(img,0,img.size[0],0,0, (255,255,255))
+            # img = self._add_margin(img,0,img.size[0],0,0, (255,255,255))
             return np.array(img)
         features = self.feature_vector_description[0]
         fv_backmap = self.feature_vector_description[1]
@@ -167,7 +180,7 @@ class Environment():
                 for ii, idx in enumerate(idxs):
                     if idx in top_features_idxs:
                         k_idx = np.where(top_features_idxs == idx)[0][0]
-                        top_features_names[k_idx] = feature_name + "(" + str(feature_signature) + ")["+str(ii)+"]"
+                        top_features_names[k_idx] = format_feature(feature_name, feature_signature, ii)
                 if 0 in fv_freeze_mask:
                     continue
                 if feature_name == "POSITION":
@@ -262,9 +275,55 @@ class Environment():
                     vector = np.subtract(current_coords, velocity_vector).tolist()
                     draw.line(current_coords + vector, fill=(255,165,0,alpha), width=2)
         #print(top_features_names)
+        # import ipdb; ipdb.set_trace()
         img = img.resize((img.size[0]*scale, img.size[1]*scale), resample=Image.BOX)
-        img = self._add_margin(img,0,img.size[0],0,0, (255,255,255))
-        to_draw = "\n".join(top_features_names)
-        draw = ImageDraw.Draw(img, "RGBA")
-        draw.text((img.size[0]/2 +20,20), to_draw,(5, 5, 5), self.render_font )
+        self._top_features = top_features_names
+        # img = self._add_margin(img,0,img.size[0],0,0, (255,255,255))
+        # draw = ImageDraw.Draw(img, "RGBA")
+        # draw.text((img.size[0]/2 +20, 50), to_draw, (5, 5, 5), self.render_font)
         return np.array(img)
+
+
+def format_feature(feature_name, feature_signature, ii):
+    if feature_name == "POSITION_HISTORY":
+        if ii < 2:
+            axis = ["x", "y"][ii]
+            return f"{feature_signature}.{axis}"
+        axis = ["x", "y"][ii-2]
+        return f"{feature_signature}.{axis}[t-1]"
+    if ii not in [0, 1]:
+        import ipdb; ipdb.set_trace()
+    axis = ["x", "y"][ii]
+    if feature_name == 'POSITION':
+        return f"{feature_signature}.{axis}"
+    elif feature_name == "DISTANCE":
+        return f"D({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
+    elif feature_name == "DIR_VELOCITY":
+        return f"V({feature_signature[0][1]}).{axis}"
+    elif feature_name == "CENTER":
+        return f"C({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
+    elif feature_name == "ORIENTATION":
+        return f"O({feature_signature})"
+    import ipdb; ipdb.set_trace()
+
+
+def mark_bb(image_array, bb, color=(255, 0, 0), surround=True):
+    """
+    marks a bounding box on the image
+    """
+    x, y, w, h = bb
+    if surround:
+        if x > 0:
+            x, w = bb[0] - 1, bb[2] + 1
+        else:
+            x, w = bb[0], bb[2]
+        if y > 0:
+            y, h = bb[1] - 1, bb[3] + 1
+        else:
+            y, h = bb[1], bb[3]
+    bottom = min(209, y + h)
+    right = min(159, x + w)
+    image_array[y:bottom + 1, x] = color
+    image_array[y:bottom + 1, right] = color
+    image_array[y, x:right + 1] = color
+    image_array[bottom, x:right + 1] = color
