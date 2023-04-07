@@ -11,6 +11,7 @@ logdir: '/relogs/'
 
 video_steps: 100
 
+liveplot: True
 
 train:
   random_action_p: 0.05
