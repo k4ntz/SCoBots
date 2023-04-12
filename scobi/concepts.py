@@ -34,6 +34,14 @@ def get_position_history(obj: GameObject) -> Tuple[int, int, int, int]:
     return tuple(coords[0] + coords[1])
 
 
+@register(type="P", name="ORIENTATION", params= ["OBJECT"], desc="get the orientation for given object")
+def get_orientation(obj: GameObject) -> Tuple[int]:
+    if not obj:
+        return None,
+    orientation = obj.orientation
+    return orientation,
+
+
 @register(type="P", name="RGB", params= ["OBJECT"], desc="get the rgb value for given object")
 def get_rgb(obj: GameObject) -> Tuple[int, int, int]:
     if not obj:
@@ -87,6 +95,17 @@ def get_velocity(pos_history: Tuple[int, int, int, int]) -> Tuple[float]:
     obj_past = pos_history[2:4]
     vel = math.sqrt((obj_past[0] - obj[0])**2 + (obj_past[1] - obj[1])**2)
     return vel,
+
+
+@register(type="F", name="DIR_VELOCITY", params=["POSITION_HISTORY"], desc="directional velocity of object")
+def get_dir_velocity(pos_history: Tuple[int, int, int, int]) -> Tuple[float, float]:
+    if None in pos_history:
+        return None, None
+    obj = pos_history[0:2]
+    obj_past = pos_history[2:4]
+    vel_x = obj_past[0] - obj[0]
+    vel_y = obj_past[1] - obj[1]
+    return vel_x, vel_y
 
 
 @register(type="F", name="COLOR", params=["RGB"], desc="Index of colorname")

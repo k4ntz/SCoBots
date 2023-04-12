@@ -21,7 +21,27 @@ class GameObjectInterface(ABC):
 
     @property
     @abstractmethod
+    def orientation(self):
+        pass
+
+    @orientation.setter
+    @abstractmethod
+    def orientation(self, o):
+        pass
+
+    @property
+    @abstractmethod
     def h_coords(self):
+        pass
+
+    @property
+    @abstractmethod
+    def w(self):
+        pass
+
+    @property
+    @abstractmethod
+    def h(self):
         pass
 
     @property
@@ -39,10 +59,10 @@ class GameObjectInterface(ABC):
     def number(self, number):
         pass
 
-    @property
-    @abstractmethod
-    def visible(self):
-        pass
+    #@property
+    #@abstractmethod
+    #def visible(self):
+    #    pass
 
     # default behaviour
     @property
@@ -53,8 +73,7 @@ class GameObjectInterface(ABC):
         return math.sqrt((self.xy[0] - game_object.xy[0])**2 + (self.xy[1] - game_object.xy[1])**2)
 
     def __repr__(self):
-        visible_status = "V" if self.visible else "H"
-        return f"{self.name}({visible_status}) at ({self.xy[0]}, {self.xy[1]})"
+        return f"{self.name} at ({self.xy[0]}, {self.xy[1]})"
     
     # @property
     # @abstractmethod
@@ -81,13 +100,4 @@ class GameObjectInterface(ABC):
     # def y(self):
     #     pass
 
-    # @property
-    # @abstractmethod
-    # def w(self):
-    #     pass
-
-    # @property
-    # @abstractmethod
-    # def h(self):
-    #     pass
 
