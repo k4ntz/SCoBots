@@ -19,6 +19,7 @@ mpl.rcParams['toolbar'] = 'None'
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+import os
 
 
 def re_select_action(*args, **kwargs):
@@ -27,8 +28,21 @@ def re_select_action(*args, **kwargs):
 
 pause = False
 def onclick(event):
+    print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+          ('double' if event.dblclick else 'single', event.button,
+           event.x, event.y, event.xdata, event.ydata))
     global pause
-    pause = not pause
+    if event.button == 1:
+        pause = not pause
+    elif pause and event.button == 3:
+        i = 0
+        while True:
+            savename = f"explanations_{i}.svg"
+            if not os.path.exists(savename):
+                break
+            i += 1
+        plt.savefig(savename)
+        print(f"Saving current image in {savename}")
 
 
 # function to test agent loaded via main switch
