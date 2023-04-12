@@ -43,6 +43,8 @@ cfg = CfgNode({
 
     # scobi settings
     'scobi_interactive': False,
+    'scobi_reward_shaping': False,
+    'scobi_hide_properties': False,
     'scobi_focus_file': "",
     'scobi_focus_dir': "focusfiles",
 
@@ -98,6 +100,7 @@ cfg = CfgNode({
         ### XRL SPECIFIC
         'make_hidden': True,
         # 0 means auto scaling
+        'policy_act_f': "relu",
         'policy_h_size': 0,
         'value_h_size': 0,
         'value_iters': 50,

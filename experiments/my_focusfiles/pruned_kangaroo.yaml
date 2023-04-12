@@ -1,0 +1,637 @@
+ENVIRONMENT: KangarooDeterministic-v4
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Enemy1
+  - Enemy2
+  - Enemy3
+  - Enemy4
+  - Fruit1
+  - Fruit2
+  - Fruit3
+  - Bell1
+  - Child1
+  - Scale1
+  - Scale2
+  - Scale3
+  - Platform1
+  - Platform2
+  - Platform3
+  - Platform4
+  - Projectile_top1
+  - Projectile_enemy1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Enemy1
+  - Enemy2
+  - Fruit1
+  - Fruit2
+  - Bell1
+  - Child1
+  - Scale1
+  - Scale2
+  - Platform1
+  - Platform2
+  - Projectile_top1
+  - Projectile_enemy1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  properties:
+  - POSITION: Player1
+  - POSITION: Enemy1
+  - POSITION: Enemy2
+  - POSITION: Fruit1
+  - POSITION: Fruit2
+  - POSITION: Bell1
+  - POSITION: Child1
+  - POSITION: Scale1
+  - POSITION: Scale2
+  - POSITION: Platform1
+  - POSITION: Platform2
+  - POSITION: Projectile_top1
+  - POSITION: Projectile_enemy1
+  - POSITION_HISTORY: Player1
+  - POSITION_HISTORY: Enemy1
+  - POSITION_HISTORY: Enemy2
+  - POSITION_HISTORY: Fruit1
+  - POSITION_HISTORY: Fruit2
+  - POSITION_HISTORY: Bell1
+  - POSITION_HISTORY: Child1
+  - POSITION_HISTORY: Scale1
+  - POSITION_HISTORY: Scale2
+  - POSITION_HISTORY: Platform1
+  - POSITION_HISTORY: Platform2
+  - POSITION_HISTORY: Projectile_top1
+  - POSITION_HISTORY: Projectile_enemy1
+  functions:
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Fruit1
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Fruit2
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Bell1
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Child1
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Scale1
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Scale2
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Platform1
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Projectile_top1
+  - DISTANCE:
+    - POSITION: Platform2
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Projectile_top1
+    - POSITION: Projectile_enemy1
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Fruit1
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Fruit2
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Bell1
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Child1
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Scale1
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Scale2
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Platform1
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Platform2
+  - DISTANCE:
+    - POSITION: Projectile_enemy1
+    - POSITION: Projectile_top1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Player1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Fruit1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Fruit2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Bell1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Child1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Scale1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Scale2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Platform1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Platform2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Projectile_top1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Projectile_enemy1

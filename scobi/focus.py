@@ -1,5 +1,6 @@
 import yaml
 import numpy as np
+import math
 from pathlib import Path
 from itertools import permutations
 from scobi.concepts import init as concept_init
@@ -8,7 +9,7 @@ from termcolor import colored
 from collections.abc import Iterable
 
 class Focus():
-    def __init__(self, env_name, interactive, fodir, fofile, raw_features, actions, refresh_yaml, l):
+    def __init__(self, env_name, interactive, reward, hide_properties, fodir, fofile, raw_features, actions, refresh_yaml, l):
         concept_init()
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
@@ -21,7 +22,8 @@ class Focus():
         self.PARSED_ACTIONS = []
         self.PARSED_PROPERTIES = []
         self.PARSED_FUNCTIONS = []
-       
+        self.FEATURE_VECTOR_BACKMAP = []
+
         self.PROPERTY_COMPUTE_LAYER = []
         self.FUNC_COMPUTE_LAYER = []
         self.PROPERTY_COMPUTE_LAYER_SIZE = 0
@@ -35,6 +37,12 @@ class Focus():
         self.CURRENT_FEATURE_VECTOR_PROPS = []
         self.FEATURE_VECTOR_FUNCS_SIZE = 0
         self.CURRENT_FEATURE_VECTOR_FUNCS = []
+        self.CURRENT_FREEZE_MASK = []
+
+        self.REWARD_SHAPING = reward
+        self.REWARD_FUNC = None
+        self.reward_history = [0, 0]
+        self.HIDE_PROPERTIES = hide_properties
 
         self.running_stats = []
         self.l = l
@@ -81,7 +89,21 @@ class Focus():
             self.load_focus_file(fpath)
             l.GeneralInfo("File is valid. Imported.")
             self.FOCUSFILEPATH = fpath
+        
+        if self.REWARD_SHAPING == True:
+            l.GeneralInfo("Reward Shaping: %s." % colored("active", "light_green"))
+            self.REWARD_FUNC = self.get_reward_func(self.ENV_NAME)
+            if self.REWARD_FUNC:
+                l.GeneralInfo("Reward function is valid. Bound.")
+            else:
+                l.GeneralError("Reward function for %s not implemented!" % colored(env_name, "light_green"))
+        else:
+            l.GeneralInfo("Reward Shaping: %s." % colored("disabled", "light_yellow"))
 
+        if self.HIDE_PROPERTIES == True:
+            l.GeneralInfo("Object properties are %s from the observation vector." % colored("excluded", "light_yellow"))
+        else:
+            l.GeneralInfo("Object properties are %s in the observation vector." % colored("included", "light_green"))
 
 
     def generate_property_set(self):
@@ -292,8 +314,8 @@ class Focus():
             para_list = [fname, []]
             for p in fparas:
                 para_tuple = list(p.items())[0]
-                properties_to_vali.append(para_tuple[0])
-                objects_to_vali.append(para_tuple[1])
+                properties_to_vali.append(para_tuple[0]) # not used ?
+                objects_to_vali.append(para_tuple[1]) # not used ?
                 para_list[1].append(list(para_tuple))
             out.append(para_list)
         if self.validate_functions_signatures(out):
@@ -318,11 +340,16 @@ class Focus():
         # 1     PROPERTY_COMPUTE_LAYER
         # 2     FUNC_COMPUTE_LAYER
         prop_name_obj_name_pairs = []
+        parsed_fv_index = 0
         for p in self.PARSED_PROPERTIES:
             property_name = p[0]
             object_name = p[1]
             prop_name_obj_name_pairs.append((property_name, object_name))
             prop_func = PROPERTIES[property_name]["object"]
+            return_len = len(PROPERTIES[property_name]["returns"][0].__args__)
+            for _ in range(return_len):
+                self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+            parsed_fv_index += 1
             def prop(input_dict, prop_func=prop_func, object_name=object_name):
                 func = prop_func
                 return func(input_dict[object_name])
@@ -336,6 +363,10 @@ class Focus():
                 object_name = p[1]
                 property_result_idxs.append(prop_name_obj_name_pairs.index((property_name, object_name)))
             f = FUNCTIONS[func_name]["object"]
+            return_len = len(FUNCTIONS[func_name]["returns"][0].__args__)
+            for _ in range(return_len):
+                self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+            parsed_fv_index += 1
             ol = [0 for _ in range(len(property_result_idxs))]
             def func(prop_results, f=f, idxs=property_result_idxs, outlist=ol):
                 f_in = outlist
@@ -386,6 +417,7 @@ class Focus():
             self.FEATURE_VECTOR_FUNCS_SIZE = len(funcs)
             self.CURRENT_FEATURE_VECTOR_PROPS = [0 for _ in range(self.FEATURE_VECTOR_PROPS_SIZE)]
             self.CURRENT_FEATURE_VECTOR_FUNCS = [0 for _ in range(self.FEATURE_VECTOR_FUNCS_SIZE)]
+            self.CURRENT_FREEZE_MASK = [1 for _ in range(self.FEATURE_VECTOR_SIZE)]
 
             # unpack property layer
             idx = 0
@@ -405,7 +437,16 @@ class Focus():
             for e in out:
                 item = 0.0 if e is None else e
                 self.last_obs_vector.append(item)
-            return self.last_obs_vector
+
+            if self.REWARD_SHAPING:
+                reward = self.REWARD_FUNC(self.last_obs_vector)
+            else:
+                reward = 0
+            
+            out = self.last_obs_vector
+            if self.HIDE_PROPERTIES:
+                out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
+            return out, reward
 
         # unpack property layer
         idx = 0
@@ -429,5 +470,98 @@ class Focus():
         for i in range(self.FEATURE_VECTOR_SIZE): 
             if out[i] is None:
                 out[i] = self.last_obs_vector[i]
+                self.CURRENT_FREEZE_MASK[i] = 0
+            else:
+                self.CURRENT_FREEZE_MASK[i] = 1
         self.last_obs_vector = out
-        return out
+        
+        if self.REWARD_SHAPING:
+            reward = self.REWARD_FUNC(out)
+        else:
+            reward = 0
+        if self.HIDE_PROPERTIES:
+            out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
+        return out, reward
+    
+    def get_feature_vector_description(self):
+        fv = self.PARSED_PROPERTIES + self.PARSED_FUNCTIONS
+        return (fv, np.array(self.FEATURE_VECTOR_BACKMAP))
+    
+    def get_current_freeze_mask(self):
+        return self.CURRENT_FREEZE_MASK
+    
+    def get_reward_func(self, env):
+        fv_description, fv_backmap = self.get_feature_vector_description()
+        i = 0
+        if "Pong" in env:
+            # pong reward function
+            for feature in fv_description:
+                i += 1
+                feature_name = feature[0]
+                feature_signature = feature[1]
+                if feature_name == "DISTANCE":
+                    input1 = feature_signature[0]
+                    input2 = feature_signature[1]
+                    if input1[0] == "POSITION" and input1[1] == "Player1" and input2[0] == "POSITION" and input2[1] == "Ball1":
+                        idxs = np.where(fv_backmap == i-1)[0]
+                        # reward when player decreases y-distance to ball
+                        def reward(fv, idxs=idxs):
+                            v_entries = fv[idxs[0]:idxs[-1]+1]
+                            self.reward_history[0] = self.reward_history[1]
+                            self.reward_history[1] = abs(v_entries[1]) # absolute distance on y-axis
+                            delta = self.reward_history[0] - self.reward_history[1] #decrease in distance: positive sign
+                            return delta
+                        return reward
+        elif "Kangaroo" in env:
+            # kangaroo reward function
+            for feature in fv_description:
+                i += 1
+                feature_name = feature[0]
+                feature_signature = feature[1]
+                if feature_name == "POSITION":
+                    if feature_signature == "Player1":
+                        idxs = np.where(fv_backmap == i-1)[0]
+                        # reward when player decreases y-position value (going up)
+                        def reward(fv, idxs=idxs):
+                            p_entries = fv[idxs[0]:idxs[-1]+1]
+                            self.reward_history[0] = self.reward_history[1]
+                            self.reward_history[1] = abs(p_entries[1]) # absolute position on y-axis
+                            delta = self.reward_history[0] - self.reward_history[1] #decrease in y-position (going up): positive sign
+                            return delta
+                        return reward
+        elif "Skiing" in env:
+            # skiing reward function
+            player_position_idxs = []
+            flag_center_idxs = []
+            flag_velocity_idxs = []
+            for feature in fv_description:
+                i += 1
+                feature_name = feature[0]
+                feature_signature = feature[1]
+                if feature_name == "CENTER":
+                    input1 = feature_signature[0]
+                    input2 = feature_signature[1]
+                    if input1[0] == "POSITION" and input1[1] == "Flag1" and input2[0] == "POSITION" and input2[1] == "Flag2":
+                        flag_center_idxs = np.where(fv_backmap == i-1)[0]
+                if feature_name == "POSITION":
+                    if feature_signature == "Player1":
+                        player_position_idxs = np.where(fv_backmap == i-1)[0]
+                if feature_name == "DIR_VELOCITY":
+                    input = feature_signature[0]
+                    if input[0] == "POSITION_HISTORY" and input[1] == "Flag1":
+                        flag_velocity_idxs = np.where(fv_backmap == i-1)[0]
+            # reward for high player velocity and player decreases euc-distance to center of flag1 and flag2
+            def reward(fv, c_idxs=flag_center_idxs, p_idxs=player_position_idxs, v_idxs=flag_velocity_idxs):
+                p_entries = fv[p_idxs[0]:p_idxs[-1]+1]
+                c_entries = fv[c_idxs[0]:c_idxs[-1]+1]
+                v_entries = fv[v_idxs[0]:v_idxs[-1]+1]
+                euc_dist = FUNCTIONS["EUCLIDEAN_DISTANCE"]["object"]
+                player_flag_distance = euc_dist(p_entries, c_entries)[0]
+                self.reward_history[0] = self.reward_history[1]
+                self.reward_history[1] = player_flag_distance
+                delta = self.reward_history[0] - self.reward_history[1] #decrease in distance: positive sign
+                player_flag_distance_delta = delta if delta > 0 else 0 #only give positives
+                euc_velocity_flag = np.clip(math.sqrt((v_entries[0])**2 + (v_entries[1])**2), 0, 10) #clip to 10
+                return euc_velocity_flag + 4 * player_flag_distance_delta
+            return reward
+

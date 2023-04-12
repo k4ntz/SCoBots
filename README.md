@@ -13,7 +13,7 @@ from scobi import Environment
 # Minimal init, not interactive, no focus dir/file specified, empirical observation space normalization active
 env = Environment(env_name='PongDeterministic-v4')
 env.reset()
-obs, reward, truncated, terminated, info, obs_raw = env.step(1)
+obs, env_reward, scobi_reward, truncated, terminated, info, obs_raw = env.step(1)
 env.action_space                    # Discrete(6)
 env.action_space_description        # ['NOOP', 'FIRE', 'RIGHT', 'LEFT', 'RIGHTFIRE', 'LEFTFIRE']
 env.observation_space               # Box(-1000.0, 1000.0, (81,), float32)
@@ -23,7 +23,7 @@ env.close()
 # Extensive init, interactive, custom fcous dir and focus file, empirical observation space normalization not active
 env = Environment(env_name='PongDeterministic-v4', interactive=True, focus_dir="experiments/my_focusfiles", focus_file="pruned_pong.yaml", obs_normalized=False)
 env.reset()
-obs, reward, truncated, terminated, info, obs_raw = env.step(1)
+obs, env_reward, scobi_reward, truncated, terminated, info, obs_raw = env.step(1)
 env.action_space                    # Discrete(4)
 env.action_space_description        # ['NOOP', 'FIRE', 'RIGHT', 'LEFT']
 env.observation_space               # Box(-1000.0, 1000.0, (12,), float32)

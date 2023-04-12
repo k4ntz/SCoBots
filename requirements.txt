@@ -8,7 +8,10 @@ opencv_python
 joblib
 tensorboard
 tqdm
+pandas
 pyyaml
 colormath
 yacs
+captum
+notebook
 ocatari @ git+https://github.com/k4ntz/OC_Atari.git

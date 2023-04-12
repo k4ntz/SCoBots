@@ -41,7 +41,9 @@ class OCAGameObject(GameObjectInterface):
     def xy(self):
         if len(self.ocgo.xy) != 2:
             raise ValueError(f"Bad xy dimension from ocatari: {self.name} : {self.ocgo.xy}") #TODO: generalize and improve dimension checks
-        return self.ocgo.xy
+        x = self.ocgo.xy[0] + int(self.w / 2)
+        y = self.ocgo.xy[1] + int(self.h / 2)
+        return x, y
 
     @xy.setter
     def xy(self, xy):
@@ -54,8 +56,22 @@ class OCAGameObject(GameObjectInterface):
         shc = self.ocgo.h_coords
         if len(shc) != 2 or len([*shc[0], *shc[1]]) != 4:
             raise ValueError(f"Bad h_coords dimension from ocatari: {self.name} : {self.ocgo.h_coords}")
-        return self.ocgo.h_coords
+        ncord = shc[0][0] + int(self.w / 2), shc[0][1] + int(self.h / 2)
+        ocord = shc[1][0] + int(self.w / 2), shc[1][1] + int(self.h / 2)
+        return ncord, ocord
     
+    @property
+    def w(self):
+        return self.ocgo.w
+
+    @property
+    def h(self):
+        return self.ocgo.h
+    
+    @property
+    def xywh(self):
+        return self.ocgo.xywh
+
     @property
     def rgb(self):
         if len(self.ocgo.rgb) != 3:
@@ -63,5 +79,5 @@ class OCAGameObject(GameObjectInterface):
         return self.ocgo.rgb
     
     @property
-    def visible(self):
-        return self.ocgo.visible
+    def orientation(self):
+        return self.ocgo.orientation
