@@ -91,8 +91,8 @@ class ExperienceBuffer():
         self.advantages = []
 
 
-def model_name(training_name):
-    return PATH_TO_OUTPUTS + training_name + "_model.pth"
+def model_name(training_name, episode=1):
+    return PATH_TO_OUTPUTS + training_name + "_e"+ str(episode).zfill(2)+".pth"
 
 
 def select_action(features, policy, random_tr = -1, n_actions=3):
@@ -128,6 +128,7 @@ def train(cfg):
     env.reset()
     obs, _, _, _, _, _, _ = env.step(1)
     hidden_layer_size = cfg.train.policy_h_size
+    act_f = cfg.train.policy_act_f
     if hidden_layer_size == 0:
         hidden_layer_size = int(2/3 * (n_actions + len(obs)))
     print("EXPERIMENT")
@@ -142,32 +143,35 @@ def train(cfg):
     print(">> Action space: " + str(env.action_space_description))
     print(">> Observation Vector Length:", len(obs))
 
-    # init fresh policy and optimizer
-
-    policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions).to(dev)
+    # init fresh networks and optimizers
+    policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions, act_f).to(dev)
     value_net = networks.ValueNet(len(obs), hidden_layer_size, 1).to(dev)
     policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
     value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
     input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value) #
     i_epoch = 1
-    # overwrite if checkpoint exists
-    model_path = model_name("val_" + cfg.exp_name) # load value net
-    if os.path.isfile(model_path):
-        print(f"{model_path} does exist, loading ... ")
-        checkpoint = torch.load(model_path)
-        value_net.load_state_dict(checkpoint["value"])
-        value_optimizer.load_state_dict(checkpoint["optimizer"])
-        i_epoch = checkpoint["episode"]
+   
 
-    model_path = model_name("pol_" + cfg.exp_name) # load policy net
-    if os.path.isfile(model_path):
-        print(f"{model_path} does exist, loading ... ")
-        checkpoint = torch.load(model_path)
+    # overwrite if checkpoint exists
+    pol_checkpoints = [str(x) for x in Path(PATH_TO_OUTPUTS).iterdir() if "pol_" + cfg.exp_name in str(x)]
+    if pol_checkpoints:
+        pol_path = sorted(pol_checkpoints)[-1]
+        print(f"Loading latest policy checkpoint: {pol_path}")
+        checkpoint = torch.load(pol_path)
         policy_net.load_state_dict(checkpoint["policy"])
         policy_optimizer.load_state_dict(checkpoint["optimizer"])
         input_normalizer.set_state(checkpoint["normalizer_state"])
         i_epoch = checkpoint["episode"]
+        val_path = model_name("val_" + cfg.exp_name, episode=i_epoch) 
+        if Path(val_path).exists():
+            print(f"Loading corresponding valuenet checkpoint: {val_path}")
+            checkpoint = torch.load(val_path)
+            value_net.load_state_dict(checkpoint["value"])
+            value_optimizer.load_state_dict(checkpoint["optimizer"])
+        else:
+            print(f"Fitting valuenet not found: {val_path}")
         i_epoch += 1
+
 
     print("TRAINING")
     print(">> Epochs:", cfg.train.num_episodes)
@@ -187,24 +191,12 @@ def train(cfg):
     last_stdout_nr_buffer = -1000000
     buffer = ExperienceBuffer(cfg.train.max_steps_per_trajectory, cfg.train.gamma, cfg.scobi_reward_shaping)
 
-   # def entropy(n_actions, probs):
-   #     print(probs)
-   #     out = []
-   #     for prob in probs:
-   #         if prob[0] != 0:
-   #             out.append(prob * (np.log(prob) / np.log(n_actions)))
-   #         else:
-   #             out.append(0)
-   #     return(-np.sum(out))
-    
     # save model helper function
     def save_models(training_name, episode):
         if not os.path.exists(PATH_TO_OUTPUTS):
             os.makedirs(PATH_TO_OUTPUTS)
-        pol_model_path = model_name("pol_" + training_name)
-        val_model_path = model_name("val_" + training_name)
-
-        #print("Saving {}".format(model_path))
+        pol_model_path = model_name("pol_" + training_name, episode)
+        val_model_path = model_name("val_" + training_name, episode)
         torch.save({
                 "policy": policy_net.state_dict(),
                 "episode": episode,
@@ -218,6 +210,7 @@ def train(cfg):
                 "normalizer_state" : input_normalizer.get_state()
                 }, val_model_path)
 
+    # update model parameters
     def update_models(data):
         obss, rets, advs, = data["obs"], data["rets"], data["advs"]
         logps, vals = data["logps"], data["vals"]
@@ -393,6 +386,7 @@ def eval_reward_discovery(cfg):
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, _, _, _ = env.step(1)
+    act_f = cfg.train.policy_act_f
     hidden_layer_size = cfg.train.policy_h_size
     if hidden_layer_size == 0:
         hidden_layer_size = int(2/3 * (n_actions + len(obs)))
@@ -417,7 +411,7 @@ def eval_reward_discovery(cfg):
         env.reset()
         obs, _, _, _, _, _, _ = env.step(1)
         # init fresh policy and optimizer
-        policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions).to(dev)
+        policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions, act_f).to(dev)
         value_net = networks.ValueNet(len(obs), hidden_layer_size, 1).to(dev)
         policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
         value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
@@ -496,6 +490,7 @@ def eval_reward_discovery(cfg):
 
 # eval function, returns trained model
 def eval_load(cfg):
+    cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
     print("Experiment name:", cfg.exp_name)
     print("Evaluating Mode")
     print("Seed:", cfg.seed)
@@ -513,16 +508,19 @@ def eval_load(cfg):
     env.reset()
     obs, _, _, _, _, _, _ = env.step(1)
     hidden_layer_size = cfg.train.policy_h_size
+    act_f = cfg.train.policy_act_f
     if hidden_layer_size == 0:
         hidden_layer_size = int(2/3 * (n_actions + len(obs)))
     print("Make hidden layer in nn:", hidden_layer_size)
-    policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions).to(dev)
-    # load if exists
-    model_path = model_name("pol_" + cfg.exp_name + "-seed" + str(cfg.seed))
+    policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions, act_f).to(dev)
     normalizer_state = []
-    if os.path.isfile(model_path):
-        print(f"{model_path} does exist, loading ... ")
-        checkpoint = torch.load(model_path)
+    
+    # load latest policy checkpoint if exists
+    pol_checkpoints = [str(x) for x in Path(PATH_TO_OUTPUTS).iterdir() if "pol_" + cfg.exp_name in str(x)]
+    if pol_checkpoints:
+        pol_path = sorted(pol_checkpoints)[-1]
+        print(f"Loading latest policy checkpoint: {pol_path}")
+        checkpoint = torch.load(pol_path)
         policy_net.load_state_dict(checkpoint["policy"])
         normalizer_state = checkpoint["normalizer_state"]
         i_epoch = checkpoint["episode"]
@@ -531,4 +529,4 @@ def eval_load(cfg):
                                              clip_value=cfg.train.input_clip_value,
                                              stats=normalizer_state)
     policy_net.eval()
-    return policy_net, input_normalizer
+    return policy_net, input_normalizer, i_epoch

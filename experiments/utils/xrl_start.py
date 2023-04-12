@@ -11,7 +11,9 @@ from algos import reinforce
 from algos import genetic_rl as genetic
 from scobi import Environment
 from captum.attr import IntegratedGradients
+from pathlib import Path
 import matplotlib as mpl
+import json
 mpl.use("TkAgg")
 mpl.rcParams['toolbar'] = 'None' 
 import warnings
@@ -30,22 +32,22 @@ def onclick(event):
 
 
 # function to test agent loaded via main switch
-def play_agent(cfg, model, select_action_func, normalizer):
+def play_agent(cfg, model, select_action_func, normalizer, epochs):
+    runs = 5
     # init env
-
+    draw = cfg.liveplot
     env = Environment(cfg.env_name,
                       interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file,
-                      draw_features=True)
+                      draw_features=draw)
     n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
     obs, _, _, _, _, info, obs_raw = env.step(1)
     features = obs
     summary(model, input_size=(1, len(features)), device=cfg.device)
-    runs = 3
     print("Runs:", runs)
     rewards = []
     all_sco_rewards = []
@@ -146,16 +148,39 @@ def play_agent(cfg, model, select_action_func, normalizer):
     print(rewards)
     print(all_sco_rewards)
     print("Mean of Env Rewards:", sum(rewards) / len(rewards))
+    result_file = Path(__file__).parent.parent / Path("results", "results.json")
+    if result_file.exists():
+        result_dict = json.load(open(result_file))
+    else:
+        result_dict = {cfg.env_name : {}}
+        result_file.touch()
 
+    mode_str = "base"
+    if cfg.scobi_interactive:
+        mode_str = "pruned"
+    if cfg.scobi_reward_shaping:
+        mode_str += "_reward"
+    entry =  {
+        "mode" : mode_str,
+        "seed" : cfg.seed,
+        "eval_runs" : runs,
+        "reward": sum(rewards) / len(rewards),
+        "scobi_reward": sum(all_sco_rewards) / len(all_sco_rewards),
+        "frames_seen": epochs * cfg.train.steps_per_episode
+        }
+    if cfg.env_name not in result_dict.keys():
+        result_dict[cfg.env_name] = {}
+    result_dict[cfg.env_name][cfg.exp_name] = entry
+    result_file.write_text(json.dumps(result_dict, indent=4))
 
 # function to call reinforce algorithm
 def use_reinforce(cfg, mode):
     if mode == "train":
         reinforce.train(cfg)
     elif mode == "eval":
-        model, normalizer = reinforce.eval_load(cfg)
+        model, normalizer, epochs = reinforce.eval_load(cfg)
         model.eval()
-        play_agent(cfg, model, re_select_action, normalizer)
+        play_agent(cfg, model, re_select_action, normalizer, epochs)
     elif mode == "discover":
         reinforce.eval_reward_discovery(cfg)
     else:

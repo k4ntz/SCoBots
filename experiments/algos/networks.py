@@ -1,12 +1,12 @@
 """MLP Definitions"""
 from torch import nn
-from torch.nn  import Tanh
+from torch.nn  import Tanh, ReLU
 import torch.nn.functional as F
 
 
 class PolicyNet(nn.Module):
     """Policy MLP"""
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self, input_size, hidden_size, output_size, act_f="relu"):
         """
         Args:
             input_size (int): input_layer size
@@ -15,7 +15,10 @@ class PolicyNet(nn.Module):
         """
         super().__init__()
         self.hlayer1 = nn.Linear(input_size, hidden_size)
-        self.tanh = Tanh()
+        if act_f == "tanh":
+            self.act = Tanh()
+        else:
+            self.act = ReLU()
         self.out = nn.Linear(hidden_size, output_size)
 
         # xavier normal and bias 0 init
@@ -31,8 +34,8 @@ class PolicyNet(nn.Module):
     def forward(self, t_in):
         """forward pass"""
         hidden = self.hlayer1(t_in)
-        tanh = self.tanh(hidden)
-        lin_out = self.out(tanh)
+        activation = self.act(hidden)
+        lin_out = self.out(activation)
         return F.softmax(lin_out, dim=1)
 
 
