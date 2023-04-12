@@ -5,7 +5,6 @@ from argparse import ArgumentParser
 
 parser = ArgumentParser()
 parser.add_argument("-e", "--env", type=str, help="environment", default="Pong")
-#parser.add_argument("-f", "--file", type=str, help="output file", default=None)
 parser.add_argument("-a", "--actions", type=str, help="actions to prune", default=None)
 parser.add_argument("-o", "--objects", type=str, help="objects to prune", default=None)
 parser.add_argument("-p", "--properties", type=str, help="properties to prune", default=None)
