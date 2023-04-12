@@ -512,6 +512,23 @@ class Focus():
                             delta = self.reward_history[0] - self.reward_history[1] #decrease in distance: positive sign
                             return delta
                         return reward
+        elif "Kangaroo" in env:
+            # kangaroo reward function
+            for feature in fv_description:
+                i += 1
+                feature_name = feature[0]
+                feature_signature = feature[1]
+                if feature_name == "POSITION":
+                    if feature_signature == "Player1":
+                        idxs = np.where(fv_backmap == i-1)[0]
+                        # reward when player decreases y-position value (going up)
+                        def reward(fv, idxs=idxs):
+                            p_entries = fv[idxs[0]:idxs[-1]+1]
+                            self.reward_history[0] = self.reward_history[1]
+                            self.reward_history[1] = abs(p_entries[1]) # absolute position on y-axis
+                            delta = self.reward_history[0] - self.reward_history[1] #decrease in y-position (going up): positive sign
+                            return delta
+                        return reward
         elif "Skiing" in env:
             # skiing reward function
             player_position_idxs = []

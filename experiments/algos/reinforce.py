@@ -516,6 +516,7 @@ def eval_load(cfg):
     normalizer_state = []
     
     # load latest policy checkpoint if exists
+    i_epoch = 0
     pol_checkpoints = [str(x) for x in Path(PATH_TO_OUTPUTS).iterdir() if "pol_" + cfg.exp_name in str(x)]
     if pol_checkpoints:
         pol_path = sorted(pol_checkpoints)[-1]
