@@ -103,14 +103,6 @@ class Environment():
         # if there is none to fill, pin2 and pin3 are the closest visible and all derived features for the third pin (which is invisble) are frozen
         return out
 
-    def _make_darker(self, color, col_precent=0.8):
-        """
-        return a darker color
-        """
-        if not color:
-            print("No color passed, using default black")
-            return [0, 0, 0]
-        return [int(col * col_precent) for col in color]
 
     # def _mark_bb(self, image_array, bb, color=(255, 0, 0), surround=True):
     #     """
@@ -148,7 +140,7 @@ class Environment():
     def _draw_objects_overlay(self, obs_image, action=None):
         obs_mod = deepcopy(obs_image)
         for obj in self.oc_env.objects:
-            mark_bb(obs_mod, obj.xywh, color=obj.rgb)
+            mark_bb(obs_mod, obj.xywh, color=obj.rgb, name=str(obj))
         return obs_mod
 
 
@@ -318,11 +310,22 @@ def format_feature(feature_name, feature_signature, ii):
     import ipdb; ipdb.set_trace()
 
 
-def mark_bb(image_array, bb, color=(255, 0, 0), surround=True):
+def _make_darker(color, col_precent=0.8):
+    """
+    return a darker color
+    """
+    if not color:
+        print("No color passed, using default black")
+        return [0, 0, 0]
+    return [int(col * col_precent) for col in color]
+
+
+def mark_bb(image_array, bb, color=(255, 0, 0), surround=True, name=None):
     """
     marks a bounding box on the image
     """
     x, y, w, h = bb
+    color = _make_darker(color)
     if surround:
         if x > 0:
             x, w = bb[0] - 1, bb[2] + 1
@@ -332,6 +335,10 @@ def mark_bb(image_array, bb, color=(255, 0, 0), surround=True):
             y, h = bb[1] - 1, bb[3] + 1
         else:
             y, h = bb[1], bb[3]
+    if y > 209 or x > 159:
+        print(name)
+    y = min(209, y)
+    x = min(159, x)
     bottom = min(209, y + h)
     right = min(159, x + w)
     image_array[y:bottom + 1, x] = color
