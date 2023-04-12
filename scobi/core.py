@@ -243,7 +243,7 @@ class Environment():
                     vector = np.add(source_object_coord_values, delta)#.tolist()
                     vector = vector / np.sqrt(np.sum(vector**2))
                     vector *= 100
-                    draw.line(source_object_coord_values + vector.tolist(), fill=(0,155,155,alpha), width=1)
+                    draw.line(source_object_coord_values + vector.tolist(), fill=(0,255,255,alpha), width=1)
                 elif feature_name == "DIR_VELOCITY":
                     velocity_scaling = 4
                     velocity_vector = [fv_entries[0], fv_entries[1]]
@@ -260,7 +260,7 @@ class Environment():
                     vector = np.add(current_coords, velocity_vector).tolist()
                     draw.line(current_coords + vector, fill=(0,255,255,alpha), width=2)
                 elif feature_name == "VELOCITY":
-                    velocity_scaling = 2
+                    velocity_scaling = 4
                     velocity_value = [0, fv_entries[0]] #draw velocity as vertical bar
                     velocity_vector = np.multiply(velocity_value, velocity_scaling)
                     source_object_phistory = feature_signature[0]
@@ -273,7 +273,7 @@ class Environment():
                     source_object_phistory_values = feature_vector[idxs[0]:idxs[-1]+1]
                     current_coords = source_object_phistory_values[:2]
                     vector = np.subtract(current_coords, velocity_vector).tolist()
-                    draw.line(current_coords + vector, fill=(255,165,0,alpha), width=2)
+                    draw.line(current_coords + vector, fill=(0,255,255,alpha), width=2)
         #print(top_features_names)
         # import ipdb; ipdb.set_trace()
         img = img.resize((img.size[0]*scale, img.size[1]*scale), resample=Image.BOX)
@@ -285,25 +285,36 @@ class Environment():
 
 
 def format_feature(feature_name, feature_signature, ii):
+    if feature_name == 'RGB':
+        axis = ["R", "G", "B"][ii]
+        return f"RGB({feature_signature}.{axis})"
     if feature_name == "POSITION_HISTORY":
         if ii < 2:
             axis = ["x", "y"][ii]
             return f"{feature_signature}.{axis}"
         axis = ["x", "y"][ii-2]
         return f"{feature_signature}.{axis}[t-1]"
-    if ii not in [0, 1]:
-        import ipdb; ipdb.set_trace()
     axis = ["x", "y"][ii]
+    if ii > 3:
+        import ipdb; ipdb.set_trace()
     if feature_name == 'POSITION':
         return f"{feature_signature}.{axis}"
+    elif feature_name == "EUCLIDEAN_DISTANCE":
+        return f"ED({feature_signature})"
     elif feature_name == "DISTANCE":
         return f"D({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
-    elif feature_name == "DIR_VELOCITY":
+    elif feature_name == "VELOCITY":
         return f"V({feature_signature[0][1]}).{axis}"
+    elif feature_name == "DIR_VELOCITY":
+        return f"DV({feature_signature[0][1]}).{axis}"
     elif feature_name == "CENTER":
         return f"C({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
     elif feature_name == "ORIENTATION":
         return f"O({feature_signature})"
+    elif feature_name == "LINEAR_TRAJECTORY":
+        return f"LT({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
+    elif feature_name == "COLOR":
+        return f"COL({feature_signature})"
     import ipdb; ipdb.set_trace()
 
 

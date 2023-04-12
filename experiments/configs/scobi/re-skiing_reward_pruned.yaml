@@ -11,8 +11,6 @@ logdir: '/relogs/'
 
 video_steps: 100
 
-liveplot: True
-
 train:
   random_action_p: 0.05
   gamma: 0.99
@@ -22,4 +20,4 @@ train:
   steps_per_episode: 250000
   max_steps_per_trajectory: 100000
   log_steps: 20000
-  save_every: 1 # episode
+  save_every: 10 # episode
