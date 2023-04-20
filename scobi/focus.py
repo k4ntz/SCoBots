@@ -42,6 +42,7 @@ class Focus():
         self.REWARD_SHAPING = reward
         self.REWARD_FUNC = None
         self.reward_history = [0, 0]
+        self.reward_threshold = -1
         self.HIDE_PROPERTIES = hide_properties
 
         self.running_stats = []
@@ -75,7 +76,7 @@ class Focus():
                     self.generate_fresh_yaml(fpath)
                     l.GeneralError("No focus file specified! Auto-generated a default focus file. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
         else:
-            l.GeneralInfo( "Non-Interactive Mode")
+            l.GeneralInfo("Non-Interactive Mode")
             if fofile:
                 l.GeneralWarning("Specified focus file ignored, because in non-interactive scobi mode. Using default.")
             fpath = fdir / Path("default_focus_" + env_name + ".yaml")
@@ -90,8 +91,14 @@ class Focus():
             l.GeneralInfo("File is valid. Imported.")
             self.FOCUSFILEPATH = fpath
         
-        if self.REWARD_SHAPING == True:
-            l.GeneralInfo("Reward Shaping: %s." % colored("active", "light_green"))
+        if self.REWARD_SHAPING != 0:
+            if self.REWARD_SHAPING == 1:
+                rewstring = "scobi" 
+            elif self.REWARD_SHAPING == 2:
+                rewstring = "env + scobi"
+            else:
+                rewstring = "unknown"
+            l.GeneralInfo("Reward Shaping: %s." % colored(rewstring, "light_green"))
             self.REWARD_FUNC = self.get_reward_func(self.ENV_NAME)
             if self.REWARD_FUNC:
                 l.GeneralInfo("Reward function is valid. Bound.")
@@ -438,7 +445,7 @@ class Focus():
                 item = 0.0 if e is None else e
                 self.last_obs_vector.append(item)
 
-            if self.REWARD_SHAPING:
+            if self.REWARD_SHAPING != 0:
                 reward = self.REWARD_FUNC(self.last_obs_vector)
             else:
                 reward = 0
@@ -475,7 +482,7 @@ class Focus():
                 self.CURRENT_FREEZE_MASK[i] = 1
         self.last_obs_vector = out
         
-        if self.REWARD_SHAPING:
+        if self.REWARD_SHAPING != 0:
             reward = self.REWARD_FUNC(out)
         else:
             reward = 0
@@ -504,31 +511,50 @@ class Focus():
                     input2 = feature_signature[1]
                     if input1[0] == "POSITION" and input1[1] == "Player1" and input2[0] == "POSITION" and input2[1] == "Ball1":
                         idxs = np.where(fv_backmap == i-1)[0]
-                        # reward when player decreases y-distance to ball
-                        def reward(fv, idxs=idxs):
-                            v_entries = fv[idxs[0]:idxs[-1]+1]
-                            self.reward_history[0] = self.reward_history[1]
-                            self.reward_history[1] = abs(v_entries[1]) # absolute distance on y-axis
-                            delta = self.reward_history[0] - self.reward_history[1] #decrease in distance: positive sign
-                            return delta
-                        return reward
+            # reward when player decreases y-distance to ball
+            def reward(fv, idxs=idxs):
+                v_entries = fv[idxs[0]:idxs[-1]+1]
+                self.reward_history[0] = self.reward_history[1]
+                self.reward_history[1] = abs(v_entries[1]) # absolute distance on y-axis
+                delta = self.reward_history[0] - self.reward_history[1] #decrease in distance: positive sign
+                return delta * 0.1
+            return reward
         elif "Kangaroo" in env:
             # kangaroo reward function
+            player_idxs = []
+            distance_idxs = []
             for feature in fv_description:
                 i += 1
                 feature_name = feature[0]
                 feature_signature = feature[1]
                 if feature_name == "POSITION":
                     if feature_signature == "Player1":
-                        idxs = np.where(fv_backmap == i-1)[0]
-                        # reward when player decreases y-position value (going up)
-                        def reward(fv, idxs=idxs):
-                            p_entries = fv[idxs[0]:idxs[-1]+1]
-                            self.reward_history[0] = self.reward_history[1]
-                            self.reward_history[1] = abs(p_entries[1]) # absolute position on y-axis
-                            delta = self.reward_history[0] - self.reward_history[1] #decrease in y-position (going up): positive sign
-                            return delta
-                        return reward
+                        player_idxs = np.where(fv_backmap == i-1)[0]
+                if feature_name == "DISTANCE":
+                    input1 = feature_signature[0]
+                    input2 = feature_signature[1]
+                    if input1[0] == "POSITION" and input1[1] == "Player1" and input2[0] == "POSITION" and input2[1] == "Scale1":
+                        distance_idxs = np.where(fv_backmap == i-1)[0]
+            # reward when player achieves new y-coord low an
+            def reward(fv, p_idxs=player_idxs, d_idxs=distance_idxs):
+                p_entries = fv[p_idxs[0]:p_idxs[-1]+1]
+                y_coord_reward = 0
+                if self.reward_threshold == -1:
+                    self.reward_threshold = p_entries[1]
+                    y_coord_reward = 0
+                else:
+                    delta = self.reward_threshold - abs(p_entries[1])
+                    if delta > 0:
+                        self.reward_threshold = abs(p_entries[1])
+                        y_coord_reward = delta # reward when player achieves new y-coord low an
+                
+                d_entries = fv[d_idxs[0]:d_idxs[-1]+1]
+                self.reward_history[0] = self.reward_history[1]
+                self.reward_history[1] = abs(d_entries[0]) # x-dist
+                delta = self.reward_history[0] - self.reward_history[1]
+                distance_reward = delta if delta > 0 else 0 # reward when decreasing x-distance to Scale1
+                return y_coord_reward + 0.1 * distance_reward
+            return reward
         elif "Skiing" in env:
             # skiing reward function
             player_position_idxs = []

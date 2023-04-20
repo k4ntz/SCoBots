@@ -51,6 +51,7 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
     # init env
     draw = cfg.liveplot
     env = Environment(cfg.env_name,
+                      cfg.seed,
                       interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
@@ -69,7 +70,7 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
     rtpt.start()
     model.to(dev)
     ig = IntegratedGradients(model)
-    fps = 60
+    fps = 30
     frame_delta = 1.0 / fps
     px = 1/plt.rcParams['figure.dpi']  # pixel in inches
     zoom = 8
@@ -149,6 +150,7 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
                     plt.pause(frame_delta)
                 env.set_feature_attribution(attris.squeeze(0).detach().cpu().numpy())
                 obs, reward, scobi_reward, done, done2, info, obs_raw = env.step(action)
+                #print(scobi_reward)
                 features = obs
                 ep_reward += reward
                 sco_reward += scobi_reward

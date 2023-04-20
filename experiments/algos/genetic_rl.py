@@ -109,7 +109,7 @@ def run_agents(env, agents, cfg):
 # returns average score of given agent when it runs n times
 def return_average_score(agent, runs, cfg):
     score = 0.
-    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True, refresh_yaml=False)
+    env = Environment(cfg.env_name, cfg.seed, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file, silent=True, refresh_yaml=False)
     rtpt = RTPT(name_initials='SeSz', experiment_name=cfg.exp_name,
                     max_iterations=runs)
     rtpt.start()
@@ -237,7 +237,7 @@ def train(cfg):
     torch.set_grad_enabled(False)
 
     # init env to get actions count and features space
-    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
+    env = Environment(cfg.env_name, cfg.seed, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
     obs, _, _, _, _, info, _ = env.step(1)
@@ -316,7 +316,7 @@ def eval_load(cfg):
     # disable gradients as we will not use them
     torch.set_grad_enabled(False)
     # init env
-    env = Environment(cfg.env_name, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
+    env = Environment(cfg.env_name, cfg.seed, interactive=cfg.scobi_interactive, focus_dir=cfg.scobi_focus_dir, focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
     obs, _, _, _, _, info, _ = env.step(1)
