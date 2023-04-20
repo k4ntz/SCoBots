@@ -11,7 +11,7 @@ from copy import deepcopy
 
 
 class Environment():
-    def __init__(self, env_name, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, reward=False, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
+    def __init__(self, env_name, seed=None, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
 
@@ -21,8 +21,8 @@ class Environment():
         # TODO: oc envs should answer this, not the raw env
         actions = self.oc_env._env.unwrapped.get_action_meanings()
 
-        self.oc_env.reset()
-        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects)
+        self.oc_env.reset(seed=seed)
+        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
         self.did_reset = False
         self.focus = Focus(env_name, interactive, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
@@ -46,7 +46,7 @@ class Environment():
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
-            objects = self._wrap_map_order_game_objects(self.oc_env.objects)
+            objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
             sco_obs, sco_reward = self.focus.get_feature_vector(objects)
             freeze_mask = self.focus.get_current_freeze_mask()
             #print(sco_reward)
@@ -61,10 +61,12 @@ class Environment():
         else:
             raise ValueError("scobi> Action not in action space")
 
-    def reset(self):
+    def reset(self, *args, **kwargs):
         self.did_reset = True
         # additional scobi reset steps here
-        self.oc_env.reset()
+        self.focus.reward_threshold = -1
+        self.focus.reward_history = [0, 0]
+        self.oc_env.reset(*args, **kwargs)
 
     def close(self):
         # additional scobi close steps here
@@ -73,7 +75,7 @@ class Environment():
     def set_feature_attribution(self, att):
         self.feature_attribution = att
 
-    def _wrap_map_order_game_objects(self, oc_obj_list):
+    def _wrap_map_order_game_objects(self, oc_obj_list, env_name, reward_shaping):
         out = []
         counter_dict = {}
         player_obj = None
@@ -86,7 +88,17 @@ class Environment():
             if "Player" in scobi_obj.name or "Chicken" in scobi_obj.name:
                 player_obj = scobi_obj
                 break
-        scobi_obj_list = sorted(scobi_obj_list, key=lambda a : a.distance(player_obj))
+
+        if "Kangaroo" in env_name and reward_shaping != 0:
+            scales = []
+            rest = []
+            for x in scobi_obj_list:
+                scales.append(x) if "Scale" in x.name else rest.append(x)
+            scales = sorted(scales, key=lambda a : abs(a.y_distance(player_obj)))
+            rest = sorted(rest, key=lambda a : a.distance(player_obj))
+            scobi_obj_list = rest + scales
+        else:
+            scobi_obj_list = sorted(scobi_obj_list, key=lambda a : a.distance(player_obj))
 
         # map
         for scobi_obj in scobi_obj_list:
@@ -96,6 +108,7 @@ class Environment():
                 counter_dict[scobi_obj.category] +=1
             scobi_obj.number = counter_dict[scobi_obj.category]
             out.append(scobi_obj)
+
         # returns full objectlist [closest_visible : farest_visible] + [closest_invisible : farest invisibe]
         # if focus file specifies for example top3 closest objects (by selecting pin1, pin2, pin3), 
         # the features vector is always calculated based on the 3 closest visible objects of category pin.
@@ -237,7 +250,7 @@ class Environment():
                     vector *= 100
                     draw.line(source_object_coord_values + vector.tolist(), fill=(0,255,255,alpha), width=1)
                 elif feature_name == "DIR_VELOCITY":
-                    velocity_scaling = 4
+                    velocity_scaling = 2
                     velocity_vector = [fv_entries[0], fv_entries[1]]
                     velocity_vector = np.multiply(velocity_vector, velocity_scaling)
                     source_object_phistory = feature_signature[0]
@@ -249,10 +262,10 @@ class Environment():
                     idxs = np.where(fv_backmap == idx)[0]
                     source_object_phistory_values = feature_vector[idxs[0]:idxs[-1]+1]
                     current_coords = source_object_phistory_values[:2]
-                    vector = np.add(current_coords, velocity_vector).tolist()
+                    vector = np.subtract(current_coords, velocity_vector).tolist()
                     draw.line(current_coords + vector, fill=(0,255,255,alpha), width=2)
                 elif feature_name == "VELOCITY":
-                    velocity_scaling = 4
+                    velocity_scaling = 2
                     velocity_value = [0, fv_entries[0]] #draw velocity as vertical bar
                     velocity_vector = np.multiply(velocity_value, velocity_scaling)
                     source_object_phistory = feature_signature[0]
@@ -335,8 +348,6 @@ def mark_bb(image_array, bb, color=(255, 0, 0), surround=True, name=None):
             y, h = bb[1] - 1, bb[3] + 1
         else:
             y, h = bb[1], bb[3]
-    if y > 209 or x > 159:
-        print(name)
     y = min(209, y)
     x = min(159, x)
     bottom = min(209, y + h)

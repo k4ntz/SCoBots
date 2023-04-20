@@ -6,7 +6,6 @@ parallel: False
 
 logdir: '/relogs/'
 
-video_steps: 100
 
 train:
   random_action_p: 0.05

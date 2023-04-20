@@ -69,8 +69,14 @@ class GameObjectInterface(ABC):
     def name(self):
         return str(self.category) + str(self.number)
     
-    def distance(self, game_object ):
+    def distance(self, game_object):
         return math.sqrt((self.xy[0] - game_object.xy[0])**2 + (self.xy[1] - game_object.xy[1])**2)
+
+    def x_distance(self, game_object):
+        return self.xy[0] - game_object.xy[0]
+
+    def y_distance(self, game_object):
+        return self.xy[1] - game_object.xy[1]
 
     def __repr__(self):
         return f"{self.name} at ({self.xy[0]}, {self.xy[1]})"

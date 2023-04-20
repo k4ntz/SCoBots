@@ -17,9 +17,6 @@ from experiments.utils import normalizer, utils
 from tqdm import tqdm
 
 EPS = np.finfo(np.float32).eps.item()
-PATH_TO_OUTPUTS = os.getcwd() + "/checkpoints/"
-if not os.path.exists(PATH_TO_OUTPUTS):
-    os.makedirs(PATH_TO_OUTPUTS)
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -54,10 +51,12 @@ class ExperienceBuffer():
         self.env_rewards = np.array(self.env_rewards)
         self.sco_rewards = np.array(self.sco_rewards, dtype=float)
         ret = 0
-        if self.scobi_reward_shaping:
-            total_rewards =  self.sco_rewards 
+        if self.scobi_reward_shaping == 2: # mix rewards
+            total_rewards = self.sco_rewards + self.env_rewards
+        elif self.scobi_reward_shaping == 1: # scobi only
+            total_rewards = self.sco_rewards
         else: 
-            total_rewards = self.env_rewards
+            total_rewards = self.env_rewards # env only
         for reward in total_rewards[::-1]:
             ret = reward + self.gamma * ret
             self.returns.insert(0, ret)
@@ -90,9 +89,13 @@ class ExperienceBuffer():
         self.returns = []
         self.advantages = []
 
+def create_dirs(exp_name):
+    checkpoint_path = Path(__file__).parent.parent / "checkpoints" / exp_name
+    checkpoint_path.mkdir(exist_ok=True)
+    return checkpoint_path
 
 def model_name(training_name, episode=1):
-    return PATH_TO_OUTPUTS + training_name + "_e"+ str(episode).zfill(2)+".pth"
+    return Path(training_name + "_e"+ str(episode).zfill(2)+".pth")
 
 
 def select_action(features, policy, random_tr = -1, n_actions=3):
@@ -113,12 +116,15 @@ def select_action(features, policy, random_tr = -1, n_actions=3):
 
 def train(cfg):
     cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
+    ckp_path = create_dirs(cfg.exp_name)
     torch.manual_seed(cfg.seed)
     np.random.seed(cfg.seed)
+
     writer = SummaryWriter(os.getcwd() + cfg.logdir + cfg.exp_name)
 
     # init env to get params for policy net
     env = Environment(cfg.env_name,
+                      cfg.seed,
                       interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
@@ -139,6 +145,7 @@ def train(cfg):
     print(">> Gamma:", cfg.train.gamma)
     print(">> Learning rate:", cfg.train.learning_rate)
     print(">> Hidden Layer size:", str(hidden_layer_size))
+    print(">> Policy Activation Function:", str(act_f))
     print("ENVIRONMENT")
     print(">> Action space: " + str(env.action_space_description))
     print(">> Observation Vector Length:", len(obs))
@@ -148,28 +155,31 @@ def train(cfg):
     value_net = networks.ValueNet(len(obs), hidden_layer_size, 1).to(dev)
     policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
     value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
-    input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value) #
+    input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value)
     i_epoch = 1
    
-
     # overwrite if checkpoint exists
-    pol_checkpoints = [str(x) for x in Path(PATH_TO_OUTPUTS).iterdir() if "pol_" + cfg.exp_name in str(x)]
+    pol_checkpoints = [str(x) for x in Path(ckp_path).iterdir() if "pol_" + cfg.exp_name in str(x)]
     if pol_checkpoints:
         pol_path = sorted(pol_checkpoints)[-1]
-        print(f"Loading latest policy checkpoint: {pol_path}")
+        print(f"Loading latest policy checkpoint: {pol_path.split('/')[-1]}")
         checkpoint = torch.load(pol_path)
         policy_net.load_state_dict(checkpoint["policy"])
         policy_optimizer.load_state_dict(checkpoint["optimizer"])
         input_normalizer.set_state(checkpoint["normalizer_state"])
+        torch.set_rng_state(checkpoint["rng_states"][0])
+        np.random.set_state(checkpoint["rng_states"][1])
+        obs = checkpoint["last_observation"]
+        env.reset()
         i_epoch = checkpoint["episode"]
-        val_path = model_name("val_" + cfg.exp_name, episode=i_epoch) 
-        if Path(val_path).exists():
-            print(f"Loading corresponding valuenet checkpoint: {val_path}")
-            checkpoint = torch.load(val_path)
+        val_path = ckp_path / model_name("val_" + cfg.exp_name, episode=i_epoch)
+        if val_path.exists():
+            print(f"Loading corresponding valuenet checkpoint: {val_path.name}")
+            checkpoint = torch.load(str(val_path))
             value_net.load_state_dict(checkpoint["value"])
             value_optimizer.load_state_dict(checkpoint["optimizer"])
         else:
-            print(f"Fitting valuenet not found: {val_path}")
+            print(f"Fitting valuenet not found ({val_path.name}). Initializing new one.")
         i_epoch += 1
 
 
@@ -193,21 +203,23 @@ def train(cfg):
 
     # save model helper function
     def save_models(training_name, episode):
-        if not os.path.exists(PATH_TO_OUTPUTS):
-            os.makedirs(PATH_TO_OUTPUTS)
-        pol_model_path = model_name("pol_" + training_name, episode)
-        val_model_path = model_name("val_" + training_name, episode)
+        pol_model_path = ckp_path / model_name("pol_" + training_name, episode)
+        val_model_path = ckp_path / model_name("val_" + training_name, episode)
         torch.save({
                 "policy": policy_net.state_dict(),
                 "episode": episode,
                 "optimizer": policy_optimizer.state_dict(),
-                "normalizer_state" : input_normalizer.get_state() 
+                "normalizer_state" : input_normalizer.get_state(),
+                "rng_states" : [torch.get_rng_state(), np.random.get_state()],
+                "last_observation" : obs
                 }, pol_model_path)
         torch.save({
                 "value": value_net.state_dict(),
                 "episode": episode,
                 "optimizer": value_optimizer.state_dict(),
-                "normalizer_state" : input_normalizer.get_state()
+                "normalizer_state" : input_normalizer.get_state(),
+                "rng_states" : [torch.get_rng_state(), np.random.get_state()],
+                "last_observation" : obs
                 }, val_model_path)
 
     # update model parameters
@@ -378,6 +390,7 @@ def eval_reward_discovery(cfg):
     results = np.zeros( (len(seeds), len(milestones)))
     # init env to get params for policy net
     env = Environment(cfg.env_name,
+                      cfg.seed,
                       interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
@@ -491,6 +504,7 @@ def eval_reward_discovery(cfg):
 # eval function, returns trained model
 def eval_load(cfg):
     cfg.exp_name = cfg.exp_name + "-seed" + str(cfg.seed)
+    ckp_path = create_dirs(cfg.exp_name)
     print("Experiment name:", cfg.exp_name)
     print("Evaluating Mode")
     print("Seed:", cfg.seed)
@@ -499,6 +513,7 @@ def eval_load(cfg):
     torch.set_grad_enabled(False)
     # init env
     env = Environment(cfg.env_name,
+                      cfg.seed,
                       interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
@@ -517,7 +532,7 @@ def eval_load(cfg):
     
     # load latest policy checkpoint if exists
     i_epoch = 0
-    pol_checkpoints = [str(x) for x in Path(PATH_TO_OUTPUTS).iterdir() if "pol_" + cfg.exp_name in str(x)]
+    pol_checkpoints = [str(x) for x in Path(ckp_path).iterdir() if "pol_" + cfg.exp_name in str(x)]
     if pol_checkpoints:
         pol_path = sorted(pol_checkpoints)[-1]
         print(f"Loading latest policy checkpoint: {pol_path}")
