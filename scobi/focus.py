@@ -539,7 +539,7 @@ class Focus():
             def reward(fv, p_idxs=player_idxs, d_idxs=distance_idxs):
                 p_entries = fv[p_idxs[0]:p_idxs[-1]+1]
                 y_coord_reward = 0
-                if self.reward_threshold == -1:
+                if self.reward_threshold == -1: #set starting y
                     self.reward_threshold = p_entries[1]
                     y_coord_reward = 0
                 else:
@@ -551,8 +551,8 @@ class Focus():
                 d_entries = fv[d_idxs[0]:d_idxs[-1]+1]
                 self.reward_history[0] = self.reward_history[1]
                 self.reward_history[1] = abs(d_entries[0]) # x-dist
-                delta = self.reward_history[0] - self.reward_history[1]
-                distance_reward = delta if delta > 0 else 0 # reward when decreasing x-distance to Scale1
+                delta = self.reward_history[0] - self.reward_history[1] # decreasing x-distance to Scale1
+                distance_reward = delta if 100 > delta > 0 else 0 # only positives and ignore 100+ spikes
                 return y_coord_reward + 0.1 * distance_reward
             return reward
         elif "Skiing" in env:

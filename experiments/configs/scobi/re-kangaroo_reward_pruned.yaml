@@ -1,6 +1,6 @@
 env_name: 'KangarooDeterministic-v4'
 scobi_interactive: True
-scobi_reward_shaping: 2 #mixed
+scobi_reward_shaping: 1 #mixed
 scobi_focus_dir: 'my_focusfiles'
 scobi_focus_file: 'pruned_kangaroo.yaml' 
 rl_algo: 1
@@ -8,7 +8,6 @@ rl_algo: 1
 parallel: False
 
 logdir: '/relogs/'
-
 
 train:
   random_action_p: 0.05

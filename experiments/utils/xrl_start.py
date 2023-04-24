@@ -47,7 +47,7 @@ def onclick(event):
 
 # function to test agent loaded via main switch
 def play_agent(cfg, model, select_action_func, normalizer, epochs):
-    runs = 5
+    runs = 3
     # init env
     draw = cfg.liveplot
     env = Environment(cfg.env_name,
@@ -101,6 +101,8 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
     fig.canvas.mpl_connect('button_press_event', onclick)
     plt.tight_layout()
     max_nb_row = 0
+    outfile = "obs.npy"
+    out_array = []
     for run in tqdm(range(runs)):
         # env loop
         t = 0
@@ -110,7 +112,8 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
         while t < cfg.train.max_steps_per_trajectory:  # Don't infinite loop while playing
             if not pause:
                 features = normalizer.normalize(features)
-                action, _, probs = select_action_func(features, model, -1, n_actions)
+                out_array.append(features)
+                action, _, probs = select_action_func(features, model, 0.05, n_actions)
                 input = torch.tensor(features, requires_grad=True).unsqueeze(0).to(dev)
                 output = int(np.argmax(probs[0]))
                 attris = ig.attribute(input, target=output, method="gausslegendre")
@@ -160,6 +163,7 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
             fig.canvas.get_tk_widget().update()
         rewards.append(ep_reward)
         all_sco_rewards.append(sco_reward)
+        np.save(outfile, out_array)
         rtpt.step()
     print(rewards)
     print(all_sco_rewards)
@@ -192,7 +196,10 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
 # function to call reinforce algorithm
 def use_reinforce(cfg, mode):
     if mode == "train":
-        reinforce.train(cfg)
+        if "Kangaroo" in cfg.env_name:
+            reinforce.train_kangaroo(cfg)
+        else:
+            reinforce.train(cfg)
     elif mode == "eval":
         model, normalizer, epochs = reinforce.eval_load(cfg)
         model.eval()

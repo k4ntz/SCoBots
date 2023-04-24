@@ -28,7 +28,7 @@ class Environment():
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
-        self.observation_space_description = self.focus.PARSED_PROPERTIES + self.focus.PARSED_FUNCTIONS
+        self.observation_space_description = self.focus.PARSED_PROPERTIES + self.focus.PARSED_FUNCTIONS #this and feature_vector_desc is redundant
         self.feature_vector_description = self.focus.get_feature_vector_description()
         self.draw_features = draw_features
         self.feature_attribution = []
