@@ -56,6 +56,7 @@ AVAILABLE_CONCEPTS:
 SELECTION:
   objects:
   - Ball1
+  - Enemy1
   - Player1
   actions:
   - NOOP
@@ -64,8 +65,10 @@ SELECTION:
   - LEFT
   properties:
   - POSITION: Ball1
+  - POSITION: Enemy1
   - POSITION: Player1
   - POSITION_HISTORY: Ball1
+  - POSITION_HISTORY: Enemy1
   - POSITION_HISTORY: Player1
   functions:
   - LINEAR_TRAJECTORY:
@@ -73,20 +76,49 @@ SELECTION:
     - POSITION_HISTORY: Ball1
   - LINEAR_TRAJECTORY:
     - POSITION: Ball1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
     - POSITION_HISTORY: Player1
   - LINEAR_TRAJECTORY:
     - POSITION: Player1
     - POSITION_HISTORY: Ball1
   - LINEAR_TRAJECTORY:
     - POSITION: Player1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
     - POSITION_HISTORY: Player1
   - DISTANCE:
     - POSITION: Ball1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Enemy1
     - POSITION: Player1
   - DISTANCE:
     - POSITION: Player1
     - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy1
   - VELOCITY:
     - POSITION_HISTORY: Ball1
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy1
   - VELOCITY:
     - POSITION_HISTORY: Player1

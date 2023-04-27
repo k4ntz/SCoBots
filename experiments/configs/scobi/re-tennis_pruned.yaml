@@ -18,4 +18,4 @@ train:
   steps_per_episode: 250000
   max_steps_per_trajectory: 100000
   log_steps: 20000
-  save_every: 10 # episode
+  save_every: 5 # episode

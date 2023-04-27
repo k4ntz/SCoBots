@@ -255,7 +255,7 @@ def train(cfg):
         return policy_loss, value_loss
 
     # training loop
-    rtpt = RTPT(name_initials="SeSz",
+    rtpt = RTPT(name_initials="QD",
                 experiment_name=cfg.exp_name,
                 max_iterations=cfg.train.num_episodes)
     rtpt.start()
@@ -531,7 +531,7 @@ def train_kangaroo(cfg):
             return self.value
 
     # training loop
-    rtpt = RTPT(name_initials="SeSz",
+    rtpt = RTPT(name_initials="QD",
                 experiment_name=cfg.exp_name,
                 max_iterations=cfg.train.num_episodes)
     rtpt.start()
@@ -570,11 +570,11 @@ def train_kangaroo(cfg):
             
             while i_trajectory_step < cfg.train.max_steps_per_trajectory:
                 # epsilon selection and stepping
-                y_value = obs[y_idx] #get y-value of player
+                y_value = obs[y_idx] # get y-value of player
                 eps_idx = -1
                 for i, v in enumerate(y_position_milestones):
                     if y_value < v:
-                        eps_idx = i #get epsilon idx for respective milestone
+                        eps_idx = i # get epsilon idx for respective milestone
                 if eps_idx == -1:
                     random_action_p = cfg.train.random_action_p # use hyperparameter if no milestone passed
                 else:
