@@ -12,7 +12,7 @@ logdir: '/relogs/'
 train:
   random_action_p: 0.05
   gamma: 0.99
-  learning_rate: 0.003
+  learning_rate: 0.0003
   clip_norm: 0.5
   num_episodes: 80
   steps_per_episode: 250000

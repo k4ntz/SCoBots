@@ -1,9 +1,9 @@
 ENVIRONMENT: PongDeterministic-v4
 AVAILABLE_CONCEPTS:
   objects:
-  - Ball1
-  - Enemy1
   - Player1
+  - Enemy1
+  - Ball1
   actions:
   - NOOP
   - FIRE
@@ -20,6 +20,10 @@ AVAILABLE_CONCEPTS:
       in:
       - OBJECT
       description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
   - RGB:
       in:
       - OBJECT
@@ -49,6 +53,10 @@ AVAILABLE_CONCEPTS:
       in:
       - POSITION_HISTORY
       description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
   - COLOR:
       in:
       - RGB
@@ -69,24 +77,12 @@ SELECTION:
   - POSITION_HISTORY: Player1
   functions:
   - LINEAR_TRAJECTORY:
-    - POSITION: Ball1
-    - POSITION_HISTORY: Ball1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Ball1
-    - POSITION_HISTORY: Player1
-  - LINEAR_TRAJECTORY:
     - POSITION: Player1
     - POSITION_HISTORY: Ball1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Player1
-    - POSITION_HISTORY: Player1
-  - DISTANCE:
-    - POSITION: Ball1
-    - POSITION: Player1
   - DISTANCE:
     - POSITION: Player1
     - POSITION: Ball1
-  - VELOCITY:
+  - DIR_VELOCITY:
     - POSITION_HISTORY: Ball1
-  - VELOCITY:
+  - DIR_VELOCITY:
     - POSITION_HISTORY: Player1
