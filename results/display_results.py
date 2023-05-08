@@ -11,6 +11,7 @@ from_ddqn = pd.read_csv('from_ddqn.tsv', sep='\t').set_index('Game')
 
 random = from_ddqn['Random']
 human = from_ddqn['Human']
+dqn = from_ddqn['DQN']
 rainbow = from_rainbow['Rainbow']
 
 
@@ -65,13 +66,17 @@ df.index.name='Game'
 
 if "-hn" in sys.argv:
     rainbow = rainbow[games]
+    dqn = dqn[games]
     random = random[games]
     human = human[games]
     rainbow = rainbow.map(lambda x: x.replace(",", "")).astype(float)
     rainbow = round(100 * (rainbow - random)/(human - random), 1)
-    df = pd.concat([df, rainbow], axis=1).rename(columns={0: "Rainbow"})
+    # dqn = dqn.map(lambda x: x.replace(",", "")).astype(float)
+    dqn = round(100 * (dqn - random)/(human - random), 1)
+    df = pd.concat([df, dqn, rainbow], axis=1).rename(columns={0:"DQN" , 1: "Rainbow"})
 else:
     df = pd.concat([df, rainbow[games], random[games], human[games]], axis=1)
 # dqn_res = dqn_res[games]
 # df = pd.concat([df, dqn_res], axis=1)
 print(df)
+df.to_csv("scores.csv")

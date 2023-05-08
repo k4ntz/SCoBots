@@ -26,6 +26,10 @@ def re_select_action(*args, **kwargs):
     return reinforce.select_action(*args, **kwargs)
 
 
+def remaining_to_joey(player):
+    player.y 
+
+
 pause = False
 def onclick(event):
     print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
@@ -103,6 +107,7 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
     max_nb_row = 0
     outfile = "obs.npy"
     out_array = []
+    player = env.oc_env.objects[0]
     for run in tqdm(range(runs)):
         # env loop
         t = 0
