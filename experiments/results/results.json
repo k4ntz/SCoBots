@@ -1,0 +1,12 @@
+{
+    "PongDeterministic-v4": {
+        "re-pong_pruned-seed0": {
+            "mode": "pruned",
+            "seed": 0,
+            "eval_runs": 3,
+            "reward": 1.6666666666666667,
+            "scobi_reward": 0.0,
+            "frames_seen": 1750000
+        }
+    }
+}
