@@ -1,4 +1,4 @@
-ENVIRONMENT: SkiingDeterministic-v4
+ENVIRONMENT: Skiing-v5
 AVAILABLE_CONCEPTS:
   objects:
   - Player1

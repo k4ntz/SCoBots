@@ -1,4 +1,4 @@
-ENVIRONMENT: KangarooDeterministic-v4
+ENVIRONMENT: Kangaroo-v5
 AVAILABLE_CONCEPTS:
   objects:
   - Player1

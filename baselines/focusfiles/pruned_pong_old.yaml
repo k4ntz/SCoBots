@@ -1,4 +1,4 @@
-ENVIRONMENT: PongDeterministic-v4
+ENVIRONMENT: Pong-v5
 AVAILABLE_CONCEPTS:
   objects:
   - Ball1

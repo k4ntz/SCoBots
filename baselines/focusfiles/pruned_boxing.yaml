@@ -1,5 +1,4 @@
-ENVIRONMENT: BoxingDeterministic-v4
-AVAILABLE_CONCEPTS:
+ENVIRONMENT: Boxing-v5
   objects:
   - Player1
   - Enemy1

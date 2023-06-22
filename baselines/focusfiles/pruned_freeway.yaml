@@ -1,4 +1,4 @@
-ENVIRONMENT: FreewayDeterministic-v4
+ENVIRONMENT: Freeway-v5
 AVAILABLE_CONCEPTS:
   objects:
   - Chicken1

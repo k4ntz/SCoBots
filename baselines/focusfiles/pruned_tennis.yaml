@@ -1,4 +1,4 @@
-ENVIRONMENT: TennisDeterministic-v4
+ENVIRONMENT: Tennis-v5
 AVAILABLE_CONCEPTS:
   objects:
   - Player1
