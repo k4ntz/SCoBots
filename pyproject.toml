@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scobi"
+version = "0.1.0"
+authors = [
+    {name = "Quentin", email = "quentin.delfosse@cs.tu-darmstadt.de"},
+    {name = "Sebastian", email = "sebastian.sztwiertnia@stud.tu-darmstadt.de"},
+]
+description = "tbd"
+keywords = ["t", "b", "d"]
+license = {text = "tbd"}
+requires-python = ">=3.8"
+dependencies = [
+    "gymnasium[atari]",
+    "rtpt",
+    "termcolor",
+    "numpy",
+    "pyyaml",
+    "colormath",
+    "ocatari @ git+https://github.com/k4ntz/OC_Atari.git",
+]
+
+#[project.urls]
+#Homepage = "tbd"
+#Documentation = "tbd"
+#Repository = "tbd"
+#Changelog = "tbd"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scobi*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+scobi = ["resources/*.ttf"]

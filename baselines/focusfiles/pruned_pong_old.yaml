@@ -1,0 +1,124 @@
+ENVIRONMENT: PongDeterministic-v4
+AVAILABLE_CONCEPTS:
+  objects:
+  - Ball1
+  - Enemy1
+  - Player1
+  actions:
+  - NOOP
+  - FIRE
+  - RIGHT
+  - LEFT
+  - RIGHTFIRE
+  - LEFTFIRE
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Ball1
+  - Enemy1
+  - Player1
+  actions:
+  - NOOP
+  - FIRE
+  - RIGHT
+  - LEFT
+  properties:
+  - POSITION: Ball1
+  - POSITION: Enemy1
+  - POSITION: Player1
+  - POSITION_HISTORY: Ball1
+  - POSITION_HISTORY: Enemy1
+  - POSITION_HISTORY: Player1
+  functions:
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Player1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy1
+  - VELOCITY:
+    - POSITION_HISTORY: Ball1
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy1
+  - VELOCITY:
+    - POSITION_HISTORY: Player1

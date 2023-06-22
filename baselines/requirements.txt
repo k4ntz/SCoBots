@@ -1,0 +1,2 @@
+../ #replace with github or pypi scobi
+stable_baselines3[extra]>=2.0.0a10

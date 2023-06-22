@@ -16,7 +16,7 @@ class Focus():
         self.OBJECTS = raw_features
         self.OBJECT_NAMES = [x.name for x in self.OBJECTS]
         self.ACTIONS = actions
-        self.ENV_NAME = env_name
+        self.ENV_NAME = env_name.split("/")[-1] # handle v5 namespace case
         self.FOCUSFILEPATH = None
         self.PARSED_OBJECTS = []
         self.PARSED_ACTIONS = []
@@ -25,7 +25,7 @@ class Focus():
         self.FEATURE_VECTOR_BACKMAP = []
 
         self.PROPERTY_COMPUTE_LAYER = []
-        self.FUNC_COMPUTE_LAYER = []
+        self.FUNC_COMPUTE_LAYER = [] 
         self.PROPERTY_COMPUTE_LAYER_SIZE = 0
         self.FUNC_COMPUTE_LAYER_SIZE = 0
         self.CURRENT_PROPERTY_COMPUTE_LAYER = []
@@ -68,7 +68,7 @@ class Focus():
                 else:
                     l.GeneralError("Specified focus file %s not found!" %  colored(fpath.name, "light_green"))
             else:
-                fpath = Path.cwd() / Path(fodir) / Path("default_focus_" + env_name + ".yaml")
+                fpath = Path.cwd() / Path(fodir) / Path("default_focus_" + self.ENV_NAME + ".yaml")
                 if fpath.exists():
                     self.FOCUSFILEPATH = fpath
                     l.GeneralError("No focus file specified, but found an auto-generated default. Edit %s and pass it to continue." % colored(fpath.name, "light_green"))
@@ -79,7 +79,7 @@ class Focus():
             l.GeneralInfo("Non-Interactive Mode")
             if fofile:
                 l.GeneralWarning("Specified focus file ignored, because in non-interactive scobi mode. Using default.")
-            fpath = fdir / Path("default_focus_" + env_name + ".yaml")
+            fpath = fdir / Path("default_focus_" + self.ENV_NAME + ".yaml")
             if not fpath.exists():
                 self.generate_fresh_yaml(fpath)
                 l.GeneralWarning("No default focus file found. Auto-generated %s." % colored(fpath.name, "light_green"))
@@ -103,7 +103,7 @@ class Focus():
             if self.REWARD_FUNC:
                 l.GeneralInfo("Reward function is valid. Bound.")
             else:
-                l.GeneralError("Reward function for %s not implemented!" % colored(env_name, "light_green"))
+                l.GeneralError("Reward function for %s not implemented!" % colored(self.ENV_NAME, "light_green"))
         else:
             l.GeneralInfo("Reward Shaping: %s." % colored("disabled", "light_yellow"))
 
@@ -453,7 +453,7 @@ class Focus():
             out = self.last_obs_vector
             if self.HIDE_PROPERTIES:
                 out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
-            return out, reward
+            return np.asarray(out, dtype=np.float32), reward
 
         # unpack property layer
         idx = 0
@@ -488,7 +488,7 @@ class Focus():
             reward = 0
         if self.HIDE_PROPERTIES:
             out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
-        return out, reward
+        return np.asarray(out, dtype=np.float32), reward
     
     def get_feature_vector_description(self):
         fv = self.PARSED_PROPERTIES + self.PARSED_FUNCTIONS

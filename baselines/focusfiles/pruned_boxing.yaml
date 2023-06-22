@@ -1,0 +1,99 @@
+ENVIRONMENT: BoxingDeterministic-v4
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Enemy1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Enemy1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
+  properties:
+    - POSITION: Player1
+    - POSITION: Enemy1
+  functions:
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Player1

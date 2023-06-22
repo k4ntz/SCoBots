@@ -15,9 +15,7 @@ from scobi import Environment
 from experiments.algos import networks
 from experiments.utils import normalizer, utils
 from tqdm import tqdm
-#from remix.rules.ruleset import Ruleset
 
-#ruleset = Ruleset().from_file(str(Path().cwd() / "pong.rules"))
 
 EPS = np.finfo(np.float32).eps.item()
 BETA = 1 #entropy regularization coefficient
@@ -107,10 +105,6 @@ def model_name(training_name, episode=1):
 
 
 def select_action(features, policy, random_tr = -1, n_actions=3):
-    #action, rules, scores = ruleset.predict_and_explain(features)
-    #print(rules[0][0])
-    #print()
-    #return int(action), (0,0,0,0), (0,0,0,0)
     feature_tensor = torch.tensor(features, device=dev).unsqueeze(0)
     probs = policy(feature_tensor)
     sampler = Categorical(probs)
