@@ -60,7 +60,7 @@ def main():
     eval_env_seed = (opts.seed + 42) * 2 #different seeds for eval
     training_timestamps = 20_000_000
     checkpoint_frequency = 1_000_000
-    eval_frequency = 100_000
+    eval_frequency = 500_000
     rtpt_frequency = 100_000
     log_path = Path("baseline_logs", exp_name)
     ckpt_path = Path("baseline_checkpoints", exp_name)
@@ -138,7 +138,7 @@ def main():
 
    
     # TODO: custom logger to log both reward signals
-    new_logger = configure(str(log_path), ["stdout", "tensorboard"])
+    new_logger = configure(str(log_path), ["tensorboard"])
 
     # atari hyperparameters from the ppo paper:
     # https://arxiv.org/abs/1707.06347
