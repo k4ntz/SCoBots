@@ -65,6 +65,7 @@ SELECTION:
   objects:
   - Ball1
   - Player1
+  - Enemy1
   actions:
   - NOOP
   - FIRE
@@ -72,17 +73,24 @@ SELECTION:
   - LEFT
   properties:
   - POSITION: Ball1
+  - POSITION: Enemy1
   - POSITION: Player1
   - POSITION_HISTORY: Ball1
+  - POSITION_HISTORY: Enemy1
   - POSITION_HISTORY: Player1
   functions:
-  - LINEAR_TRAJECTORY:
-    - POSITION: Player1
-    - POSITION_HISTORY: Ball1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Enemy1
   - DISTANCE:
     - POSITION: Player1
     - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Player1
   - DIR_VELOCITY:
     - POSITION_HISTORY: Ball1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy1
   - DIR_VELOCITY:
     - POSITION_HISTORY: Player1

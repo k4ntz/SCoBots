@@ -1,4 +1,5 @@
 ENVIRONMENT: Boxing-v5
+AVAILABLE_CONCEPTS:
   objects:
   - Player1
   - Enemy1

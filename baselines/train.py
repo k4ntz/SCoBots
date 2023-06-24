@@ -1,9 +1,7 @@
-import sys
-from os import path
-sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__))))) # noqa
-#from ocatari.environments import PositionHistoryEnv
-from scobi.core import Environment
+import argparse
 import gymnasium as gym
+import numpy as np
+from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3 import PPO
@@ -14,8 +12,8 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import CheckpointCallback, EveryNTimesteps, BaseCallback, CallbackList, EvalCallback
 from pathlib import Path
 from typing import Callable
-from ocatari.utils import parser
 from rtpt import RTPT
+from collections import deque
 
 
 class RtptCallback(BaseCallback):
@@ -30,6 +28,30 @@ class RtptCallback(BaseCallback):
         self.rtpt.step()
         return True
 
+
+class TensorboardCallback(BaseCallback):
+    """
+    Custom callback for plotting additional values in tensorboard.
+    """
+
+    def __init__(self, n_envs, verbose=0):
+        self.n_envs = n_envs
+        self.buffer = deque(maxlen=100) #ppo default stat window
+        super().__init__(verbose)
+
+    def _on_step(self) -> bool:
+        ep_rewards = self.training_env.get_attr("ep_env_reward", range(self.n_envs))
+        for rew in ep_rewards:
+            if rew is not None:
+                self.buffer.extend([rew])
+
+    
+    def on_rollout_end(self) -> None:
+        buff_list = list(self.buffer)
+        if len(buff_list) == 0:
+            return
+        self.logger.record("rollout/ep_env_rew_mean", np.mean(list(self.buffer)))
+
 def linear_schedule(initial_value: float) -> Callable[[float], float]:
     def func(progress_remaining: float) -> float:
         return progress_remaining * initial_value
@@ -37,28 +59,56 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
 
 
 def main():
+
+
+    # TODO: make reward_shaping with unpruned mode work, change in scobi, doesnt make sense to have 
+    # "interactive" and "non interactive" modes
+    # TODO: add "exclude concepts"
+    parser = argparse.ArgumentParser()
     parser.add_argument("-g", "--game", type=str, required=True,
                         help="game to train (e.g. 'Pong')")
-    parser.add_argument("-m", "--mode", type=str, required=True,
-                        help="scobi mode (all, pruned, mixed_reward, custom_reward)")
     parser.add_argument("-s", "--seed", type=int, required=True,
                         help="seed")
     parser.add_argument("-c", "--cores", type=int, required=True,
                         help="number of envs used")
+    parser.add_argument("-r", "--reward", type=str, required=True, choices=["env", "human", "mixed"],
+                        help="reward mode")
+    parser.add_argument("-p", "--prune", action="store_true", help="use pruned focusfile")
+    parser.add_argument("-e", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
+
     opts = parser.parse_args()
 
-    if opts.mode not in ["all", "pruned", "mixed_reward", "custom_reward"]:
-        print("mode must be all, pruned, mixed_reward or custom_reward")
-        exit()
-
-
     env_str = "ALE/" + opts.game +"-v5"
-    exp_name = opts.game + "-s" + str(opts.seed)
+    settings_str = ""
+    pruned_ff_name = None
+    hide_properties = False
+    interactive_flag = False
+    if opts.reward == "env":
+        settings_str += "_re"
+        reward_mode = 0
+    if opts.reward == "human":
+        settings_str += "_rh"
+        interactive_flag = True # remove this
+        reward_mode = 1
+    if opts.reward == "mixed":
+        settings_str += "_rm"
+        interactive_flag = True # remove this
+        reward_mode = 2
+    if opts.prune:
+        settings_str += "_pr"
+        interactive_flag = True # remove this
+        game_id = env_str.split("/")[-1].lower().split("-")[0] 
+        pruned_ff_name = f"pruned_{game_id}.yaml"
+    if opts.exclude_properties:
+        settings_str += '_ep'
+        hide_properties = True
+
+    exp_name = opts.game + "_s" + str(opts.seed) + settings_str
     n_envs = opts.cores
     n_eval_envs = 4
     n_eval_episodes = 4
     eval_env_seed = (opts.seed + 42) * 2 #different seeds for eval
-    training_timestamps = 20_000_000
+    training_timestamps = 1_000_000
     checkpoint_frequency = 1_000_000
     eval_frequency = 500_000
     rtpt_frequency = 100_000
@@ -69,31 +119,26 @@ def main():
 
     def make_env(rank: int = 0, seed: int = 0) -> Callable:
         def _init() -> gym.Env:
-            game_id = env_str.split("/")[-1].lower().split("-")[0] 
-            pruned_ff_name = f"pruned_{game_id}.yaml"
-            if opts.mode == "all":
-                env = Environment(env_str, focus_dir="focusfiles")
-            elif opts.mode == "pruned":
-                env = Environment(env_str, interactive=True, focus_dir="focusfiles", focus_file=pruned_ff_name)
-            elif opts.mode == "mixed_reward":
-                env = Environment(env_str, interactive=True, focus_dir="focusfiles", focus_file=pruned_ff_name, reward=2)
-            elif opts.mode == "custom_reward":
-                env = Environment(env_str, interactive=True, focus_dir="focusfiles", focus_file=pruned_ff_name, reward=1)
+            env = Environment(env_str, 
+                              interactive=interactive_flag, 
+                              focus_dir="focusfiles", 
+                              focus_file=pruned_ff_name, 
+                              hide_properties=hide_properties, 
+                              reward=reward_mode)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
-
         set_random_seed(seed)
         return _init
     
     def make_eval_env(rank: int = 0, seed: int = 0) -> Callable:
         def _init() -> gym.Env:
-            game_id = env_str.split("/")[-1].lower().split("-")[0] 
-            pruned_ff_name = f"pruned_{game_id}.yaml"
-            if opts.mode == "all":
-                env = Environment(env_str, focus_dir="focusfiles")
-            else: # always eval according to original env reward
-                env = Environment(env_str, interactive=True, focus_dir="focusfiles", focus_file=pruned_ff_name)
+            env = Environment(env_str, 
+                              interactive=interactive_flag, 
+                              focus_dir="focusfiles", 
+                              focus_file=pruned_ff_name, 
+                              hide_properties=hide_properties, 
+                              reward=0) #always env reward for eval
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
@@ -133,7 +178,9 @@ def main():
         n_steps=rtpt_frequency,
         callback=rtpt_callback)
 
-    cb_list = CallbackList([checkpoint_callback, eval_callback, n_callback])
+    tb_callback = TensorboardCallback(n_envs=n_envs)
+
+    cb_list = CallbackList([checkpoint_callback, eval_callback, n_callback, tb_callback])
     env = SubprocVecEnv([make_env(rank=i, seed=opts.seed) for i in range(n_envs)], start_method="fork")
 
    

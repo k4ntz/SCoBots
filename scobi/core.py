@@ -39,6 +39,9 @@ class Environment(Env):
         
         self.original_obs = []
         self.original_reward = []
+        self.ep_env_reward = None
+        self.ep_env_reward_buffer = 0
+        self.reset_ep_reward = True
 
         if reward == 2: # mix rewards
             self._reward_composition_func = lambda a, b : a + b
@@ -66,6 +69,14 @@ class Environment(Env):
                 self._rel_obs = self._draw_relation_overlay(obs, sco_obs, freeze_mask, action)
             self.original_obs = obs
             self.original_reward = reward
+            self.ep_env_reward_buffer += self.original_reward
+            if self.reset_ep_reward:
+                self.ep_env_reward = None
+                self.reset_ep_reward = False
+            if terminated or truncated:
+                self.ep_env_reward = self.ep_env_reward_buffer
+                self.ep_env_reward_buffer = 0
+                self.reset_ep_reward = True
             final_reward = self._reward_composition_func(sco_reward, reward)
             return sco_obs, final_reward, truncated, terminated, info # 5
         else:
