@@ -18,7 +18,7 @@ from tqdm import tqdm
 
 
 EPS = np.finfo(np.float32).eps.item()
-BETA = 1 #entropy regularization coefficient
+BETA = 0 #entropy regularization coefficient
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
@@ -158,7 +158,7 @@ def train(cfg):
     # init fresh networks and optimizers
     policy_net = networks.PolicyNet(len(obs), hidden_layer_size, n_actions, act_f).to(dev)
     value_net = networks.ValueNet(len(obs), hidden_layer_size, 1).to(dev)
-    policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
+    policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)#, weight_decay=0.001)
     value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
     input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value)
     i_epoch = 1
@@ -280,6 +280,7 @@ def train(cfg):
                 new_obs, natural_reward, scobi_reward, terminated, truncated, _, _ = env.step(action)
 
                 # collection
+                probs = probs[probs != 0] # 0probs
                 entropy = -np.sum([p*np.log(p) for p in probs])
                 buffer.add(obs, (natural_reward, scobi_reward), value_estimation, log_prob, entropy)
                 entropies.append(entropy)

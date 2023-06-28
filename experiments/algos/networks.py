@@ -17,12 +17,13 @@ class PolicyNet(nn.Module):
         self.hlayer1 = nn.Linear(input_size, hidden_size)
         if act_f == "tanh":
             self.act = Tanh()
+            gain = 5.0 / 3.0 #recommended gain for tanh activations
         else:
             self.act = ReLU()
+            gain = 1.4142 #recommended gain for relu activations
         self.out = nn.Linear(hidden_size, output_size)
 
         # xavier normal and bias 0 init
-        gain = 5.0 / 3.0 #recommended gain for tanh activations
         nn.init.xavier_normal_(self.hlayer1.weight, gain)
         nn.init.zeros_(self.hlayer1.bias)
 

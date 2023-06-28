@@ -58,7 +58,7 @@ def onclick(event):
 
 
 def play_agent(cfg, model, select_action_func, normalizer, epochs):
-    runs = 3
+    runs = 5
     # init env
     draw = cfg.liveplot
     env = Environment(cfg.env_name,
@@ -175,7 +175,7 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
             fig.canvas.get_tk_widget().update()
         rewards.append(ep_reward)
         all_sco_rewards.append(sco_reward)
-        print(f"written {len(out_array)} samples")
+        #print(f"written {len(out_array)} samples")
         np.save(outfile, out_array)
         rtpt.step()
     print(rewards)
