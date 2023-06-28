@@ -82,21 +82,17 @@ def main():
     settings_str = ""
     pruned_ff_name = None
     hide_properties = False
-    interactive_flag = False
     if opts.reward == "env":
         settings_str += "_re"
         reward_mode = 0
     if opts.reward == "human":
         settings_str += "_rh"
-        interactive_flag = True # remove this
         reward_mode = 1
     if opts.reward == "mixed":
         settings_str += "_rm"
-        interactive_flag = True # remove this
         reward_mode = 2
     if opts.prune:
         settings_str += "_pr"
-        interactive_flag = True # remove this
         game_id = env_str.split("/")[-1].lower().split("-")[0] 
         pruned_ff_name = f"pruned_{game_id}.yaml"
     if opts.exclude_properties:
@@ -117,28 +113,28 @@ def main():
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
 
-    def make_env(rank: int = 0, seed: int = 0) -> Callable:
+    def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
             env = Environment(env_str, 
-                              interactive=interactive_flag, 
-                              focus_dir="focusfiles", 
                               focus_file=pruned_ff_name, 
                               hide_properties=hide_properties, 
-                              reward=reward_mode)
+                              silent=silent,
+                              reward=reward_mode,
+                              refresh_yaml=refresh)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
         set_random_seed(seed)
         return _init
     
-    def make_eval_env(rank: int = 0, seed: int = 0) -> Callable:
+    def make_eval_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
             env = Environment(env_str, 
-                              interactive=interactive_flag, 
-                              focus_dir="focusfiles", 
                               focus_file=pruned_ff_name, 
                               hide_properties=hide_properties, 
-                              reward=0) #always env reward for eval
+                              silent=silent,
+                              reward=0,
+                              refresh_yaml=refresh) #always env reward for eval
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
@@ -150,8 +146,9 @@ def main():
     monitor = make_env()()
     check_env(monitor.env)
     del monitor
-
-    eval_env = SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed) for i in range(n_eval_envs)], start_method="fork")
+    
+    # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing 
+    eval_env = SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method="fork")
     
     rtpt_iters = training_timestamps // rtpt_frequency
     eval_callback = EvalCallback(
@@ -181,10 +178,11 @@ def main():
     tb_callback = TensorboardCallback(n_envs=n_envs)
 
     cb_list = CallbackList([checkpoint_callback, eval_callback, n_callback, tb_callback])
-    env = SubprocVecEnv([make_env(rank=i, seed=opts.seed) for i in range(n_envs)], start_method="fork")
+
+    # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing 
+    train_env = SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method="fork")
 
    
-    # TODO: custom logger to log both reward signals
     new_logger = configure(str(log_path), ["tensorboard"])
 
     # atari hyperparameters from the ppo paper:
@@ -202,11 +200,11 @@ def main():
         clip_range=linear_schedule(clipping_eps),
         vf_coef=1,
         ent_coef=0.001,
-        env=env,
+        env=train_env,
         verbose=1)
     model.set_logger(new_logger)
+    print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
     model.learn(total_timesteps=training_timestamps, callback=cb_list)
-
 
 if __name__ == '__main__':
     main()
