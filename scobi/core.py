@@ -1,11 +1,6 @@
 """scobi core"""
 import numpy as np
-<<<<<<< HEAD
 from gymnasium import spaces, Env
-=======
-import gymnasium as gym
-from gymnasium import spaces
->>>>>>> 933d93c (minor changes)
 import scobi.environments.env_manager as em
 from scobi.utils.game_object import get_wrapper_class
 from scobi.focus import Focus
@@ -15,13 +10,8 @@ from PIL import Image, ImageDraw, ImageFont
 from copy import deepcopy
 
 
-<<<<<<< HEAD
 class Environment(Env):
     def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
-=======
-class Environment(gym.Env):
-    def __init__(self, env_name, seed=None, interactive=False, focus_dir="experiments/focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
->>>>>>> 933d93c (minor changes)
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
 
@@ -47,7 +37,6 @@ class Environment(gym.Env):
         self._obj_obs = None  # observation augmented with objects
         self._rel_obs = None  # observation augmented with relations
         self._top_features = []
-<<<<<<< HEAD
         
         self.original_obs = []
         self.original_reward = []
@@ -67,14 +56,6 @@ class Environment(gym.Env):
         self.observation_space = spaces.Box(low=-2**63, high=2**63 - 2, shape=(self.focus.FEATURE_VECTOR_SIZE,), dtype=np.float32)
         self.reset()
         self.did_reset = False # still require user to properly call a (likely seeded) reset()
-=======
-        self.current_oc_obs = []
-        self.current_sco_reward = 0
-        # TODO: inacurrate for now, counts the func entries, not the output of the functions, maybe use dummy object dict to evaluate once?
-        #self.observation_space = spaces.Box(low=-1000, high=1000, shape=(self.focus.FEATURE_VECTOR_SIZE,), dtype=np.float32)
-        self.observation_space = spaces.Box(low=-2**63, high=2**63 - 2, shape=(18,), dtype=np.float64)
-
->>>>>>> 933d93c (minor changes)
 
     def step(self, action):
         if not self.did_reset:
@@ -84,7 +65,6 @@ class Environment(gym.Env):
             objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
             sco_obs, sco_reward = self.focus.get_feature_vector(objects)
             freeze_mask = self.focus.get_current_freeze_mask()
-<<<<<<< HEAD
             if self.draw_features:
                 self._obj_obs = self._draw_objects_overlay(obs)
                 self._rel_obs = self._draw_relation_overlay(obs, sco_obs, freeze_mask, action)
@@ -100,19 +80,6 @@ class Environment(gym.Env):
                 self.reset_ep_reward = True
             final_reward = self._reward_composition_func(sco_reward, reward)
             return sco_obs, final_reward, truncated, terminated, info # 5
-=======
-            #print(sco_reward)
-            #print(sco_obs[0:100])
-            sco_truncated = truncated
-            sco_terminated = terminated
-            sco_info = info
-            self.current_oc_obs = obs
-            self.current_sco_reward = sco_reward
-            if self.draw_features:
-                self._obj_obs = self._draw_objects_overlay(obs)
-                self._rel_obs = self._draw_relation_overlay(obs, sco_obs, freeze_mask, action)
-            return np.array(sco_obs), reward, sco_truncated, sco_terminated, sco_info
->>>>>>> 933d93c (minor changes)
         else:
             raise ValueError("scobi> Action not in action space")
 
@@ -124,11 +91,7 @@ class Environment(gym.Env):
         _, info = self.oc_env.reset(*args, **kwargs)
         objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
         sco_obs, _ = self.focus.get_feature_vector(objects)
-<<<<<<< HEAD
         return sco_obs, info
-=======
-        return np.array(sco_obs), {}
->>>>>>> 933d93c (minor changes)
 
     def close(self):
         # additional scobi close steps here
