@@ -21,7 +21,7 @@ env.observation_space_description   # [['POSITION', 'ball'], ['POSITION', 'enemy
 env.close()
 
 # Extensive init, interactive, custom fcous dir and focus file, empirical observation space normalization not active
-env = Environment(env_name='PongDeterministic-v4', interactive=True, focus_dir="experiments/my_focusfiles", focus_file="pruned_pong.yaml", obs_normalized=False)
+env = Environment(env_name='PongDeterministic-v4', focus_dir="my_focusfiles", focus_file="pruned_pong.yaml")
 env.reset()
 obs, env_reward, scobi_reward, truncated, terminated, info, obs_raw = env.step(1)
 env.action_space                    # Discrete(4)
@@ -30,17 +30,6 @@ env.observation_space               # Box(-1000.0, 1000.0, (12,), float32)
 env.observation_space_description   # [['POSITION', 'ball'], ['POSITION', 'enemy'], ['POSITION', 'player'], ...
 env.close()
 ```
-
-## TODO
-### Major
-- unify tensoboard logging across algos (+ finegrained logging?)
-- script to generate graphs, tables over experiment seeds
-- A3C
-- implement so scobi returns a correct supported environments list
-- correct env.observation_space after env init (probably by constructing the f-vector with dummy objects)
-### Minor
-- split up focus.py
-- rework terminal output with python logging
 
 ## How to simple call
 ```bash
