@@ -14,6 +14,10 @@ from pathlib import Path
 from typing import Callable
 from rtpt import RTPT
 from collections import deque
+import os
+
+
+MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
 
 
 class RtptCallback(BaseCallback):
@@ -148,7 +152,7 @@ def main():
     del monitor
     
     # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing 
-    eval_env = SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method="fork")
+    eval_env = SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD)
     
     rtpt_iters = training_timestamps // rtpt_frequency
     eval_callback = EvalCallback(
@@ -180,7 +184,7 @@ def main():
     cb_list = CallbackList([checkpoint_callback, eval_callback, n_callback, tb_callback])
 
     # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing 
-    train_env = SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method="fork")
+    train_env = SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD)
 
    
     new_logger = configure(str(log_path), ["tensorboard"])
