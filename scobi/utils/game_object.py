@@ -54,7 +54,7 @@ class OCAGameObject(GameObjectInterface):
     @property
     def h_coords(self):
         shc = self.ocgo.h_coords
-        if len(shc) != 2 or len([*shc[0], *shc[1]]) != 4:
+        if None in shc or len(shc) != 2 or len([*shc[0], *shc[1]]) != 4:
             raise ValueError(f"Bad h_coords dimension from ocatari: {self.name} : {self.ocgo.h_coords}")
         ncord = shc[0][0] + int(self.w / 2), shc[0][1] + int(self.h / 2)
         ocord = shc[1][0] + int(self.w / 2), shc[1][1] + int(self.h / 2)
