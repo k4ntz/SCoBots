@@ -20,7 +20,7 @@ dependencies = [
     "numpy",
     "pyyaml",
     "colormath",
-    "ocatari @ git+https://github.com/k4ntz/OC_Atari.git",
+    "ocatari==0.1.2",
 ]
 
 #[project.urls]
