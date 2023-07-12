@@ -168,6 +168,7 @@ experiments/*_batch.sh
 analysis.txt
 experiments/plots/*
 
-baselines/baseline_checkpoints
-baselines/baseline_logs
+baselines/baselines_checkpoints
+baselines/baselines_logs
+baselines/baselines_focusfiles
 baselines/focusfiles/default_*

@@ -1,3 +1,4 @@
+# this dockerfile once scobi is pip installable from the web (public github, pypi etc)
 FROM ubuntu:20.04
 
 WORKDIR /workdir
@@ -15,6 +16,7 @@ RUN pip install -r requirements.txt
 RUN pip install opencv-python-headless
 
 COPY train.py train.py
-RUN mkdir "baseline_logs"
-RUN mkdir "baseline_checkpoints"
+RUN mkdir "baselines_logs"
+RUN mkdir "baselines_checkpoints"
+RUN mkdir "baselines_focusfiles"
 ENTRYPOINT ["python3", "-u" , "train.py"]

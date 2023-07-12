@@ -1,6 +1,7 @@
 import argparse
 import gymnasium as gym
 import numpy as np
+import os
 from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.vec_env import SubprocVecEnv
@@ -14,7 +15,6 @@ from pathlib import Path
 from typing import Callable
 from rtpt import RTPT
 from collections import deque
-import os
 
 
 MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
@@ -77,7 +77,8 @@ def main():
                         help="number of envs used")
     parser.add_argument("-r", "--reward", type=str, required=True, choices=["env", "human", "mixed"],
                         help="reward mode")
-    parser.add_argument("-p", "--prune", action="store_true", help="use pruned focusfile")
+    parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"], 
+                        help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-e", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
 
     opts = parser.parse_args()
@@ -85,6 +86,7 @@ def main():
     env_str = "ALE/" + opts.game +"-v5"
     settings_str = ""
     pruned_ff_name = None
+    focus_dir = "focusfiles"
     hide_properties = False
     if opts.reward == "env":
         settings_str += "_re"
@@ -95,10 +97,14 @@ def main():
     if opts.reward == "mixed":
         settings_str += "_rm"
         reward_mode = 2
-    if opts.prune:
-        settings_str += "_pr"
-        game_id = env_str.split("/")[-1].lower().split("-")[0] 
-        pruned_ff_name = f"pruned_{game_id}.yaml"
+
+    game_id = env_str.split("/")[-1].lower().split("-")[0]
+    pruned_ff_name = f"pruned_{game_id}.yaml"
+    if opts.prune == "default":
+        settings_str += "_pr-d"
+    if opts.prune == "external":
+        settings_str += "_pr-e"
+        focus_dir = "baselines_focusfiles"
     if opts.exclude_properties:
         settings_str += '_ep'
         hide_properties = True
@@ -112,14 +118,15 @@ def main():
     checkpoint_frequency = 1_000_000
     eval_frequency = 500_000
     rtpt_frequency = 100_000
-    log_path = Path("baseline_logs", exp_name)
-    ckpt_path = Path("baseline_checkpoints", exp_name)
+    log_path = Path("baselines_logs", exp_name)
+    ckpt_path = Path("baselines_checkpoints", exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
 
     def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
             env = Environment(env_str, 
+                              focus_dir=focus_dir,
                               focus_file=pruned_ff_name, 
                               hide_properties=hide_properties, 
                               silent=silent,
@@ -134,6 +141,7 @@ def main():
     def make_eval_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
             env = Environment(env_str, 
+                              focus_dir=focus_dir,
                               focus_file=pruned_ff_name, 
                               hide_properties=hide_properties, 
                               silent=silent,
@@ -207,6 +215,7 @@ def main():
         env=train_env,
         verbose=1)
     model.set_logger(new_logger)
+    print(f"Experiment name: {exp_name}")
     print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
     model.learn(total_timesteps=training_timestamps, callback=cb_list)
 

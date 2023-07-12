@@ -1,0 +1,25 @@
+FROM ubuntu:20.04
+
+WORKDIR /workdir
+RUN apt-get update && apt-get install -y --no-install-recommends python3-pip python3-venv
+
+COPY scobi scobi
+COPY pyproject.toml pyproject.toml
+COPY setup.py setup.py
+COPY baselines baselines
+
+CMD ["cd", "baselines"]
+WORKDIR /workdir/baselines
+RUN python3 -m venv .venv
+ENV PATH="/workdir/baselines/.venv/bin:$PATH"
+
+
+RUN pip install -U pip
+RUN pip install -r requirements.txt
+RUN pip install opencv-python-headless
+
+RUN mkdir "baselines_logs"
+RUN mkdir "baselines_checkpoints"
+RUN mkdir "baselines_focusfiles"
+
+ENTRYPOINT ["python3", "-u" , "train.py"]
