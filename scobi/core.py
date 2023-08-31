@@ -14,9 +14,9 @@ from scobi.utils.logging import Logger
 
 class Environment(Env):
     def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False,
-                 silent=False, refresh_yaml=True, draw_features=False):
+                 silent=False, refresh_yaml=True, draw_features=False, **kwargs):
         self.logger = Logger(silent=silent)
-        self.oc_env = em.make(env_name, self.logger)
+        self.oc_env = em.make(env_name, self.logger, **kwargs)
 
         self.render_mode = self.oc_env.render_mode
 
