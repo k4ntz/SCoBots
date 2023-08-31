@@ -99,7 +99,9 @@ def main():
         reward_mode = 2
 
     game_id = env_str.split("/")[-1].lower().split("-")[0]
-    pruned_ff_name = f"pruned_{game_id}.yaml"
+
+    if opts.prune:
+        pruned_ff_name = f"pruned_{game_id}.yaml"
     if opts.prune == "default":
         settings_str += "_pr-def"
     if opts.prune == "external":
