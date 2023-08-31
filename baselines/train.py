@@ -101,9 +101,9 @@ def main():
     game_id = env_str.split("/")[-1].lower().split("-")[0]
     pruned_ff_name = f"pruned_{game_id}.yaml"
     if opts.prune == "default":
-        settings_str += "_pr-d"
+        settings_str += "_pr-def"
     if opts.prune == "external":
-        settings_str += "_pr-e"
+        settings_str += "_pr-ext"
         focus_dir = "baselines_focusfiles"
     if opts.exclude_properties:
         settings_str += '_ep'
@@ -211,7 +211,7 @@ def main():
         gae_lambda=0.95,
         clip_range=linear_schedule(clipping_eps),
         vf_coef=1,
-        ent_coef=0.001,
+        ent_coef=0.01,
         env=train_env,
         verbose=1)
     model.set_logger(new_logger)
