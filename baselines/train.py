@@ -1,21 +1,22 @@
 import argparse
-import gymnasium as gym
-import numpy as np
 import os
-from scobi import Environment
-from stable_baselines3.common.env_checker import check_env
-from stable_baselines3.common.vec_env import SubprocVecEnv
-from stable_baselines3 import PPO
-from stable_baselines3.common.evaluation import evaluate_policy
-from stable_baselines3.common.logger import configure
-from stable_baselines3.common.utils import set_random_seed
-from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common.callbacks import CheckpointCallback, EveryNTimesteps, BaseCallback, CallbackList, EvalCallback
+from collections import deque
 from pathlib import Path
 from typing import Callable
-from rtpt import RTPT
-from collections import deque
 
+import gymnasium as gym
+import numpy as np
+from rtpt import RTPT
+from stable_baselines3 import PPO
+from stable_baselines3.common.callbacks import CheckpointCallback, EveryNTimesteps, BaseCallback, CallbackList, \
+    EvalCallback
+from stable_baselines3.common.env_checker import check_env
+from stable_baselines3.common.logger import configure
+from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.utils import set_random_seed
+from stable_baselines3.common.vec_env import SubprocVecEnv
+
+from scobi import Environment
 
 MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
 

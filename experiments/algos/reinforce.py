@@ -160,7 +160,7 @@ def train(cfg):
     value_net = networks.ValueNet(len(obs), hidden_layer_size, 1).to(dev)
     policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)#, weight_decay=0.001)
     value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
-    input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value)
+    input_normalizer = normalizer.EmpiricalNormalizer(len(obs), clip_value=cfg.train.input_clip_value)
     i_epoch = 1
    
     # overwrite if checkpoint exists
@@ -419,7 +419,7 @@ def train_kangaroo(cfg):
     value_net = networks.ValueNet(len(obs), hidden_layer_size, 1).to(dev)
     policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
     value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
-    input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value)
+    input_normalizer = normalizer.EmpiricalNormalizer(len(obs), clip_value=cfg.train.input_clip_value)
     i_epoch = 1
    
     # overwrite if checkpoint exists
@@ -749,7 +749,7 @@ def eval_reward_discovery(cfg):
         value_net = networks.ValueNet(len(obs), hidden_layer_size, 1).to(dev)
         policy_optimizer = optim.Adam(policy_net.parameters(), lr=cfg.train.learning_rate)
         value_optimizer = optim.Adam(value_net.parameters(), lr=cfg.train.learning_rate)
-        input_normalizer = normalizer.Normalizer(len(obs), clip_value=cfg.train.input_clip_value) #
+        input_normalizer = normalizer.EmpiricalNormalizer(len(obs), clip_value=cfg.train.input_clip_value) #
         buffer = ExperienceBuffer(cfg.train.max_steps_per_trajectory, cfg.train.gamma, cfg.scobi_reward_shaping)
         ms_counter = 0
         current_milestones = milestones.copy()
@@ -863,8 +863,8 @@ def eval_load(cfg):
         normalizer_state = checkpoint["normalizer_state"]
         i_epoch = checkpoint["episode"]
         print("Epochs trained:", i_epoch)
-    input_normalizer = normalizer.Normalizer(v_size=len(obs),
-                                             clip_value=cfg.train.input_clip_value,
-                                             stats=normalizer_state)
+    input_normalizer = normalizer.EmpiricalNormalizer(v_size=len(obs),
+                                                      clip_value=cfg.train.input_clip_value,
+                                                      stats=normalizer_state)
     policy_net.eval()
     return policy_net, input_normalizer, i_epoch

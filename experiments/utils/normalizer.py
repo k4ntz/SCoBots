@@ -1,10 +1,11 @@
 import math
 import numpy as np
+
+
 # calculate running stats (welford's algo)
 # https://www.johndcook.com/blog/standard_deviation/
 #
 class RunningStats:
-
     def __init__(self, n=0, m=0, s=0):
         self.n = n
         self.old_m = m
@@ -38,10 +39,9 @@ class RunningStats:
         return math.sqrt(self.variance())
 
 
-class Normalizer:
-
+class EmpiricalNormalizer:
     def __init__(self, v_size, clip_value=0, stats=[]):
-        self.running_stats = []            
+        self.running_stats = []
         for _ in range(v_size):
             self.running_stats.append(RunningStats())
         self.n = len(self.running_stats)
@@ -49,7 +49,7 @@ class Normalizer:
             self._validate(v_size, stats)
             self.set_state(stats)
         self.clip_v = clip_value
- 
+
     def set_state(self, stats):
         self._validate(self.n, stats)
         for i in range(self.n):
@@ -64,7 +64,7 @@ class Normalizer:
         return out
 
     def normalize(self, vec):
-        try:      
+        try:
             out = []
             for i in range(self.n):
                 self.running_stats[i].push(vec[i])
@@ -78,7 +78,7 @@ class Normalizer:
         except IndexError:
             print(f"normalizer dimension mismatch. excepts: {self.n}, got: {len(vec)}")
             exit()
-    
+
     def _validate(self, expected_size, target):
         try:
             assert expected_size == len(target)
