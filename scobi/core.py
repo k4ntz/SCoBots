@@ -1,6 +1,7 @@
 """scobi core"""
 import numpy as np
 from gymnasium import spaces, Env
+from gymnasium.core import RenderFrame
 import scobi.environments.env_manager as em
 from scobi.utils.game_object import get_wrapper_class
 from scobi.focus import Focus
@@ -14,6 +15,8 @@ class Environment(Env):
     def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
+
+        self.render_mode = self.oc_env.render_mode
 
         # TODO: tie to em.make
         self.game_object_wrapper = get_wrapper_class()
@@ -33,7 +36,6 @@ class Environment(Env):
         self.num_envs = 1
         self.draw_features = draw_features
         self.feature_attribution = []
-        self.render_font = ImageFont.truetype(str(Path(__file__).parent / 'resources' / 'Gidole-Regular.ttf'), size=38)
         self._obj_obs = None  # observation augmented with objects
         self._rel_obs = None  # observation augmented with relations
         self._top_features = []
@@ -312,6 +314,9 @@ class Environment(Env):
         # draw = ImageDraw.Draw(img, "RGBA")
         # draw.text((img.size[0]/2 +20, 50), to_draw, (5, 5, 5), self.render_font)
         return np.array(img)
+
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
+        return self.oc_env.render()
 
 
 def format_feature(feature_name, feature_signature, ii):
