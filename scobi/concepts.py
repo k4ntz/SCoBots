@@ -49,6 +49,20 @@ def get_rgb(obj: GameObject) -> Tuple[int, int, int]:
     return tuple(obj.rgb)
 
 
+@register(type="P", name="WIDTH", params= ["OBJECT"], desc="get the width for given object")
+def get_width(obj: GameObject) -> Tuple[int]:
+    if not obj:
+        return None,
+    return obj.w,
+
+
+@register(type="P", name="VALUE", params= ["OBJECT"], desc="get the object's value (if exists)")
+def get_value(obj: GameObject) -> Tuple[int]:
+    if not obj:
+        return None,
+    return obj.value,
+
+
 ##########################
 # FUNCTIONS TO REGISTER
 ##########################

@@ -81,3 +81,10 @@ class OCAGameObject(GameObjectInterface):
     @property
     def orientation(self):
         return self.ocgo.orientation
+
+    @property
+    def value(self):
+        if hasattr(self.ocgo, "value"):
+            return self.ocgo.value
+        else:
+            return None
