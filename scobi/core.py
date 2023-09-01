@@ -53,7 +53,7 @@ class Environment(Env):
         
         self.reset()
         self.step(0) # step once to set the feature vector size 
-        self.observation_space = spaces.Box(low=-2**63, high=2**63 - 2, shape=(self.focus.FEATURE_VECTOR_SIZE,), dtype=np.float32)
+        self.observation_space = spaces.Box(low=-2**63, high=2**63 - 2, shape=(self.focus.OBSERVATION_SIZE,), dtype=np.float32)
         self.reset()
         self.did_reset = False # still require user to properly call a (likely seeded) reset()
 

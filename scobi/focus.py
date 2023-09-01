@@ -32,6 +32,7 @@ class Focus():
         self.CURRENT_FUNC_COMPUTE_LAYER = []
         
         self.FEATURE_VECTOR_SIZE = 0
+        self.OBSERVATION_SIZE = 0
         self.CURRENT_FEATURE_VECTOR = []
         self.FEATURE_VECTOR_PROPS_SIZE = 0
         self.CURRENT_FEATURE_VECTOR_PROPS = []
@@ -411,10 +412,11 @@ class Focus():
             props = [i for e in self.CURRENT_PROPERTY_COMPUTE_LAYER for i in e]
             funcs = [i for e in self.CURRENT_FUNC_COMPUTE_LAYER for i in e]
             out = props + funcs
+            self.FEATURE_VECTOR_SIZE = len(out)
             if self.HIDE_PROPERTIES:
-                self.FEATURE_VECTOR_SIZE = len(funcs)
+                self.OBSERVATION_SIZE = len(funcs)
             else:
-                self.FEATURE_VECTOR_SIZE = len(out)
+                self.OBSERVATION_SIZE = len(out)
             self.FEATURE_VECTOR_PROPS_SIZE = len(props)
             self.FEATURE_VECTOR_FUNCS_SIZE = len(funcs)
             self.CURRENT_FEATURE_VECTOR_PROPS = [0 for _ in range(self.FEATURE_VECTOR_PROPS_SIZE)]
