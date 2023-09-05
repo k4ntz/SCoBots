@@ -1,6 +1,6 @@
 """Properties and Functions for scobi features"""
 import math
-from typing import Tuple
+from typing import Tuple, Sequence
 import numpy as np
 from scobi.utils.game_object import get_wrapper_class
 from scobi.utils.colors import get_closest_color
@@ -139,3 +139,15 @@ def get_color_name(rgb: Tuple[int, int, int]) -> Tuple[int]:
         _, col_int = get_closest_color(rgb)
         COLOR_INT_MEMORY[rgb] = col_int
         return col_int,
+
+
+##########################
+# AGGREGATIONS TO REGISTER
+##########################
+@register(type="A", name="COUNT", params=["OBJECT_CATEGORY"], desc="Number of objects of this category")
+def get_category_count(game_objects: Sequence[GameObject], category: str) -> (int,):
+    cnt = 0
+    for game_object in game_objects:
+        if game_object.category == category:
+            cnt += 1
+    return cnt,

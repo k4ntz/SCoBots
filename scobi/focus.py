@@ -4,7 +4,7 @@ import math
 from pathlib import Path
 from itertools import permutations
 from scobi.concepts import init as concept_init
-from scobi.utils.decorators import FUNCTIONS, PROPERTIES
+from scobi.utils.decorators import FUNCTIONS, PROPERTIES, AGGREGATIONS
 from termcolor import colored
 
 
@@ -23,21 +23,33 @@ class Focus:
         self.PARSED_ACTIONS = []
         self.PARSED_PROPERTIES = []
         self.PARSED_FUNCTIONS = []
+        self.PARSED_AGGREGATIONS = []
         self.FEATURE_VECTOR_BACKMAP = []
 
         self.PROPERTY_COMPUTE_LAYER = []
         self.FUNC_COMPUTE_LAYER = []
+        self.AGG_COMPUTE_LAYER = []
+
         self.PROPERTY_COMPUTE_LAYER_SIZE = 0
         self.FUNC_COMPUTE_LAYER_SIZE = 0
+        self.AGG_COMPUTE_LAYER_SIZE = 0
+
         self.CURRENT_PROPERTY_COMPUTE_LAYER = []
         self.CURRENT_FUNC_COMPUTE_LAYER = []
+        self.CURRENT_AGG_COMPUTE_LAYER = []
 
         self.FEATURE_VECTOR_SIZE = 0
         self.CURRENT_FEATURE_VECTOR = []
+
         self.FEATURE_VECTOR_PROPS_SIZE = 0
         self.CURRENT_FEATURE_VECTOR_PROPS = []
+
         self.FEATURE_VECTOR_FUNCS_SIZE = 0
         self.CURRENT_FEATURE_VECTOR_FUNCS = []
+
+        self.FEATURE_VECTOR_AGGS_SIZE = 0
+        self.CURRENT_FEATURE_VECTOR_AGGS = []
+
         self.CURRENT_FREEZE_MASK = []
 
         self.REWARD_SHAPING = reward
@@ -271,6 +283,27 @@ class Focus:
                     "Signature mismatch in functions selection. Function '%s' expects '%s'" % (f[0], sig_desc))
         return True
 
+    def validate_aggregation_signatures(self, agglist):
+        for a in agglist:
+            agg_name = a[0]
+            agg_params = a[1]
+
+            if agg_name not in AGGREGATIONS.keys():
+                self.l.FocusFileParserError("Unknown aggregation in aggregation selection: %s" % agg_name)
+
+            parsed_params_signature = []
+            for param in agg_params:
+                parsed_params_signature.append(type(param[1]))
+
+            agg_definition = AGGREGATIONS[agg_name]
+            expected_agg_signature = [x[0].annotation for x in agg_definition["expects"]]
+            sig_desc = [x[1] for x in agg_definition["expects"]]
+            if expected_agg_signature != parsed_params_signature:
+                self.l.FocusFileParserError(
+                    "Signature mismatch in aggregation selection. Aggregation '%s' expects '%s'" % (agg_name, sig_desc))
+
+        return True
+
     def import_objects(self, objs):
         if self.validate_objects(objs):
             return objs
@@ -317,6 +350,28 @@ class Focus:
         else:
             return None
 
+    def import_aggregations(self, aggs):
+        if not aggs:
+            return []
+
+        out = []
+
+        for a in aggs:
+            item = list(a.items())[0]
+            agg_name = item[0]
+            agg_params = item[1]
+
+            para_list = [agg_name, []]
+            for param in agg_params:
+                para_tuple = list(param.items())[0]
+                para_list[1].append(list(para_tuple))
+            out.append(para_list)
+
+        if self.validate_aggregation_signatures(out):
+            return out
+        else:
+            return None
+
     def load_focus_file(self, fpath):
         with open(fpath, "r") as f:
             in_dict = yaml.safe_load(f)
@@ -329,12 +384,15 @@ class Focus:
         self.PARSED_ACTIONS = self.import_actions(sdict["actions"])
         self.PARSED_PROPERTIES = self.import_properties(sdict["properties"])
         self.PARSED_FUNCTIONS = self.import_functions(sdict["functions"])
+        self.PARSED_AGGREGATIONS = self.import_aggregations(sdict["aggregations"])
+
         # based on the focus file selection,
         # construct a 2 layer computation graph for the feature vector:
         # 1     PROPERTY_COMPUTE_LAYER
         # 2     FUNC_COMPUTE_LAYER
         prop_name_obj_name_pairs = []
         parsed_fv_index = 0
+
         for p in self.PARSED_PROPERTIES:
             property_name = p[0]
             object_name = p[1]
@@ -350,6 +408,7 @@ class Focus:
                 return func(input_dict[object_name])
 
             self.PROPERTY_COMPUTE_LAYER.append(prop)
+
         for f in self.PARSED_FUNCTIONS:
             func_name = f[0]
             input_props = f[1]
@@ -372,11 +431,31 @@ class Focus:
                 return f(*f_in)
 
             self.FUNC_COMPUTE_LAYER.append(func)
+
+        for a in self.PARSED_AGGREGATIONS:
+            agg_name = a[0]
+            agg_kwargs = {kwd: arg for kwd, arg in a[1]}
+
+            a = AGGREGATIONS[agg_name]["object"]
+            return_len = len(AGGREGATIONS[agg_name]["returns"][0])
+
+            for _ in range(return_len):
+                self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+            parsed_fv_index += 1
+
+            def agg(game_objects):
+                return a(game_objects, **agg_kwargs)
+
+            self.AGG_COMPUTE_LAYER.append(agg)
+
         # init compute layer lists
         self.PROPERTY_COMPUTE_LAYER_SIZE = len(self.PROPERTY_COMPUTE_LAYER)
         self.FUNC_COMPUTE_LAYER_SIZE = len(self.FUNC_COMPUTE_LAYER)
+        self.AGG_COMPUTE_LAYER_SIZE = len(self.AGG_COMPUTE_LAYER)
+
         self.CURRENT_PROPERTY_COMPUTE_LAYER = [0 for _ in range(self.PROPERTY_COMPUTE_LAYER_SIZE)]
         self.CURRENT_FUNC_COMPUTE_LAYER = [0 for _ in range(self.FUNC_COMPUTE_LAYER_SIZE)]
+        self.CURRENT_AGG_COMPUTE_LAYER = [0 for _ in range(self.AGG_COMPUTE_LAYER_SIZE)]
 
     def get_feature_vector(self, inc_objects_list):
         # evaluate a 2 layer computation graph for the feature vector:
@@ -405,19 +484,29 @@ class Focus:
             f = self.FUNC_COMPUTE_LAYER[i]
             self.CURRENT_FUNC_COMPUTE_LAYER[i] = f(self.CURRENT_PROPERTY_COMPUTE_LAYER)
 
+        # calc aggregation layer
+        for i in range(self.AGG_COMPUTE_LAYER_SIZE):
+            a = self.AGG_COMPUTE_LAYER[i]
+            self.CURRENT_AGG_COMPUTE_LAYER[i] = a(inc_objects_list)
+
         if self.first_pass:
             self.first_pass = False
             props = [i for e in self.CURRENT_PROPERTY_COMPUTE_LAYER for i in e]
             funcs = [i for e in self.CURRENT_FUNC_COMPUTE_LAYER for i in e]
-            out = props + funcs
+            aggs = [i for e in self.CURRENT_AGG_COMPUTE_LAYER for i in e]
+            out = props + funcs + aggs
             if self.HIDE_PROPERTIES:
                 self.FEATURE_VECTOR_SIZE = len(funcs)
             else:
                 self.FEATURE_VECTOR_SIZE = len(out)
             self.FEATURE_VECTOR_PROPS_SIZE = len(props)
             self.FEATURE_VECTOR_FUNCS_SIZE = len(funcs)
+            self.FEATURE_VECTOR_AGGS_SIZE = len(aggs)
+
             self.CURRENT_FEATURE_VECTOR_PROPS = [0 for _ in range(self.FEATURE_VECTOR_PROPS_SIZE)]
             self.CURRENT_FEATURE_VECTOR_FUNCS = [0 for _ in range(self.FEATURE_VECTOR_FUNCS_SIZE)]
+            self.CURRENT_FEATURE_VECTOR_AGGS = [0 for _ in range(self.FEATURE_VECTOR_AGGS_SIZE)]
+
             self.CURRENT_FREEZE_MASK = [1 for _ in range(self.FEATURE_VECTOR_SIZE)]
 
             # unpack property layer
@@ -434,7 +523,17 @@ class Focus:
                     self.CURRENT_FEATURE_VECTOR_FUNCS[idx] = ff
                     idx += 1
 
-            out = self.CURRENT_FEATURE_VECTOR_PROPS + self.CURRENT_FEATURE_VECTOR_FUNCS
+            # unpack aggregation layer
+            idx = 0
+            for f in self.CURRENT_AGG_COMPUTE_LAYER:
+                for ff in f:
+                    self.CURRENT_FEATURE_VECTOR_AGGS[idx] = ff
+                    idx += 1
+
+            out = self.CURRENT_FEATURE_VECTOR_PROPS + \
+                  self.CURRENT_FEATURE_VECTOR_FUNCS + \
+                  self.CURRENT_FEATURE_VECTOR_AGGS
+
             for e in out:
                 item = 0.0 if e is None else e
                 self.last_obs_vector.append(item)
@@ -447,6 +546,7 @@ class Focus:
             out = self.last_obs_vector
             if self.HIDE_PROPERTIES:
                 out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
+
             return np.asarray(out, dtype=np.float32), reward
 
         # unpack property layer
@@ -463,7 +563,17 @@ class Focus:
                 self.CURRENT_FEATURE_VECTOR_FUNCS[idx] = ff
                 idx += 1
 
-        out = self.CURRENT_FEATURE_VECTOR_PROPS + self.CURRENT_FEATURE_VECTOR_FUNCS
+        # unpack aggregation layer
+        idx = 0
+        for f in self.CURRENT_AGG_COMPUTE_LAYER:
+            for ff in f:
+                self.CURRENT_FEATURE_VECTOR_AGGS[idx] = ff
+                idx += 1
+
+        out = self.CURRENT_FEATURE_VECTOR_PROPS + \
+              self.CURRENT_FEATURE_VECTOR_FUNCS + \
+              self.CURRENT_FEATURE_VECTOR_AGGS
+
         # freeze feature entries that are derived from invisible objects
         # objects are distinguished by order, not id
         # if object id=1 on position 1 becomes invisible, and obj id=2, pos=2 remains visible
@@ -482,6 +592,7 @@ class Focus:
             reward = 0
         if self.HIDE_PROPERTIES:
             out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
+
         return np.asarray(out, dtype=np.float32), reward
 
     def get_feature_vector_description(self):
