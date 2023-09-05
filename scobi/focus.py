@@ -10,7 +10,7 @@ from termcolor import colored
 
 class Focus:
     def __init__(self, env_name, reward, hide_properties, fofiles_dir_name, fofile,
-                 raw_features, actions, refresh_yaml, l):
+                 raw_features, actions, freeze_invisible_obj, refresh_yaml, l):
         concept_init()
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
@@ -19,6 +19,7 @@ class Focus:
         self.ACTIONS = actions
         self.ENV_NAME = env_name.split("/")[-1]  # handle v5 namespace case
         self.FOCUSFILEPATH = None
+        self.FREEZE_INVISIBLE_OBJ = freeze_invisible_obj
 
         self.PARSED_OBJECTS = []
         self.PARSED_ACTIONS = []
@@ -584,10 +585,11 @@ class Focus:
         # obj with id=2 will be pos=1 and objc id=1 will be first position of hidden objects
         for i in range(self.FEATURE_VECTOR_SIZE):
             if out[i] is None:
-                out[i] = self.last_obs_vector[i]
+                out[i] = self.last_obs_vector[i] if self.FREEZE_INVISIBLE_OBJ else 0
                 self.CURRENT_FREEZE_MASK[i] = 0
             else:
                 self.CURRENT_FREEZE_MASK[i] = 1
+
         self.last_obs_vector = out
 
         if self.REWARD_SHAPING != 0:

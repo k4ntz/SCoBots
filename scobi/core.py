@@ -15,7 +15,8 @@ from scobi.preprocessing import Normalizer
 
 class Environment(Env):
     def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False,
-                 silent=False, refresh_yaml=True, draw_features=False, normalize=False, **kwargs):
+                 silent=False, refresh_yaml=True, draw_features=False, normalize=False, freeze_invisible_obj=False,
+                 **kwargs):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger, **kwargs)
 
@@ -30,8 +31,8 @@ class Environment(Env):
         self.oc_env.reset(seed=seed)
         max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
         self.did_reset = False
-        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml,
-                           self.logger)
+        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions,
+                           freeze_invisible_obj, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
