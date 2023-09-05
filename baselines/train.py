@@ -4,9 +4,10 @@ import numpy as np
 import os
 from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
-from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack
+from stable_baselines3.common.env_util import make_atari_env
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.monitor import Monitor
@@ -75,12 +76,12 @@ def main():
                         help="seed")
     parser.add_argument("-c", "--cores", type=int, required=True,
                         help="number of envs used")
-    parser.add_argument("-r", "--reward", type=str, required=True, choices=["env", "human", "mixed"],
-                        help="reward mode")
+    parser.add_argument("-r", "--reward", type=str, required=False, choices=["env", "human", "mixed"],
+                        help="reward mode, env if omitted")
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"], 
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-e", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
-
+    parser.add_argument("--rgb", action="store_true", help="rgb observation space")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -88,9 +89,10 @@ def main():
     pruned_ff_name = None
     focus_dir = "focusfiles"
     hide_properties = False
+    
+    reward_mode = 0
     if opts.reward == "env":
         settings_str += "_re"
-        reward_mode = 0
     if opts.reward == "human":
         settings_str += "_rh"
         reward_mode = 1
@@ -111,6 +113,9 @@ def main():
         settings_str += '_ep'
         hide_properties = True
 
+    #override setting str if rgb
+    if opts.rgb:
+        settings_str = "-rgb"
     exp_name = opts.game + "_s" + str(opts.seed) + settings_str
     n_envs = opts.cores
     n_eval_envs = 4
@@ -124,6 +129,8 @@ def main():
     ckpt_path = Path("baselines_checkpoints", exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
+
+
 
     def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
@@ -156,14 +163,21 @@ def main():
         set_random_seed(seed)
         return _init
 
-    # check if compatible gym env
-    monitor = make_env()()
-    check_env(monitor.env)
-    del monitor
-    
-    # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing 
-    eval_env = SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD)
-    
+
+    if opts.rgb:
+        eval_env = make_atari_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        eval_env = VecFrameStack(eval_env, n_stack=4)
+        train_env = make_atari_env(env_str, n_envs=n_envs, seed=opts.seed, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        train_env = VecFrameStack(train_env, n_stack=4)
+    else:
+        # check if compatible gym env
+        monitor = make_env()()
+        check_env(monitor.env)
+        del monitor
+        # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing 
+        eval_env = SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD)
+        train_env = SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD)
+
     rtpt_iters = training_timestamps // rtpt_frequency
     eval_callback = EvalCallback(
         eval_env,
@@ -190,21 +204,23 @@ def main():
         callback=rtpt_callback)
 
     tb_callback = TensorboardCallback(n_envs=n_envs)
+    cbl = [checkpoint_callback, eval_callback, n_callback, tb_callback]
+    if opts.rgb: #remove tb callback if rgb
+        cbl = cbl[:-1]
+    cb_list = CallbackList(cbl)
 
-    cb_list = CallbackList([checkpoint_callback, eval_callback, n_callback, tb_callback])
-
-    # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing 
-    train_env = SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD)
-
-   
     new_logger = configure(str(log_path), ["tensorboard"])
 
     # atari hyperparameters from the ppo paper:
     # https://arxiv.org/abs/1707.06347
+    if opts.rgb:
+        policy_str = "CnnPolicy"
+    else:
+        policy_str = "MlpPolicy"
     adam_step_size = 0.00025
     clipping_eps = 0.1
     model = PPO(
-        "MlpPolicy",
+        policy_str,
         n_steps=128,
         learning_rate=linear_schedule(adam_step_size),
         n_epochs=3,
