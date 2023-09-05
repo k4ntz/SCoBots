@@ -10,11 +10,12 @@ import scobi.environments.env_manager as em
 from scobi.focus import Focus
 from scobi.utils.game_object import get_wrapper_class
 from scobi.utils.logging import Logger
+from scobi.preprocessing import Normalizer
 
 
 class Environment(Env):
     def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False,
-                 silent=False, refresh_yaml=True, draw_features=False, **kwargs):
+                 silent=False, refresh_yaml=True, draw_features=False, normalize=False, **kwargs):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger, **kwargs)
 
@@ -56,6 +57,11 @@ class Environment(Env):
         else:  # env only
             self._reward_composition_func = lambda a, b: b
 
+        self.normalize = normalize
+        self.normalizer = Normalizer(self.focus) if normalize else None
+        if self.normalize:
+            self.logger.GeneralInfo("Normalizing features.")
+
         self.reset()
         self.step(0)  # step once to set the feature vector size
         self.observation_space = spaces.Box(low=-2 ** 63, high=2 ** 63 - 2, shape=(self.focus.FEATURE_VECTOR_SIZE,),
@@ -86,6 +92,8 @@ class Environment(Env):
                 self.ep_env_reward_buffer = 0
                 self.reset_ep_reward = True
             final_reward = self._reward_composition_func(sco_reward, reward)
+            if self.normalize:
+                sco_obs = self.normalizer(sco_obs)
             return sco_obs, final_reward, truncated, terminated, info  # 5
         else:
             raise ValueError("scobi> Action not in action space")
@@ -98,6 +106,8 @@ class Environment(Env):
         _, info = self.oc_env.reset(*args, **kwargs)
         objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
         sco_obs, _ = self.focus.get_feature_vector(objects)
+        if self.normalize:
+            sco_obs = self.normalizer(sco_obs)
         return sco_obs, info
 
     def close(self):

@@ -19,11 +19,14 @@ class Focus:
         self.ACTIONS = actions
         self.ENV_NAME = env_name.split("/")[-1]  # handle v5 namespace case
         self.FOCUSFILEPATH = None
+
         self.PARSED_OBJECTS = []
         self.PARSED_ACTIONS = []
         self.PARSED_PROPERTIES = []
         self.PARSED_FUNCTIONS = []
         self.PARSED_AGGREGATIONS = []
+        self.PARSED_CONCEPTS = []
+
         self.FEATURE_VECTOR_BACKMAP = []
 
         self.PROPERTY_COMPUTE_LAYER = []
@@ -385,6 +388,7 @@ class Focus:
         self.PARSED_PROPERTIES = self.import_properties(sdict["properties"])
         self.PARSED_FUNCTIONS = self.import_functions(sdict["functions"])
         self.PARSED_AGGREGATIONS = self.import_aggregations(sdict["aggregations"])
+        self.PARSED_CONCEPTS = self.PARSED_PROPERTIES + self.PARSED_FUNCTIONS + self.PARSED_AGGREGATIONS
 
         # based on the focus file selection,
         # construct a 2 layer computation graph for the feature vector:
