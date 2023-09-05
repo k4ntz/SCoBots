@@ -340,7 +340,7 @@ class Focus:
             object_name = p[1]
             prop_name_obj_name_pairs.append((property_name, object_name))
             prop_func = PROPERTIES[property_name]["object"]
-            return_len = len(PROPERTIES[property_name]["returns"][0].__args__)
+            return_len = len(PROPERTIES[property_name]["returns"][0])
             for _ in range(return_len):
                 self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
             parsed_fv_index += 1
