@@ -106,3 +106,78 @@ SELECTION:
   - DISTANCE:
     - POSITION: Player1
     - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin4
