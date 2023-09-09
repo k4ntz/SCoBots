@@ -72,7 +72,7 @@ def get_value(obj: GameObject) -> (int | None,):
 ##########################
 @register(type="F", name="LINEAR_TRAJECTORY", params=["POSITION", "POSITION_HISTORY"],
           desc="x, y distance to trajectory")
-def calc_lin_traj(a_position: Tuple[int, int], b_history: Tuple[int, int, int, int]) -> Tuple[int, int]:
+def calc_lin_traj(a_position: (int | None, int | None), b_history: (int | None, int | None, int | None, int | None)) -> (int | None, int | None):
     if None in a_position or None in b_history:
         return None, None
     m = (b_history[3] - b_history[1]) / (b_history[2] - b_history[0] + 0.1)  # slope  m = (y2 - y1) / (x2 - x1)
@@ -83,7 +83,7 @@ def calc_lin_traj(a_position: Tuple[int, int], b_history: Tuple[int, int, int, i
 
 
 @register(type="F", name="DISTANCE", params=["POSITION", "POSITION"], desc="distance between two coordinates")
-def calc_distance(a_position: Tuple[int, int], b_position: Tuple[int, int]) -> Tuple[int, int]:
+def calc_distance(a_position: (int | None, int | None), b_position: (int | None, int | None)) -> (int | None, int | None):
     if None in a_position or None in b_position:
         return None, None
     distx = b_position[0] - a_position[0]
@@ -93,7 +93,7 @@ def calc_distance(a_position: Tuple[int, int], b_position: Tuple[int, int]) -> T
 
 @register(type="F", name="EUCLIDEAN_DISTANCE", params=["POSITION", "POSITION"],
           desc="euclidean distance between two coordinates")
-def calc_euclidean_distance(a_position: Tuple[int, int], b_position: Tuple[int, int]) -> Tuple[float]:
+def calc_euclidean_distance(a_position: (int | None, int | None), b_position: (int | None, int | None)) -> (float | None,):
     if None in [*a_position, *b_position]:
         return None,
     dist = math.sqrt((b_position[1] - a_position[1]) ** 2 + (b_position[0] - a_position[0]) ** 2)
@@ -101,14 +101,14 @@ def calc_euclidean_distance(a_position: Tuple[int, int], b_position: Tuple[int, 
 
 
 @register(type="F", name="CENTER", params=["POSITION", "POSITION"], desc="center position of two objects")
-def get_center(a_position: Tuple[int, int], b_position: Tuple[int, int]) -> Tuple[int, int]:
+def get_center(a_position: (int | None, int | None), b_position: (int | None, int | None)) -> (int | None, int | None):
     if None in a_position or None in b_position:
         return None, None
     return (a_position[0] + b_position[0]) / 2, (a_position[1] + b_position[1]) / 2
 
 
 @register(type="F", name="VELOCITY", params=["POSITION_HISTORY"], desc="velocity of object")
-def get_velocity(pos_history: Tuple[int, int, int, int]) -> Tuple[float]:
+def get_velocity(pos_history: (int | None, int | None, int | None, int | None)) -> (float | None,):
     if None in pos_history:
         return None,
     obj = pos_history[0:2]
@@ -118,7 +118,7 @@ def get_velocity(pos_history: Tuple[int, int, int, int]) -> Tuple[float]:
 
 
 @register(type="F", name="DIR_VELOCITY", params=["POSITION_HISTORY"], desc="directional velocity of object")
-def get_dir_velocity(pos_history: Tuple[int, int, int, int]) -> Tuple[float, float]:
+def get_dir_velocity(pos_history: (int | None, int | None, int | None, int | None)) -> (float | None, float | None):
     if None in pos_history:
         return None, None
     obj = pos_history[0:2]
@@ -129,7 +129,7 @@ def get_dir_velocity(pos_history: Tuple[int, int, int, int]) -> Tuple[float, flo
 
 
 @register(type="F", name="COLOR", params=["RGB"], desc="Index of colorname")
-def get_color_name(rgb: Tuple[int, int, int]) -> Tuple[int]:
+def get_color_name(rgb: (int | None, int | None, int | None)) -> (int | None,):
     if None in rgb:
         return None,
     # only calc distances if new unseen rgb value

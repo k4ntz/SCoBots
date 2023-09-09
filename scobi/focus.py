@@ -388,7 +388,7 @@ class Focus:
         self.PARSED_ACTIONS = self.import_actions(sdict["actions"])
         self.PARSED_PROPERTIES = self.import_properties(sdict["properties"])
         self.PARSED_FUNCTIONS = self.import_functions(sdict["functions"])
-        self.PARSED_AGGREGATIONS = self.import_aggregations(sdict["aggregations"])
+        self.PARSED_AGGREGATIONS = self.import_aggregations(sdict.get("aggregations"))
         self.PARSED_CONCEPTS = self.PARSED_PROPERTIES + self.PARSED_FUNCTIONS + self.PARSED_AGGREGATIONS
 
         # based on the focus file selection,
@@ -423,7 +423,7 @@ class Focus:
                 object_name = p[1]
                 property_result_idxs.append(prop_name_obj_name_pairs.index((property_name, object_name)))
             f = FUNCTIONS[func_name]["object"]
-            return_len = len(FUNCTIONS[func_name]["returns"][0].__args__)
+            return_len = len(FUNCTIONS[func_name]["returns"][0])
             for _ in range(return_len):
                 self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
             parsed_fv_index += 1

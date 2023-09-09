@@ -10,12 +10,12 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name='scobi',
-    version='0.0.0',
+    version='0.1.1',
     author='',
     author_email='',
     packages=find_packages(),
     include_package_data=True,
-    description='Successive Concepet Bottleneck Interface',
+    description='Successive Concept Bottleneck Interface',
     long_description=long_description,
     long_description_content_type='text/markdown',
     install_requires=requirements

@@ -5,6 +5,9 @@ from typing import Callable
 
 NORMALIZATION_FNS = {
     "POSITION_HISTORY": lambda x: x / 164,  # any object coords
+    "POSITION": lambda x: x / 164,  # any object coords
+    "DISTANCE": lambda x: x / 164,  # any object coords
+    "DIR_VELOCITY": lambda x: np.tanh(x / 5),  # velocities (typically inside [-5, 5])
     "ORIENTATION": lambda x: x / 8,  # player
     "WIDTH": lambda x: x / 64,  # oxygen bar
     "VALUE": lambda x: x / 3,  # lives
