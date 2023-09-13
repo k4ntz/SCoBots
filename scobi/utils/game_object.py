@@ -88,3 +88,10 @@ class OCAGameObject(GameObjectInterface):
             return self.ocgo.value
         else:
             return None
+
+    @property
+    def value_diff(self):
+        if hasattr(self.ocgo, "value_diff"):
+            return self.ocgo.value_diff
+        else:
+            return None
