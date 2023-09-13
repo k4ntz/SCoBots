@@ -130,7 +130,7 @@ def train(cfg):
     env = Environment(cfg.env_name,
                       cfg.seed,
                       interactive=cfg.scobi_interactive,
-                      reward=cfg.scobi_reward_shaping,
+                      reward_mode=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file)
@@ -389,7 +389,7 @@ def train_kangaroo(cfg):
     env = Environment(cfg.env_name,
                       cfg.seed,
                       interactive=cfg.scobi_interactive,
-                      reward=cfg.scobi_reward_shaping,
+                      reward_mode=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file)
@@ -713,7 +713,7 @@ def eval_reward_discovery(cfg):
     env = Environment(cfg.env_name,
                       cfg.seed,
                       interactive=cfg.scobi_interactive,
-                      reward=cfg.scobi_reward_shaping,
+                      reward_mode=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file)
@@ -837,7 +837,7 @@ def eval_load(cfg):
     env = Environment(cfg.env_name,
                       cfg.seed,
                       interactive=cfg.scobi_interactive,
-                      reward=cfg.scobi_reward_shaping,
+                      reward_mode=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file)

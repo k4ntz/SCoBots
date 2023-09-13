@@ -126,12 +126,12 @@ def main():
 
     def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
-            env = Environment(env_str, 
+            env = Environment(env_str,
                               focus_dir=focus_dir,
-                              focus_file=pruned_ff_name, 
-                              hide_properties=hide_properties, 
+                              focus_file=pruned_ff_name,
+                              hide_properties=hide_properties,
                               silent=silent,
-                              reward=reward_mode,
+                              reward_mode=reward_mode,
                               refresh_yaml=refresh)
             env = Monitor(env)
             env.reset(seed=seed + rank)
@@ -141,12 +141,12 @@ def main():
     
     def make_eval_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
-            env = Environment(env_str, 
+            env = Environment(env_str,
                               focus_dir=focus_dir,
-                              focus_file=pruned_ff_name, 
-                              hide_properties=hide_properties, 
+                              focus_file=pruned_ff_name,
+                              hide_properties=hide_properties,
                               silent=silent,
-                              reward=0,
+                              reward_mode=0,
                               refresh_yaml=refresh) #always env reward for eval
             env = Monitor(env)
             env.reset(seed=seed + rank)

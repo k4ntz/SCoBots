@@ -1,6 +1,5 @@
 import yaml
 import numpy as np
-import math
 from pathlib import Path
 from itertools import permutations
 from scobi.concepts import init as concept_init
@@ -9,7 +8,7 @@ from termcolor import colored
 
 
 class Focus:
-    def __init__(self, env_name, reward, hide_properties, fofiles_dir_name, fofile,
+    def __init__(self, env_name, hide_properties, fofiles_dir_name, fofile,
                  raw_features, actions, freeze_invisible_obj, refresh_yaml, l):
         concept_init()
         self.PROPERTY_LIST = []
@@ -56,10 +55,10 @@ class Focus:
 
         self.CURRENT_FREEZE_MASK = []
 
-        self.REWARD_SHAPING = reward
-        self.REWARD_FUNC = None
+        # TODO: remove
         self.reward_history = [0, 0]
         self.reward_threshold = -1
+
         self.HIDE_PROPERTIES = hide_properties
 
         self.running_stats = []
@@ -95,27 +94,6 @@ class Focus:
             self.load_focus_file(fofile_path)
             l.GeneralInfo("Default Focus File is valid. Imported.")
             self.FOCUSFILEPATH = fofile_path
-
-        if self.REWARD_SHAPING != 0:  # set respective reward shaping
-            if self.REWARD_SHAPING == 1:
-                rewstring = "scobi"
-            elif self.REWARD_SHAPING == 2:
-                rewstring = "env + scobi"
-            else:
-                rewstring = "unknown"
-            l.GeneralInfo("Reward Shaping: %s." % colored(rewstring, "light_green"))
-            self.REWARD_FUNC = self.get_reward_func(self.ENV_NAME)
-            if not self.REWARD_FUNC is None:
-                if self.REWARD_FUNC == "norew":
-                    l.GeneralError("Reward function for %s not implemented!" % colored(self.ENV_NAME, "light_green"))
-                else:
-                    l.GeneralInfo("Reward function is valid. Bound.")
-            else:
-                l.GeneralError(
-                    "Reward function for %s is expecting properties/concepts that missing in the focus file!" % colored(
-                        self.ENV_NAME, "light_green"))
-        else:
-            l.GeneralInfo("Reward Shaping: %s." % colored("disabled", "light_yellow"))
 
         if self.HIDE_PROPERTIES == True:  # hide properties from observation or not
             l.GeneralInfo("Object properties are %s from the observation vector." % colored("excluded", "light_yellow"))
@@ -543,16 +521,11 @@ class Focus:
                 item = 0.0 if e is None else e
                 self.last_obs_vector.append(item)
 
-            if self.REWARD_SHAPING != 0:
-                reward = self.REWARD_FUNC(self.last_obs_vector)
-            else:
-                reward = 0
-
             out = self.last_obs_vector
             if self.HIDE_PROPERTIES:
                 out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
 
-            return np.asarray(out, dtype=np.float32), reward
+            return np.asarray(out, dtype=np.float32)
 
         # unpack property layer
         idx = 0
@@ -592,14 +565,10 @@ class Focus:
 
         self.last_obs_vector = out
 
-        if self.REWARD_SHAPING != 0:
-            reward = self.REWARD_FUNC(out)
-        else:
-            reward = 0
         if self.HIDE_PROPERTIES:
             out = out[self.FEATURE_VECTOR_PROPS_SIZE:]
 
-        return np.asarray(out, dtype=np.float32), reward
+        return np.asarray(out, dtype=np.float32)
 
     def get_feature_vector_description(self):
         fv = self.PARSED_PROPERTIES + self.PARSED_FUNCTIONS
@@ -607,115 +576,3 @@ class Focus:
 
     def get_current_freeze_mask(self):
         return self.CURRENT_FREEZE_MASK
-
-    def get_reward_func(self, env):
-        fv_description, fv_backmap = self.get_feature_vector_description()
-        i = 0
-        if "Pong" in env:
-            # pong reward function
-            idxs = np.empty(0)
-            for feature in fv_description:
-                i += 1
-                feature_name = feature[0]
-                feature_signature = feature[1]
-                if feature_name == "DISTANCE":
-                    input1 = feature_signature[0]
-                    input2 = feature_signature[1]
-                    if input1[0] == "POSITION" and input1[1] == "Player1" and input2[0] == "POSITION" and input2[
-                        1] == "Ball1":
-                        idxs = np.where(fv_backmap == i - 1)[0]
-            if not idxs.any():
-                return None
-
-            # reward when player decreases y-distance to ball TODO: change to neg rew when y-distance > 12
-            def reward(fv, idxs=idxs):
-                v_entries = fv[idxs[0]:idxs[-1]+1]
-                self.reward_history[0] = self.reward_history[1]
-                self.reward_history[1] = abs(v_entries[1]) # absolute distance on y-axis
-                delta = self.reward_history[0] - self.reward_history[1] #decrease in distance: positive sign
-                return delta * 0.1
-            return reward
-        elif "Kangaroo" in env:
-            # kangaroo reward function
-            player_idxs = np.empty(0)
-            distance_idxs = np.empty(0)
-            for feature in fv_description:
-                i += 1
-                feature_name = feature[0]
-                feature_signature = feature[1]
-                if feature_name == "POSITION":
-                    if feature_signature == "Player1":
-                        player_idxs = np.where(fv_backmap == i - 1)[0]
-                if feature_name == "DISTANCE":
-                    input1 = feature_signature[0]
-                    input2 = feature_signature[1]
-                    if input1[0] == "POSITION" and input1[1] == "Player1" and input2[0] == "POSITION" and input2[
-                        1] == "Scale1":
-                        distance_idxs = np.where(fv_backmap == i - 1)[0]
-
-            if not (player_idxs.any() and distance_idxs.any()):
-                return None
-
-            # reward when player achieves new y-coord low an
-            def reward(fv, p_idxs=player_idxs, d_idxs=distance_idxs):
-                p_entries = fv[p_idxs[0]:p_idxs[-1] + 1]
-                y_coord_reward = 0
-                if self.reward_threshold == -1:  # set starting y
-                    self.reward_threshold = p_entries[1]
-                    y_coord_reward = 0
-                else:
-                    delta = self.reward_threshold - abs(p_entries[1])
-                    if delta > 0:
-                        self.reward_threshold = abs(p_entries[1])
-                        y_coord_reward = delta  # reward when player achieves new y-coord low an
-
-                d_entries = fv[d_idxs[0]:d_idxs[-1] + 1]
-                self.reward_history[0] = self.reward_history[1]
-                self.reward_history[1] = abs(d_entries[0])  # x-dist
-                delta = self.reward_history[0] - self.reward_history[1]  # decreasing x-distance to Scale1
-                distance_reward = delta if 100 > delta > 0 else 0  # only positives and ignore 100+ spikes
-                return y_coord_reward + 0.1 * distance_reward
-
-            return reward
-        elif "Skiing" in env:
-            # skiing reward function
-            player_position_idxs = np.empty(0)
-            flag_center_idxs = np.empty(0)
-            flag_velocity_idxs = np.empty(0)
-            for feature in fv_description:
-                i += 1
-                feature_name = feature[0]
-                feature_signature = feature[1]
-                if feature_name == "CENTER":
-                    input1 = feature_signature[0]
-                    input2 = feature_signature[1]
-                    if input1[0] == "POSITION" and input1[1] == "Flag1" and input2[0] == "POSITION" and input2[
-                        1] == "Flag2":
-                        flag_center_idxs = np.where(fv_backmap == i - 1)[0]
-                if feature_name == "POSITION":
-                    if feature_signature == "Player1":
-                        player_position_idxs = np.where(fv_backmap == i - 1)[0]
-                if feature_name == "DIR_VELOCITY":
-                    input = feature_signature[0]
-                    if input[0] == "POSITION_HISTORY" and input[1] == "Flag1":
-                        flag_velocity_idxs = np.where(fv_backmap == i - 1)[0]
-            if not (player_position_idxs.any() and flag_center_idxs.any() and flag_center_idxs.any()):
-                return None
-
-            # reward for high player velocity and player decreases euc-distance to center of flag1 and flag2
-            def reward(fv, c_idxs=flag_center_idxs, p_idxs=player_position_idxs, v_idxs=flag_velocity_idxs):
-                p_entries = fv[p_idxs[0]:p_idxs[-1] + 1]
-                c_entries = fv[c_idxs[0]:c_idxs[-1] + 1]
-                v_entries = fv[v_idxs[0]:v_idxs[-1] + 1]
-                euc_dist = FUNCTIONS["EUCLIDEAN_DISTANCE"]["object"]
-                player_flag_distance = euc_dist(p_entries, c_entries)[0]
-                self.reward_history[0] = self.reward_history[1]
-                self.reward_history[1] = player_flag_distance
-                delta = self.reward_history[0] - self.reward_history[1]  # decrease in distance: positive sign
-                player_flag_distance_delta = delta if delta > 0 else 0  # only give positives
-                euc_velocity_flag = np.clip(math.sqrt((v_entries[0]) ** 2 + (v_entries[1]) ** 2), 0, 10)  # clip to 10
-                return euc_velocity_flag + 4 * player_flag_distance_delta
-
-            return reward
-        else:
-            return "norew"

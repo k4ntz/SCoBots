@@ -63,11 +63,11 @@ def main():
 
 
     EVAL_ENV_SEED = 0
-    env = Environment(env_str, 
-                        focus_file=pruned_ff_name, 
-                        hide_properties=hide_properties, 
-                        draw_features=False, # implement feature attribution
-                        reward=0) #env reward only for evaluation
+    env = Environment(env_str,
+                      focus_file=pruned_ff_name,
+                      hide_properties=hide_properties,
+                      draw_features=False,  # implement feature attribution
+                      reward_mode=0) #env reward only for evaluation
 
     obs, info = env.reset(seed=EVAL_ENV_SEED)
     print(obs)

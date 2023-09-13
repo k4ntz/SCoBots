@@ -5,16 +5,18 @@ import numpy as np
 from PIL import Image, ImageDraw
 from gymnasium import spaces, Env
 from gymnasium.core import RenderFrame
+from termcolor import colored
 
 import scobi.environments.env_manager as em
 from scobi.focus import Focus
 from scobi.utils.game_object import get_wrapper_class
 from scobi.utils.logging import Logger
 from scobi.preprocessing import Normalizer
+from scobi.reward_shaping import get_reward_fn
 
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False,
+    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward_mode=0, hide_properties=False,
                  silent=False, refresh_yaml=True, draw_features=False, normalize=False, freeze_invisible_obj=False,
                  **kwargs):
         self.logger = Logger(silent=silent)
@@ -29,11 +31,12 @@ class Environment(Env):
         actions = self.oc_env._env.unwrapped.get_action_meanings()
 
         self.oc_env.reset(seed=seed)
-        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
+        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward_mode)
         self.did_reset = False
-        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions,
+        self.focus = Focus(env_name, hide_properties, focus_dir, focus_file, max_objects, actions,
                            freeze_invisible_obj, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
+
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
         self.observation_space_description = self.focus.PARSED_PROPERTIES + self.focus.PARSED_FUNCTIONS  # this and feature_vector_desc is redundant
@@ -45,15 +48,18 @@ class Environment(Env):
         self._rel_obs = None  # observation augmented with relations
         self._top_features = []
 
+        self._reward_mode = reward_mode
+        self._setup_reward(env_name.split("/")[-1])
+
         self.original_obs = []
         self.original_reward = []
         self.ep_env_reward = None
         self.ep_env_reward_buffer = 0
         self.reset_ep_reward = True
 
-        if reward == 2:  # mix rewards
+        if reward_mode == 2:  # mix rewards
             self._reward_composition_func = lambda a, b: a + b
-        elif reward == 1:  # scobi only
+        elif reward_mode == 1:  # scobi only
             self._reward_composition_func = lambda a, b: a
         else:  # env only
             self._reward_composition_func = lambda a, b: b
@@ -70,14 +76,37 @@ class Environment(Env):
         self.reset()
         self.did_reset = False  # still require user to properly call a (likely seeded) reset()
 
+    def _setup_reward(self, env_name: str):
+        if self._reward_mode != 0:
+            if self._reward_mode == 1:
+                log_str = "scobi"
+            elif self._reward_mode == 2:
+                log_str = "env + scobi"
+            else:
+                log_str = "unknown"
+
+            self.logger.GeneralInfo("Reward Shaping: %s." % colored(log_str, "light_green"))
+            self._reward_fn = get_reward_fn(env_name)
+
+            if self._reward_fn is None:
+                self.logger.GeneralError(
+                    "Reward function for %s not implemented!" % colored(env_name, "orange"))
+            else:
+                self.logger.GeneralInfo("Reward function is valid. Bound.")
+
+        else:
+            self._reward_fn = None
+            self.logger.GeneralInfo("Reward Shaping: %s." % colored("disabled", "light_yellow"))
+
     def step(self, action):
         if not self.did_reset:
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
             objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME,
-                                                        self.focus.REWARD_SHAPING)
-            sco_obs, sco_reward = self.focus.get_feature_vector(objects)
+                                                        self._reward_mode)
+            sco_obs = self.focus.get_feature_vector(objects)
+            sco_reward = self._reward_fn(objects, terminated) if self._reward_fn is not None else 0
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
                 self._obj_obs = self._draw_objects_overlay(obs)
@@ -105,8 +134,8 @@ class Environment(Env):
         self.focus.reward_threshold = -1
         self.focus.reward_history = [0, 0]
         _, info = self.oc_env.reset(*args, **kwargs)
-        objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
-        sco_obs, _ = self.focus.get_feature_vector(objects)
+        objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self._reward_mode)
+        sco_obs = self.focus.get_feature_vector(objects)
         if self.normalize:
             sco_obs = self.normalizer(sco_obs)
         return sco_obs, info
