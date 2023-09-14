@@ -11,14 +11,7 @@ def get_reward_fn(env: str):
 
 def reward_pong(game_objects: Sequence[GameObject], _: bool) -> float:
     """Small negative reward when y-distance between player and ball > 14"""
-
-    # Identify relevant objects
-    ball = player = None
-    for game_object in game_objects:
-        if game_object.category == "Ball":
-            ball = game_object
-        elif game_object.category == "Player":
-            player = game_object
+    ball, player = _get_game_objects_by_category(game_objects, ["Ball", "Player"])
 
     if ball is None or player is None:
         return 0
@@ -76,15 +69,21 @@ def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> flo
     n_lives = _count_game_objects_of_category(game_objects, "Life")
 
     # Encourage moving to the child
-    y_distance = abs(child.xy[1] - player.xy[1])
-    if episode_starts:
-        y_distance_reward = 0
+    if player is not None and child is not None:
+        y_distance = abs(child.xy[1] - player.xy[1])
+        if episode_starts:
+            y_distance_reward = 0
+        else:
+            y_distance_reward = (last_y_distance - y_distance) / 5
+        last_y_distance = y_distance
     else:
-        y_distance_reward = (last_y_distance - y_distance) / 5
-    last_y_distance = y_distance
+        y_distance_reward = 0
 
     # Discourage monkey kicking
-    score_reward = score.value_diff / 200
+    if score is not None:
+        score_reward = score.value_diff / 200
+    else:
+        score_reward = 0
 
     # Discourage loosing lives
     if episode_starts:
@@ -143,7 +142,7 @@ def reward_skiing(game_objects: Sequence[GameObject], terminated: bool) -> float
     return 0
 
 
-def _get_game_objects_by_category(game_objects: Sequence[GameObject], categories: Sequence[str]):
+def _get_game_objects_by_category(game_objects: Sequence[GameObject], categories: Sequence[str]) -> Sequence[GameObject]:
     result = len(categories) * [None]
 
     for game_object in game_objects:
