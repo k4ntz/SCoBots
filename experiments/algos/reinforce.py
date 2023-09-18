@@ -836,14 +836,13 @@ def eval_load(cfg):
     # init env
     env = Environment(cfg.env_name,
                       cfg.seed,
-                      interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, _, _, _ = env.step(1)
+    obs, _, _, _, _ = env.step(1)
     hidden_layer_size = cfg.train.policy_h_size
     act_f = cfg.train.policy_act_f
     if hidden_layer_size == 0:

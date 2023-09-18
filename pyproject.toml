@@ -20,7 +20,7 @@ dependencies = [
     "numpy",
     "pyyaml",
     "colormath",
-    "ocatari==0.1.2",
+    "ocatari>=0.1.3",
 ]
 
 #[project.urls]

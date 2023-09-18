@@ -63,7 +63,6 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
     draw = cfg.liveplot
     env = Environment(cfg.env_name,
                       cfg.seed,
-                      interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
@@ -71,7 +70,8 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
                       draw_features=draw)
     n_actions = env.action_space.n
     _, ep_reward = env.reset(), 0
-    obs, _, _, _, _, info, obs_raw = env.step(1)
+    obs, _, _, _, info = env.step(1)
+    obs_raw = env.original_obs
     features = obs
     summary(model, input_size=(1, len(features)), device=cfg.device)
     print("Runs:", runs)
@@ -164,10 +164,11 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
                     features_text.set_text(to_draw)
                     plt.pause(frame_delta)
                 env.set_feature_attribution(attris.squeeze(0).detach().cpu().numpy())
-                obs, reward, scobi_reward, done, done2, info, obs_raw = env.step(action)
+                obs, scobi_reward, done, done2, info = env.step(action)
+                obs_raw = env.original_obs
                 #print(scobi_reward)
                 features = obs
-                ep_reward += reward
+                ep_reward += env.original_reward
                 sco_reward += scobi_reward
                 t += 1
                 if done or done2:
@@ -209,7 +210,8 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
 
 def explain_agent(cfg, model, normalizer):
     norm_state = normalizer.get_state()
-    print(norm_state)
+    print(len(norm_state))
+    print(len(fnames_pong))
     assert(len(norm_state) == len(fnames_pong))
 
     for state, name in zip(norm_state, fnames_pong):
@@ -222,14 +224,14 @@ def explain_agent(cfg, model, normalizer):
     # init env
     env = Environment(cfg.env_name,
                       cfg.seed,
-                      interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file,
                       draw_features=True)
     _, ep_reward = env.reset(), 0
-    obs, _, _, _, _, info, obs_raw = env.step(1)
+    obs, _, _, _, info = env.step(1)
+    obs_raw = env.original_obs
     features = obs
     summary(model, input_size=(1, len(features)), device=cfg.device)
     print("Runs:", runs)
@@ -328,9 +330,10 @@ def explain_agent(cfg, model, normalizer):
                     to_draw += f" --> {env.action_space_description[action]}"
                 features_text.set_text(to_draw)
                 plt.pause(frame_delta)
-                obs, reward, scobi_reward, done, done2, info, obs_raw = env.step(action)
+                obs, scobi_reward, done, done2, info = env.step(action)
+                obs_raw = env.original_obs
                 features = obs
-                ep_reward += reward
+                ep_reward += env.original_reward
                 sco_reward += scobi_reward
                 t += 1
                 if done or done2:

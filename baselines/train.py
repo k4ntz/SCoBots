@@ -64,11 +64,6 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
 
 
 def main():
-
-
-    # TODO: make reward_shaping with unpruned mode work, change in scobi, doesnt make sense to have 
-    # "interactive" and "non interactive" modes
-    # TODO: add "exclude concepts"
     parser = argparse.ArgumentParser()
     parser.add_argument("-g", "--game", type=str, required=True,
                         help="game to train (e.g. 'Pong')")

@@ -560,6 +560,7 @@ class Focus():
             return reward
         elif "Skiing" in env:
             # skiing reward function
+            dscale = 10
             player_position_idxs = np.empty(0)
             flag_center_idxs = np.empty(0)
             flag_velocity_idxs = np.empty(0)
@@ -591,9 +592,11 @@ class Focus():
                 self.reward_history[0] = self.reward_history[1]
                 self.reward_history[1] = player_flag_distance
                 delta = self.reward_history[0] - self.reward_history[1] #decrease in distance: positive sign
-                player_flag_distance_delta = delta if delta > 0 else 0 #only give positives
-                euc_velocity_flag = np.clip(math.sqrt((v_entries[0])**2 + (v_entries[1])**2), 0, 10) #clip to 10
-                return euc_velocity_flag + 4 * player_flag_distance_delta
+                player_flag_distance_delta = delta * dscale if p_entries[1] < c_entries[1] else 0 #only scale and send if next flag is ahead not behind
+                player_flag_distance_delta = player_flag_distance_delta if abs(player_flag_distance_delta) < 20 * dscale else 0 #omit bad delta spikes when new flag in focus
+                #euc_velocity_flag = np.clip(math.sqrt((v_entries[0])**2 + (v_entries[1])**2), 0, 10) #clip to 10
+                #print([euc_velocity_flag, player_flag_distance_delta])
+                return player_flag_distance_delta #+ euc_velocity_flag 
             return reward
         else:
             return "norew"
