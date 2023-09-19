@@ -6,7 +6,7 @@ from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
-from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack
+from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack, VecNormalize
 from stable_baselines3.common.env_util import make_atari_env
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.utils import set_random_seed
@@ -56,6 +56,23 @@ class TensorboardCallback(BaseCallback):
         if len(buff_list) == 0:
             return
         self.logger.record("rollout/ep_env_rew_mean", np.mean(list(self.buffer)))
+
+
+class SaveBestModelCallback(BaseCallback):
+    def __init__(self, save_path: str):
+        super(SaveBestModelCallback, self).__init__()
+        self.save_path = save_path
+        
+    def _init_callback(self) -> None:
+        if self.save_path is not None:
+            os.makedirs(self.save_path, exist_ok=True)
+    
+    def _on_step(self) -> bool:
+        save_path_name = os.path.join(self.save_path, "best_vecnormalize.pkl")
+        self.model.get_vec_normalize_env().save(save_path_name)
+        self.model.save(os.path.join(self.save_path, "best_model"))
+        
+
 
 def linear_schedule(initial_value: float) -> Callable[[float], float]:
     def func(progress_remaining: float) -> float:
@@ -125,8 +142,6 @@ def main():
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
 
-
-
     def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
             env = Environment(env_str, 
@@ -170,12 +185,14 @@ def main():
         check_env(monitor.env)
         del monitor
         # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing 
-        eval_env = SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD)
-        train_env = SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD)
+        eval_env = VecNormalize(SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False, training=False)
+        train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
 
     rtpt_iters = training_timestamps // rtpt_frequency
+    save_bm = SaveBestModelCallback(ckpt_path)
     eval_callback = EvalCallback(
         eval_env,
+        callback_on_new_best=save_bm,
         n_eval_episodes=n_eval_episodes,
         best_model_save_path=str(ckpt_path),
         log_path=str(ckpt_path),
@@ -188,7 +205,7 @@ def main():
         save_path=str(ckpt_path),
         name_prefix="model",
         save_replay_buffer=True,
-        save_vecnormalize=False,)
+        save_vecnormalize=True)
     
     rtpt_callback = RtptCallback(
         exp_name=exp_name,

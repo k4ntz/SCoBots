@@ -78,6 +78,7 @@ class Environment(Env):
                 self.ep_env_reward = self.ep_env_reward_buffer
                 self.ep_env_reward_buffer = 0
                 self.reset_ep_reward = True
+                self.focus.reward_subgoals = 0
             final_reward = self._reward_composition_func(sco_reward, reward)
             return sco_obs, final_reward, truncated, terminated, info # 5
         else:
