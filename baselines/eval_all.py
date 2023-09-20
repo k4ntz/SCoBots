@@ -5,106 +5,143 @@ from stable_baselines3 import PPO
 from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
+from multiprocessing import JoinableQueue
+from multiprocessing import Process, Value
 
 
 def main():
-    envs = ["Bowling", "Skiing", "Pong", "Boxing", "Freeway", "Skiing"]
+    envs = ["Bowling", "Pong", "Tennis", "Boxing", "Freeway", "Skiing"]
     check_dir = "baselines_checkpoints"
     variants = ["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011]
-    episodes_per_seed = 10
+    episodes_per_seed = 5
     checkpoint_str = "best_model" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
-    run_results = []
-    detailed_results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "mean", "std"]
-    detailed_results_data = []
+    eval_results_pkl_path = Path("eval_results.pkl")
+    eval_results_csv_path = Path("eval_results.csv")
+    results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
+    EVALUATORS = 4
 
     def run_list():
-        run_queue = {"env": "", "variant" : "", "models": []}
+        task = {"env": "", "variant" : "", "model": [], "eval_seed": ""}
         for e in envs:
-            run_queue["env"] = e
+            task["env"] = e
             for v in variants:
-                run_list = []
-                run_queue["variant"] = v
+                task["variant"] = v
                 p = Path(check_dir, v)
                 for path in Path(p).iterdir():
                     if path.is_dir() and e in str(path):
-                        run_list.append(path)
-                        run_queue["models"] = run_list
-                yield run_queue
+                        task["model"] = path
+                        for s in eval_env_seeds:
+                            task["eval_seed"] = s
+                            yield task
+
+
+    def evaluate(jobq : JoinableQueue, doneq : JoinableQueue):
+        while True:
+            if jobq.empty():
+                break 
+            task = jobq.get()
+            env_str = task["env"]
+            model_dir = task["model"]
+            eval_seed = task["eval_seed"]
+            variant = task["variant"]
+            vecnorm_path = Path(model_dir,  vecnorm_str)
+            model_path = Path(model_dir, checkpoint_str)
+            train_seed = model_dir.name.split("_")[1][1:]
+            pruned_ff_name = None
+            if task["variant"] == "iscobots":
+                pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
+            atari_env_str = "ALE/" + env_str +"-v5"
+            
+            env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
+            _, _ = env.reset(seed=eval_seed)
+            dummy_vecenv = DummyVecEnv([lambda :  env])
+            env = VecNormalize.load(vecnorm_path, dummy_vecenv)
+            env.training = False
+            env.norm_reward = False
+            model = PPO.load(model_path)
+
+            current_episode = 0
+            episode_rewards = []
+            steps = []
+            current_rew = 0
+            current_step = 0
+            obs = env.reset()
+            while True:
+                action, _ = model.predict(obs, deterministic=True)
+                obs, reward, done, info = env.step(action)
+                current_rew += reward
+                current_step += 1
+                if done:
+                    current_episode += 1
+                    episode_rewards.append(current_rew)
+                    steps.append(current_step)
+                    current_rew = 0
+                    current_step = 0
+                    obs = env.reset()
+                if current_episode == episodes_per_seed:
+                    #["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steaps_std"]
+                    result_record = [env_str, variant, train_seed, eval_seed, episodes_per_seed, np.mean(episode_rewards), np.std(episode_rewards), np.mean(steps), np.std(steps)]
+                    doneq.put(result_record)
+                    jobq.task_done()
+                    break
+
+        
+    
+    def flush(doneq : JoinableQueue, pbar):
+        while True:
+            record = doneq.get()
+            if eval_results_pkl_path.exists():
+                results_df = pd.read_pickle(eval_results_pkl_path)
+                results_df.loc[len(results_df)] = record
+            else:
+                results_df = pd.DataFrame([record], columns=results_header)
+            results_df.to_pickle(eval_results_pkl_path)
+            results_df.to_csv(eval_results_csv_path)
+            pbar.update(episodes_per_seed)
+            doneq.task_done()
 
 
 
-
+    for e in envs:
+        atari_env_str = "ALE/" + e +"-v5"
+        Environment(atari_env_str, silent=True, refresh_yaml=True)
+    
     pbarsize = 0
-    for a in run_list():
-        pbarsize += len(a["models"])
-    pbarsize = pbarsize * len(eval_env_seeds) * episodes_per_seed
+    for r in run_list():
+        pbarsize += 1
+    pbarsize *= episodes_per_seed
     pbar = tqdm(total=pbarsize)
+
+
+    jobq = JoinableQueue()
+    doneq = JoinableQueue()
     rlist = run_list()
     for run in rlist:
-        model_dir_results = []
-        for model_dir in run["models"]:
-            train_seed = model_dir.name.split("_")[1][1:]
-            eval_seed_rewards = []
-            env_str = run["env"]
-            game_id = env_str.lower()
-            pruned_ff_name = None
-            if run["variant"] == "iscobots":
-                pruned_ff_name = f"pruned_{game_id}.yaml"
-            for eval_seed in eval_env_seeds:
-                pbar.set_description(f"{env_str} {run['variant']} {eval_seed}")
-                vecnorm_path = Path(model_dir,  vecnorm_str)
-                model_path = Path(model_dir, checkpoint_str)
-                
-                atari_env_str = "ALE/" + env_str +"-v5"
-                env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True)
-                _, _ = env.reset(seed=eval_seed)
-                dummy_vecenv = DummyVecEnv([lambda :  env])
-                env = VecNormalize.load(vecnorm_path, dummy_vecenv)
-                env.training = False
-                env.norm_reward = False
-                model = PPO.load(model_path)
+        job = run.copy()
+        jobq.put(job)
 
-                current_episode = 0
-                episode_rewards = []
-                steps = []
-                current_rew = 0
-                current_step = 0
-                obs = env.reset()
-                while True:
-                    action, _ = model.predict(obs, deterministic=True)
-                    obs, reward, done, info = env.step(action)
-                    current_rew += reward
-                    current_step += 1
-                    if done:
-                        current_episode += 1
-                        episode_rewards.append(current_rew)
-                        steps.append(current_step)
-                        current_rew = 0
-                        current_step = 0
-                        obs = env.reset()
-                        pbar.update(1)
-                    if current_episode == episodes_per_seed:
-                        #print(episode_rewards)
-                        #print(f"> mean: {np.mean(episode_rewards):.2f} mean_steps: {np.mean(steps):.2f}")
-                        eval_seed_rewards.append(np.mean(episode_rewards))
-                        break
-            #print(eval_seed_rewards)
-            #print(f"> mean: {np.mean(eval_seed_rewards):.2f}")
-            model_dir_results.append(np.mean(eval_seed_rewards))
-            #["env", "variant", "train_seed", "eval_seed", "episodes", "mean", "std"]
-            result_record = [env_str, run["variant"], train_seed, eval_seed, episodes_per_seed, np.mean(eval_seed_rewards), np.std(eval_seed_rewards)]
-            detailed_results_data.append(result_record)
-       # print(model_dir_results)
-       # print(f"> mean: {np.mean(model_dir_results):.2f}")
-        run_results.append([env_str, run["variant"], np.mean(model_dir_results), np.std(model_dir_results)])
-    detailed_results_df = pd.DataFrame(detailed_results_data, columns=detailed_results_header)
-    print(detailed_results_df)
-    agg_results_df = pd.DataFrame(run_results, columns=["env", "variant", "mean", "std"])
-    print(agg_results_df)
-    agg_results_df.to_pickle("eval_agg_results.pkl")
-    detailed_results_df.to_pickle("eval_detailed_results.pkl")
 
+    workers = []
+    for _ in range(EVALUATORS):
+        t = Process(target=evaluate, args=(jobq, doneq))
+        t.daemon = True
+        workers.append(t)
+    for w in workers:
+        w.start()
+
+
+    
+    flusher = Process(target=flush, args=(doneq, pbar))
+    flusher.daemon = True
+    flusher.start()
+
+    jobq.join()
+    for w in workers:
+        w.join()
+    doneq.join()
+
+ 
 if __name__ == '__main__':
     main()

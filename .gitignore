@@ -172,6 +172,6 @@ baselines/baselines_checkpoints
 baselines/baselines_logs
 baselines/baselines_focusfiles
 baselines/plots
-baselines/out.csv
-baselines/out.pkl
+baselines/*.csv
+baselines/*.pkl
 baselines/focusfiles/default_*

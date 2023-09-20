@@ -129,14 +129,13 @@ def train(cfg):
     # init env to get params for policy net
     env = Environment(cfg.env_name,
                       cfg.seed,
-                      interactive=cfg.scobi_interactive,
                       reward=cfg.scobi_reward_shaping,
                       hide_properties=cfg.scobi_hide_properties,
                       focus_dir=cfg.scobi_focus_dir,
                       focus_file=cfg.scobi_focus_file)
     n_actions = env.action_space.n
     env.reset()
-    obs, _, _, _, _, _, _ = env.step(1)
+    obs, _, _, _, _ = env.step(1)
     hidden_layer_size = cfg.train.policy_h_size
     act_f = cfg.train.policy_act_f
     if hidden_layer_size == 0:
@@ -277,7 +276,8 @@ def train(cfg):
                                                         n_actions)
                 value_net_input = torch.tensor(obs, device=dev).unsqueeze(0)
                 value_estimation = torch.squeeze(value_net.forward(value_net_input), -1)
-                new_obs, natural_reward, scobi_reward, terminated, truncated, _, _ = env.step(action)
+                new_obs, scobi_reward, terminated, truncated, _ = env.step(action)
+                natural_reward = env.original_reward
 
                 # collection
                 probs = probs[probs != 0] # 0probs
