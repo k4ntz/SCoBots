@@ -1,5 +1,4 @@
 env_name: 'SkiingDeterministic-v4'
-scobi_interactive: True
 scobi_reward_shaping: 1 #only scobi
 scobi_focus_dir: 'my_focusfiles'
 scobi_focus_file: 'pruned_skiing.yaml' 

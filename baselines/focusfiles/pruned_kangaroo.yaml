@@ -2,8 +2,8 @@ ENVIRONMENT: Kangaroo-v5
 AVAILABLE_CONCEPTS:
   objects:
   - Player1
-  - Enemy1
-  - Enemy2
+  - Monkey1
+  - Monkey2
   - Enemy3
   - Enemy4
   - Fruit1
@@ -11,15 +11,15 @@ AVAILABLE_CONCEPTS:
   - Fruit3
   - Bell1
   - Child1
-  - Scale1
-  - Scale2
+  - Ladder1
+  - Ladder2
   - Scale3
   - Platform1
   - Platform2
   - Platform3
   - Platform4
-  - Projectile_top1
-  - Projectile_enemy1
+  - FallingCoconut1
+  - ThrownCoconut1
   actions:
   - NOOP
   - FIRE
@@ -92,18 +92,18 @@ AVAILABLE_CONCEPTS:
 SELECTION:
   objects:
   - Player1
-  - Enemy1
-  - Enemy2
+  - Monkey1
+  - Monkey2
   - Fruit1
   - Fruit2
   - Bell1
   - Child1
-  - Scale1
-  - Scale2
+  - Ladder1
+  - Ladder2
   - Platform1
   - Platform2
-  - Projectile_top1
-  - Projectile_enemy1
+  - FallingCoconut1
+  - ThrownCoconut1
   actions:
   - NOOP
   - FIRE
@@ -115,38 +115,38 @@ SELECTION:
   - UPLEFT
   properties:
   - POSITION: Player1
-  - POSITION: Enemy1
-  - POSITION: Enemy2
+  - POSITION: Monkey1
+  - POSITION: Monkey2
   - POSITION: Fruit1
   - POSITION: Fruit2
   - POSITION: Bell1
   - POSITION: Child1
-  - POSITION: Scale1
-  - POSITION: Scale2
+  - POSITION: Ladder1
+  - POSITION: Ladder2
   - POSITION: Platform1
   - POSITION: Platform2
-  - POSITION: Projectile_top1
-  - POSITION: Projectile_enemy1
+  - POSITION: FallingCoconut1
+  - POSITION: ThrownCoconut1
   - POSITION_HISTORY: Player1
-  - POSITION_HISTORY: Enemy1
-  - POSITION_HISTORY: Enemy2
+  - POSITION_HISTORY: Monkey1
+  - POSITION_HISTORY: Monkey2
   - POSITION_HISTORY: Fruit1
   - POSITION_HISTORY: Fruit2
   - POSITION_HISTORY: Bell1
   - POSITION_HISTORY: Child1
-  - POSITION_HISTORY: Scale1
-  - POSITION_HISTORY: Scale2
+  - POSITION_HISTORY: Ladder1
+  - POSITION_HISTORY: Ladder2
   - POSITION_HISTORY: Platform1
   - POSITION_HISTORY: Platform2
-  - POSITION_HISTORY: Projectile_top1
-  - POSITION_HISTORY: Projectile_enemy1
+  - POSITION_HISTORY: FallingCoconut1
+  - POSITION_HISTORY: ThrownCoconut1
   functions:
   - DISTANCE:
     - POSITION: Player1
-    - POSITION: Enemy1
+    - POSITION: Monkey1
   - DISTANCE:
     - POSITION: Player1
-    - POSITION: Enemy2
+    - POSITION: Monkey2
   - DISTANCE:
     - POSITION: Player1
     - POSITION: Fruit1
@@ -161,10 +161,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Player1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Player1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Player1
     - POSITION: Platform1
@@ -173,91 +173,91 @@ SELECTION:
     - POSITION: Platform2
   - DISTANCE:
     - POSITION: Player1
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
   - DISTANCE:
     - POSITION: Player1
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
-    - POSITION: Enemy1
+    - POSITION: Monkey1
     - POSITION: Player1
   - DISTANCE:
-    - POSITION: Enemy1
-    - POSITION: Enemy2
+    - POSITION: Monkey1
+    - POSITION: Monkey2
   - DISTANCE:
-    - POSITION: Enemy1
+    - POSITION: Monkey1
     - POSITION: Fruit1
   - DISTANCE:
-    - POSITION: Enemy1
+    - POSITION: Monkey1
     - POSITION: Fruit2
   - DISTANCE:
-    - POSITION: Enemy1
+    - POSITION: Monkey1
     - POSITION: Bell1
   - DISTANCE:
-    - POSITION: Enemy1
+    - POSITION: Monkey1
     - POSITION: Child1
   - DISTANCE:
-    - POSITION: Enemy1
-    - POSITION: Scale1
+    - POSITION: Monkey1
+    - POSITION: Ladder1
   - DISTANCE:
-    - POSITION: Enemy1
-    - POSITION: Scale2
+    - POSITION: Monkey1
+    - POSITION: Ladder2
   - DISTANCE:
-    - POSITION: Enemy1
+    - POSITION: Monkey1
     - POSITION: Platform1
   - DISTANCE:
-    - POSITION: Enemy1
+    - POSITION: Monkey1
     - POSITION: Platform2
   - DISTANCE:
-    - POSITION: Enemy1
-    - POSITION: Projectile_top1
+    - POSITION: Monkey1
+    - POSITION: FallingCoconut1
   - DISTANCE:
-    - POSITION: Enemy1
-    - POSITION: Projectile_enemy1
+    - POSITION: Monkey1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
-    - POSITION: Enemy2
+    - POSITION: Monkey2
     - POSITION: Player1
   - DISTANCE:
-    - POSITION: Enemy2
-    - POSITION: Enemy1
+    - POSITION: Monkey2
+    - POSITION: Monkey1
   - DISTANCE:
-    - POSITION: Enemy2
+    - POSITION: Monkey2
     - POSITION: Fruit1
   - DISTANCE:
-    - POSITION: Enemy2
+    - POSITION: Monkey2
     - POSITION: Fruit2
   - DISTANCE:
-    - POSITION: Enemy2
+    - POSITION: Monkey2
     - POSITION: Bell1
   - DISTANCE:
-    - POSITION: Enemy2
+    - POSITION: Monkey2
     - POSITION: Child1
   - DISTANCE:
-    - POSITION: Enemy2
-    - POSITION: Scale1
+    - POSITION: Monkey2
+    - POSITION: Ladder1
   - DISTANCE:
-    - POSITION: Enemy2
-    - POSITION: Scale2
+    - POSITION: Monkey2
+    - POSITION: Ladder2
   - DISTANCE:
-    - POSITION: Enemy2
+    - POSITION: Monkey2
     - POSITION: Platform1
   - DISTANCE:
-    - POSITION: Enemy2
+    - POSITION: Monkey2
     - POSITION: Platform2
   - DISTANCE:
-    - POSITION: Enemy2
-    - POSITION: Projectile_top1
+    - POSITION: Monkey2
+    - POSITION: FallingCoconut1
   - DISTANCE:
-    - POSITION: Enemy2
-    - POSITION: Projectile_enemy1
+    - POSITION: Monkey2
+    - POSITION: ThrownCoconut1
   - DISTANCE:
     - POSITION: Fruit1
     - POSITION: Player1
   - DISTANCE:
     - POSITION: Fruit1
-    - POSITION: Enemy1
+    - POSITION: Monkey1
   - DISTANCE:
     - POSITION: Fruit1
-    - POSITION: Enemy2
+    - POSITION: Monkey2
   - DISTANCE:
     - POSITION: Fruit1
     - POSITION: Fruit2
@@ -269,10 +269,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Fruit1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Fruit1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Fruit1
     - POSITION: Platform1
@@ -281,19 +281,19 @@ SELECTION:
     - POSITION: Platform2
   - DISTANCE:
     - POSITION: Fruit1
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
   - DISTANCE:
     - POSITION: Fruit1
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
     - POSITION: Fruit2
     - POSITION: Player1
   - DISTANCE:
     - POSITION: Fruit2
-    - POSITION: Enemy1
+    - POSITION: Monkey1
   - DISTANCE:
     - POSITION: Fruit2
-    - POSITION: Enemy2
+    - POSITION: Monkey2
   - DISTANCE:
     - POSITION: Fruit2
     - POSITION: Fruit1
@@ -305,10 +305,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Fruit2
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Fruit2
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Fruit2
     - POSITION: Platform1
@@ -317,19 +317,19 @@ SELECTION:
     - POSITION: Platform2
   - DISTANCE:
     - POSITION: Fruit2
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
   - DISTANCE:
     - POSITION: Fruit2
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
     - POSITION: Bell1
     - POSITION: Player1
   - DISTANCE:
     - POSITION: Bell1
-    - POSITION: Enemy1
+    - POSITION: Monkey1
   - DISTANCE:
     - POSITION: Bell1
-    - POSITION: Enemy2
+    - POSITION: Monkey2
   - DISTANCE:
     - POSITION: Bell1
     - POSITION: Fruit1
@@ -341,10 +341,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Bell1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Bell1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Bell1
     - POSITION: Platform1
@@ -353,19 +353,19 @@ SELECTION:
     - POSITION: Platform2
   - DISTANCE:
     - POSITION: Bell1
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
   - DISTANCE:
     - POSITION: Bell1
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
     - POSITION: Child1
     - POSITION: Player1
   - DISTANCE:
     - POSITION: Child1
-    - POSITION: Enemy1
+    - POSITION: Monkey1
   - DISTANCE:
     - POSITION: Child1
-    - POSITION: Enemy2
+    - POSITION: Monkey2
   - DISTANCE:
     - POSITION: Child1
     - POSITION: Fruit1
@@ -377,10 +377,10 @@ SELECTION:
     - POSITION: Bell1
   - DISTANCE:
     - POSITION: Child1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Child1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Child1
     - POSITION: Platform1
@@ -389,91 +389,91 @@ SELECTION:
     - POSITION: Platform2
   - DISTANCE:
     - POSITION: Child1
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
   - DISTANCE:
     - POSITION: Child1
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Player1
   - DISTANCE:
-    - POSITION: Scale1
-    - POSITION: Enemy1
+    - POSITION: Ladder1
+    - POSITION: Monkey1
   - DISTANCE:
-    - POSITION: Scale1
-    - POSITION: Enemy2
+    - POSITION: Ladder1
+    - POSITION: Monkey2
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Fruit1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Fruit2
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Bell1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Child1
   - DISTANCE:
-    - POSITION: Scale1
-    - POSITION: Scale2
+    - POSITION: Ladder1
+    - POSITION: Ladder2
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Platform1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Platform2
   - DISTANCE:
-    - POSITION: Scale1
-    - POSITION: Projectile_top1
+    - POSITION: Ladder1
+    - POSITION: FallingCoconut1
   - DISTANCE:
-    - POSITION: Scale1
-    - POSITION: Projectile_enemy1
+    - POSITION: Ladder1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Player1
   - DISTANCE:
-    - POSITION: Scale2
-    - POSITION: Enemy1
+    - POSITION: Ladder2
+    - POSITION: Monkey1
   - DISTANCE:
-    - POSITION: Scale2
-    - POSITION: Enemy2
+    - POSITION: Ladder2
+    - POSITION: Monkey2
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Fruit1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Fruit2
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Bell1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Child1
   - DISTANCE:
-    - POSITION: Scale2
-    - POSITION: Scale1
+    - POSITION: Ladder2
+    - POSITION: Ladder1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Platform1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Platform2
   - DISTANCE:
-    - POSITION: Scale2
-    - POSITION: Projectile_top1
+    - POSITION: Ladder2
+    - POSITION: FallingCoconut1
   - DISTANCE:
-    - POSITION: Scale2
-    - POSITION: Projectile_enemy1
+    - POSITION: Ladder2
+    - POSITION: ThrownCoconut1
   - DISTANCE:
     - POSITION: Platform1
     - POSITION: Player1
   - DISTANCE:
     - POSITION: Platform1
-    - POSITION: Enemy1
+    - POSITION: Monkey1
   - DISTANCE:
     - POSITION: Platform1
-    - POSITION: Enemy2
+    - POSITION: Monkey2
   - DISTANCE:
     - POSITION: Platform1
     - POSITION: Fruit1
@@ -488,28 +488,28 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Platform1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Platform1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Platform1
     - POSITION: Platform2
   - DISTANCE:
     - POSITION: Platform1
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
   - DISTANCE:
     - POSITION: Platform1
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
     - POSITION: Platform2
     - POSITION: Player1
   - DISTANCE:
     - POSITION: Platform2
-    - POSITION: Enemy1
+    - POSITION: Monkey1
   - DISTANCE:
     - POSITION: Platform2
-    - POSITION: Enemy2
+    - POSITION: Monkey2
   - DISTANCE:
     - POSITION: Platform2
     - POSITION: Fruit1
@@ -524,97 +524,97 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Platform2
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Platform2
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Platform2
     - POSITION: Platform1
   - DISTANCE:
     - POSITION: Platform2
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
   - DISTANCE:
     - POSITION: Platform2
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
     - POSITION: Player1
   - DISTANCE:
-    - POSITION: Projectile_top1
-    - POSITION: Enemy1
+    - POSITION: FallingCoconut1
+    - POSITION: Monkey1
   - DISTANCE:
-    - POSITION: Projectile_top1
-    - POSITION: Enemy2
+    - POSITION: FallingCoconut1
+    - POSITION: Monkey2
   - DISTANCE:
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
     - POSITION: Fruit1
   - DISTANCE:
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
     - POSITION: Fruit2
   - DISTANCE:
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
     - POSITION: Bell1
   - DISTANCE:
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
     - POSITION: Child1
   - DISTANCE:
-    - POSITION: Projectile_top1
-    - POSITION: Scale1
+    - POSITION: FallingCoconut1
+    - POSITION: Ladder1
   - DISTANCE:
-    - POSITION: Projectile_top1
-    - POSITION: Scale2
+    - POSITION: FallingCoconut1
+    - POSITION: Ladder2
   - DISTANCE:
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
     - POSITION: Platform1
   - DISTANCE:
-    - POSITION: Projectile_top1
+    - POSITION: FallingCoconut1
     - POSITION: Platform2
   - DISTANCE:
-    - POSITION: Projectile_top1
-    - POSITION: Projectile_enemy1
+    - POSITION: FallingCoconut1
+    - POSITION: ThrownCoconut1
   - DISTANCE:
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
     - POSITION: Player1
   - DISTANCE:
-    - POSITION: Projectile_enemy1
-    - POSITION: Enemy1
+    - POSITION: ThrownCoconut1
+    - POSITION: Monkey1
   - DISTANCE:
-    - POSITION: Projectile_enemy1
-    - POSITION: Enemy2
+    - POSITION: ThrownCoconut1
+    - POSITION: Monkey2
   - DISTANCE:
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
     - POSITION: Fruit1
   - DISTANCE:
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
     - POSITION: Fruit2
   - DISTANCE:
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
     - POSITION: Bell1
   - DISTANCE:
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
     - POSITION: Child1
   - DISTANCE:
-    - POSITION: Projectile_enemy1
-    - POSITION: Scale1
+    - POSITION: ThrownCoconut1
+    - POSITION: Ladder1
   - DISTANCE:
-    - POSITION: Projectile_enemy1
-    - POSITION: Scale2
+    - POSITION: ThrownCoconut1
+    - POSITION: Ladder2
   - DISTANCE:
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
     - POSITION: Platform1
   - DISTANCE:
-    - POSITION: Projectile_enemy1
+    - POSITION: ThrownCoconut1
     - POSITION: Platform2
   - DISTANCE:
-    - POSITION: Projectile_enemy1
-    - POSITION: Projectile_top1
+    - POSITION: ThrownCoconut1
+    - POSITION: FallingCoconut1
   - DIR_VELOCITY:
     - POSITION_HISTORY: Player1
   - DIR_VELOCITY:
-    - POSITION_HISTORY: Enemy1
+    - POSITION_HISTORY: Monkey1
   - DIR_VELOCITY:
-    - POSITION_HISTORY: Enemy2
+    - POSITION_HISTORY: Monkey2
   - DIR_VELOCITY:
     - POSITION_HISTORY: Fruit1
   - DIR_VELOCITY:
@@ -624,14 +624,14 @@ SELECTION:
   - DIR_VELOCITY:
     - POSITION_HISTORY: Child1
   - DIR_VELOCITY:
-    - POSITION_HISTORY: Scale1
+    - POSITION_HISTORY: Ladder1
   - DIR_VELOCITY:
-    - POSITION_HISTORY: Scale2
+    - POSITION_HISTORY: Ladder2
   - DIR_VELOCITY:
     - POSITION_HISTORY: Platform1
   - DIR_VELOCITY:
     - POSITION_HISTORY: Platform2
   - DIR_VELOCITY:
-    - POSITION_HISTORY: Projectile_top1
+    - POSITION_HISTORY: FallingCoconut1
   - DIR_VELOCITY:
-    - POSITION_HISTORY: Projectile_enemy1
+    - POSITION_HISTORY: ThrownCoconut1

@@ -17,8 +17,8 @@ def main():
     episodes_per_seed = 5
     checkpoint_str = "best_model" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("eval_results.pkl")
-    eval_results_csv_path = Path("eval_results.csv")
+    eval_results_pkl_path = Path("keval_results.pkl")
+    eval_results_csv_path = Path("keval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 

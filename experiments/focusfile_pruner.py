@@ -12,13 +12,13 @@ parser.add_argument("-r", "--relations", type=str, help="relations to prune", de
 opts = parser.parse_args()
 
 
-name = "default_focus_" + opts.env + "Deterministic-v4.yaml"
-actions_to_delete = opts.actions.split(",")
-properties_to_delete = opts.properties.split(",")
-relations_to_delete = opts.relations.split(",")
-objects_to_delete = opts.objects.split(",")
+name = "default_focus_" + opts.env + "-v5.yaml"
+actions_to_delete = opts.actions.split(",") if opts.actions is not None else []
+properties_to_delete = opts.properties.split(",") if opts.properties is not None else []
+relations_to_delete = opts.relations.split(",") if opts.relations is not None else []
+objects_to_delete = opts.objects.split(",") if opts.objects is not None else []
 
-focusdir = Path("experiments", "focusfiles")
+focusdir = Path("baselines", "focusfiles")
 fdir = Path.cwd() / Path(focusdir)
 fpath = fdir / Path(name)
 with open(fpath, "r") as f:

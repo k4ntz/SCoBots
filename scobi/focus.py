@@ -96,7 +96,7 @@ class Focus():
                 else:
                     l.GeneralInfo("Reward function is valid. Bound.")
             else:
-                l.GeneralError("Reward function for %s is expecting properties/concepts that missing in the focus file!" % colored(self.ENV_NAME, "light_green"))
+                l.GeneralError("Reward function for %s is expecting properties/concepts that are missing in the focus file!" % colored(self.ENV_NAME, "light_green"))
         else:
             l.GeneralInfo("Reward Shaping: %s." % colored("disabled", "light_yellow"))
 
@@ -535,7 +535,7 @@ class Focus():
                 if feature_name == "DISTANCE":
                     input1 = feature_signature[0]
                     input2 = feature_signature[1]
-                    if input1[0] == "POSITION" and input1[1] == "Player1" and input2[0] == "POSITION" and input2[1] == "Scale1":
+                    if input1[0] == "POSITION" and input1[1] == "Player1" and input2[0] == "POSITION" and input2[1] == "Ladder1":
                         distance_idxs = np.where(fv_backmap == i-1)[0]
             
             if not (player_idxs.any() and distance_idxs.any()):
@@ -557,7 +557,7 @@ class Focus():
                 self.reward_history[0] = self.reward_history[1]
                 self.reward_history[1] = abs(d_entries[0]) # x-dist
                 delta = self.reward_history[0] - self.reward_history[1] # decreasing x-distance to Scale1
-                distance_reward = delta if 100 > delta > 0 else 0 # only positives and ignore 100+ spikes
+                distance_reward = delta if 100 > delta else 0 # ignore 100+ spikes
                 return y_coord_reward + 0.1 * distance_reward
             return reward
         elif "Skiing" in env:

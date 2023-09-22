@@ -165,6 +165,22 @@
             "reward": 4.6,
             "scobi_reward": 20.0,
             "frames_seen": 20000000
+        },
+        "re-pong_pruned-seed11": {
+            "mode": "base_reward",
+            "seed": 11,
+            "eval_runs": 5,
+            "reward": -12.6,
+            "scobi_reward": -13.120000000000024,
+            "frames_seen": 1400000
+        },
+        "re-pong_pruned-seed42": {
+            "mode": "base",
+            "seed": 42,
+            "eval_runs": 5,
+            "reward": -11.0,
+            "scobi_reward": -11.0,
+            "frames_seen": 2000000
         }
     },
     "SkiingDeterministic-v4": {
@@ -191,6 +207,14 @@
             "reward": -25016.0,
             "scobi_reward": 8002.77072626793,
             "frames_seen": 20000000
+        },
+        "re-skiing_reward_pruned-seed11": {
+            "mode": "base_reward",
+            "seed": 11,
+            "eval_runs": 5,
+            "reward": -7995.4,
+            "scobi_reward": 6619.189193531167,
+            "frames_seen": 250000
         }
     }
 }
