@@ -59,17 +59,19 @@ class TensorboardCallback(BaseCallback):
 
 
 class SaveBestModelCallback(BaseCallback):
-    def __init__(self, save_path: str):
+    def __init__(self, save_path: str, rgb=False):
         super(SaveBestModelCallback, self).__init__()
         self.save_path = save_path
+        self.rgb = rgb
+        self.vec_path_name = os.path.join(self.save_path, "best_vecnormalize.pkl")
         
     def _init_callback(self) -> None:
         if self.save_path is not None:
             os.makedirs(self.save_path, exist_ok=True)
     
     def _on_step(self) -> bool:
-        save_path_name = os.path.join(self.save_path, "best_vecnormalize.pkl")
-        self.model.get_vec_normalize_env().save(save_path_name)
+        if not self.rgb:
+            self.model.get_vec_normalize_env().save(self.vec_path_name)
         self.model.save(os.path.join(self.save_path, "best_model"))
         
 
@@ -189,7 +191,7 @@ def main():
         train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
 
     rtpt_iters = training_timestamps // rtpt_frequency
-    save_bm = SaveBestModelCallback(ckpt_path)
+    save_bm = SaveBestModelCallback(ckpt_path, rgb=opts.rgb)
     eval_callback = EvalCallback(
         eval_env,
         callback_on_new_best=save_bm,
