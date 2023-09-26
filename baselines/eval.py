@@ -70,13 +70,13 @@ def main():
     if opts.rgb:
         settings_str = "-rgb"
     exp_name = opts.game + "_s" + str(opts.seed) + settings_str
-    checkpoint_str = "model_4000000_steps" #"best_model"
-    vecnorm_str = "vecnormalize_4000000_steps.pkl"
+    checkpoint_str = "best_model" #"best_model"
+    vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("baselines_checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("baselines_checkpoints", exp_name, vecnorm_str)
 
 
-    EVAL_ENV_SEED = 69
+    EVAL_ENV_SEED = 42
     env = Environment(env_str, 
                         focus_file=pruned_ff_name, 
                         hide_properties=hide_properties, 

@@ -558,7 +558,7 @@ class Focus():
                 self.reward_history[1] = abs(d_entries[0]) # x-dist
                 delta = self.reward_history[0] - self.reward_history[1] # decreasing x-distance to Scale1
                 distance_reward = delta if 100 > delta else 0 # ignore 100+ spikes
-                return y_coord_reward + 0.1 * distance_reward
+                return y_coord_reward + distance_reward
             return reward
         elif "Skiing" in env:
             # skiing reward function

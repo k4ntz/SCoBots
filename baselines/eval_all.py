@@ -10,7 +10,7 @@ from multiprocessing import Process, Value
 
 
 def main():
-    envs = ["Bowling", "Pong", "Tennis", "Boxing", "Freeway", "Skiing"]
+    envs = ["Kangaroo", "Asterix"] #["Bowling", "Pong", "Tennis", "Boxing", "Freeway", "Skiing"]
     check_dir = "baselines_checkpoints"
     variants = ["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011]
