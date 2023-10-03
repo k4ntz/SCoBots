@@ -22,11 +22,12 @@ def reward_pong(game_objects: Sequence[GameObject], _: bool) -> float:
 
 last_lives = None
 episode_starts = True
+last_crashed = False
 
 
 def reward_seaquest(game_objects: Sequence[GameObject], terminated: bool) -> float:
     """Negative reward on life-loss, positive (scaled) reward on score"""
-    global last_lives, episode_starts
+    global last_lives, episode_starts, last_crashed
 
     # Identify relevant objects
     player, score, lives, oxygen = _get_game_objects_by_category(game_objects,
@@ -37,68 +38,71 @@ def reward_seaquest(game_objects: Sequence[GameObject], terminated: bool) -> flo
     else:
         score_reward = score.value_diff / 10
 
-    if lives is None:
-        if last_lives is not None:  # last live used
-            lives_reward = -10
-        elif terminated:  # finally dead
-            lives_reward = -10
-        else:
-            lives_reward = 0
+    # Discourage crashes
+    if player is not None and player.ocgo.crashed and not last_crashed: # new crash detected
+        crash_reward = -10
     else:
-        lives_reward = lives.value_diff * 10
+        crash_reward = 0
+
+    last_crashed = player.ocgo.crashed
 
     # Encourage oxygen refill when oxygen is low
-    if oxygen is not None and oxygen.w < 16:
-        refill_reward = - player.dy / 10
+    if oxygen is not None and oxygen.w < 8:
+        refill_reward = - player.dy / 5
     else:
         refill_reward = 0
 
     last_lives = lives
     episode_starts = terminated
 
-    return score_reward + lives_reward + refill_reward
+    return score_reward + crash_reward + refill_reward
 
 
 last_y_distance = None
 last_n_lives = 1
 
 
-def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> float:  # TODO: update
+def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> float:
     """Positive Reward for decreasing y-distance to Child Kangaroo."""
-    global last_y_distance, last_n_lives, episode_starts
+    global last_y_distance, last_n_lives, episode_starts, last_crashed
 
-    score, player, child = _get_game_objects_by_category(game_objects, ["PlayerScore", "Player", "Child"])
+    score, player, child = _get_game_objects_by_category(game_objects, ["Score", "Player", "Child"])
     n_lives = _count_game_objects_of_category(game_objects, "Life")
 
-    # Encourage moving to the child
-    if player is not None and child is not None:
-        y_distance = abs(child.xy[1] - player.xy[1])
-        if episode_starts:
-            y_distance_reward = 0
-        else:
-            y_distance_reward = (last_y_distance - y_distance) / 40
-        last_y_distance = y_distance
-    else:
-        y_distance_reward = 0
+    # Get current platform
+    platform = np.ceil((player.xy[1] - 16) / 48)  # 0: topmost, 3: lowest platform
 
-    # Discourage monkey kicking
+    # Encourage moving to the child
+    if not episode_starts and not last_crashed:
+        if platform % 2 == 0:  # even platform, encourage left movement
+            movement_reward = - player.dx
+        else:  # encourage right movement
+            movement_reward = player.dx
+
+        # Always reward upward movement
+        movement_reward -= player.dy / 5
+    else:
+        movement_reward = 0
+
     if score is not None and not episode_starts:
-        score_reward = score.value_diff / 200
+        # # Discourage monkey kicking (each monkey gives exactly 200 points)
+        if score.value_diff == 200:
+            score_reward = score.value_diff / 50
+        else:
+            score_reward = score.value_diff / 5
     else:
         score_reward = 0
 
     # Discourage loosing lives
-    if episode_starts:
-        life_reward = 0
-    elif n_lives == 0 and terminated:
-        life_reward = -20
+    if player is not None and player.ocgo.crashed and not last_crashed: # new crash detected
+        crash_reward = -50
     else:
-        life_reward = (n_lives - last_n_lives) * 20
-    last_n_lives = n_lives
+        crash_reward = 0
 
+    last_crashed = player.ocgo.crashed
     episode_starts = terminated
 
-    return score_reward + y_distance_reward + life_reward
+    return score_reward + movement_reward + crash_reward
 
 
 def reward_skiing(game_objects: Sequence[GameObject], terminated: bool) -> float:  # TODO: update
