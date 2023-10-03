@@ -479,7 +479,7 @@ class Focus:
             aggs = [i for e in self.CURRENT_AGG_COMPUTE_LAYER for i in e]
             out = props + funcs + aggs
             if self.HIDE_PROPERTIES:
-                self.FEATURE_VECTOR_SIZE = len(funcs)
+                self.FEATURE_VECTOR_SIZE = len(funcs) + len(aggs)
             else:
                 self.FEATURE_VECTOR_SIZE = len(out)
             self.FEATURE_VECTOR_PROPS_SIZE = len(props)

@@ -29,17 +29,13 @@ def reward_seaquest(game_objects: Sequence[GameObject], terminated: bool) -> flo
     global last_lives, episode_starts
 
     # Identify relevant objects
-    score = lives = None
-    for game_object in game_objects:
-        if game_object.category == "PlayerScore":
-            score = game_object
-        elif game_object.category == "Lives":
-            lives = game_object
+    player, score, lives, oxygen = _get_game_objects_by_category(game_objects,
+                                                                 ["Player", "PlayerScore", "Lives", "OxygenBar"])
 
     if score is None or episode_starts:
         score_reward = 0
     else:
-        score_reward = score.value_diff / 50
+        score_reward = score.value_diff / 10
 
     if lives is None:
         if last_lives is not None:  # last live used
@@ -51,10 +47,16 @@ def reward_seaquest(game_objects: Sequence[GameObject], terminated: bool) -> flo
     else:
         lives_reward = lives.value_diff * 10
 
+    # Encourage oxygen refill when oxygen is low
+    if oxygen is not None and oxygen.w < 16:
+        refill_reward = - player.dy / 10
+    else:
+        refill_reward = 0
+
     last_lives = lives
     episode_starts = terminated
 
-    return score_reward + lives_reward
+    return score_reward + lives_reward + refill_reward
 
 
 last_y_distance = None
@@ -74,13 +76,13 @@ def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> flo
         if episode_starts:
             y_distance_reward = 0
         else:
-            y_distance_reward = (last_y_distance - y_distance) / 5
+            y_distance_reward = (last_y_distance - y_distance) / 40
         last_y_distance = y_distance
     else:
         y_distance_reward = 0
 
     # Discourage monkey kicking
-    if score is not None:
+    if score is not None and not episode_starts:
         score_reward = score.value_diff / 200
     else:
         score_reward = 0
@@ -88,6 +90,8 @@ def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> flo
     # Discourage loosing lives
     if episode_starts:
         life_reward = 0
+    elif n_lives == 0 and terminated:
+        life_reward = -20
     else:
         life_reward = (n_lives - last_n_lives) * 20
     last_n_lives = n_lives

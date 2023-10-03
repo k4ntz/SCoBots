@@ -52,6 +52,14 @@ class OCAGameObject(GameObjectInterface):
         self.ocgo.xy = xy
 
     @property
+    def dx(self):
+        return self.ocgo.dx
+
+    @property
+    def dy(self):
+        return self.ocgo.dy
+
+    @property
     def h_coords(self):
         shc = self.ocgo.h_coords
         if None in shc or len(shc) != 2 or len([*shc[0], *shc[1]]) != 4:
@@ -80,7 +88,10 @@ class OCAGameObject(GameObjectInterface):
     
     @property
     def orientation(self):
-        return self.ocgo.orientation
+        if self.ocgo.orientation is None:
+            return None
+        else:
+            return self.ocgo.orientation.value
 
     @property
     def value(self):
