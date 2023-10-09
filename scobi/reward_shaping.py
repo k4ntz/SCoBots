@@ -36,24 +36,25 @@ def reward_seaquest(game_objects: Sequence[GameObject], terminated: bool) -> flo
     if score is None or episode_starts:
         score_reward = 0
     else:
-        score_reward = score.value_diff / 10
+        score_reward = score.value_diff
 
     # Discourage crashes
     if player is not None and player.ocgo.crashed and not last_crashed: # new crash detected
-        crash_reward = -10
+        crash_reward = -20
     else:
         crash_reward = 0
-
-    last_crashed = player.ocgo.crashed
+    crash_reward = 0
 
     # Encourage oxygen refill when oxygen is low
-    if oxygen is not None and oxygen.w < 8:
-        refill_reward = - player.dy / 5
+    if not last_crashed and oxygen is not None and oxygen.w < 8:
+        refill_reward = - player.dy
     else:
         refill_reward = 0
+    refill_reward = 0
 
     last_lives = lives
     episode_starts = terminated
+    last_crashed = player.ocgo.crashed
 
     return score_reward + crash_reward + refill_reward
 
