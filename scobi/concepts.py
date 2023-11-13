@@ -93,7 +93,7 @@ def calc_distance(a_position: (Optional[int], Optional[int]), b_position: (Optio
 
 @register(type="F", name="EUCLIDEAN_DISTANCE", params=["POSITION", "POSITION"],
           desc="euclidean distance between two coordinates")
-def calc_euclidean_distance(a_position: (Optional[int], Optional[int]), b_position: (Optional[int], Optional[int])) -> (float | None,):
+def calc_euclidean_distance(a_position: (Optional[int], Optional[int]), b_position: (Optional[int], Optional[int])) -> (Optional[float],):
     if None in [*a_position, *b_position]:
         return None,
     dist = math.sqrt((b_position[1] - a_position[1]) ** 2 + (b_position[0] - a_position[0]) ** 2)
@@ -108,7 +108,7 @@ def get_center(a_position: (Optional[int], Optional[int]), b_position: (Optional
 
 
 @register(type="F", name="VELOCITY", params=["POSITION_HISTORY"], desc="velocity of object")
-def get_velocity(pos_history: (Optional[int], Optional[int], Optional[int], Optional[int])) -> (float | None,):
+def get_velocity(pos_history: (Optional[int], Optional[int], Optional[int], Optional[int])) -> (Optional[float],):
     if None in pos_history:
         return None,
     obj = pos_history[0:2]
@@ -118,7 +118,7 @@ def get_velocity(pos_history: (Optional[int], Optional[int], Optional[int], Opti
 
 
 @register(type="F", name="DIR_VELOCITY", params=["POSITION_HISTORY"], desc="directional velocity of object")
-def get_dir_velocity(pos_history: (Optional[int], Optional[int], Optional[int], Optional[int])) -> (float | None, float | None):
+def get_dir_velocity(pos_history: (Optional[int], Optional[int], Optional[int], Optional[int])) -> (Optional[float], Optional[float]):
     if None in pos_history:
         return None, None
     obj = pos_history[0:2]
