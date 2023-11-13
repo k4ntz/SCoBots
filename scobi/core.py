@@ -1,5 +1,6 @@
 """scobi core"""
 from copy import deepcopy
+from typing import Optional, Union, Sequence
 
 import numpy as np
 from PIL import Image, ImageDraw
@@ -357,7 +358,7 @@ class Environment(Env):
         # draw.text((img.size[0]/2 +20, 50), to_draw, (5, 5, 5), self.render_font)
         return np.array(img)
 
-    def render(self) -> RenderFrame | list[RenderFrame] | None:
+    def render(self) -> Optional[Union[RenderFrame, Sequence[RenderFrame]]]:
         return self.oc_env.render()
 
 

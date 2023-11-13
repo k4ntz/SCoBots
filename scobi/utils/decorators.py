@@ -34,14 +34,13 @@ def register(*args, **kwargs):
         if concept_name in FUNCTIONS.keys():
             print(f"Concept with name '{concept_name}' already registered.")
         else:
-            match concept_type:
-                case "F":  # function
-                    FUNCTIONS[concept_name] = sig_dict
-                case "P":  # property
-                    PROPERTIES[concept_name] = sig_dict
-                case "A":   # aggregation
-                    AGGREGATIONS[concept_name] = sig_dict
-                case other:
-                    print(f"Unknown concept type {other}.")
+            if concept_type == "F":  # function
+                FUNCTIONS[concept_name] = sig_dict
+            elif concept_type == "P":  # property
+                PROPERTIES[concept_name] = sig_dict
+            elif concept_type == "A":   # aggregation
+                AGGREGATIONS[concept_name] = sig_dict
+            else:
+                print(f"Unknown concept type {concept_type}.")
 
     return inner

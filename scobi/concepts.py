@@ -1,6 +1,6 @@
 """Properties and Functions for scobi features"""
 import math
-from typing import Tuple, Sequence
+from typing import Sequence, Optional
 import numpy as np
 from scobi.utils.game_object import get_wrapper_class
 from scobi.utils.colors import get_closest_color
@@ -23,7 +23,7 @@ def init():
 # PROPERTIES TO REGISTER
 ##########################
 @register(type="P", name="POSITION", params=["OBJECT"], desc="get the position for given object")
-def get_position(obj: GameObject) -> (int | None, int | None):
+def get_position(obj: GameObject) -> (Optional[int], Optional[int]):
     if not obj:
         return None, None
     return tuple(obj.xy)
@@ -31,7 +31,7 @@ def get_position(obj: GameObject) -> (int | None, int | None):
 
 @register(type="P", name="POSITION_HISTORY", params=["OBJECT"],
           desc="get the current and last position for given object")
-def get_position_history(obj: GameObject) -> (int | None, int | None, int | None, int | None):
+def get_position_history(obj: GameObject) -> (Optional[int], Optional[int], Optional[int], Optional[int]):
     if not obj:
         return None, None, None, None
     coords = obj.h_coords
@@ -39,7 +39,7 @@ def get_position_history(obj: GameObject) -> (int | None, int | None, int | None
 
 
 @register(type="P", name="ORIENTATION", params=["OBJECT"], desc="get the orientation for given object")
-def get_orientation(obj: GameObject) -> (int | None,):
+def get_orientation(obj: GameObject) -> (Optional[int],):
     if not obj:
         return None,
     orientation = obj.orientation
@@ -47,21 +47,21 @@ def get_orientation(obj: GameObject) -> (int | None,):
 
 
 @register(type="P", name="RGB", params=["OBJECT"], desc="get the rgb value for given object")
-def get_rgb(obj: GameObject) -> (int | None, int | None, int | None):
+def get_rgb(obj: GameObject) -> (Optional[int], Optional[int], Optional[int]):
     if not obj:
         return None, None, None
     return tuple(obj.rgb)
 
 
 @register(type="P", name="WIDTH", params=["OBJECT"], desc="get the width for given object")
-def get_width(obj: GameObject) -> (int | None,):
+def get_width(obj: GameObject) -> (Optional[int],):
     if not obj:
         return None,
     return obj.w,
 
 
 @register(type="P", name="VALUE", params=["OBJECT"], desc="get the object's value (if exists)")
-def get_value(obj: GameObject) -> (int | None,):
+def get_value(obj: GameObject) -> (Optional[int],):
     if not obj:
         return None,
     return obj.value,
@@ -72,7 +72,7 @@ def get_value(obj: GameObject) -> (int | None,):
 ##########################
 @register(type="F", name="LINEAR_TRAJECTORY", params=["POSITION", "POSITION_HISTORY"],
           desc="x, y distance to trajectory")
-def calc_lin_traj(a_position: (int | None, int | None), b_history: (int | None, int | None, int | None, int | None)) -> (int | None, int | None):
+def calc_lin_traj(a_position: (Optional[int], Optional[int]), b_history: (Optional[int], Optional[int], Optional[int], Optional[int])) -> (Optional[int], Optional[int]):
     if None in a_position or None in b_history:
         return None, None
     m = (b_history[3] - b_history[1]) / (b_history[2] - b_history[0] + 0.1)  # slope  m = (y2 - y1) / (x2 - x1)
@@ -83,7 +83,7 @@ def calc_lin_traj(a_position: (int | None, int | None), b_history: (int | None, 
 
 
 @register(type="F", name="DISTANCE", params=["POSITION", "POSITION"], desc="distance between two coordinates")
-def calc_distance(a_position: (int | None, int | None), b_position: (int | None, int | None)) -> (int | None, int | None):
+def calc_distance(a_position: (Optional[int], Optional[int]), b_position: (Optional[int], Optional[int])) -> (Optional[int], Optional[int]):
     if None in a_position or None in b_position:
         return None, None
     distx = b_position[0] - a_position[0]
@@ -93,7 +93,7 @@ def calc_distance(a_position: (int | None, int | None), b_position: (int | None,
 
 @register(type="F", name="EUCLIDEAN_DISTANCE", params=["POSITION", "POSITION"],
           desc="euclidean distance between two coordinates")
-def calc_euclidean_distance(a_position: (int | None, int | None), b_position: (int | None, int | None)) -> (float | None,):
+def calc_euclidean_distance(a_position: (Optional[int], Optional[int]), b_position: (Optional[int], Optional[int])) -> (float | None,):
     if None in [*a_position, *b_position]:
         return None,
     dist = math.sqrt((b_position[1] - a_position[1]) ** 2 + (b_position[0] - a_position[0]) ** 2)
@@ -101,14 +101,14 @@ def calc_euclidean_distance(a_position: (int | None, int | None), b_position: (i
 
 
 @register(type="F", name="CENTER", params=["POSITION", "POSITION"], desc="center position of two objects")
-def get_center(a_position: (int | None, int | None), b_position: (int | None, int | None)) -> (int | None, int | None):
+def get_center(a_position: (Optional[int], Optional[int]), b_position: (Optional[int], Optional[int])) -> (Optional[int], Optional[int]):
     if None in a_position or None in b_position:
         return None, None
     return (a_position[0] + b_position[0]) / 2, (a_position[1] + b_position[1]) / 2
 
 
 @register(type="F", name="VELOCITY", params=["POSITION_HISTORY"], desc="velocity of object")
-def get_velocity(pos_history: (int | None, int | None, int | None, int | None)) -> (float | None,):
+def get_velocity(pos_history: (Optional[int], Optional[int], Optional[int], Optional[int])) -> (float | None,):
     if None in pos_history:
         return None,
     obj = pos_history[0:2]
@@ -118,7 +118,7 @@ def get_velocity(pos_history: (int | None, int | None, int | None, int | None)) 
 
 
 @register(type="F", name="DIR_VELOCITY", params=["POSITION_HISTORY"], desc="directional velocity of object")
-def get_dir_velocity(pos_history: (int | None, int | None, int | None, int | None)) -> (float | None, float | None):
+def get_dir_velocity(pos_history: (Optional[int], Optional[int], Optional[int], Optional[int])) -> (float | None, float | None):
     if None in pos_history:
         return None, None
     obj = pos_history[0:2]
@@ -129,7 +129,7 @@ def get_dir_velocity(pos_history: (int | None, int | None, int | None, int | Non
 
 
 @register(type="F", name="COLOR", params=["RGB"], desc="Index of colorname")
-def get_color_name(rgb: (int | None, int | None, int | None)) -> (int | None,):
+def get_color_name(rgb: (Optional[int], Optional[int], Optional[int])) -> (Optional[int],):
     if None in rgb:
         return None,
     # only calc distances if new unseen rgb value
