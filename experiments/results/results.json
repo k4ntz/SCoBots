@@ -47,6 +47,14 @@
             "reward": 22.2,
             "scobi_reward": 0.0,
             "frames_seen": 20000000
+        },
+        "re-freeway_pruned-seed42": {
+            "mode": "pruned",
+            "seed": 42,
+            "eval_runs": 5,
+            "reward": 23.0,
+            "scobi_reward": 23.0,
+            "frames_seen": 625000
         }
     },
     "BoxingDeterministic-v4": {
@@ -115,6 +123,14 @@
             "reward": 0.0,
             "scobi_reward": 0.0,
             "frames_seen": 20000000
+        },
+        "re-bowling_pruned-seed42": {
+            "mode": "pruned",
+            "seed": 42,
+            "eval_runs": 5,
+            "reward": 78.0,
+            "scobi_reward": 78.0,
+            "frames_seen": 1625000
         }
     },
     "PongDeterministic-v4": {
@@ -215,6 +231,16 @@
             "reward": -7995.4,
             "scobi_reward": 6619.189193531167,
             "frames_seen": 250000
+        }
+    },
+    "KangarooDeterministic-v4": {
+        "re-kangaroo_reward_pruned-seed123": {
+            "mode": "pruned_reward",
+            "seed": 123,
+            "eval_runs": 5,
+            "reward": 0.0,
+            "scobi_reward": 284.0,
+            "frames_seen": 125000
         }
     }
 }

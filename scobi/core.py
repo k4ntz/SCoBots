@@ -314,6 +314,20 @@ class Environment(Env):
         # draw.text((img.size[0]/2 +20, 50), to_draw, (5, 5, 5), self.render_font)
         return np.array(img)
 
+    def get_vector_entry_descriptions(self):
+        features = self.feature_vector_description[0]
+        fv_backmap = self.feature_vector_description[1]
+        i = 0
+        features_names = []
+        for feature in features:
+            idxs = np.where(fv_backmap == i)[0]
+            feature_name = feature[0]
+            feature_signature = feature[1]
+            for ii, idx in enumerate(idxs):
+                features_names.append(format_feature(feature_name, feature_signature, ii))
+            i += 1
+        return features_names
+
 
 def format_feature(feature_name, feature_signature, ii):
     if feature_name == 'RGB':
@@ -331,7 +345,7 @@ def format_feature(feature_name, feature_signature, ii):
     if feature_name == 'POSITION':
         return f"{feature_signature}.{axis}"
     elif feature_name == "EUCLIDEAN_DISTANCE":
-        return f"ED({feature_signature})"
+        return f"ED({feature_signature[0][1]}, {feature_signature[1][1]})"
     elif feature_name == "DISTANCE":
         return f"D({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
     elif feature_name == "VELOCITY":

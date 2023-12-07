@@ -214,8 +214,8 @@ class Focus():
             return False
         for o in objs:
             if o not in self.OBJECT_NAMES:
-                return False
-        return True
+                return False, o
+        return True, None
 
 
     def validate_actions(self, acts):
@@ -280,10 +280,11 @@ class Focus():
 
 
     def import_objects(self, objs):
-        if self.validate_objects(objs):
+        passed, obj = self.validate_objects(objs)
+        if passed:
             return objs
         else:
-            self.l.FocusFileParserError("Invalid objects specified in objects selection!")
+            self.l.FocusFileParserError("Invalid objects specified in objects selection: "+obj+" !")
 
     def import_actions(self, acts):
         if self.validate_actions(acts):
@@ -540,7 +541,7 @@ class Focus():
             
             if not (player_idxs.any() and distance_idxs.any()):
                 return None
-            # reward when player achieves new y-coord low an
+            # reward when player achieves new y-coord low and goes to ladder
             def reward(fv, p_idxs=player_idxs, d_idxs=distance_idxs):
                 p_entries = fv[p_idxs[0]:p_idxs[-1]+1]
                 y_coord_reward = 0
@@ -558,7 +559,7 @@ class Focus():
                 self.reward_history[1] = abs(d_entries[0]) # x-dist
                 delta = self.reward_history[0] - self.reward_history[1] # decreasing x-distance to Scale1
                 distance_reward = delta if 100 > delta else 0 # ignore 100+ spikes
-                return y_coord_reward + distance_reward
+                return y_coord_reward + 5 * distance_reward
             return reward
         elif "Skiing" in env:
             # skiing reward function

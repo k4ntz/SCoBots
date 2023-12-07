@@ -11,9 +11,9 @@ AVAILABLE_CONCEPTS:
   - Fruit3
   - Bell1
   - Child1
-  - Scale1
-  - Scale2
-  - Scale3
+  - Ladder1
+  - Ladder2
+  - Ladder3
   - Platform1
   - Platform2
   - Platform3
@@ -98,8 +98,8 @@ SELECTION:
   - Fruit2
   - Bell1
   - Child1
-  - Scale1
-  - Scale2
+  - Ladder1
+  - Ladder2
   - Platform1
   - Platform2
   - Projectile_top1
@@ -121,8 +121,8 @@ SELECTION:
   - POSITION: Fruit2
   - POSITION: Bell1
   - POSITION: Child1
-  - POSITION: Scale1
-  - POSITION: Scale2
+  - POSITION: Ladder1
+  - POSITION: Ladder2
   - POSITION: Platform1
   - POSITION: Platform2
   - POSITION: Projectile_top1
@@ -134,8 +134,8 @@ SELECTION:
   - POSITION_HISTORY: Fruit2
   - POSITION_HISTORY: Bell1
   - POSITION_HISTORY: Child1
-  - POSITION_HISTORY: Scale1
-  - POSITION_HISTORY: Scale2
+  - POSITION_HISTORY: Ladder1
+  - POSITION_HISTORY: Ladder2
   - POSITION_HISTORY: Platform1
   - POSITION_HISTORY: Platform2
   - POSITION_HISTORY: Projectile_top1
@@ -161,10 +161,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Player1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Player1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Player1
     - POSITION: Platform1
@@ -197,10 +197,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Enemy1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Enemy1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Enemy1
     - POSITION: Platform1
@@ -233,10 +233,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Enemy2
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Enemy2
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Enemy2
     - POSITION: Platform1
@@ -269,10 +269,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Fruit1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Fruit1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Fruit1
     - POSITION: Platform1
@@ -305,10 +305,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Fruit2
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Fruit2
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Fruit2
     - POSITION: Platform1
@@ -341,10 +341,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Bell1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Bell1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Bell1
     - POSITION: Platform1
@@ -377,10 +377,10 @@ SELECTION:
     - POSITION: Bell1
   - DISTANCE:
     - POSITION: Child1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Child1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Child1
     - POSITION: Platform1
@@ -394,76 +394,76 @@ SELECTION:
     - POSITION: Child1
     - POSITION: Projectile_enemy1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Player1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Enemy1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Enemy2
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Fruit1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Fruit2
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Bell1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Child1
   - DISTANCE:
-    - POSITION: Scale1
-    - POSITION: Scale2
+    - POSITION: Ladder1
+    - POSITION: Ladder2
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Platform1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Platform2
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Projectile_top1
   - DISTANCE:
-    - POSITION: Scale1
+    - POSITION: Ladder1
     - POSITION: Projectile_enemy1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Player1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Enemy1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Enemy2
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Fruit1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Fruit2
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Bell1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Child1
   - DISTANCE:
-    - POSITION: Scale2
-    - POSITION: Scale1
+    - POSITION: Ladder2
+    - POSITION: Ladder1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Platform1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Platform2
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Projectile_top1
   - DISTANCE:
-    - POSITION: Scale2
+    - POSITION: Ladder2
     - POSITION: Projectile_enemy1
   - DISTANCE:
     - POSITION: Platform1
@@ -488,10 +488,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Platform1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Platform1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Platform1
     - POSITION: Platform2
@@ -524,10 +524,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Platform2
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Platform2
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Platform2
     - POSITION: Platform1
@@ -560,10 +560,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Projectile_top1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Projectile_top1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Projectile_top1
     - POSITION: Platform1
@@ -596,10 +596,10 @@ SELECTION:
     - POSITION: Child1
   - DISTANCE:
     - POSITION: Projectile_enemy1
-    - POSITION: Scale1
+    - POSITION: Ladder1
   - DISTANCE:
     - POSITION: Projectile_enemy1
-    - POSITION: Scale2
+    - POSITION: Ladder2
   - DISTANCE:
     - POSITION: Projectile_enemy1
     - POSITION: Platform1
@@ -624,9 +624,9 @@ SELECTION:
   - DIR_VELOCITY:
     - POSITION_HISTORY: Child1
   - DIR_VELOCITY:
-    - POSITION_HISTORY: Scale1
+    - POSITION_HISTORY: Ladder1
   - DIR_VELOCITY:
-    - POSITION_HISTORY: Scale2
+    - POSITION_HISTORY: Ladder2
   - DIR_VELOCITY:
     - POSITION_HISTORY: Platform1
   - DIR_VELOCITY:

@@ -127,10 +127,7 @@ def main():
         settings_str += '_ep'
         hide_properties = True
 
-    #override setting str if rgb
-    if opts.rgb:
-        settings_str = "-rgb"
-    exp_name = opts.game + "_s" + str(opts.seed) + settings_str
+
     n_envs = opts.cores
     n_eval_envs = 4
     n_eval_episodes = 8
@@ -139,6 +136,14 @@ def main():
     checkpoint_frequency = 1_000_000
     eval_frequency = 500_000
     rtpt_frequency = 100_000
+
+    #override some settings if rgb
+    if opts.rgb:
+        settings_str = "-rgb"
+        env_str = opts.game +"NoFrameskip-v4"
+        training_timestamps = 10_000_000
+    
+    exp_name = opts.game + "_s" + str(opts.seed) + settings_str
     log_path = Path("baselines_logs", exp_name)
     ckpt_path = Path("baselines_checkpoints", exp_name)
     log_path.mkdir(parents=True, exist_ok=True)

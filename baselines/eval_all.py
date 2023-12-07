@@ -1,7 +1,8 @@
 import numpy as np
 from scobi import Environment
-from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv
+from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv, VecFrameStack
 from stable_baselines3 import PPO
+from stable_baselines3.common.env_util import make_atari_env
 from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
@@ -10,15 +11,15 @@ from multiprocessing import Process, Value
 
 
 def main():
-    envs = ["Kangaroo", "Asterix"] #["Bowling", "Pong", "Tennis", "Boxing", "Freeway", "Skiing"]
+    envs = ["Asterix", "Bowling", "Pong", "Tennis", "Boxing", "Freeway", "Skiing", "Kangaroo"]
     check_dir = "baselines_checkpoints"
-    variants = ["scobots", "iscobots"]#, "rgb"]
-    eval_env_seeds = [123, 456, 789, 1011]
+    variants = ["rgb"] #["scobots", "iscobots"]#, "rgb"]
+    eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
     checkpoint_str = "best_model" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("keval_results.pkl")
-    eval_results_csv_path = Path("keval_results.csv")
+    eval_results_pkl_path = Path("rgb_eval_results.pkl")
+    eval_results_csv_path = Path("rgb_eval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 
@@ -54,14 +55,18 @@ def main():
                 pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
             atari_env_str = "ALE/" + env_str +"-v5"
             
-            env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
-            _, _ = env.reset(seed=eval_seed)
-            dummy_vecenv = DummyVecEnv([lambda :  env])
-            env = VecNormalize.load(vecnorm_path, dummy_vecenv)
-            env.training = False
-            env.norm_reward = False
+            if variant == "rgb":
+                env = make_atari_env(atari_env_str, seed=eval_seed, wrapper_kwargs={"clip_reward": False})
+                env = VecFrameStack(env, n_stack=4)
+            else:
+                env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
+                _, _ = env.reset(seed=eval_seed)
+                dummy_vecenv = DummyVecEnv([lambda :  env])
+                env = VecNormalize.load(vecnorm_path, dummy_vecenv)
+                env.training = False
+                env.norm_reward = False
+            
             model = PPO.load(model_path)
-
             current_episode = 0
             episode_rewards = []
             steps = []
