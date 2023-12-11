@@ -145,7 +145,7 @@ def main():
         env_str = opts.game +"NoFrameskip-v4"
         training_timestamps = 10_000_000
     
-    exp_name = opts.game + "_s" + str(opts.seed) + settings_str
+    exp_name = opts.game + "_s" + str(opts.seed) + settings_str + "-v2"
     log_path = Path("baselines_logs", exp_name)
     ckpt_path = Path("baselines_checkpoints", exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
