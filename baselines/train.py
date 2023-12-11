@@ -7,6 +7,7 @@ from stable_baselines3.common.env_checker import check_env
 from stable_baselines3 import PPO
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack, VecNormalize
+from stable_baselines3.common.atari_wrappers import ClipRewardEnv, EpisodicLifeEnv
 from stable_baselines3.common.env_util import make_atari_env
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.utils import set_random_seed
@@ -16,6 +17,7 @@ from pathlib import Path
 from typing import Callable
 from rtpt import RTPT
 from collections import deque
+import torch as th
 
 
 MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
@@ -158,6 +160,8 @@ def main():
                               silent=silent,
                               reward=reward_mode,
                               refresh_yaml=refresh)
+            env = EpisodicLifeEnv(env=env)
+            env = ClipRewardEnv(env=env)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
@@ -234,24 +238,36 @@ def main():
     # https://arxiv.org/abs/1707.06347
     if opts.rgb:
         policy_str = "CnnPolicy"
+        pkwargs = None
     else:
         policy_str = "MlpPolicy"
-    adam_step_size = 0.00025
+        pkwargs = None
+        pkwargs = dict(activation_fn=th.nn.ReLU, net_arch=dict(pi=[64, 64], vf=[64, 64]))
+        # activation_fn=th.nn.ReLU,
+
+
+
+    # 2048s_2x32_tanh with 3e
+    # 2048s_2x64_relu with 3e <-
+
+    adam_step_size = 0.001
     clipping_eps = 0.1
     model = PPO(
         policy_str,
-        n_steps=128,
+        n_steps=2048,
         learning_rate=linear_schedule(adam_step_size),
         n_epochs=3,
-        batch_size=32*8,
+        batch_size=128*2,
         gamma=0.99,
         gae_lambda=0.95,
         clip_range=linear_schedule(clipping_eps),
         vf_coef=1,
         ent_coef=0.01,
         env=train_env,
+        policy_kwargs=pkwargs,
         verbose=1)
     model.set_logger(new_logger)
+    print(model.policy)
     print(f"Experiment name: {exp_name}")
     print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
     model.learn(total_timesteps=training_timestamps, callback=cb_list)

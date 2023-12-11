@@ -11,15 +11,15 @@ from multiprocessing import Process, Value
 
 
 def main():
-    envs = ["Asterix", "Bowling", "Pong", "Tennis", "Boxing", "Freeway", "Skiing", "Kangaroo"]
+    envs = ["Freeway"] # ["Asterix", "Bowling", "Pong", "Tennis", "Boxing", "Freeway", "Skiing", "Kangaroo"]
     check_dir = "baselines_checkpoints"
-    variants = ["rgb"] #["scobots", "iscobots"]#, "rgb"]
+    variants = ["iscobots"] #["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
     checkpoint_str = "best_model" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("rgb_eval_results.pkl")
-    eval_results_csv_path = Path("rgb_eval_results.csv")
+    eval_results_pkl_path = Path("keval_results.pkl")
+    eval_results_csv_path = Path("keval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 
@@ -56,7 +56,8 @@ def main():
             atari_env_str = "ALE/" + env_str +"-v5"
             
             if variant == "rgb":
-                env = make_atari_env(atari_env_str, seed=eval_seed, wrapper_kwargs={"clip_reward": False})
+                atari_env_str = env_str +"NoFrameskip-v4"
+                env = make_atari_env(atari_env_str, seed=eval_seed, wrapper_kwargs={"clip_reward": False, "terminal_on_life_loss": False})
                 env = VecFrameStack(env, n_stack=4)
             else:
                 env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)

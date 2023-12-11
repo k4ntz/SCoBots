@@ -75,13 +75,14 @@ def main():
         settings_str = "-rgb"
         variant= "rgb"
     exp_name = opts.game + "_s" + str(opts.seed) + settings_str
-    checkpoint_str = "best_model" #"best_model"
+    checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("baselines_checkpoints", variant, exp_name, checkpoint_str)
     vecnorm_path = Path("baselines_checkpoints", variant, exp_name, vecnorm_str)
-    EVAL_ENV_SEED = 1011
+    EVAL_ENV_SEED = 84
     if variant == "rgb":
-        env = make_atari_env(env_str, seed=EVAL_ENV_SEED, wrapper_kwargs={"clip_reward": False})
+        env_str = opts.game +"NoFrameskip-v4"
+        env = make_atari_env(env_str, seed=EVAL_ENV_SEED, wrapper_kwargs={"clip_reward": False, "terminal_on_life_loss": False})
         env = VecFrameStack(env, n_stack=4)
     else:
         env = Environment(env_str, 
@@ -114,9 +115,9 @@ def main():
         img = plt.imshow(scobi_env.original_obs)
 
     while True:
-        action, _ = model.predict(obs)
+        action, _ = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
-        print(reward)
+        #print(reward)
        # print(action)
 
         #if reward > 20:
@@ -141,7 +142,7 @@ def main():
             print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
             break
         #print(frame_delta)
-        time.sleep(steps_delta)
+        #time.sleep(steps_delta)
 
 if __name__ == '__main__':
     main()
