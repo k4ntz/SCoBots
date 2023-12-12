@@ -239,31 +239,42 @@ def main():
     new_logger = configure(str(log_path), ["tensorboard"])
 
     if opts.rgb:
-        policy_str = "CnnPolicy"
-        pkwargs = None
+        adam_step_size = 0.00025
+        clipping_eps = 0.1
+        model = PPO(
+            "CnnPolicy",
+            n_steps=128,
+            learning_rate=linear_schedule(adam_step_size),
+            n_epochs=3,
+            batch_size=32*8,
+            gamma=0.99,
+            gae_lambda=0.95,
+            clip_range=linear_schedule(clipping_eps),
+            vf_coef=1,
+            ent_coef=0.01,
+            env=train_env,
+            verbose=1)
     else:
         policy_str = "MlpPolicy"
-        pkwargs = None
         pkwargs = dict(activation_fn=th.nn.ReLU, net_arch=dict(pi=[64, 64], vf=[64, 64]))
-
-    # 2048s_2x32_tanh with 3e 
-    # 2048s_2x64_relu with 3e <-
-    adam_step_size = 0.001
-    clipping_eps = 0.1
-    model = PPO(
-        policy_str,
-        n_steps=2048,
-        learning_rate=linear_schedule(adam_step_size),
-        n_epochs=3,
-        batch_size=128*2,
-        gamma=0.99,
-        gae_lambda=0.95,
-        clip_range=linear_schedule(clipping_eps),
-        vf_coef=1,
-        ent_coef=0.01,
-        env=train_env,
-        policy_kwargs=pkwargs,
-        verbose=1)
+        # 2048s_2x32_tanh with 3e 
+        # 2048s_2x64_relu with 3e <-
+        adam_step_size = 0.001
+        clipping_eps = 0.1
+        model = PPO(
+            policy_str,
+            n_steps=2048,
+            learning_rate=linear_schedule(adam_step_size),
+            n_epochs=3,
+            batch_size=128*2,
+            gamma=0.99,
+            gae_lambda=0.95,
+            clip_range=linear_schedule(clipping_eps),
+            vf_coef=1,
+            ent_coef=0.01,
+            env=train_env,
+            policy_kwargs=pkwargs,
+            verbose=1)
     model.set_logger(new_logger)
     print(model.policy)
     print(f"Experiment name: {exp_name}")
