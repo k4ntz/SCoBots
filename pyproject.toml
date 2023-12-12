@@ -20,7 +20,8 @@ dependencies = [
     "numpy",
     "pyyaml",
     "colormath",
-    "ocatari>=0.1.3",
+    "torch == 2.0.1",
+    "ocatari@git+https://github.com/k4ntz/OC_Atari@asterix",
 ]
 
 #[project.urls]

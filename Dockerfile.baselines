@@ -3,7 +3,7 @@
 FROM ubuntu:20.04
 
 WORKDIR /workdir
-RUN apt-get update && apt-get install -y --no-install-recommends python3-pip python3-venv
+RUN apt-get update && apt-get install -y --no-install-recommends git python3-pip python3-venv
 
 COPY scobi scobi
 COPY pyproject.toml pyproject.toml
