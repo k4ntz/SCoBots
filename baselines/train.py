@@ -5,10 +5,9 @@ import os
 from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3 import PPO
-from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack, VecNormalize
-from stable_baselines3.common.atari_wrappers import ClipRewardEnv, EpisodicLifeEnv
-from stable_baselines3.common.env_util import make_atari_env
+from stable_baselines3.common.atari_wrappers import EpisodicLifeEnv, WarpFrame
+from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.monitor import Monitor
@@ -21,6 +20,13 @@ import torch as th
 
 
 MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
+
+
+class rgbWrapper(gym.Wrapper[np.ndarray, int, np.ndarray, int]):
+    def __init__(self, env: gym.Env, screen_size: int = 84) -> None:
+        env = EpisodicLifeEnv(env)
+        env = WarpFrame(env, width=screen_size, height=screen_size)
+        super().__init__(env)
 
 
 class RtptCallback(BaseCallback):
@@ -142,7 +148,6 @@ def main():
     #override some settings if rgb
     if opts.rgb:
         settings_str = "-rgb"
-        env_str = opts.game +"NoFrameskip-v4"
         training_timestamps = 10_000_000
     
     exp_name = opts.game + "_s" + str(opts.seed) + settings_str + "-v2"
@@ -161,7 +166,6 @@ def main():
                               reward=reward_mode,
                               refresh_yaml=refresh)
             env = EpisodicLifeEnv(env=env)
-            env = ClipRewardEnv(env=env)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
@@ -186,9 +190,10 @@ def main():
 
 
     if opts.rgb:
-        eval_env = make_atari_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        # atari wrap around v5: keep 84x84, graysacle, termination signal
+        eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=rgbWrapper, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         eval_env = VecFrameStack(eval_env, n_stack=4)
-        train_env = make_atari_env(env_str, n_envs=n_envs, seed=opts.seed, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed, wrapper_class=rgbWrapper, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         train_env = VecFrameStack(train_env, n_stack=4)
     else:
         # check if compatible gym env
@@ -231,11 +236,8 @@ def main():
     if opts.rgb: #remove tb callback if rgb
         cbl = cbl[:-1]
     cb_list = CallbackList(cbl)
-
     new_logger = configure(str(log_path), ["tensorboard"])
 
-    # atari hyperparameters from the ppo paper:
-    # https://arxiv.org/abs/1707.06347
     if opts.rgb:
         policy_str = "CnnPolicy"
         pkwargs = None
@@ -243,13 +245,9 @@ def main():
         policy_str = "MlpPolicy"
         pkwargs = None
         pkwargs = dict(activation_fn=th.nn.ReLU, net_arch=dict(pi=[64, 64], vf=[64, 64]))
-        # activation_fn=th.nn.ReLU,
 
-
-
-    # 2048s_2x32_tanh with 3e
+    # 2048s_2x32_tanh with 3e 
     # 2048s_2x64_relu with 3e <-
-
     adam_step_size = 0.001
     clipping_eps = 0.1
     model = PPO(

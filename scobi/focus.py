@@ -476,7 +476,8 @@ class Focus():
         # obj with id=2 will be pos=1 and objc id=1 will be first position of hidden objects
         for i in range(self.FEATURE_VECTOR_SIZE): 
             if out[i] is None:
-                out[i] = self.last_obs_vector[i]
+                out[i] = 0 #dont freeze. turns out feezing was very bad
+                #out[i] = self.last_obs_vector[i]
                 self.CURRENT_FREEZE_MASK[i] = 0
             else:
                 self.CURRENT_FREEZE_MASK[i] = 1

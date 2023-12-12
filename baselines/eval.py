@@ -112,7 +112,7 @@ def main():
         img = plt.imshow(env.get_images()[0])
     else:
         scobi_env = env.venv.envs[0]
-        img = plt.imshow(scobi_env.original_obs)
+        img = plt.imshow(scobi_env._obj_obs)
 
     while True:
         action, _ = model.predict(obs, deterministic=True)
@@ -129,7 +129,8 @@ def main():
             if variant == "rgb":
                 img.set_data(env.get_images()[0])
             else:
-                img.set_data(scobi_env.original_obs)
+                img.set_data(scobi_env._obj_obs)
+                time.sleep(steps_delta)
             plt.pause(frame_delta)
         if done:
             current_episode += 1
@@ -142,7 +143,7 @@ def main():
             print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
             break
         #print(frame_delta)
-        #time.sleep(steps_delta)
+        #
 
 if __name__ == '__main__':
     main()
