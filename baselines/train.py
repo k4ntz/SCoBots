@@ -258,7 +258,7 @@ def main():
     else:
         policy_str = "MlpPolicy"
         pkwargs = dict(activation_fn=th.nn.ReLU, net_arch=dict(pi=[64, 64], vf=[64, 64]))
-        adam_step_size = 0.00025
+        adam_step_size = 0.00025 # or 0.001
         clipping_eps = 0.1
         model = PPO(
             policy_str,

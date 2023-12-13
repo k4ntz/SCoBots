@@ -1,0 +1,310 @@
+ENVIRONMENT: Seaquest-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Lives1
+  - Diver1
+  - Diver2
+  - Diver3
+  - Diver4
+  - Submarine1
+  - Submarine2
+  - Submarine3
+  - Submarine4
+  - Submarine5
+  - Submarine6
+  - Submarine7
+  - Submarine8
+  - Submarine9
+  - Submarine10
+  - Submarine11
+  - Submarine12
+  - SurfaceSubmarine1
+  - CollectedDiver1
+  - CollectedDiver2
+  - CollectedDiver3
+  - CollectedDiver4
+  - CollectedDiver5
+  - CollectedDiver6
+  - Shark1
+  - Shark2
+  - Shark3
+  - Shark4
+  - Shark5
+  - Shark6
+  - Shark7
+  - Shark8
+  - Shark9
+  - Shark10
+  - Shark11
+  - Shark12
+  - EnemyMissile1
+  - EnemyMissile2
+  - EnemyMissile3
+  - EnemyMissile4
+  - PlayerMissile1
+  - OxygenBar1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Lives1
+  - Diver1
+  - Diver2
+  - Diver3
+  - Diver4
+  - Submarine1
+  - Submarine2
+  - Submarine3
+  - Submarine4
+  - Submarine5
+  - Submarine6
+  - Submarine7
+  - Submarine8
+  - Submarine9
+  - Submarine10
+  - Submarine11
+  - Submarine12
+  - SurfaceSubmarine1
+  - CollectedDiver1
+  - CollectedDiver2
+  - CollectedDiver3
+  - CollectedDiver4
+  - CollectedDiver5
+  - CollectedDiver6
+  - Shark1
+  - Shark2
+  - Shark3
+  - Shark4
+  - Shark5
+  - Shark6
+  - Shark7
+  - Shark8
+  - Shark9
+  - Shark10
+  - Shark11
+  - Shark12
+  - EnemyMissile1
+  - EnemyMissile2
+  - EnemyMissile3
+  - EnemyMissile4
+  - PlayerMissile1
+  - OxygenBar1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
+  properties:
+  - POSITION: Player1
+  - POSITION: Lives1
+  - POSITION: Diver1
+  - POSITION: Diver2
+  - POSITION: Diver3
+  - POSITION: Diver4
+  - POSITION: Submarine1
+  - POSITION: Submarine2
+  - POSITION: Submarine3
+  - POSITION: Submarine4
+  - POSITION: Submarine5
+  - POSITION: Submarine6
+  - POSITION: Submarine7
+  - POSITION: Submarine8
+  - POSITION: Submarine9
+  - POSITION: Submarine10
+  - POSITION: Submarine11
+  - POSITION: Submarine12
+  - POSITION: SurfaceSubmarine1
+  - POSITION: CollectedDiver1
+  - POSITION: CollectedDiver2
+  - POSITION: CollectedDiver3
+  - POSITION: CollectedDiver4
+  - POSITION: CollectedDiver5
+  - POSITION: CollectedDiver6
+  - POSITION: Shark1
+  - POSITION: Shark2
+  - POSITION: Shark3
+  - POSITION: Shark4
+  - POSITION: Shark5
+  - POSITION: Shark6
+  - POSITION: Shark7
+  - POSITION: Shark8
+  - POSITION: Shark9
+  - POSITION: Shark10
+  - POSITION: Shark11
+  - POSITION: Shark12
+  - POSITION: EnemyMissile1
+  - POSITION: EnemyMissile2
+  - POSITION: EnemyMissile3
+  - POSITION: EnemyMissile4
+  - POSITION: PlayerMissile1
+  - POSITION: OxygenBar1
+  - POSITION_HISTORY: Player1
+  - POSITION_HISTORY: Lives1
+  - POSITION_HISTORY: Diver1
+  - POSITION_HISTORY: Diver2
+  - POSITION_HISTORY: Diver3
+  - POSITION_HISTORY: Diver4
+  - POSITION_HISTORY: Submarine1
+  - POSITION_HISTORY: Submarine2
+  - POSITION_HISTORY: Submarine3
+  - POSITION_HISTORY: Submarine4
+  - POSITION_HISTORY: Submarine5
+  - POSITION_HISTORY: Submarine6
+  - POSITION_HISTORY: Submarine7
+  - POSITION_HISTORY: Submarine8
+  - POSITION_HISTORY: Submarine9
+  - POSITION_HISTORY: Submarine10
+  - POSITION_HISTORY: Submarine11
+  - POSITION_HISTORY: Submarine12
+  - POSITION_HISTORY: SurfaceSubmarine1
+  - POSITION_HISTORY: CollectedDiver1
+  - POSITION_HISTORY: CollectedDiver2
+  - POSITION_HISTORY: CollectedDiver3
+  - POSITION_HISTORY: CollectedDiver4
+  - POSITION_HISTORY: CollectedDiver5
+  - POSITION_HISTORY: CollectedDiver6
+  - POSITION_HISTORY: Shark1
+  - POSITION_HISTORY: Shark2
+  - POSITION_HISTORY: Shark3
+  - POSITION_HISTORY: Shark4
+  - POSITION_HISTORY: Shark5
+  - POSITION_HISTORY: Shark6
+  - POSITION_HISTORY: Shark7
+  - POSITION_HISTORY: Shark8
+  - POSITION_HISTORY: Shark9
+  - POSITION_HISTORY: Shark10
+  - POSITION_HISTORY: Shark11
+  - POSITION_HISTORY: Shark12
+  - POSITION_HISTORY: EnemyMissile1
+  - POSITION_HISTORY: EnemyMissile2
+  - POSITION_HISTORY: EnemyMissile3
+  - POSITION_HISTORY: EnemyMissile4
+  - POSITION_HISTORY: PlayerMissile1
+  - POSITION_HISTORY: OxygenBar1
+  - ORIENTATION: Player1
+  - ORIENTATION: Lives1
+  - ORIENTATION: Diver1
+  - ORIENTATION: Diver2
+  - ORIENTATION: Diver3
+  - ORIENTATION: Diver4
+  - ORIENTATION: Submarine1
+  - ORIENTATION: Submarine2
+  - ORIENTATION: Submarine3
+  - ORIENTATION: Submarine4
+  - ORIENTATION: Submarine5
+  - ORIENTATION: Submarine6
+  - ORIENTATION: Submarine7
+  - ORIENTATION: Submarine8
+  - ORIENTATION: Submarine9
+  - ORIENTATION: Submarine10
+  - ORIENTATION: Submarine11
+  - ORIENTATION: Submarine12
+  - ORIENTATION: SurfaceSubmarine1
+  - ORIENTATION: CollectedDiver1
+  - ORIENTATION: CollectedDiver2
+  - ORIENTATION: CollectedDiver3
+  - ORIENTATION: CollectedDiver4
+  - ORIENTATION: CollectedDiver5
+  - ORIENTATION: CollectedDiver6
+  - ORIENTATION: Shark1
+  - ORIENTATION: Shark2
+  - ORIENTATION: Shark3
+  - ORIENTATION: Shark4
+  - ORIENTATION: Shark5
+  - ORIENTATION: Shark6
+  - ORIENTATION: Shark7
+  - ORIENTATION: Shark8
+  - ORIENTATION: Shark9
+  - ORIENTATION: Shark10
+  - ORIENTATION: Shark11
+  - ORIENTATION: Shark12
+  - ORIENTATION: EnemyMissile1
+  - ORIENTATION: EnemyMissile2
+  - ORIENTATION: EnemyMissile3
+  - ORIENTATION: EnemyMissile4
+  - ORIENTATION: PlayerMissile1
+  - ORIENTATION: OxygenBar1
+  functions:

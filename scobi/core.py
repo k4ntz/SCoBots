@@ -342,7 +342,8 @@ def format_feature(feature_name, feature_signature, ii):
         return f"{feature_signature}.{axis}[t-1]"
     axis = ["x", "y"][ii]
     if ii > 3:
-        import ipdb; ipdb.set_trace()
+        print("feature render formatting error. exiting...")
+        exit()
     if feature_name == 'POSITION':
         return f"{feature_signature}.{axis}"
     elif feature_name == "EUCLIDEAN_DISTANCE":
@@ -361,7 +362,8 @@ def format_feature(feature_name, feature_signature, ii):
         return f"LT({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
     elif feature_name == "COLOR":
         return f"COL({feature_signature})"
-    import ipdb; ipdb.set_trace()
+    print("feature render formatting error. exiting...")
+    exit()
 
 
 def _make_darker(color, col_precent=0.8):
