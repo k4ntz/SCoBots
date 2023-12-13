@@ -14,7 +14,7 @@ keywords = ["t", "b", "d"]
 license = {text = "tbd"}
 requires-python = ">=3.8"
 dependencies = [
-    "gymnasium[atari]",
+    "gymnasium[atari] == 0.28.1",
     "rtpt",
     "termcolor",
     "numpy",
