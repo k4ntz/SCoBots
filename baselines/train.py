@@ -5,9 +5,9 @@ import os
 from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack, VecNormalize
-from stable_baselines3.common.atari_wrappers import EpisodicLifeEnv, WarpFrame
-from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack, VecNormalize, VecTransposeImage
+from stable_baselines3.common.atari_wrappers import EpisodicLifeEnv, WarpFrame, AtariWrapper
+from stable_baselines3.common.env_util import make_vec_env, make_atari_env
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.monitor import Monitor
@@ -20,14 +20,6 @@ import torch as th
 
 
 MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
-
-
-class rgbWrapper(gym.Wrapper[np.ndarray, int, np.ndarray, int]):
-    def __init__(self, env: gym.Env, screen_size: int = 84) -> None:
-        env = EpisodicLifeEnv(env)
-        env = WarpFrame(env, width=screen_size, height=screen_size)
-        super().__init__(env)
-
 
 class RtptCallback(BaseCallback):
     def __init__(self, exp_name, max_iter, verbose=0):
@@ -103,7 +95,8 @@ def main():
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"], 
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-e", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
-    parser.add_argument("--rgb", action="store_true", help="rgb observation space")
+    parser.add_argument("--rgbv4", action="store_true", help="rgb observation space")
+    parser.add_argument("--rgbv5", action="store_true", help="rgb observation space")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -145,12 +138,20 @@ def main():
     eval_frequency = 500_000
     rtpt_frequency = 100_000
 
-    #override some settings if rgb
-    if opts.rgb:
-        settings_str = "-rgb"
-        training_timestamps = 10_000_000
+    if opts.rgbv4 and opts.rgbv5:
+        print("please select only one rgb mode!")
     
-    exp_name = opts.game + "_s" + str(opts.seed) + settings_str + "-v3"
+    #override some settings if rgb
+    rgb_exp = opts.rgbv4 or opts.rgbv5
+    if opts.rgbv4:
+        settings_str = "-rgb-v4"
+        env_str = opts.game + "NoFrameskip-v4"
+    if opts.rgbv5:
+        settings_str = "-rgb-v5"
+
+    exp_name = opts.game + "_s" + str(opts.seed) + settings_str
+    if not rgb_exp:
+        exp_name += "-v3"
     log_path = Path("baselines_logs", exp_name)
     ckpt_path = Path("baselines_checkpoints", exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
@@ -188,13 +189,25 @@ def main():
         set_random_seed(seed)
         return _init
 
-
-    if opts.rgb:
-        # atari wrap around v5: keep 84x84, graysacle, termination signal
-        eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=rgbWrapper, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
-        eval_env = VecFrameStack(eval_env, n_stack=4)
-        train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed, wrapper_class=rgbWrapper, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
-        train_env = VecFrameStack(train_env, n_stack=4)
+    # preprocessing based on atari wrapper of the openai baseline implementation (https://github.com/openai/baselines/blob/master/baselines/ppo1/run_atari.py)
+    if opts.rgbv4:
+        # NoopResetEnv:30, MaxAndSkipEnv=4, WarpFrame=84x84,grayscale, EpisodicLifeEnv, FireResetEnv, ClipRewardEnv, frame_stack=False, scale=False
+        train_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : True, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
+        train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
+        # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
+        eval_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
+        eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
+    elif opts.rgbv5:
+        # NoopResetEnv not required, because sticky actions in v5, frame_skip=5 in v5, so also not required to set here
+        train_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : True} # remaining values are part of AtariWrapper
+        train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
+        # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
+        eval_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False} # remaining values are part of AtariWrapper
+        eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
     else:
         # check if compatible gym env
         monitor = make_env()()
@@ -205,7 +218,7 @@ def main():
         train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
 
     rtpt_iters = training_timestamps // rtpt_frequency
-    save_bm = SaveBestModelCallback(ckpt_path, rgb=opts.rgb)
+    save_bm = SaveBestModelCallback(ckpt_path, rgb=rgb_exp)
     eval_callback = EvalCallback(
         eval_env,
         callback_on_new_best=save_bm,
@@ -233,13 +246,14 @@ def main():
 
     tb_callback = TensorboardCallback(n_envs=n_envs)
     cbl = [checkpoint_callback, eval_callback, n_callback, tb_callback]
-    if opts.rgb: #remove tb callback if rgb
+    if rgb_exp: #remove tb callback if rgb
         cbl = cbl[:-1]
     cb_list = CallbackList(cbl)
     new_logger = configure(str(log_path), ["tensorboard"])
 
-    if opts.rgb:
+    if rgb_exp:
         policy_str = "CnnPolicy"
+        pkwargs = dict(activation_fn=th.nn.Tanh, net_arch=dict(pi=[64, 64], vf=[64, 64])) # as in ppo paper
         adam_step_size = 0.00025
         clipping_eps = 0.1
         model = PPO(
@@ -254,6 +268,7 @@ def main():
             vf_coef=1,
             ent_coef=0.01,
             env=train_env,
+            policy_kwargs=pkwargs,
             verbose=1)
     else:
         policy_str = "MlpPolicy"

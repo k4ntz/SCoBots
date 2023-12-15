@@ -2,7 +2,8 @@ import numpy as np
 from scobi import Environment
 from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv, VecFrameStack
 from stable_baselines3 import PPO
-from stable_baselines3.common.env_util import make_atari_env
+from stable_baselines3.common.atari_wrappers import  WarpFrame
+from stable_baselines3.common.env_util import make_atari_env, make_vec_env
 from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
@@ -11,15 +12,15 @@ from multiprocessing import Process, Value
 
 
 def main():
-    envs = ["Freeway"] # ["Asterix", "Bowling", "Pong", "Tennis", "Boxing", "Freeway", "Skiing", "Kangaroo"]
+    envs = ["Bowling",  "Tennis", "Boxing", "Freeway", "Skiing", "Pong"] #"Seaquest", "Kangaroo","Asterix"
     check_dir = "baselines_checkpoints"
-    variants = ["iscobots"] #["scobots", "iscobots"]#, "rgb"]
+    variants = ["scobots"] #["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
-    checkpoint_str = "best_model" #"best_model"
+    checkpoint_str = "best_model" #"model_5000000_steps"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("keval_results.pkl")
-    eval_results_csv_path = Path("keval_results.csv")
+    eval_results_pkl_path = Path("scobots-v2_eval_results.pkl")
+    eval_results_csv_path = Path("scobots-v2_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 
@@ -56,8 +57,7 @@ def main():
             atari_env_str = "ALE/" + env_str +"-v5"
             
             if variant == "rgb":
-                atari_env_str = env_str +"NoFrameskip-v4"
-                env = make_atari_env(atari_env_str, seed=eval_seed, wrapper_kwargs={"clip_reward": False, "terminal_on_life_loss": False})
+                env = make_vec_env(atari_env_str, seed=eval_seed, wrapper_class=WarpFrame) #default 84x84 same as training
                 env = VecFrameStack(env, n_stack=4)
             else:
                 env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
@@ -110,7 +110,7 @@ def main():
 
 
 
-    for e in envs:
+    for e in envs: #refresh default focus files
         atari_env_str = "ALE/" + e +"-v5"
         Environment(atari_env_str, silent=True, refresh_yaml=True)
     

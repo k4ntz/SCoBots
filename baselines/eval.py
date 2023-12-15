@@ -6,6 +6,7 @@ from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv, VecFrameStack
 from stable_baselines3 import PPO
+from stable_baselines3.common.atari_wrappers import  WarpFrame
 from stable_baselines3.common.evaluation import evaluate_policy
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.utils import set_random_seed
@@ -74,15 +75,14 @@ def main():
     if opts.rgb:
         settings_str = "-rgb"
         variant= "rgb"
-    exp_name = opts.game + "_s" + str(opts.seed) + settings_str
+    exp_name = opts.game + "_s" + str(opts.seed) + settings_str + "-v2"
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
-    model_path = Path("baselines_checkpoints", variant, exp_name, checkpoint_str)
-    vecnorm_path = Path("baselines_checkpoints", variant, exp_name, vecnorm_str)
+    model_path = Path("baselines_checkpoints", exp_name, checkpoint_str)
+    vecnorm_path = Path("baselines_checkpoints",  exp_name, vecnorm_str)
     EVAL_ENV_SEED = 84
     if variant == "rgb":
-        env_str = opts.game +"NoFrameskip-v4"
-        env = make_atari_env(env_str, seed=EVAL_ENV_SEED, wrapper_kwargs={"clip_reward": False, "terminal_on_life_loss": False})
+        env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
         env = VecFrameStack(env, n_stack=4)
     else:
         env = Environment(env_str, 
