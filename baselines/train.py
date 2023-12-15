@@ -180,8 +180,8 @@ def main():
                               focus_file=pruned_ff_name, 
                               hide_properties=hide_properties, 
                               silent=silent,
-                              reward=0,
-                              refresh_yaml=refresh) #always env reward for eval
+                              reward=0, #always env reward for eval
+                              refresh_yaml=refresh) 
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
@@ -200,7 +200,7 @@ def main():
         eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
     elif opts.rgbv5:
-        # NoopResetEnv not required, because sticky actions in v5, frame_skip=5 in v5, so also not required to set here
+        # NoopResetEnv not required, because sticky actions in v5, frame_skip=5 in v5, so also not required to set here (1 means no frameskip)
         train_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : False} # remaining values are part of AtariWrapper
         train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
