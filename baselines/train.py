@@ -144,10 +144,10 @@ def main():
     #override some settings if rgb
     rgb_exp = opts.rgbv4 or opts.rgbv5
     if opts.rgbv4:
-        settings_str = "-rgb-v4"
+        settings_str = "-rgb-v4-fs4"
         env_str = opts.game + "NoFrameskip-v4"
     if opts.rgbv5:
-        settings_str = "-rgb-v5"
+        settings_str = "-rgb-v5-fs4"
 
     exp_name = opts.game + "_s" + str(opts.seed) + settings_str
     if not rgb_exp:
@@ -191,23 +191,27 @@ def main():
 
     # preprocessing based on atari wrapper of the openai baseline implementation (https://github.com/openai/baselines/blob/master/baselines/ppo1/run_atari.py)
     if opts.rgbv4:
-        # NoopResetEnv:30, MaxAndSkipEnv=4, WarpFrame=84x84,grayscale, EpisodicLifeEnv, FireResetEnv, ClipRewardEnv, frame_stack=False, scale=False
+        # NoopResetEnv:30, MaxAndSkipEnv=4, WarpFrame=84x84,grayscale, EpisodicLifeEnv, FireResetEnv, ClipRewardEnv, frame_stack=4, scale=False
         train_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : True, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
         train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
+        train_env = VecFrameStack(train_env, 4)
         # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
         eval_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
         eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
+        eval_env = VecFrameStack(eval_env, 4)
     elif opts.rgbv5:
         # NoopResetEnv not required, because sticky actions in v5, frame_skip=5 in v5, so also not required to set here (1 means no frameskip)
         train_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : False} # remaining values are part of AtariWrapper
         train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
+        train_env = VecFrameStack(train_env, 4)
         # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
         eval_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False} # remaining values are part of AtariWrapper
         eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
+        eval_env = VecFrameStack(eval_env, 4)
     else:
         # check if compatible gym env
         monitor = make_env()()
