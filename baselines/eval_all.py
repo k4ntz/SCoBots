@@ -63,12 +63,10 @@ def main():
                 atari_env_str = env_str + "NoFrameskip-v4"
                 eval_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
                 env = make_vec_env(atari_env_str, seed=eval_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params)
-                env = VecFrameStack(env)
                 env = VecTransposeImage(env)
             elif variant == "rgbv5":
                 eval_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
                 env = make_vec_env(atari_env_str, seed=eval_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params)
-                env = VecFrameStack(env)
                 env = VecTransposeImage(env)
             else:
                 env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)

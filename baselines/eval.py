@@ -83,7 +83,6 @@ def main():
     EVAL_ENV_SEED = 84
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
-        env = VecFrameStack(env, n_stack=4)
     else:
         env = Environment(env_str, 
                             focus_file=pruned_ff_name, 

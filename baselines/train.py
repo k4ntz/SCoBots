@@ -191,27 +191,23 @@ def main():
 
     # preprocessing based on atari wrapper of the openai baseline implementation (https://github.com/openai/baselines/blob/master/baselines/ppo1/run_atari.py)
     if opts.rgbv4:
-        # NoopResetEnv:30, MaxAndSkipEnv=4, WarpFrame=84x84,grayscale, EpisodicLifeEnv, FireResetEnv, ClipRewardEnv, frame_stack=4, scale=False
+        # NoopResetEnv:30, MaxAndSkipEnv=4, WarpFrame=84x84,grayscale, EpisodicLifeEnv, FireResetEnv, ClipRewardEnv, frame_stack=1, scale=False
         train_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : True, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
         train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
-        train_env = VecFrameStack(train_env, 4)
         # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
         eval_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
         eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
-        eval_env = VecFrameStack(eval_env, 4)
     elif opts.rgbv5:
-        # NoopResetEnv not required, because sticky actions in v5, frame_skip=5 in v5, so also not required to set here (1 means no frameskip)
+        # NoopResetEnv not required, because v5 has sticky actions, and also frame_skip=5, so also not required to set in wrapper (1 means no frameskip). no reward clipping, because scobots dont clip as well
         train_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : False} # remaining values are part of AtariWrapper
         train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
-        train_env = VecFrameStack(train_env, 4)
         # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
         eval_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False} # remaining values are part of AtariWrapper
         eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
-        eval_env = VecFrameStack(eval_env, 4)
     else:
         # check if compatible gym env
         monitor = make_env()()
@@ -256,8 +252,11 @@ def main():
     new_logger = configure(str(log_path), ["tensorboard"])
 
     if rgb_exp:
+        # pkwargs = dict(activation_fn=th.nn.Tanh, net_arch=dict(pi=[64, 64], vf=[64, 64])) 
+        # was mentioned in ppo paper, but most likely not used, use Nature DQN:
+        # (https://github.com/openai/baselines/blob/master/baselines/ppo1/cnn_policy.py#L6) instead
+        # this is implemented in sb3 as 'CnnPolicy'
         policy_str = "CnnPolicy"
-        pkwargs = dict(activation_fn=th.nn.Tanh, net_arch=dict(pi=[64, 64], vf=[64, 64])) # as in ppo paper
         adam_step_size = 0.00025
         clipping_eps = 0.1
         model = PPO(
@@ -272,7 +271,7 @@ def main():
             vf_coef=1,
             ent_coef=0.01,
             env=train_env,
-            policy_kwargs=pkwargs,
+            #policy_kwargs=pkwargs,
             verbose=1)
     else:
         policy_str = "MlpPolicy"
