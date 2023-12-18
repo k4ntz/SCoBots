@@ -175,3 +175,4 @@ baselines/plots
 baselines/*.csv
 baselines/*.pkl
 baselines/focusfiles/default_*
+baselines/curve_data_to_plot.npy

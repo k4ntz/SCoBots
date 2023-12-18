@@ -144,10 +144,10 @@ def main():
     #override some settings if rgb
     rgb_exp = opts.rgbv4 or opts.rgbv5
     if opts.rgbv4:
-        settings_str = "-rgb-v4-fs4"
+        settings_str = "-rgb-v4"
         env_str = opts.game + "NoFrameskip-v4"
     if opts.rgbv5:
-        settings_str = "-rgb-v5-fs4"
+        settings_str = "-rgb-v5"
 
     exp_name = opts.game + "_s" + str(opts.seed) + settings_str
     if not rgb_exp:
