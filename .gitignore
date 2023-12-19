@@ -176,3 +176,4 @@ baselines/*.csv
 baselines/*.pkl
 baselines/focusfiles/default_*
 baselines/curve_data_to_plot.npy
+baselines/old_numeric_table.txt

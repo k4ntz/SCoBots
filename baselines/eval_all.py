@@ -14,13 +14,13 @@ from multiprocessing import Process, Value
 def main():
     envs =["Seaquest", "Kangaroo", "Asterix", "Bowling", "Tennis", "Boxing", "Freeway", "Skiing", "Pong"] 
     check_dir = "baselines_checkpoints"
-    variants = ["rgbv4"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
+    variants = ["rgbv5"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
     checkpoint_str = "best_model" #"model_5000000_steps"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("rgb-v4_eval_results.pkl")
-    eval_results_csv_path = Path("rgb-v4_eval_results.csv")
+    eval_results_pkl_path = Path("rgb-v5_eval_results.pkl")
+    eval_results_csv_path = Path("rgb-v5_eval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 

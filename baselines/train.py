@@ -259,6 +259,9 @@ def main():
         policy_str = "CnnPolicy"
         adam_step_size = 0.00025
         clipping_eps = 0.1
+        norm_adv = True
+        if opts.rgbv4:
+            norm_adv = False # according to sb3, adv normalization not used in original ppo paper
         model = PPO(
             policy=policy_str,
             n_steps=128,
@@ -268,6 +271,7 @@ def main():
             gamma=0.99,
             gae_lambda=0.95,
             clip_range=linear_schedule(clipping_eps),
+            normalize_advantage=norm_adv,
             vf_coef=1,
             ent_coef=0.01,
             env=train_env,

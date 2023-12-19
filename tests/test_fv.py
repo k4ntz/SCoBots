@@ -1,9 +1,9 @@
 from scobi import Environment
 import numpy as np
 # Extensive init, interactive, custom fcous dir and focus file
-env = Environment(env_name='PongDeterministic-v4', interactive=True, focus_dir="experiments/my_focusfiles", focus_file="pruned_pong.yaml")
+env = Environment(env_name='KangarooDeterministic-v4', focus_dir="experiments/my_focusfiles", focus_file="pruned_kangaroo.yaml")
 env.reset()
-obs, env_reward, scobi_reward, truncated, terminated, info, obs_a = env.step(1)
+obs, env_reward, truncated, terminated, info = env.step(1)
 env.close()
 
 fv_desc = env.feature_vector_description

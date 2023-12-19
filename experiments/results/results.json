@@ -241,6 +241,22 @@
             "reward": 0.0,
             "scobi_reward": 284.0,
             "frames_seen": 125000
+        },
+        "re-kangaroo_pruned-seed42": {
+            "mode": "pruned",
+            "seed": 42,
+            "eval_runs": 5,
+            "reward": 240.0,
+            "scobi_reward": 240.0,
+            "frames_seen": 50000
+        },
+        "re-kangaroo_pruned-seed4242": {
+            "mode": "pruned",
+            "seed": 4242,
+            "eval_runs": 5,
+            "reward": 600.0,
+            "scobi_reward": 600.0,
+            "frames_seen": 350000
         }
     }
 }
