@@ -14,4 +14,4 @@ colormath
 yacs
 captum
 notebook
-ocatari @ ocatari@git+https://github.com/k4ntz/OC_Atari@asterix
+ocatari @ git+https://github.com/k4ntz/OC_Atari@asterix
