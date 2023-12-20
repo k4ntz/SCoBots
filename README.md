@@ -3,8 +3,6 @@ Successive Concepet Bottleneck Interface
 
 you need ocatari
 
-raw -> object bottleneck -> concept bottleneck -> env
-
 ## How to use (example)
 
 ```python
@@ -33,4 +31,16 @@ env.observation_space_description   # [['POSITION', 'ball'], ['POSITION', 'enemy
 env.original_reward                 # ALE reward
 env.original_obs                    # ALE obs
 env.close()
+```
+
+## Where to start
+
+Reinforce Training: ```/experiments```
+```bash
+python train.py --config configs/scobi/re-pong.yaml seed 42
+```
+
+PPO Training ```/baselines```
+```bash
+python train.py -g Pong -s 42 -c 8 -r env
 ```
