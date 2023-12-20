@@ -1,4 +1,4 @@
-gymnasium[atari, accept-rom-license]
+gymnasium[atari, accept-rom-license] == 0.28.1
 rtpt
 termcolor
 torch
@@ -14,4 +14,4 @@ colormath
 yacs
 captum
 notebook
-ocatari @ git+https://github.com/k4ntz/OC_Atari.git
+ocatari @ ocatari@git+https://github.com/k4ntz/OC_Atari@asterix

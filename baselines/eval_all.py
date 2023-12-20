@@ -14,13 +14,13 @@ from multiprocessing import Process, Value
 def main():
     envs =["Seaquest", "Kangaroo", "Asterix", "Bowling", "Tennis", "Boxing", "Freeway", "Skiing", "Pong"] 
     check_dir = "baselines_checkpoints"
-    variants = ["rgbv5"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
+    variants = ["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
     checkpoint_str = "best_model" #"model_5000000_steps"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("rgb-v5_eval_results.pkl")
-    eval_results_csv_path = Path("rgb-v5_eval_results.csv")
+    eval_results_pkl_path = Path("rgb-v4-nn_eval_results.pkl")
+    eval_results_csv_path = Path("rgb-v4-nn_eval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 
@@ -59,12 +59,12 @@ def main():
                 pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
             atari_env_str = "ALE/" + env_str +"-v5"
             
-            if variant == "rgbv4":
+            if "rgbv4" in variant:
                 atari_env_str = env_str + "NoFrameskip-v4"
                 eval_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
                 env = make_vec_env(atari_env_str, seed=eval_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params)
                 env = VecTransposeImage(env)
-            elif variant == "rgbv5":
+            elif "rgbv5" in variant:
                 eval_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
                 env = make_vec_env(atari_env_str, seed=eval_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params)
                 env = VecTransposeImage(env)
