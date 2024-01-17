@@ -7,7 +7,7 @@ from scobi.utils.colors import get_closest_color
 from scobi.utils.decorators import register
 COLOR_INT_MEMORY = {}
 EPS = np.finfo(np.float64).eps.item()
-GameObject = get_wrapper_class()
+GameObject = get_wrapper_class(game_object_extractor="OC_Atari")
 
 # None forwarding crucial for feature handling when objects are invisible
 # TODO: use a wrapper instead, pretty ugly atm

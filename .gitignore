@@ -177,3 +177,9 @@ baselines/*.pkl
 baselines/focusfiles/default_*
 baselines/curve_data_to_plot.npy
 baselines/old_numeric_table.txt
+
+tmp/
+eval_imgs/
+baselines_checkpoints/
+baselines_logs/
+a_saved_pong_training_stuff/

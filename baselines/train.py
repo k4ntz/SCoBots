@@ -5,7 +5,7 @@ import os
 from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack, VecNormalize, VecTransposeImage
+from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack, VecNormalize, VecTransposeImage, DummyVecEnv
 from stable_baselines3.common.atari_wrappers import EpisodicLifeEnv, WarpFrame, AtariWrapper
 from stable_baselines3.common.env_util import make_vec_env, make_atari_env
 from stable_baselines3.common.logger import configure
@@ -19,7 +19,7 @@ from collections import deque
 import torch as th
 
 
-MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
+MULTIPROCESSING_START_METHOD = "spawn" # if os.name == 'nt' else "fork"  # 'nt' == Windows
 
 class RtptCallback(BaseCallback):
     def __init__(self, exp_name, max_iter, verbose=0):
@@ -49,6 +49,7 @@ class TensorboardCallback(BaseCallback):
         for rew in ep_rewards:
             if rew is not None:
                 self.buffer.extend([rew])
+        return True
 
     
     def on_rollout_end(self) -> None:
@@ -73,6 +74,7 @@ class SaveBestModelCallback(BaseCallback):
         if not self.rgb:
             self.model.get_vec_normalize_env().save(self.vec_path_name)
         self.model.save(os.path.join(self.save_path, "best_model"))
+        return True
         
 
 
@@ -97,6 +99,7 @@ def main():
     parser.add_argument("-e", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("--rgbv4", action="store_true", help="rgb observation space")
     parser.add_argument("--rgbv5", action="store_true", help="rgb observation space")
+    parser.add_argument("--use_checkpoint", action="store_true", help="use checkpoint")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -130,13 +133,13 @@ def main():
 
 
     n_envs = opts.cores
-    n_eval_envs = 4
+    n_eval_envs = 4 #4
     n_eval_episodes = 8
     eval_env_seed = (opts.seed + 42) * 2 #different seeds for eval
-    training_timestamps = 20_000_000
-    checkpoint_frequency = 1_000_000
-    eval_frequency = 500_000
-    rtpt_frequency = 100_000
+    training_timestamps = 10_000_000 #20_000_000 # was 20_000_000
+    checkpoint_frequency = 200_000 #1_000_000
+    eval_frequency = 400_000 #500_000
+    rtpt_frequency = 100_000 # 100_000
 
     if opts.rgbv4 and opts.rgbv5:
         print("please select only one rgb mode!")
@@ -217,38 +220,6 @@ def main():
         eval_env = VecNormalize(SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False, training=False)
         train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
 
-    rtpt_iters = training_timestamps // rtpt_frequency
-    save_bm = SaveBestModelCallback(ckpt_path, rgb=rgb_exp)
-    eval_callback = EvalCallback(
-        eval_env,
-        callback_on_new_best=save_bm,
-        n_eval_episodes=n_eval_episodes,
-        best_model_save_path=str(ckpt_path),
-        log_path=str(ckpt_path),
-        eval_freq=max(eval_frequency // n_envs, 1),
-        deterministic=True,
-        render=False)
-
-    checkpoint_callback = CheckpointCallback(
-        save_freq= max(checkpoint_frequency // n_envs, 1),
-        save_path=str(ckpt_path),
-        name_prefix="model",
-        save_replay_buffer=True,
-        save_vecnormalize=True)
-    
-    rtpt_callback = RtptCallback(
-        exp_name=exp_name,
-        max_iter=rtpt_iters)
-
-    n_callback = EveryNTimesteps(
-        n_steps=rtpt_frequency,
-        callback=rtpt_callback)
-
-    tb_callback = TensorboardCallback(n_envs=n_envs)
-    cbl = [checkpoint_callback, eval_callback, n_callback, tb_callback]
-    if rgb_exp: #remove tb callback if rgb
-        cbl = cbl[:-1]
-    cb_list = CallbackList(cbl)
     new_logger = configure(str(log_path), ["tensorboard"])
 
     if rgb_exp:
@@ -282,25 +253,84 @@ def main():
         pkwargs = dict(activation_fn=th.nn.ReLU, net_arch=dict(pi=[64, 64], vf=[64, 64]))
         adam_step_size = 0.00025 # or 0.001
         clipping_eps = 0.1
-        model = PPO(
-            policy_str,
-            n_steps=2048,
-            learning_rate=linear_schedule(adam_step_size),
-            n_epochs=3,
-            batch_size=32*8,
-            gamma=0.99,
-            gae_lambda=0.95,
-            clip_range=linear_schedule(clipping_eps),
-            vf_coef=1,
-            ent_coef=0.01,
-            env=train_env,
-            policy_kwargs=pkwargs,
-            verbose=1)
+
+        if not opts.use_checkpoint:
+            model = PPO(
+                policy_str,
+                n_steps=2048,
+                learning_rate=linear_schedule(adam_step_size),
+                n_epochs=3,
+                batch_size=32*8,
+                gamma=0.99,
+                gae_lambda=0.95,
+                clip_range=linear_schedule(clipping_eps),
+                vf_coef=1,
+                ent_coef=0.01,
+                env=train_env,
+                policy_kwargs=pkwargs,
+                verbose=1)
+        else:
+            # load last checkpoint
+            ckpt_list = [f for f in os.listdir(ckpt_path) if f.endswith(".zip") and f.startswith("model")]
+            last_ckpt = sorted(ckpt_list, key=lambda x: int(x.split("_")[1]))[-1]
+            #remove .zip
+            last_ckpt = last_ckpt[:-4]
+            vec_norm_list = [f for f in os.listdir(ckpt_path) if f.endswith(".pkl") and f.startswith("model_vecnormalize")]
+            last_vecnorm = sorted(vec_norm_list, key=lambda x: int(x.split("_")[2]))[-1]
+            eval_env = SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD)
+            train_env = SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD)
+            train_env = VecNormalize.load(Path(ckpt_path, last_vecnorm), train_env)
+            eval_env = VecNormalize.load(Path(ckpt_path, last_vecnorm), eval_env)
+            train_env.training = True
+            eval_env.training = False
+            train_env.norm_reward = False
+            eval_env.norm_reward = False
+            print(f"loading model from {last_ckpt}")
+            model_path = Path(ckpt_path, last_ckpt)
+            model = PPO.load(model_path, env=train_env)
+            import ipdb; ipdb.set_trace()
+            
+
+
+    rtpt_iters = training_timestamps // rtpt_frequency
+    save_bm = SaveBestModelCallback(ckpt_path, rgb=rgb_exp)
+    eval_callback = EvalCallback(
+        eval_env,
+        callback_on_new_best=save_bm,
+        n_eval_episodes=n_eval_episodes,
+        best_model_save_path=str(ckpt_path),
+        log_path=str(ckpt_path),
+        eval_freq=max(eval_frequency // n_envs, 1),
+        deterministic=True,
+        render=False)
+
+    checkpoint_callback = CheckpointCallback(
+        save_freq= max(checkpoint_frequency // n_envs, 1),
+        save_path=str(ckpt_path),
+        name_prefix="model",
+        save_replay_buffer=True,
+        save_vecnormalize=True)
+    
+    rtpt_callback = RtptCallback(
+        exp_name=exp_name,
+        max_iter=rtpt_iters)
+
+    n_callback = EveryNTimesteps(
+        n_steps=rtpt_frequency,
+        callback=rtpt_callback)
+
+    tb_callback = TensorboardCallback(n_envs=n_envs)
+    cbl = [checkpoint_callback, eval_callback, n_callback, tb_callback]
+    if rgb_exp: #remove tb callback if rgb
+        cbl = cbl[:-1]
+    cb_list = CallbackList(cbl)
+
+
     model.set_logger(new_logger)
     print(model.policy)
     print(f"Experiment name: {exp_name}")
     print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
-    model.learn(total_timesteps=training_timestamps, callback=cb_list)
+    model.learn(total_timesteps=training_timestamps, callback=cb_list, progress_bar=True)
 
 if __name__ == '__main__':
     main()

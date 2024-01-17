@@ -2,20 +2,20 @@
 # switch depending on object extractor
 # only ocatari implemented for now
 from scobi.utils.interfaces import GameObjectInterface
-from typing import Tuple
+
 from ocatari.ram.game_objects import GameObject as Ocatari_GameObject
+from scobi.utils.SPACEGameObject import KFandSPACEGameObject
 
-OBJ_EXTRACTOR = "OC_Atari" #TODO: pass or fetch from global env
-
-
-def get_wrapper_class():
-    if OBJ_EXTRACTOR == "OC_Atari":
-        return OCAGameObject
+def get_wrapper_class(game_object_extractor):
+    if game_object_extractor == "OC_Atari":
+        return OCAGameObjectWrapped
     # add other object extractors here and its wrapper classe below
+    elif game_object_extractor == "KFandSPACE":
+        return KFandSPACEGameObjectWrapped
 
 
 # OC Atari GameObject wrapper classes implementing scobi GameObjectInterface
-class OCAGameObject(GameObjectInterface):
+class OCAGameObjectWrapped(GameObjectInterface):
     def __init__(self, ocgo):
         self._number = 1
         if issubclass(type(ocgo), Ocatari_GameObject):
@@ -23,7 +23,6 @@ class OCAGameObject(GameObjectInterface):
         else:
             incoming_type = type(ocgo)
             raise ValueError("Incompatible Wrapper, expects OC_Atari GameObject. Got: "+str(incoming_type))
-
 
     @property
     def category(self):
@@ -81,3 +80,76 @@ class OCAGameObject(GameObjectInterface):
     @property
     def orientation(self):
         return self.ocgo.orientation
+    
+
+class KFandSPACEGameObjectWrapped(GameObjectInterface):
+
+    def __init__(self, kfandspacego):
+        self._number = 1
+        if issubclass(type(kfandspacego), KFandSPACEGameObject):
+            self.kfandspacego = kfandspacego
+        elif issubclass(type(kfandspacego), Ocatari_GameObject):
+            self.kfandspacego = kfandspacego
+        else:
+            incoming_type = type(kfandspacego)
+            raise ValueError("Incompatible Wrapper, expects KFandSPACEGameObject. Got: "+str(incoming_type))
+
+    @property
+    def category(self):
+        return self.kfandspacego.category
+    
+    @property
+    def xy(self):
+        return self.kfandspacego.xy
+    
+    @xy.setter
+    def xy(self, xy):
+        self.kfandspacego.xy = xy
+    
+    @property
+    def w(self):
+        return self.kfandspacego.w
+    
+    @property
+    def h(self):
+        return self.kfandspacego.h
+
+    @property
+    def number(self):
+        return self._number
+        
+    @number.setter
+    def number(self, number):
+        self._number = number
+
+    @property
+    def h(self):
+        return self.h
+    
+    @property
+    def w(self):
+        return self.w
+    
+    @property
+    def rgb(self): #TODO: decide what to do with rgb
+        return self.kfandspacego.rgb
+        #if self.category == "Player":
+        #    return  (92, 186, 92) #Boxing (214, 214, 214) # Pong (92, 186, 92)
+        #elif self.category == "Ball":
+        #    return (236, 236, 236)
+        #elif self.category == "Enemy":
+        #    return (213, 130, 74)#Boxing (0, 0, 0)  # Pong (213, 130, 74)
+        #else:
+        #    return (0, 0, 0)
+    
+    @property
+    def xywh(self):
+        return self.kfandspacego.xywh
+    
+    @property
+    def orientation(self):
+        return self.kfandspacego.orientation
+    
+    @property
+    def h_coords(self):
+        return self.kfandspacego.h_coords

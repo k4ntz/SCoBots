@@ -394,7 +394,7 @@ class Focus():
 
         # fill missing objects as None
         input_dict = {}
-        for obj in inc_objects_list:
+        for obj in inc_objects_list: # detected objects that were not in max_objects will be ignored
             input_dict[obj.name] = obj 
         for name in self.OBJECT_NAMES:
             if not name in input_dict.keys():

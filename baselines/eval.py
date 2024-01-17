@@ -18,6 +18,7 @@ from typing import Callable
 from rtpt import RTPT
 from collections import deque
 import matplotlib.pyplot as plt
+import os
 
 def flist(l):
     return ["%.2f" % e for e in l]
@@ -75,12 +76,12 @@ def main():
     if opts.rgb:
         settings_str = "-rgb"
         variant= "rgb"
-    exp_name = opts.game + "_s" + str(opts.seed) + settings_str + "-v2"
+    exp_name = opts.game + "_s" + str(opts.seed) + settings_str +  "-v3" + "_gtdata" #"-v2"
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("baselines_checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("baselines_checkpoints",  exp_name, vecnorm_str)
-    EVAL_ENV_SEED = 84
+    EVAL_ENV_SEED = 100 #84
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
     else:
@@ -89,7 +90,6 @@ def main():
                             hide_properties=hide_properties, 
                             draw_features=True, # implement feature attribution
                             reward=0) #env reward only for evaluation
-
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])
         #print(obs)
@@ -112,15 +112,33 @@ def main():
     else:
         scobi_env = env.venv.envs[0]
         img = plt.imshow(scobi_env._obj_obs)
-
+    
+    # create eval_imgs dir and remove old images
+    if not os.path.exists("eval_imgs"):
+        os.makedirs("eval_imgs")
+    else:
+        files = os.listdir("eval_imgs")
+        for file in files:
+            os.remove(os.path.join("eval_imgs", file))
+    # same code for tmp
+    if not os.path.exists("tmp"):
+        os.makedirs("tmp")
+    else:
+        files = os.listdir("tmp")
+        for file in files:
+            os.remove(os.path.join("tmp", file))
     while True:
         action, _ = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
-        #print(reward)
-       # print(action)
-
-        #if reward > 20:
-        #print([scobi_env.original_reward, reward])
+        
+        # save observation as image
+        #plt.imsave(f"eval_imgs/obs_{current_episode}_{current_step}.png", env.envs[0].oc_env._get_obs())
+        # use five digits for episode and step
+        #plt.imsave(f"eval_imgs/obs_{current_episode:05d}_{current_step:05d}.png", env.envs[0].oc_env._get_obs())
+        plt.imsave(f"tmp/obs_obj_{current_episode:05d}_{current_step:05d}.png", env.venv.envs[0]._obj_obs)
+        #plt.imsave(f"eval_imgs/obs_{current_episode:05d}_{current_step:05d}.png", env.envs[0].oc_env._get_obs())
+        #import ipdb; ipdb.set_trace()
+        
         current_rew += reward #scobi_env.original_reward
         current_step += 1
         # TODO: implement feature attribution here
