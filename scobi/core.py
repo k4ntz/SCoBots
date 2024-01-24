@@ -80,16 +80,15 @@ class Environment(Env):
                 objects = self._wrap_map_order_game_objects(objects_by_detector, self.focus.ENV_NAME, self.focus.REWARD_SHAPING, self.game_object_wrapper_1)
                 sco_obs, sco_reward = self.focus.get_feature_vector(objects)
             if USE_SPACE or COMPARE:
-                start_detect_time = time.time()
                 objects_by_detector = self.object_detector_2.get_objects(obs)
-                end_detect_time = time.time()
                 #print(f"get_objects time space: {end_detect_time - start_detect_time}")
                 objects_2 = self._wrap_map_order_game_objects(objects_by_detector, self.focus.ENV_NAME, self.focus.REWARD_SHAPING, self.game_object_wrapper_2)
                 sco_obs_2, sco_reward_2 = self.focus.get_feature_vector(objects_2)
-                
-                objects = objects_2
-                sco_obs = sco_obs_2 
-                sco_reward = sco_reward_2
+                if USE_SPACE:
+                    objects = objects_2
+                    sco_obs = sco_obs_2 
+                    sco_reward = sco_reward_2
+            
             #self.print_objects(objects, objects_2)
 
             freeze_mask = self.focus.get_current_freeze_mask()
@@ -125,7 +124,9 @@ class Environment(Env):
         if COMPARE or USE_SPACE:
             objects_2 = self._wrap_map_order_game_objects(self.object_detector_2.get_objects(observation), self.focus.ENV_NAME, self.focus.REWARD_SHAPING, self.game_object_wrapper_2)
             sco_obs_2, _ = self.focus.get_feature_vector(objects_2)
-            sco_obs = sco_obs_2
+            if USE_SPACE:
+                objects = objects_2
+                sco_obs = sco_obs_2
         return sco_obs, info
     
     def print_observation_and_with_description(self, observations_1, observations_2):
@@ -440,6 +441,8 @@ def mark_bb(image_array, bb, color=(255, 0, 0), surround=True, name=None):
     """
     marks a bounding box on the image
     """
+    x, y, w, h = bb
+    bb = int(x - w / 2), int(y - h / 2), int(w), int(h)
     x, y, w, h = bb
     color = _make_darker(color)
     if surround:

@@ -15,6 +15,10 @@ def get_wrapper_class(game_object_extractor):
 
 
 # OC Atari GameObject wrapper classes implementing scobi GameObjectInterface
+#Format for coordinates:
+# x and y are the center coordinates of the bbox
+# w and h are the width and height of the bbox
+
 class OCAGameObjectWrapped(GameObjectInterface):
     def __init__(self, ocgo):
         self._number = 1
@@ -48,7 +52,7 @@ class OCAGameObjectWrapped(GameObjectInterface):
     def xy(self, xy):
         if len(self.ocgo.xy) != 2:
             raise ValueError(f"Bad xy dimension from ocatari: {self.name} : {self.ocgo.xy}")
-        self.ocgo.xy = xy
+        self.ocgo.xy = xy[0] - int(self.w / 2), xy[1] - int(self.h / 2)
 
     @property
     def h_coords(self):
@@ -69,7 +73,8 @@ class OCAGameObjectWrapped(GameObjectInterface):
     
     @property
     def xywh(self):
-        return self.ocgo.xywh
+        x_min, y_min, w, h = self.ocgo.xywh
+        return x_min + int(w / 2), y_min + int(h / 2), w, h
 
     @property
     def rgb(self):
@@ -99,22 +104,6 @@ class KFandSPACEGameObjectWrapped(GameObjectInterface):
         return self.kfandspacego.category
     
     @property
-    def xy(self):
-        return self.kfandspacego.xy
-    
-    @xy.setter
-    def xy(self, xy):
-        self.kfandspacego.xy = xy
-    
-    @property
-    def w(self):
-        return self.kfandspacego.w
-    
-    @property
-    def h(self):
-        return self.kfandspacego.h
-
-    @property
     def number(self):
         return self._number
         
@@ -123,12 +112,26 @@ class KFandSPACEGameObjectWrapped(GameObjectInterface):
         self._number = number
 
     @property
-    def h(self):
-        return self.h
+    def xy(self):
+        if len(self.kfandspacego.xy) != 2:
+            raise ValueError(f"Bad xy dimension: {self.name} : {self.kfandspacego.xy}") #TODO: generalize and improve dimension checks
+        x = self.kfandspacego.xy[0] + int(self.w / 2)
+        y = self.kfandspacego.xy[1] + int(self.h / 2)
+        return x, y
+    
+    @xy.setter
+    def xy(self, xy):
+        if len(self.kfandspacego.xy) != 2:
+            raise ValueError(f"Bad xy dimension: {self.name} : {self.ocgo.xy}")
+        self.kfandspacego.xy = xy[0] - int(self.w / 2), xy[1] - int(self.h / 2)
     
     @property
     def w(self):
-        return self.w
+        return self.kfandspacego.w
+    
+    @property
+    def h(self):
+        return self.kfandspacego.h
     
     @property
     def rgb(self): #TODO: decide what to do with rgb
@@ -144,7 +147,8 @@ class KFandSPACEGameObjectWrapped(GameObjectInterface):
     
     @property
     def xywh(self):
-        return self.kfandspacego.xywh
+        x_min, y_min, w, h = self.kfandspacego.xywh
+        return x_min + int(w / 2), y_min + int(h / 2), w, h
     
     @property
     def orientation(self):
@@ -152,4 +156,9 @@ class KFandSPACEGameObjectWrapped(GameObjectInterface):
     
     @property
     def h_coords(self):
-        return self.kfandspacego.h_coords
+        shc = self.kfandspacego.h_coords
+        if None in shc or len(shc) != 2 or len([*shc[0], *shc[1]]) != 4:
+            raise ValueError(f"Bad h_coords dimension{self.name} : {self.kfandspacego.h_coords}")
+        ncord = shc[0][0] + int(self.w / 2), shc[0][1] + int(self.h / 2)
+        ocord = shc[1][0] + int(self.w / 2), shc[1][1] + int(self.h / 2)
+        return ncord, ocord

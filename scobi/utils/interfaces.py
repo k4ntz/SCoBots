@@ -79,7 +79,7 @@ class GameObjectInterface(ABC):
         return self.xy[1] - game_object.xy[1]
 
     def __repr__(self):
-        return f"{self.name} at ({self.xy[0]}, {self.xy[1]})"
+        return f"{self.name} at ({self.xy[0]}, {self.xy[1]}, {self.w}, {self.h})"
     
     # @property
     # @abstractmethod

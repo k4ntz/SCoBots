@@ -70,7 +70,6 @@ def sorted_label_list_for(env_name):
 class KFandSPACEGameObject:
 
     def __init__(self, x_min, y_min, w, h, class_id, confidence, game_name):
-        self._number = 1
         self._x_min = x_min
         self._y_min = y_min
         self._w = w
@@ -94,22 +93,11 @@ class KFandSPACEGameObject:
     
     @property
     def xy(self):
-        x = self._x_min + int(self._w / 2)
-        y = self._y_min + int(self._h / 2)
-        return x, y
+       return self._x_min, self._y_min
 
     @xy.setter
     def xy(self, xy):
-        self._x_min = xy[0] - int(self._w / 2)
-        self._y_min = xy[1] - int(self._h / 2)
-
-    @property
-    def number(self):
-        return self._number
-        
-    @number.setter
-    def number(self, number):
-        self._number = number
+        self._x_min, self._y_min = xy
 
     @property
     def h(self):
@@ -129,7 +117,7 @@ class KFandSPACEGameObject:
 
     @property
     def xywh(self):
-        return self._x_min , self._y_min, self._w, self._h
+        return self._x_min, self._y_min, self._w, self._h
 
     @property
     def rgb(self):
@@ -143,11 +131,8 @@ class KFandSPACEGameObject:
     
     @property
     def h_coords(self):
-        ncord = self.xy[0], self.xy[1]
-        ocord = self.prev_xy[0], self.prev_xy[1]
-        return ncord, ocord
+        return [self.xy, self.prev_xy]
         
-
     @property
     def prev_xy(self):
         if self._prev_xy is not None:

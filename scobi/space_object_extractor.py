@@ -61,14 +61,14 @@ def space_bboxes2scobi_bboxes(bboxes, game_name):
 
     x_shift = 0
     y_shift = 0
-    if game_name == "pong":
-        x_shift = 6
-        y_shift = 9
-    elif game_name == "boxing":
-        x_shift = 10
-        y_shift = 25
-    else:
-        raise ValueError("game_name not recognized")
+    #if game_name == "pong":
+    #    x_shift = 6
+    #    y_shift = 9
+    #elif game_name == "boxing":
+    #    x_shift = 10
+    #    y_shift = 25
+    #else:
+    #    raise ValueError("game_name not recognized")
     
     bboxes[:, 0] = bboxes[:, 0] * (160 / 128) + x_shift
     bboxes[:, 1] = bboxes[:, 1] * (210 / 128) + y_shift
