@@ -9,7 +9,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from copy import deepcopy
 from scobi.ram_object_extractor import RAMObjectExtractor
-from scobi.space_object_extractor import CentroidTrackerAndSPACEObjectExtractor
+#from scobi.space_object_extractor import CentroidTrackerAndSPACEObjectExtractor
 import time
 USE_SPACE = False
 COMPARE = False
@@ -29,7 +29,7 @@ class Environment(Env):
         if not USE_SPACE or COMPARE:
             self.object_detector_1 = RAMObjectExtractor(self.oc_env)
         if USE_SPACE or COMPARE:
-            self.object_detector_2 = CentroidTrackerAndSPACEObjectExtractor(env_name)
+            self.object_detector_2 = None #CentroidTrackerAndSPACEObjectExtractor(env_name)
         self.oc_env.reset(seed=seed)
         max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward, self.game_object_wrapper_1)
         self.did_reset = False
@@ -273,7 +273,7 @@ class Environment(Env):
                 for ii, idx in enumerate(idxs):
                     if idx in top_features_idxs:
                         k_idx = np.where(top_features_idxs == idx)[0][0]
-                        top_features_names[k_idx] = format_feature(feature_name, feature_signature, ii)
+                        top_features_names[k_idx] = Focus.format_feature(feature_name, feature_signature, ii)
                 if 0 in fv_freeze_mask:
                     continue
                 if feature_name == "POSITION":
@@ -375,56 +375,6 @@ class Environment(Env):
         # draw = ImageDraw.Draw(img, "RGBA")
         # draw.text((img.size[0]/2 +20, 50), to_draw, (5, 5, 5), self.render_font)
         return np.array(img)
-
-    def get_vector_entry_descriptions(self):
-        features = self.feature_vector_description[0]
-        fv_backmap = self.feature_vector_description[1]
-        i = 0
-        features_names = []
-        for feature in features:
-            idxs = np.where(fv_backmap == i)[0]
-            feature_name = feature[0]
-            feature_signature = feature[1]
-            for ii, idx in enumerate(idxs):
-                features_names.append(format_feature(feature_name, feature_signature, ii))
-            i += 1
-        return features_names
-
-
-def format_feature(feature_name, feature_signature, ii):
-    if feature_name == 'RGB':
-        axis = ["R", "G", "B"][ii]
-        return f"RGB({feature_signature}.{axis})"
-    if feature_name == "POSITION_HISTORY":
-        if ii < 2:
-            axis = ["x", "y"][ii]
-            return f"{feature_signature}.{axis}"
-        axis = ["x", "y"][ii-2]
-        return f"{feature_signature}.{axis}[t-1]"
-    axis = ["x", "y"][ii]
-    if ii > 3:
-        print("feature render formatting error. exiting...")
-        exit()
-    if feature_name == 'POSITION':
-        return f"{feature_signature}.{axis}"
-    elif feature_name == "EUCLIDEAN_DISTANCE":
-        return f"ED({feature_signature[0][1]}, {feature_signature[1][1]})"
-    elif feature_name == "DISTANCE":
-        return f"D({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
-    elif feature_name == "VELOCITY":
-        return f"V({feature_signature[0][1]}).{axis}"
-    elif feature_name == "DIR_VELOCITY":
-        return f"DV({feature_signature[0][1]}).{axis}"
-    elif feature_name == "CENTER":
-        return f"C({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
-    elif feature_name == "ORIENTATION":
-        return f"O({feature_signature})"
-    elif feature_name == "LINEAR_TRAJECTORY":
-        return f"LT({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
-    elif feature_name == "COLOR":
-        return f"COL({feature_signature})"
-    print("feature render formatting error. exiting...")
-    exit()
 
 
 def _make_darker(color, col_precent=0.8):

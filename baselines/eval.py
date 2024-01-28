@@ -1,6 +1,7 @@
 import argparse
 import gymnasium as gym
 import numpy as np
+import torch
 import time
 from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
@@ -19,6 +20,7 @@ from rtpt import RTPT
 from collections import deque
 import matplotlib.pyplot as plt
 import os
+from experiments.my_normalizer import save_normalizer
 
 def flist(l):
     return ["%.2f" % e for e in l]
@@ -63,11 +65,12 @@ def main():
     if opts.prune:
         pruned_ff_name = f"pruned_{game_id}.yaml"
         variant =  "iscobots"
-    if opts.prune == "default":
-        settings_str += "_pr-def"
-    if opts.prune == "external":
-        settings_str += "_pr-ext"
-        focus_dir = "baselines_focusfiles"
+        if opts.prune == "default":
+            settings_str += "_pr-def"
+        if opts.prune == "external":
+            settings_str += "_pr-ext"
+            focus_dir = "baselines_focusfiles"
+            
     if opts.exclude_properties:
         settings_str += '_ep'
         hide_properties = True
@@ -76,7 +79,8 @@ def main():
     if opts.rgb:
         settings_str = "-rgb"
         variant= "rgb"
-    exp_name = opts.game + "_s" + str(opts.seed) + settings_str +  "-v3" + "_gtdata" #"-v2"
+    exp_name = opts.game + "_s" + str(opts.seed) + settings_str +  "-v3" #+ "_gtdata" #"-v2"
+
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("baselines_checkpoints", exp_name, checkpoint_str)
@@ -85,7 +89,8 @@ def main():
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
     else:
-        env = Environment(env_str, 
+        env = Environment(env_str,
+                            focus_dir=focus_dir,
                             focus_file=pruned_ff_name, 
                             hide_properties=hide_properties, 
                             draw_features=True, # implement feature attribution
@@ -97,6 +102,13 @@ def main():
         env.training = False
         env.norm_reward = False
     model = PPO.load(model_path)
+
+
+    folder_path = "ppo_pruned_inx64xout"
+    os.makedirs(folder_path, exist_ok=True)
+    torch.save(model.policy.state_dict(), os.path.join(folder_path, "model.pth"))
+    save_normalizer(env, os.path.join(folder_path, "normalizer.json"))
+    
     fps = 30
     sps = 20 # steps per seconds
     steps_delta = 1.0 / sps
@@ -113,13 +125,7 @@ def main():
         scobi_env = env.venv.envs[0]
         img = plt.imshow(scobi_env._obj_obs)
     
-    # create eval_imgs dir and remove old images
-    if not os.path.exists("eval_imgs"):
-        os.makedirs("eval_imgs")
-    else:
-        files = os.listdir("eval_imgs")
-        for file in files:
-            os.remove(os.path.join("eval_imgs", file))
+
     # same code for tmp
     if not os.path.exists("tmp"):
         os.makedirs("tmp")
@@ -127,17 +133,20 @@ def main():
         files = os.listdir("tmp")
         for file in files:
             os.remove(os.path.join("tmp", file))
+
+    # initialize output file
+    outfile = os.path.join(folder_path, "obs.npy")
+    Path(outfile).unlink(missing_ok=True)
+    out_array = [] # TODO: check correctness: moved to here from inside first loop
+
     while True:
         action, _ = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
+
+        out_array.append(obs)
         
         # save observation as image
-        #plt.imsave(f"eval_imgs/obs_{current_episode}_{current_step}.png", env.envs[0].oc_env._get_obs())
-        # use five digits for episode and step
-        #plt.imsave(f"eval_imgs/obs_{current_episode:05d}_{current_step:05d}.png", env.envs[0].oc_env._get_obs())
-        plt.imsave(f"tmp/obs_obj_{current_episode:05d}_{current_step:05d}.png", env.venv.envs[0]._obj_obs)
-        #plt.imsave(f"eval_imgs/obs_{current_episode:05d}_{current_step:05d}.png", env.envs[0].oc_env._get_obs())
-        #import ipdb; ipdb.set_trace()
+        plt.imsave(f"tmp/obs_obj_{current_episode:05d}_{current_step:05d}.png", env.venv.envs[0]._obj_obs) # use env.envs[0].oc_env._get_obs() instead?
         
         current_rew += reward #scobi_env.original_reward
         current_step += 1
@@ -159,8 +168,8 @@ def main():
         if current_episode == opts.times:
             print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
             break
-        #print(frame_delta)
-        #
+
+    np.save(outfile, out_array) #TODO: check correctness: moved to here from inside first loop
 
 if __name__ == '__main__':
     main()

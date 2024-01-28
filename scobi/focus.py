@@ -2,6 +2,7 @@ import yaml
 import numpy as np
 import math
 from pathlib import Path
+import os.path as osp
 from itertools import permutations
 from scobi.concepts import init as concept_init
 from scobi.utils.decorators import FUNCTIONS, PROPERTIES
@@ -9,8 +10,14 @@ from termcolor import colored
 from collections.abc import Iterable
 
 class Focus():
-    def __init__(self, env_name, reward, hide_properties, fofiles_dir_name, fofile, raw_features, actions, refresh_yaml, l):
+    def __init__(self, env_name = None, reward = None, hide_properties = None,
+                  fofiles_dir_name = None, fofile = None, raw_features = None, actions = None, refresh_yaml = None, l = None):
         concept_init()
+        # if only fofile and fofiles_dir_name are passed, load focus file from there
+        if fofile and fofiles_dir_name and not env_name: #TODO: this is only a temporary solution
+            self.load_focus_file_unchecked(osp.join(fofiles_dir_name, fofile))
+            return
+
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
         self.OBJECTS = raw_features
@@ -325,6 +332,31 @@ class Focus():
             return out
         else:
             return None
+        
+    def import_objects_unchecked(self, objs):
+        return objs
+    def import_actions_unchecked(self, acts):
+        return acts
+    def import_properties_unchecked(self, props):
+        out = []
+        for p in props:
+            out.append(list(p.items())[0])
+        out_list =  list(map(list, out))
+        return out_list    
+    def import_functions_unchecked(self ,funcs):
+        out = []
+        if not funcs:
+            return []
+        for p in funcs:
+            item = list(p.items())[0]
+            fname = item[0]
+            fparas = item[1]
+            para_list = [fname, []]
+            for p in fparas:
+                para_tuple = list(p.items())[0]
+                para_list[1].append(list(para_tuple))
+            out.append(para_list)
+        return out
 
 
     def load_focus_file(self, fpath):
@@ -382,6 +414,65 @@ class Focus():
         self.FUNC_COMPUTE_LAYER_SIZE = len(self.FUNC_COMPUTE_LAYER)
         self.CURRENT_PROPERTY_COMPUTE_LAYER = [0 for _ in range(self.PROPERTY_COMPUTE_LAYER_SIZE)]
         self.CURRENT_FUNC_COMPUTE_LAYER = [0 for _ in range(self.FUNC_COMPUTE_LAYER_SIZE)]
+
+    def load_focus_file_unchecked(self, fpath):
+        with open(fpath, "r") as f:
+            in_dict = yaml.safe_load(f)
+        
+
+        sdict = in_dict["SELECTION"]
+        self.PARSED_OBJECTS = self.import_objects_unchecked(sdict["objects"])
+        self.PARSED_ACTIONS = self.import_actions_unchecked(sdict["actions"])
+        self.PARSED_PROPERTIES = self.import_properties_unchecked(sdict["properties"])
+        self.PARSED_FUNCTIONS = self.import_functions_unchecked(sdict["functions"])
+        # based on the focus file selection,
+        # construct a 2 layer computation graph for the feature vector:
+        # 1     PROPERTY_COMPUTE_LAYER
+        # 2     FUNC_COMPUTE_LAYER
+        prop_name_obj_name_pairs = []
+        parsed_fv_index = 0
+        self.FEATURE_VECTOR_BACKMAP = []
+        self.PROPERTY_COMPUTE_LAYER = []
+        self.FUNC_COMPUTE_LAYER = []
+        for p in self.PARSED_PROPERTIES:
+            property_name = p[0]
+            object_name = p[1]
+            prop_name_obj_name_pairs.append((property_name, object_name))
+            prop_func = PROPERTIES[property_name]["object"]
+            return_len = len(PROPERTIES[property_name]["returns"][0].__args__)
+            for _ in range(return_len):
+                self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+            parsed_fv_index += 1
+            def prop(input_dict, prop_func=prop_func, object_name=object_name):
+                func = prop_func
+                return func(input_dict[object_name])
+            self.PROPERTY_COMPUTE_LAYER.append(prop)
+        for f in self.PARSED_FUNCTIONS:
+            func_name = f[0]
+            input_props = f[1]
+            property_result_idxs = []
+            for p in input_props:
+                property_name = p[0]
+                object_name = p[1]
+                property_result_idxs.append(prop_name_obj_name_pairs.index((property_name, object_name)))
+            f = FUNCTIONS[func_name]["object"]
+            return_len = len(FUNCTIONS[func_name]["returns"][0].__args__)
+            for _ in range(return_len):
+                self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+            parsed_fv_index += 1
+            ol = [0 for _ in range(len(property_result_idxs))]
+            def func(prop_results, f=f, idxs=property_result_idxs, outlist=ol):
+                f_in = outlist
+                for i, j in enumerate(idxs):
+                    f_in[i] = prop_results[j]
+                return f(*f_in)
+            self.FUNC_COMPUTE_LAYER.append(func)
+        # init compute layer lists
+        self.PROPERTY_COMPUTE_LAYER_SIZE = len(self.PROPERTY_COMPUTE_LAYER)
+        self.FUNC_COMPUTE_LAYER_SIZE = len(self.FUNC_COMPUTE_LAYER)
+        self.CURRENT_PROPERTY_COMPUTE_LAYER = [0 for _ in range(self.PROPERTY_COMPUTE_LAYER_SIZE)]
+        self.CURRENT_FUNC_COMPUTE_LAYER = [0 for _ in range(self.FUNC_COMPUTE_LAYER_SIZE)]
+
 
     def get_feature_vector(self, inc_objects_list):
         # evaluate a 2 layer computation graph for the feature vector:
@@ -611,3 +702,54 @@ class Focus():
             return reward
         else:
             return "norew"
+
+    def get_vector_entry_descriptions(self):
+        feature_vector_description = self.get_feature_vector_description()
+        features = feature_vector_description[0]
+        fv_backmap = feature_vector_description[1]
+        i = 0
+        features_names = []
+        for feature in features:
+            idxs = np.where(fv_backmap == i)[0]
+            feature_name = feature[0]
+            feature_signature = feature[1]
+            for ii, idx in enumerate(idxs):
+                features_names.append(Focus.format_feature(feature_name, feature_signature, ii))
+            i += 1
+        return features_names
+    
+    @staticmethod
+    def format_feature(feature_name, feature_signature, ii):
+        if feature_name == 'RGB':
+            axis = ["R", "G", "B"][ii]
+            return f"RGB({feature_signature}.{axis})"
+        if feature_name == "POSITION_HISTORY":
+            if ii < 2:
+                axis = ["x", "y"][ii]
+                return f"{feature_signature}.{axis}"
+            axis = ["x", "y"][ii-2]
+            return f"{feature_signature}.{axis}[t-1]"
+        axis = ["x", "y"][ii]
+        if ii > 3:
+            print("feature render formatting error. exiting...")
+            exit()
+        if feature_name == 'POSITION':
+            return f"{feature_signature}.{axis}"
+        elif feature_name == "EUCLIDEAN_DISTANCE":
+            return f"ED({feature_signature[0][1]}, {feature_signature[1][1]})"
+        elif feature_name == "DISTANCE":
+            return f"D({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
+        elif feature_name == "VELOCITY":
+            return f"V({feature_signature[0][1]}).{axis}" #TODO: remove .{axis}?
+        elif feature_name == "DIR_VELOCITY":
+            return f"DV({feature_signature[0][1]}).{axis}"
+        elif feature_name == "CENTER":
+            return f"C({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
+        elif feature_name == "ORIENTATION":
+            return f"O({feature_signature})"
+        elif feature_name == "LINEAR_TRAJECTORY":
+            return f"LT({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
+        elif feature_name == "COLOR":
+            return f"COL({feature_signature})"
+        print("feature render formatting error. exiting...")
+        exit()

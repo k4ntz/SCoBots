@@ -6,7 +6,6 @@ import numpy as np
 
 # Use Agg backend for canvas
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from sklearn.decomposition import PCA
 from scipy.stats import entropy
 
 from argparse import ArgumentParser

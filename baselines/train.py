@@ -249,8 +249,11 @@ def main():
             #policy_kwargs=pkwargs,
             verbose=1)
     else:
+        net_arch = dict(pi=[64, 64], vf=[64, 64])
+        #net_arch = dict(pi=[64], vf=[64])
+        activation_fn = th.nn.ReLU
         policy_str = "MlpPolicy"
-        pkwargs = dict(activation_fn=th.nn.ReLU, net_arch=dict(pi=[64, 64], vf=[64, 64]))
+        pkwargs = dict(activation_fn=activation_fn, net_arch=net_arch)
         adam_step_size = 0.00025 # or 0.001
         clipping_eps = 0.1
 
@@ -288,10 +291,7 @@ def main():
             print(f"loading model from {last_ckpt}")
             model_path = Path(ckpt_path, last_ckpt)
             model = PPO.load(model_path, env=train_env)
-            import ipdb; ipdb.set_trace()
             
-
-
     rtpt_iters = training_timestamps // rtpt_frequency
     save_bm = SaveBestModelCallback(ckpt_path, rgb=rgb_exp)
     eval_callback = EvalCallback(
