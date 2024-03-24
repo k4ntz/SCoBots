@@ -151,7 +151,7 @@ def main():
 
     exp_name = opts.game + "_s" + str(opts.seed) + settings_str
     if not rgb_exp:
-        exp_name += "-v3"
+        exp_name += "-abl"
     log_path = Path("baselines_logs", exp_name)
     ckpt_path = Path("baselines_checkpoints", exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
@@ -280,7 +280,9 @@ def main():
     else:
         policy_str = "MlpPolicy"
         pkwargs = dict(activation_fn=th.nn.ReLU, net_arch=dict(pi=[64, 64], vf=[64, 64]))
-        adam_step_size = 0.00025 # or 0.001
+        adam_step_size = 0.001
+        if opts.game in ["Bowling", "Tennis"]:
+            adam_step_size = 0.00025
         clipping_eps = 0.1
         model = PPO(
             policy_str,
