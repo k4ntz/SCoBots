@@ -1,0 +1,137 @@
+ENVIRONMENT: Freeway-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Chicken1
+  - Chicken2
+  - Car1
+  - Car2
+  - Car3
+  - Car4
+  - Car5
+  - Car6
+  - Car7
+  - Car8
+  - Car9
+  - Car10
+  actions:
+  - NOOP
+  - UP
+  - DOWN
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Chicken1
+  - Chicken2
+  - Car1
+  - Car2
+  - Car3
+  - Car4
+  - Car5
+  - Car6
+  - Car7
+  - Car8
+  - Car9
+  - Car10
+  actions:
+  - NOOP
+  - UP
+  - DOWN
+  properties:
+  - POSITION: Chicken1
+  - POSITION: Chicken2
+  - POSITION: Car1
+  - POSITION: Car2
+  - POSITION: Car3
+  - POSITION: Car4
+  - POSITION: Car5
+  - POSITION: Car6
+  - POSITION: Car7
+  - POSITION: Car8
+  - POSITION: Car9
+  - POSITION: Car10
+  - POSITION_HISTORY: Chicken1
+  - POSITION_HISTORY: Chicken2
+  - POSITION_HISTORY: Car1
+  - POSITION_HISTORY: Car2
+  - POSITION_HISTORY: Car3
+  - POSITION_HISTORY: Car4
+  - POSITION_HISTORY: Car5
+  - POSITION_HISTORY: Car6
+  - POSITION_HISTORY: Car7
+  - POSITION_HISTORY: Car8
+  - POSITION_HISTORY: Car9
+  - POSITION_HISTORY: Car10
+  - ORIENTATION: Chicken1
+  - ORIENTATION: Chicken2
+  - ORIENTATION: Car1
+  - ORIENTATION: Car2
+  - ORIENTATION: Car3
+  - ORIENTATION: Car4
+  - ORIENTATION: Car5
+  - ORIENTATION: Car6
+  - ORIENTATION: Car7
+  - ORIENTATION: Car8
+  - ORIENTATION: Car9
+  - ORIENTATION: Car10
+  - RGB: Chicken1
+  - RGB: Chicken2
+  - RGB: Car1
+  - RGB: Car2
+  - RGB: Car3
+  - RGB: Car4
+  - RGB: Car5
+  - RGB: Car6
+  - RGB: Car7
+  - RGB: Car8
+  - RGB: Car9
+  - RGB: Car10
+  functions:

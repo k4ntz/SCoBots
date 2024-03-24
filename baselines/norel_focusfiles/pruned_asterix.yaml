@@ -1,0 +1,228 @@
+ENVIRONMENT: Asterix-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Reward1
+  - Reward2
+  - Reward3
+  - Reward4
+  - Reward5
+  - Reward6
+  - Reward7
+  - Reward8
+  - Enemy1
+  - Enemy2
+  - Enemy3
+  - Enemy4
+  - Enemy5
+  - Enemy6
+  - Enemy7
+  - Enemy8
+  - Consumable1
+  - Consumable2
+  - Consumable3
+  - Consumable4
+  - Consumable5
+  - Consumable6
+  - Consumable7
+  - Consumable8
+  actions:
+  - NOOP
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Reward1
+  - Reward2
+  - Reward3
+  - Reward4
+  - Reward5
+  - Reward6
+  - Reward7
+  - Reward8
+  - Enemy1
+  - Enemy2
+  - Enemy3
+  - Enemy4
+  - Enemy5
+  - Enemy6
+  - Enemy7
+  - Enemy8
+  - Consumable1
+  - Consumable2
+  - Consumable3
+  - Consumable4
+  - Consumable5
+  - Consumable6
+  - Consumable7
+  - Consumable8
+  actions:
+  - NOOP
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  properties:
+  - POSITION: Player1
+  - POSITION: Reward1
+  - POSITION: Reward2
+  - POSITION: Reward3
+  - POSITION: Reward4
+  - POSITION: Reward5
+  - POSITION: Reward6
+  - POSITION: Reward7
+  - POSITION: Reward8
+  - POSITION: Enemy1
+  - POSITION: Enemy2
+  - POSITION: Enemy3
+  - POSITION: Enemy4
+  - POSITION: Enemy5
+  - POSITION: Enemy6
+  - POSITION: Enemy7
+  - POSITION: Enemy8
+  - POSITION: Consumable1
+  - POSITION: Consumable2
+  - POSITION: Consumable3
+  - POSITION: Consumable4
+  - POSITION: Consumable5
+  - POSITION: Consumable6
+  - POSITION: Consumable7
+  - POSITION: Consumable8
+  - POSITION_HISTORY: Player1
+  - POSITION_HISTORY: Reward1
+  - POSITION_HISTORY: Reward2
+  - POSITION_HISTORY: Reward3
+  - POSITION_HISTORY: Reward4
+  - POSITION_HISTORY: Reward5
+  - POSITION_HISTORY: Reward6
+  - POSITION_HISTORY: Reward7
+  - POSITION_HISTORY: Reward8
+  - POSITION_HISTORY: Enemy1
+  - POSITION_HISTORY: Enemy2
+  - POSITION_HISTORY: Enemy3
+  - POSITION_HISTORY: Enemy4
+  - POSITION_HISTORY: Enemy5
+  - POSITION_HISTORY: Enemy6
+  - POSITION_HISTORY: Enemy7
+  - POSITION_HISTORY: Enemy8
+  - POSITION_HISTORY: Consumable1
+  - POSITION_HISTORY: Consumable2
+  - POSITION_HISTORY: Consumable3
+  - POSITION_HISTORY: Consumable4
+  - POSITION_HISTORY: Consumable5
+  - POSITION_HISTORY: Consumable6
+  - POSITION_HISTORY: Consumable7
+  - POSITION_HISTORY: Consumable8
+  - ORIENTATION: Player1
+  - ORIENTATION: Reward1
+  - ORIENTATION: Reward2
+  - ORIENTATION: Reward3
+  - ORIENTATION: Reward4
+  - ORIENTATION: Reward5
+  - ORIENTATION: Reward6
+  - ORIENTATION: Reward7
+  - ORIENTATION: Reward8
+  - ORIENTATION: Enemy1
+  - ORIENTATION: Enemy2
+  - ORIENTATION: Enemy3
+  - ORIENTATION: Enemy4
+  - ORIENTATION: Enemy5
+  - ORIENTATION: Enemy6
+  - ORIENTATION: Enemy7
+  - ORIENTATION: Enemy8
+  - ORIENTATION: Consumable1
+  - ORIENTATION: Consumable2
+  - ORIENTATION: Consumable3
+  - ORIENTATION: Consumable4
+  - ORIENTATION: Consumable5
+  - ORIENTATION: Consumable6
+  - ORIENTATION: Consumable7
+  - ORIENTATION: Consumable8
+  - RGB: Player1
+  - RGB: Reward1
+  - RGB: Reward2
+  - RGB: Reward3
+  - RGB: Reward4
+  - RGB: Reward5
+  - RGB: Reward6
+  - RGB: Reward7
+  - RGB: Reward8
+  - RGB: Enemy1
+  - RGB: Enemy2
+  - RGB: Enemy3
+  - RGB: Enemy4
+  - RGB: Enemy5
+  - RGB: Enemy6
+  - RGB: Enemy7
+  - RGB: Enemy8
+  - RGB: Consumable1
+  - RGB: Consumable2
+  - RGB: Consumable3
+  - RGB: Consumable4
+  - RGB: Consumable5
+  - RGB: Consumable6
+  - RGB: Consumable7
+  - RGB: Consumable8
+  functions:
+  

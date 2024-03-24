@@ -1,0 +1,137 @@
+ENVIRONMENT: Skiing-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Tree1
+  - Tree2
+  - Tree3
+  - Tree4
+  - Flag1
+  - Flag2
+  - Flag3
+  - Flag4
+  - Mogul1
+  - Mogul2
+  - Mogul3
+  actions:
+  - NOOP
+  - RIGHT
+  - LEFT
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Tree1
+  - Tree2
+  - Tree3
+  - Tree4
+  - Flag1
+  - Flag2
+  - Flag3
+  - Flag4
+  - Mogul1
+  - Mogul2
+  - Mogul3
+  actions:
+  - NOOP
+  - RIGHT
+  - LEFT
+  properties:
+  - POSITION: Player1
+  - POSITION: Tree1
+  - POSITION: Tree2
+  - POSITION: Tree3
+  - POSITION: Tree4
+  - POSITION: Flag1
+  - POSITION: Flag2
+  - POSITION: Flag3
+  - POSITION: Flag4
+  - POSITION: Mogul1
+  - POSITION: Mogul2
+  - POSITION: Mogul3
+  - POSITION_HISTORY: Player1
+  - POSITION_HISTORY: Tree1
+  - POSITION_HISTORY: Tree2
+  - POSITION_HISTORY: Tree3
+  - POSITION_HISTORY: Tree4
+  - POSITION_HISTORY: Flag1
+  - POSITION_HISTORY: Flag2
+  - POSITION_HISTORY: Flag3
+  - POSITION_HISTORY: Flag4
+  - POSITION_HISTORY: Mogul1
+  - POSITION_HISTORY: Mogul2
+  - POSITION_HISTORY: Mogul3
+  - ORIENTATION: Player1
+  - ORIENTATION: Tree1
+  - ORIENTATION: Tree2
+  - ORIENTATION: Tree3
+  - ORIENTATION: Tree4
+  - ORIENTATION: Flag1
+  - ORIENTATION: Flag2
+  - ORIENTATION: Flag3
+  - ORIENTATION: Flag4
+  - ORIENTATION: Mogul1
+  - ORIENTATION: Mogul2
+  - ORIENTATION: Mogul3
+  - RGB: Player1
+  - RGB: Tree1
+  - RGB: Tree2
+  - RGB: Tree3
+  - RGB: Tree4
+  - RGB: Flag1
+  - RGB: Flag2
+  - RGB: Flag3
+  - RGB: Flag4
+  - RGB: Mogul1
+  - RGB: Mogul2
+  - RGB: Mogul3
+  functions:

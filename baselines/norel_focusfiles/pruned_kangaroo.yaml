@@ -1,0 +1,389 @@
+ENVIRONMENT: Kangaroo-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Monkey1
+  - Monkey2
+  - Monkey3
+  - Monkey4
+  - Fruit1
+  - Fruit2
+  - Fruit3
+  - Time1
+  - Bell1
+  - Life1
+  - Life2
+  - Life3
+  - Life4
+  - Life5
+  - Life6
+  - Life7
+  - Life8
+  - Child1
+  - Ladder1
+  - Ladder2
+  - Ladder3
+  - Ladder4
+  - Ladder5
+  - Ladder6
+  - Platform1
+  - Platform2
+  - Platform3
+  - Platform4
+  - Platform5
+  - Platform6
+  - Platform7
+  - Platform8
+  - Platform9
+  - Platform10
+  - Platform11
+  - Platform12
+  - Platform13
+  - Platform14
+  - Platform15
+  - Platform16
+  - Platform17
+  - Platform18
+  - Platform19
+  - Platform20
+  - FallingCoconut1
+  - ThrownCoconut1
+  - ThrownCoconut2
+  - ThrownCoconut3
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Monkey1
+  - Monkey2
+  - Monkey3
+  - Monkey4
+  - Fruit1
+  - Fruit2
+  - Fruit3
+  - Time1
+  - Bell1
+  - Life1
+  - Life2
+  - Life3
+  - Life4
+  - Life5
+  - Life6
+  - Life7
+  - Life8
+  - Child1
+  - Ladder1
+  - Ladder2
+  - Ladder3
+  - Ladder4
+  - Ladder5
+  - Ladder6
+  - Platform1
+  - Platform2
+  - Platform3
+  - Platform4
+  - Platform5
+  - Platform6
+  - Platform7
+  - Platform8
+  - Platform9
+  - Platform10
+  - Platform11
+  - Platform12
+  - Platform13
+  - Platform14
+  - Platform15
+  - Platform16
+  - Platform17
+  - Platform18
+  - Platform19
+  - Platform20
+  - FallingCoconut1
+  - ThrownCoconut1
+  - ThrownCoconut2
+  - ThrownCoconut3
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  - UPFIRE
+  - RIGHTFIRE
+  - LEFTFIRE
+  - DOWNFIRE
+  - UPRIGHTFIRE
+  - UPLEFTFIRE
+  - DOWNRIGHTFIRE
+  - DOWNLEFTFIRE
+  properties:
+  - POSITION: Player1
+  - POSITION: Monkey1
+  - POSITION: Monkey2
+  - POSITION: Monkey3
+  - POSITION: Monkey4
+  - POSITION: Fruit1
+  - POSITION: Fruit2
+  - POSITION: Fruit3
+  - POSITION: Time1
+  - POSITION: Bell1
+  - POSITION: Life1
+  - POSITION: Life2
+  - POSITION: Life3
+  - POSITION: Life4
+  - POSITION: Life5
+  - POSITION: Life6
+  - POSITION: Life7
+  - POSITION: Life8
+  - POSITION: Child1
+  - POSITION: Ladder1
+  - POSITION: Ladder2
+  - POSITION: Ladder3
+  - POSITION: Ladder4
+  - POSITION: Ladder5
+  - POSITION: Ladder6
+  - POSITION: Platform1
+  - POSITION: Platform2
+  - POSITION: Platform3
+  - POSITION: Platform4
+  - POSITION: Platform5
+  - POSITION: Platform6
+  - POSITION: Platform7
+  - POSITION: Platform8
+  - POSITION: Platform9
+  - POSITION: Platform10
+  - POSITION: Platform11
+  - POSITION: Platform12
+  - POSITION: Platform13
+  - POSITION: Platform14
+  - POSITION: Platform15
+  - POSITION: Platform16
+  - POSITION: Platform17
+  - POSITION: Platform18
+  - POSITION: Platform19
+  - POSITION: Platform20
+  - POSITION: FallingCoconut1
+  - POSITION: ThrownCoconut1
+  - POSITION: ThrownCoconut2
+  - POSITION: ThrownCoconut3
+  - POSITION_HISTORY: Player1
+  - POSITION_HISTORY: Monkey1
+  - POSITION_HISTORY: Monkey2
+  - POSITION_HISTORY: Monkey3
+  - POSITION_HISTORY: Monkey4
+  - POSITION_HISTORY: Fruit1
+  - POSITION_HISTORY: Fruit2
+  - POSITION_HISTORY: Fruit3
+  - POSITION_HISTORY: Time1
+  - POSITION_HISTORY: Bell1
+  - POSITION_HISTORY: Life1
+  - POSITION_HISTORY: Life2
+  - POSITION_HISTORY: Life3
+  - POSITION_HISTORY: Life4
+  - POSITION_HISTORY: Life5
+  - POSITION_HISTORY: Life6
+  - POSITION_HISTORY: Life7
+  - POSITION_HISTORY: Life8
+  - POSITION_HISTORY: Child1
+  - POSITION_HISTORY: Ladder1
+  - POSITION_HISTORY: Ladder2
+  - POSITION_HISTORY: Ladder3
+  - POSITION_HISTORY: Ladder4
+  - POSITION_HISTORY: Ladder5
+  - POSITION_HISTORY: Ladder6
+  - POSITION_HISTORY: Platform1
+  - POSITION_HISTORY: Platform2
+  - POSITION_HISTORY: Platform3
+  - POSITION_HISTORY: Platform4
+  - POSITION_HISTORY: Platform5
+  - POSITION_HISTORY: Platform6
+  - POSITION_HISTORY: Platform7
+  - POSITION_HISTORY: Platform8
+  - POSITION_HISTORY: Platform9
+  - POSITION_HISTORY: Platform10
+  - POSITION_HISTORY: Platform11
+  - POSITION_HISTORY: Platform12
+  - POSITION_HISTORY: Platform13
+  - POSITION_HISTORY: Platform14
+  - POSITION_HISTORY: Platform15
+  - POSITION_HISTORY: Platform16
+  - POSITION_HISTORY: Platform17
+  - POSITION_HISTORY: Platform18
+  - POSITION_HISTORY: Platform19
+  - POSITION_HISTORY: Platform20
+  - POSITION_HISTORY: FallingCoconut1
+  - POSITION_HISTORY: ThrownCoconut1
+  - POSITION_HISTORY: ThrownCoconut2
+  - POSITION_HISTORY: ThrownCoconut3
+  - ORIENTATION: Player1
+  - ORIENTATION: Monkey1
+  - ORIENTATION: Monkey2
+  - ORIENTATION: Monkey3
+  - ORIENTATION: Monkey4
+  - ORIENTATION: Fruit1
+  - ORIENTATION: Fruit2
+  - ORIENTATION: Fruit3
+  - ORIENTATION: Time1
+  - ORIENTATION: Bell1
+  - ORIENTATION: Life1
+  - ORIENTATION: Life2
+  - ORIENTATION: Life3
+  - ORIENTATION: Life4
+  - ORIENTATION: Life5
+  - ORIENTATION: Life6
+  - ORIENTATION: Life7
+  - ORIENTATION: Life8
+  - ORIENTATION: Child1
+  - ORIENTATION: Ladder1
+  - ORIENTATION: Ladder2
+  - ORIENTATION: Ladder3
+  - ORIENTATION: Ladder4
+  - ORIENTATION: Ladder5
+  - ORIENTATION: Ladder6
+  - ORIENTATION: Platform1
+  - ORIENTATION: Platform2
+  - ORIENTATION: Platform3
+  - ORIENTATION: Platform4
+  - ORIENTATION: Platform5
+  - ORIENTATION: Platform6
+  - ORIENTATION: Platform7
+  - ORIENTATION: Platform8
+  - ORIENTATION: Platform9
+  - ORIENTATION: Platform10
+  - ORIENTATION: Platform11
+  - ORIENTATION: Platform12
+  - ORIENTATION: Platform13
+  - ORIENTATION: Platform14
+  - ORIENTATION: Platform15
+  - ORIENTATION: Platform16
+  - ORIENTATION: Platform17
+  - ORIENTATION: Platform18
+  - ORIENTATION: Platform19
+  - ORIENTATION: Platform20
+  - ORIENTATION: FallingCoconut1
+  - ORIENTATION: ThrownCoconut1
+  - ORIENTATION: ThrownCoconut2
+  - ORIENTATION: ThrownCoconut3
+  - RGB: Player1
+  - RGB: Monkey1
+  - RGB: Monkey2
+  - RGB: Monkey3
+  - RGB: Monkey4
+  - RGB: Fruit1
+  - RGB: Fruit2
+  - RGB: Fruit3
+  - RGB: Time1
+  - RGB: Bell1
+  - RGB: Life1
+  - RGB: Life2
+  - RGB: Life3
+  - RGB: Life4
+  - RGB: Life5
+  - RGB: Life6
+  - RGB: Life7
+  - RGB: Life8
+  - RGB: Child1
+  - RGB: Ladder1
+  - RGB: Ladder2
+  - RGB: Ladder3
+  - RGB: Ladder4
+  - RGB: Ladder5
+  - RGB: Ladder6
+  - RGB: Platform1
+  - RGB: Platform2
+  - RGB: Platform3
+  - RGB: Platform4
+  - RGB: Platform5
+  - RGB: Platform6
+  - RGB: Platform7
+  - RGB: Platform8
+  - RGB: Platform9
+  - RGB: Platform10
+  - RGB: Platform11
+  - RGB: Platform12
+  - RGB: Platform13
+  - RGB: Platform14
+  - RGB: Platform15
+  - RGB: Platform16
+  - RGB: Platform17
+  - RGB: Platform18
+  - RGB: Platform19
+  - RGB: Platform20
+  - RGB: FallingCoconut1
+  - RGB: ThrownCoconut1
+  - RGB: ThrownCoconut2
+  - RGB: ThrownCoconut3
+  functions:

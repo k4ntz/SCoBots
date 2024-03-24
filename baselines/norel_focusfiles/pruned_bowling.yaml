@@ -1,0 +1,143 @@
+ENVIRONMENT: Bowling-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Pin1
+  - Pin2
+  - Pin3
+  - Pin4
+  - Pin5
+  - Pin6
+  - Pin7
+  - Pin8
+  - Pin9
+  - Pin10
+  - Ball1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - DOWN
+  - UPFIRE
+  - DOWNFIRE
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Pin1
+  - Pin2
+  - Pin3
+  - Pin4
+  - Pin5
+  - Pin6
+  - Pin7
+  - Pin8
+  - Pin9
+  - Pin10
+  - Ball1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - DOWN
+  - UPFIRE
+  - DOWNFIRE
+  properties:
+  - POSITION: Player1
+  - POSITION: Pin1
+  - POSITION: Pin2
+  - POSITION: Pin3
+  - POSITION: Pin4
+  - POSITION: Pin5
+  - POSITION: Pin6
+  - POSITION: Pin7
+  - POSITION: Pin8
+  - POSITION: Pin9
+  - POSITION: Pin10
+  - POSITION: Ball1
+  - POSITION_HISTORY: Player1
+  - POSITION_HISTORY: Pin1
+  - POSITION_HISTORY: Pin2
+  - POSITION_HISTORY: Pin3
+  - POSITION_HISTORY: Pin4
+  - POSITION_HISTORY: Pin5
+  - POSITION_HISTORY: Pin6
+  - POSITION_HISTORY: Pin7
+  - POSITION_HISTORY: Pin8
+  - POSITION_HISTORY: Pin9
+  - POSITION_HISTORY: Pin10
+  - POSITION_HISTORY: Ball1
+  - ORIENTATION: Player1
+  - ORIENTATION: Pin1
+  - ORIENTATION: Pin2
+  - ORIENTATION: Pin3
+  - ORIENTATION: Pin4
+  - ORIENTATION: Pin5
+  - ORIENTATION: Pin6
+  - ORIENTATION: Pin7
+  - ORIENTATION: Pin8
+  - ORIENTATION: Pin9
+  - ORIENTATION: Pin10
+  - ORIENTATION: Ball1
+  - RGB: Player1
+  - RGB: Pin1
+  - RGB: Pin2
+  - RGB: Pin3
+  - RGB: Pin4
+  - RGB: Pin5
+  - RGB: Pin6
+  - RGB: Pin7
+  - RGB: Pin8
+  - RGB: Pin9
+  - RGB: Pin10
+  - RGB: Ball1
+  functions:
