@@ -1,5 +1,3 @@
-# TODO: change order so sourcecode is last layer.
-
 FROM ubuntu:20.04
 
 
