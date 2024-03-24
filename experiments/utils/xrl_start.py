@@ -24,7 +24,7 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 
-rule_env = "freeway"
+rule_env = "kangaroo"
 #ruleset = Ruleset().from_file("remix_data/" + rule_env + "/output.rules")
 
 denorm_dict = {}
@@ -131,8 +131,8 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs):
                 output = int(np.argmax(probs[0]))
                 attris = ig.attribute(input, target=output, method="gausslegendre")
                 if cfg.liveplot:
-                    img.set_data(env._obj_obs)
-                    img2.set_data(env._rel_obs)
+                    img.set_data(env.original_obs)
+                    #img2.set_data(env._rel_obs)
                     # table
                     nb_row = len(my_table.get_celld()) // 4
                     if max_nb_row < nb_row:
@@ -220,7 +220,11 @@ def explain_agent(cfg, model, normalizer):
                       focus_file=cfg.scobi_focus_file,
                       draw_features=True)
     
-    fnames = env.get_vector_entry_descriptions()
+    fnames_raw = env.get_vector_entry_descriptions()
+    fnames = []
+    for f in fnames_raw:
+        f2 = f.replace(" ", "")
+        fnames.append(f2)
     norm_state = normalizer.get_state()
     assert(len(norm_state) == len(fnames))
 

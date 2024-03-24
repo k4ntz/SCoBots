@@ -257,6 +257,30 @@
             "reward": 600.0,
             "scobi_reward": 600.0,
             "frames_seen": 350000
+        },
+        "re-kangaroo_pruned-seed11": {
+            "mode": "pruned",
+            "seed": 11,
+            "eval_runs": 5,
+            "reward": 520.0,
+            "scobi_reward": 520.0,
+            "frames_seen": 2000000
+        },
+        "re-kangaroo_pruned-seed10": {
+            "mode": "pruned",
+            "seed": 10,
+            "eval_runs": 5,
+            "reward": 600.0,
+            "scobi_reward": 600.0,
+            "frames_seen": 2000000
+        },
+        "re-kangaroo_pruned-seed12": {
+            "mode": "pruned",
+            "seed": 12,
+            "eval_runs": 5,
+            "reward": 0.0,
+            "scobi_reward": 0.0,
+            "frames_seen": 2000000
         }
     }
 }
