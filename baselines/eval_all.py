@@ -12,15 +12,15 @@ from multiprocessing import Process, Value
 
 
 def main():
-    envs =["Seaquest", "Kangaroo", "Asterix", "Bowling", "Tennis", "Boxing", "Freeway", "Skiing", "Pong"] 
+    envs = ["Seaquest", "Kangaroo", "Asterix", "Bowling", "Tennis", "Boxing", "Freeway", "Skiing", "Pong"] 
     check_dir = "baselines_checkpoints"
-    variants = ["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
+    variants = ["abl_onlyrel"] #["abl_norel"] #["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
     checkpoint_str = "best_model" #"model_5000000_steps"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("rgb-v4-nn_eval_results.pkl")
-    eval_results_csv_path = Path("rgb-v4-nn_eval_results.csv")
+    eval_results_pkl_path = Path("abl_onlyrel_eval_results.pkl")
+    eval_results_csv_path = Path("abl_onlyrel_eval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 
@@ -68,6 +68,22 @@ def main():
                 eval_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
                 env = make_vec_env(atari_env_str, seed=eval_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params)
                 env = VecTransposeImage(env)
+            elif "abl_norel" in variant:
+                pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
+                env = Environment(atari_env_str, focus_dir="norel_focusfiles", focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
+                _, _ = env.reset(seed=eval_seed)
+                dummy_vecenv = DummyVecEnv([lambda :  env])
+                env = VecNormalize.load(vecnorm_path, dummy_vecenv)
+                env.training = False
+                env.norm_reward = False
+            elif "abl_onlyrel" in variant:
+                pruned_ff_name = None
+                env = Environment(atari_env_str, focus_file=pruned_ff_name, hide_properties=True, silent=True, refresh_yaml=False)
+                _, _ = env.reset(seed=eval_seed)
+                dummy_vecenv = DummyVecEnv([lambda :  env])
+                env = VecNormalize.load(vecnorm_path, dummy_vecenv)
+                env.training = False
+                env.norm_reward = False
             else:
                 env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
                 _, _ = env.reset(seed=eval_seed)

@@ -2,10 +2,10 @@ from scobi import Environment
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 from scobi.utils import logging
-logging.SILENT = True
+logging.SILENT = False
 
 # Minimal init, not interactive, no focus dir/file specified
-env = Environment(env_name='Pong-v5')
+env = Environment(env_name='ALE/Pong-v5', noisy_objects=True)
 env.reset()
 obs, reward, truncated, terminated, info = env.step(1)
 env.close()

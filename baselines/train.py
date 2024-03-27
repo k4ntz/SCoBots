@@ -97,6 +97,7 @@ def main():
     parser.add_argument("-e", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("--rgbv4", action="store_true", help="rgb observation space")
     parser.add_argument("--rgbv5", action="store_true", help="rgb observation space")
+    parser.add_argument("--noisy", action="store_true", help="use noisy objects (default: gaussian noise std 3, detection error rate 5%)")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -104,6 +105,7 @@ def main():
     pruned_ff_name = None
     focus_dir = "focusfiles"
     hide_properties = False
+    noisy = False
     
     reward_mode = 0
     if opts.reward == "env":
@@ -128,6 +130,8 @@ def main():
         settings_str += '_ep'
         hide_properties = True
 
+    if opts.noisy:
+        noisy = True
 
     n_envs = opts.cores
     n_eval_envs = 4
@@ -152,6 +156,8 @@ def main():
     exp_name = opts.game + "_s" + str(opts.seed) + settings_str
     if not rgb_exp:
         exp_name += "-abl"
+    if noisy:
+        exp_name += "-noisy"
     log_path = Path("baselines_logs", exp_name)
     ckpt_path = Path("baselines_checkpoints", exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
@@ -159,13 +165,15 @@ def main():
 
     def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
-            env = Environment(env_str, 
+            env = Environment(env_str,
+                              seed=seed + rank, 
                               focus_dir=focus_dir,
                               focus_file=pruned_ff_name, 
                               hide_properties=hide_properties, 
                               silent=silent,
                               reward=reward_mode,
-                              refresh_yaml=refresh)
+                              refresh_yaml=refresh,
+                              noisy_objects=noisy)
             env = EpisodicLifeEnv(env=env)
             env = Monitor(env)
             env.reset(seed=seed + rank)
@@ -175,13 +183,15 @@ def main():
     
     def make_eval_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
-            env = Environment(env_str, 
+            env = Environment(env_str,
+                              seed=seed + rank,
                               focus_dir=focus_dir,
                               focus_file=pruned_ff_name, 
                               hide_properties=hide_properties, 
                               silent=silent,
                               reward=0, #always env reward for eval
-                              refresh_yaml=refresh) 
+                              refresh_yaml=refresh,
+                              noisy_objects=noisy)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env

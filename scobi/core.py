@@ -11,17 +11,19 @@ from copy import deepcopy
 
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
+    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, noisy_objects=False):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
-
+        self.seed = seed
+        self.randomstate = np.random.RandomState(self.seed)
         # TODO: tie to em.make
         self.game_object_wrapper = get_wrapper_class()
 
         # TODO: oc envs should answer this, not the raw env
         actions = self.oc_env._env.unwrapped.get_action_meanings()
 
-        self.oc_env.reset(seed=seed)
+        self.oc_env.reset(seed=self.seed)
+        self.noisy_objects = noisy_objects
         max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
         self.did_reset = False
         self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
@@ -51,6 +53,9 @@ class Environment(Env):
         else: # env only
             self._reward_composition_func = lambda a, b : b 
         
+        if self.noisy_objects:
+            self.logger.GeneralInfo("Using noisy object detection.")
+
         self.reset()
         self.step(0) # step once to set the feature vector size 
         self.observation_space = spaces.Box(low=-2**63, high=2**63 - 2, shape=(self.focus.OBSERVATION_SIZE,), dtype=np.float32)
@@ -109,6 +114,10 @@ class Environment(Env):
 
         # wrap
         scobi_obj_list = [self.game_object_wrapper(obj) for obj in oc_obj_list]
+        if self.noisy_objects:
+            for o in scobi_obj_list:
+                o.add_noise(std=3, error_rate=0.05, random_state=self.randomstate)
+                
 
         # order
         for scobi_obj in scobi_obj_list:

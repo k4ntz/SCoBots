@@ -4,6 +4,7 @@
 from scobi.utils.interfaces import GameObjectInterface
 from typing import Tuple
 from ocatari.ram.game_objects import GameObject as Ocatari_GameObject
+import numpy as np
 
 OBJ_EXTRACTOR = "OC_Atari" #TODO: pass or fetch from global env
 
@@ -81,3 +82,10 @@ class OCAGameObject(GameObjectInterface):
     @property
     def orientation(self):
         return self.ocgo.orientation
+    
+    def add_noise(self, std, error_rate, random_state):
+        x_noise = random_state.normal(0.0, std)
+        y_noise = random_state.normal(0.0, std)
+        self.xy = [self.ocgo.x + x_noise, self.ocgo.y + y_noise]
+        if random_state.rand(1)[0]  <= error_rate:
+            self.xy = self.ocgo.prev_xy
