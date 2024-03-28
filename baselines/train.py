@@ -97,7 +97,6 @@ def main():
     parser.add_argument("-e", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("--rgbv4", action="store_true", help="rgb observation space")
     parser.add_argument("--rgbv5", action="store_true", help="rgb observation space")
-    parser.add_argument("--noisy", action="store_true", help="use noisy objects (default: gaussian noise std 3, detection error rate 5%)")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -105,7 +104,7 @@ def main():
     pruned_ff_name = None
     focus_dir = "focusfiles"
     hide_properties = False
-    noisy = False
+    noisy = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
     
     reward_mode = 0
     if opts.reward == "env":
@@ -130,8 +129,6 @@ def main():
         settings_str += '_ep'
         hide_properties = True
 
-    if opts.noisy:
-        noisy = True
 
     n_envs = opts.cores
     n_eval_envs = 4
@@ -172,8 +169,7 @@ def main():
                               hide_properties=hide_properties, 
                               silent=silent,
                               reward=reward_mode,
-                              refresh_yaml=refresh,
-                              noisy_objects=noisy)
+                              refresh_yaml=refresh)
             env = EpisodicLifeEnv(env=env)
             env = Monitor(env)
             env.reset(seed=seed + rank)
@@ -190,8 +186,7 @@ def main():
                               hide_properties=hide_properties, 
                               silent=silent,
                               reward=0, #always env reward for eval
-                              refresh_yaml=refresh,
-                              noisy_objects=noisy)
+                              refresh_yaml=refresh)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env

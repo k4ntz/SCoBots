@@ -4,6 +4,8 @@ Successive Concepet Bottleneck Interface
 you need ocatari
 
 ## How to use (example)
+Select object extractor by setting env var 'SCOBI_OBJ_EXTRACTOR'. Supported values: 'OC_Atari', 'Noisy_OC_Atari'.
+
 
 ```python
 from scobi import Environment

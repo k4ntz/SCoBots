@@ -1,5 +1,6 @@
 """scobi core"""
 import numpy as np
+import os
 from gymnasium import spaces, Env
 import scobi.environments.env_manager as em
 from scobi.utils.game_object import get_wrapper_class
@@ -11,7 +12,7 @@ from copy import deepcopy
 
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, noisy_objects=False):
+    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
         self.seed = seed
@@ -23,7 +24,7 @@ class Environment(Env):
         actions = self.oc_env._env.unwrapped.get_action_meanings()
 
         self.oc_env.reset(seed=self.seed)
-        self.noisy_objects = noisy_objects
+        self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
         max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
         self.did_reset = False
         self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
@@ -54,7 +55,7 @@ class Environment(Env):
             self._reward_composition_func = lambda a, b : b 
         
         if self.noisy_objects:
-            self.logger.GeneralInfo("Using noisy object detection.")
+            self.logger.GeneralInfo("Using noisy object detection (default: std 3, detection error rate 5%)")
 
         self.reset()
         self.step(0) # step once to set the feature vector size 
@@ -113,10 +114,13 @@ class Environment(Env):
         player_obj = None
 
         # wrap
-        scobi_obj_list = [self.game_object_wrapper(obj) for obj in oc_obj_list]
         if self.noisy_objects:
-            for o in scobi_obj_list:
-                o.add_noise(std=3, error_rate=0.05, random_state=self.randomstate)
+            scobi_obj_list = [self.game_object_wrapper(obj, std=3, error_rate=0.05, random_state=self.randomstate) for obj in oc_obj_list]
+        else:
+            scobi_obj_list = [self.game_object_wrapper(obj) for obj in oc_obj_list]
+        #if self.noisy_objects:
+        #    for o in scobi_obj_list:
+        #        o.add_noise(std=3, error_rate=0.05, random_state=self.randomstate)
                 
 
         # order

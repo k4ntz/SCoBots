@@ -12,15 +12,15 @@ from multiprocessing import Process, Value
 
 
 def main():
-    envs = ["Seaquest", "Kangaroo", "Asterix", "Bowling", "Tennis", "Boxing", "Freeway", "Skiing", "Pong"] 
+    envs = ["Asterix", "Bowling", "Tennis", "Boxing", "Freeway", "Pong"]  # ["Seaquest", "Kangaroo", "Asterix", "Bowling", "Tennis", "Boxing", "Freeway", "Skiing", "Pong"] 
     check_dir = "baselines_checkpoints"
-    variants = ["abl_onlyrel"] #["abl_norel"] #["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
+    variants = ["abl_noisy"] #["abl_norel"] #["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
     checkpoint_str = "best_model" #"model_5000000_steps"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("abl_onlyrel_eval_results.pkl")
-    eval_results_csv_path = Path("abl_onlyrel_eval_results.csv")
+    eval_results_pkl_path = Path("abl_noisy_eval_results.pkl")
+    eval_results_csv_path = Path("abl_noisy_eval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 
@@ -79,6 +79,14 @@ def main():
             elif "abl_onlyrel" in variant:
                 pruned_ff_name = None
                 env = Environment(atari_env_str, focus_file=pruned_ff_name, hide_properties=True, silent=True, refresh_yaml=False)
+                _, _ = env.reset(seed=eval_seed)
+                dummy_vecenv = DummyVecEnv([lambda :  env])
+                env = VecNormalize.load(vecnorm_path, dummy_vecenv)
+                env.training = False
+                env.norm_reward = False
+            elif "abl_noisy" in variant:
+                pruned_ff_name = None
+                env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)#, noisy_objects=True) #pass eval seed for noisy np rng state
                 _, _ = env.reset(seed=eval_seed)
                 dummy_vecenv = DummyVecEnv([lambda :  env])
                 env = VecNormalize.load(vecnorm_path, dummy_vecenv)

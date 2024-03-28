@@ -1,9 +1,9 @@
 ENVIRONMENT: Pong-v5
 AVAILABLE_CONCEPTS:
   objects:
+  - Ball1
   - Player1
   - Enemy1
-  - Ball1
   actions:
   - NOOP
   - FIRE
@@ -63,9 +63,9 @@ AVAILABLE_CONCEPTS:
       description: Index of colorname
 SELECTION:
   objects:
+  - Ball1
   - Player1
   - Enemy1
-  - Ball1
   actions:
   - NOOP
   - FIRE
@@ -73,116 +73,5 @@ SELECTION:
   - LEFT
   - RIGHTFIRE
   - LEFTFIRE
-  properties:
-  - POSITION: Player1
-  - POSITION: Enemy1
-  - POSITION: Ball1
-  - POSITION_HISTORY: Player1
-  - POSITION_HISTORY: Enemy1
-  - POSITION_HISTORY: Ball1
-  - ORIENTATION: Player1
-  - ORIENTATION: Enemy1
-  - ORIENTATION: Ball1
-  - RGB: Player1
-  - RGB: Enemy1
-  - RGB: Ball1
-  functions:
-  - LINEAR_TRAJECTORY:
-    - POSITION: Player1
-    - POSITION_HISTORY: Player1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Player1
-    - POSITION_HISTORY: Enemy1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Player1
-    - POSITION_HISTORY: Ball1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Enemy1
-    - POSITION_HISTORY: Player1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Enemy1
-    - POSITION_HISTORY: Enemy1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Enemy1
-    - POSITION_HISTORY: Ball1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Ball1
-    - POSITION_HISTORY: Player1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Ball1
-    - POSITION_HISTORY: Enemy1
-  - LINEAR_TRAJECTORY:
-    - POSITION: Ball1
-    - POSITION_HISTORY: Ball1
-  - DISTANCE:
-    - POSITION: Player1
-    - POSITION: Enemy1
-  - DISTANCE:
-    - POSITION: Player1
-    - POSITION: Ball1
-  - DISTANCE:
-    - POSITION: Enemy1
-    - POSITION: Player1
-  - DISTANCE:
-    - POSITION: Enemy1
-    - POSITION: Ball1
-  - DISTANCE:
-    - POSITION: Ball1
-    - POSITION: Player1
-  - DISTANCE:
-    - POSITION: Ball1
-    - POSITION: Enemy1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Player1
-    - POSITION: Enemy1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Player1
-    - POSITION: Ball1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Enemy1
-    - POSITION: Player1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Enemy1
-    - POSITION: Ball1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Ball1
-    - POSITION: Player1
-  - EUCLIDEAN_DISTANCE:
-    - POSITION: Ball1
-    - POSITION: Enemy1
-  - CENTER:
-    - POSITION: Player1
-    - POSITION: Enemy1
-  - CENTER:
-    - POSITION: Player1
-    - POSITION: Ball1
-  - CENTER:
-    - POSITION: Enemy1
-    - POSITION: Player1
-  - CENTER:
-    - POSITION: Enemy1
-    - POSITION: Ball1
-  - CENTER:
-    - POSITION: Ball1
-    - POSITION: Player1
-  - CENTER:
-    - POSITION: Ball1
-    - POSITION: Enemy1
-  - VELOCITY:
-    - POSITION_HISTORY: Player1
-  - VELOCITY:
-    - POSITION_HISTORY: Enemy1
-  - VELOCITY:
-    - POSITION_HISTORY: Ball1
-  - DIR_VELOCITY:
-    - POSITION_HISTORY: Player1
-  - DIR_VELOCITY:
-    - POSITION_HISTORY: Enemy1
-  - DIR_VELOCITY:
-    - POSITION_HISTORY: Ball1
-  - COLOR:
-    - RGB: Player1
-  - COLOR:
-    - RGB: Enemy1
-  - COLOR:
-    - RGB: Ball1
+  properties: []
+  functions: []
