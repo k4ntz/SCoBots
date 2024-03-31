@@ -27,5 +27,4 @@ RUN mkdir "baselines_checkpoints"
 RUN mkdir "baselines_focusfiles"
 COPY baselines/ .
 
-ENV SCOBI_OBJ_DETECTOR="OC_ATARI"
 ENTRYPOINT ["python3", "-u" , "train.py"]
