@@ -12,15 +12,15 @@ from multiprocessing import Process, Value
 
 
 def main():
-    envs = ["Asterix", "Bowling", "Tennis", "Boxing", "Freeway", "Pong"]  # ["Seaquest", "Kangaroo", "Asterix", "Bowling", "Tennis", "Boxing", "Freeway", "Skiing", "Pong"] 
+    envs = ["Asterix", "Bowling", "Boxing", "Freeway", "Kangaroo", "Pong", "Seaquest", "Skiing", "Tennis"] 
     check_dir = "baselines_checkpoints"
-    variants = ["abl_noisy"] #["abl_norel"] #["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
+    variants = ["abl_noisy_v2"] #["abl_norel"] #["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
     checkpoint_str = "best_model" #"model_5000000_steps"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("abl_noisy_eval_results.pkl")
-    eval_results_csv_path = Path("abl_noisy_eval_results.csv")
+    eval_results_pkl_path = Path("abl_noisy_v2normal_eval_results.pkl")
+    eval_results_csv_path = Path("abl_noisy_v2normal_eval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 
@@ -59,16 +59,16 @@ def main():
                 pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
             atari_env_str = "ALE/" + env_str +"-v5"
             
-            if "rgbv4" in variant:
+            if variant == "rgbv4":
                 atari_env_str = env_str + "NoFrameskip-v4"
                 eval_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
                 env = make_vec_env(atari_env_str, seed=eval_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params)
                 env = VecTransposeImage(env)
-            elif "rgbv5" in variant:
+            elif variant == "rgbv5":
                 eval_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
                 env = make_vec_env(atari_env_str, seed=eval_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params)
                 env = VecTransposeImage(env)
-            elif "abl_norel" in variant:
+            elif variant == "abl_norel":
                 pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
                 env = Environment(atari_env_str, focus_dir="norel_focusfiles", focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
                 _, _ = env.reset(seed=eval_seed)
@@ -76,7 +76,7 @@ def main():
                 env = VecNormalize.load(vecnorm_path, dummy_vecenv)
                 env.training = False
                 env.norm_reward = False
-            elif "abl_onlyrel" in variant:
+            elif variant == "abl_onlyrel":
                 pruned_ff_name = None
                 env = Environment(atari_env_str, focus_file=pruned_ff_name, hide_properties=True, silent=True, refresh_yaml=False)
                 _, _ = env.reset(seed=eval_seed)
@@ -84,9 +84,19 @@ def main():
                 env = VecNormalize.load(vecnorm_path, dummy_vecenv)
                 env.training = False
                 env.norm_reward = False
-            elif "abl_noisy" in variant:
+            elif variant == "abl_noisy":
+                # set env 'SCOBI_OBJ_EXTRACTOR' to NOISY_OC_ATARI
                 pruned_ff_name = None
-                env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)#, noisy_objects=True) #pass eval seed for noisy np rng state
+                env = Environment(atari_env_str, seed=eval_seed, focus_file=pruned_ff_name, silent=True, refresh_yaml=False) #pass eval seed for noisy np rng state
+                _, _ = env.reset(seed=eval_seed)
+                dummy_vecenv = DummyVecEnv([lambda :  env])
+                env = VecNormalize.load(vecnorm_path, dummy_vecenv)
+                env.training = False
+                env.norm_reward = False
+            elif variant == "abl_noisy_v2" :
+                # set env 'SCOBI_OBJ_EXTRACTOR' to NOISY_OC_ATARI
+                pruned_ff_name = None
+                env = Environment(atari_env_str, seed=eval_seed, focus_file=pruned_ff_name, silent=True, refresh_yaml=False) #pass eval seed for noisy np rng state
                 _, _ = env.reset(seed=eval_seed)
                 dummy_vecenv = DummyVecEnv([lambda :  env])
                 env = VecNormalize.load(vecnorm_path, dummy_vecenv)

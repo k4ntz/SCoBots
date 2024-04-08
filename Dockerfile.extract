@@ -1,0 +1,61 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND noninteractive
+WORKDIR /workdir
+
+# python 3.8 install
+RUN apt update && apt install -y --no-install-recommends software-properties-common gpg-agent
+RUN add-apt-repository ppa:deadsnakes/ppa && apt update 
+RUN apt install -y --no-install-recommends python3.8 python3-pip python3.8-dev python3.8-distutils
+
+# install build tools & R
+RUN apt-get update && apt-get install -y --no-install-recommends git make build-essential libcurl4-gnutls-dev libxml2-dev libssl-dev libatlas-base-dev gfortran libz-dev libbz2-dev liblzma-dev libpcre2-dev r-base 
+
+# install r packages
+RUN R -e "install.packages('stringr',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('stringi',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('C50',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('Cubist',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('reshape2',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('plyr',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('Rcpp',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('magrittr',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('partykit', dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('Formula',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('libcoin',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('mvtnorm',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages('inum',dependencies=TRUE, repos='http://cran.rstudio.com/')"
+
+# setup env
+RUN mkdir "extract"
+WORKDIR /workdir/extract
+RUN python3.8 -m pip install -U pip setuptools numpy
+
+# clone & install remix fork
+RUN git clone https://github.com/sebawastaken/remix.git remix
+RUN python3.8 -m pip install /workdir/extract/remix
+
+# remix test code
+COPY remixtest.py remixtest.py
+RUN python3.8 remixtest.py
+
+# setup scobi baselines
+COPY scobi scobi
+COPY pyproject.toml pyproject.toml
+COPY setup.py setup.py
+RUN mkdir "baselines"
+WORKDIR /workdir/extract/baselines
+COPY baselines/requirements.txt .
+
+# install scobi baselines
+RUN pip install -r requirements.txt
+RUN pip install opencv-python-headless
+RUN mkdir "baselines_logs"
+RUN mkdir "baselines_checkpoints"
+RUN mkdir "baselines_focusfiles"
+COPY baselines/ .
+
+# scobi test code
+ENV SCOBI_OBJ_EXTRACTOR="OC_Atari"
+RUN python3.8 eval.py
+# ENTRYPOINT ["python3", "-u" , "train.py"]
