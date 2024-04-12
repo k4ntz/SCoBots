@@ -169,6 +169,8 @@ analysis.txt
 experiments/plots/*
 
 baselines/baselines_checkpoints
+baselines/baselines_extract_input
+baselines/baselines_extract_output
 baselines/baselines_logs
 baselines/baselines_focusfiles
 baselines/plots
