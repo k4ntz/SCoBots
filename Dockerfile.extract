@@ -50,12 +50,13 @@ COPY baselines/requirements.txt .
 # install scobi baselines
 RUN pip install -r requirements.txt
 RUN pip install opencv-python-headless
-RUN mkdir "baselines_logs"
-RUN mkdir "baselines_checkpoints"
 RUN mkdir "baselines_focusfiles"
+RUN mkdir "baselines_extract_input"
+RUN mkdir "baselines_extract_output"
+COPY baselines/baselines_extract_input/Pong_s0_re baselines_extract_input/
 COPY baselines/ .
 
 # scobi test code
 ENV SCOBI_OBJ_EXTRACTOR="OC_Atari"
-RUN python3.8 eval.py
+RUN python3.8 extract_generate_samples.py -i Pong_s0_re -e 1
 # ENTRYPOINT ["python3", "-u" , "train.py"]
