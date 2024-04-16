@@ -18,11 +18,80 @@ from typing import Callable
 from rtpt import RTPT
 from collections import deque
 import matplotlib.pyplot as plt
+from remix import eclaire, deep_red_c5
+from remix.rules.ruleset import Ruleset
+import torch
+import numpy as np
+import tensorflow as tf
 
+EVAL_ENV_SEED = 84
+
+class SB3Model():
+    def __init__(self, model) -> None:
+        self.name = "Original SB3 Model"
+        self.model = model
+
+    def predict(self, obs, deterministic):
+        return self.model.predict(obs, deterministic) #vecenv output eg. (array([2]), True)
+
+
+class KerasModel():
+    def __init__(self, model) -> None:
+        self.name = "Translated Keras Model"
+        self.model = model
+
+    def predict(self, obs, deterministic=True):
+        out = self.model(obs)
+        idx = tf.argmax(out[0])
+        return np.array([idx]), None #increase dim to match vecenv used
+
+
+class RemixModel():
+    def __init__(self, model) -> None:
+        self.name = "Extracted Ruleset Model"
+        self.model = model
+
+    def predict(self, obs, deterministic=True):
+        out = self.model.predict(obs)
+        return np.array(out), None
 
 
 def flist(l):
     return ["%.2f" % e for e in l]
+
+
+def eval_agent(model, env, episodes, obs_save_file=None):
+    current_episode = 0
+    rewards = []
+    steps = []
+    current_rew = 0
+    current_step = 0
+    out_array = []
+    obs = env.reset()
+    while True:
+        action, _ = model.predict(obs, deterministic=True)
+        obs, reward, done, _ = env.step(action)
+        out_array.append(obs[0]) #unvec
+        current_rew += reward
+        current_step += 1
+        if done:
+            current_episode += 1
+            if type(current_rew) == np.ndarray:
+                current_rew = current_rew[0]
+            rewards.append(current_rew)
+            steps.append(current_step)
+            current_rew = 0
+            current_step = 0
+            obs = env.reset()
+        if current_episode == episodes:
+            print("--------------------------------------------\n"+model.name)
+            print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \nsteps: {flist(steps)} | mean: {np.mean(steps):.2f}")
+            if obs_save_file:
+                obs_save_file.unlink(missing_ok=True)
+                np.save(obs_save_file, out_array)
+                print(">>> Observations saved!")
+            print("--------------------------------------------\n")
+            break
 
 
 def main():
@@ -31,7 +100,7 @@ def main():
     parser.add_argument("-e", "--episodes", type=int, required=False, help="number of episodes to generate samples from")
     opts = parser.parse_args()
     
-    #default values
+    # Default values
     prune = False
     pruned_ff_name = None
     episodes = 5
@@ -51,7 +120,6 @@ def main():
     if opts.episodes:
         episodes = opts.episodes
 
-    # print([env, seed, episodes])
     env_str = "ALE/" + env +"-v5"
     game_id = env_str.split("/")[-1].lower().split("-")[0]
     if prune:
@@ -65,47 +133,68 @@ def main():
     output_path.mkdir(parents=True, exist_ok=True)
     outfile = output_path / "obs.npy"
         
-    EVAL_ENV_SEED = 84
+
     env = Environment(env_str,
                       focus_dir=focus_dir,
                       focus_file=pruned_ff_name)
-
     _, _ = env.reset(seed=EVAL_ENV_SEED)
-    dummy_vecenv = DummyVecEnv([lambda :  env])
-    env = VecNormalize.load(vecnorm_path, dummy_vecenv)
-    env.training = False
-    env.norm_reward = False
-    model = PPO.load(model_path)
-    current_episode = 0
-    rewards = []
-    steps = []
-    current_rew = 0
-    current_step = 0
-    obs = env.reset()
 
-    out_array = []
-    while True:
-        action, _ = model.predict(obs, deterministic=True)
-        obs, reward, done, _ = env.step(action)
-        out_array.append(obs)
-        current_rew += reward
-        current_step += 1
-        if done:
-            current_episode += 1
-            if type(current_rew) == np.ndarray:
-                current_rew = current_rew[0]
-            rewards.append(current_rew)
-            steps.append(current_step)
-            current_rew = 0
-            current_step = 0
-            obs = env.reset()
-        if current_episode == episodes:
-            print(rewards)
-            print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
-            outfile.unlink(missing_ok=True)
-            np.save(outfile, out_array)
-            break
-    #print(scores)
+
+    # Original SB3 Model Eval and Trainset Generation
+    model = PPO.load(model_path)
+    sb3_model_wrapped = SB3Model(model=model)
+    dummy_vecenv = DummyVecEnv([lambda :  env])
+    vec_env = VecNormalize.load(vecnorm_path, dummy_vecenv)
+    vec_env.seed = EVAL_ENV_SEED
+    vec_env.training = False
+    vec_env.norm_reward = False
+    eval_agent(sb3_model_wrapped, vec_env, episodes=episodes, obs_save_file=outfile)
+
+
+    # Translation to Keras and Model Eval 
+    fnames = env.get_vector_entry_descriptions()
+    actions = env.action_space_description
+    input_size = len(fnames)
+    output_size = len(actions)
+    pi_hidden_sizes = model.policy.net_arch["pi"]
+    torch_act_f_name = str(model.policy.activation_fn).split(".")[-1][:-2]
+    keras_act_f = torch_act_f_name.lower() #works for relu, didnt test others
+
+    #hardcoded to 2 hidden layers for now. should work for arbitrary sizes
+    pi_weight_keys = ['mlp_extractor.policy_net.0.weight', 
+               'mlp_extractor.policy_net.0.bias',
+               'mlp_extractor.policy_net.2.weight',
+               'mlp_extractor.policy_net.2.bias',
+               'action_net.weight',
+               'action_net.bias']
+
+    weights = model.policy.state_dict()
+    keras_model = tf.keras.Sequential()
+    keras_model.add(tf.keras.Input(shape=(input_size,)))
+    keras_model.add(tf.keras.layers.Activation("linear"))
+    keras_model.add(tf.keras.layers.Dense(pi_hidden_sizes[0], activation=keras_act_f))
+    keras_model.add(tf.keras.layers.Dense(pi_hidden_sizes[1], activation=keras_act_f))
+    keras_model.add(tf.keras.layers.Dense(output_size))
+    keras_model.add(tf.keras.layers.Softmax())
+    keras_model.set_weights([weights[key].cpu().numpy().T for key in pi_weight_keys])
+    #keras_model.summary()
+
+    keras_model_wrapped = KerasModel(keras_model)
+    eval_agent(keras_model_wrapped, vec_env, episodes=episodes)
+    
+
+    # Rule extraction via ECLAIRE
+    trainset = np.load(outfile)
+    input = tf.convert_to_tensor(trainset.astype(np.float32))
+    clean_fnames = [s.replace(' ', '') for s in fnames] # need to remove whitespaces in names otherwise remix gets mad
+    ruleset = eclaire.extract_rules(keras_model, input, feature_names=clean_fnames, output_class_names=actions)
+    ruleset.to_file(output_path / "output.rules")
+    print("Ruleset saved!")
+
+    # Eval ruleset
+    ruleset = Ruleset().from_file(output_path / "output.rules")
+    ruleset_model_wrapped = RemixModel(ruleset)
+    eval_agent(ruleset_model_wrapped, vec_env, episodes=episodes)
 
 if __name__ == '__main__':
     main()

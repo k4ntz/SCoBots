@@ -374,7 +374,7 @@ def format_feature(feature_name, feature_signature, ii):
     elif feature_name == "LINEAR_TRAJECTORY":
         return f"LT({feature_signature[0][1]}, {feature_signature[1][1]}).{axis}"
     elif feature_name == "COLOR":
-        return f"COL({feature_signature})"
+        return f"COL({feature_signature[0][1]})"
     print("feature render formatting error. exiting...")
     exit()
 
