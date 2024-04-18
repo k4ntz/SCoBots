@@ -2,13 +2,17 @@ import torch
 import matplotlib.pyplot as plt
 import numpy as np
 
-from torchinfo import summary
+try:
+    from torchinfo import summary
+    from captum.attr import IntegratedGradients
+except:
+    pass
 from tqdm import tqdm
 from rtpt import RTPT
 
 
 from scobi import Environment
-from captum.attr import IntegratedGradients
+
 from pathlib import Path
 import matplotlib as mpl
 import os
@@ -21,7 +25,7 @@ dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
     INTEGRATED_GRADIENTS = False
-    runs = 3
+    runs = 1
     # init env
     draw = cfg.liveplot
     if env is None:
@@ -50,8 +54,12 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
     drawer = Drawer(obs_raw)
 
     # initialize output file
-    outfile_path = "obs.npy"
-    Path(outfile_path).unlink(missing_ok=True)
+    if "eclaire" in cfg:
+        print("eclaire_dir: ", cfg.eclaire.eclaire_dir)
+        outfile_path = os.path.join(cfg.eclaire.eclaire_dir, "obs.npy")
+    else:
+        outfile_path = "obs.npy"
+        Path(outfile_path).unlink(missing_ok=True)
     out_array = [] # TODO: check correctness: moved to here from inside first loop
 
     for run in tqdm(range(runs)):
@@ -63,7 +71,7 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
             if not drawer.pause:
                 features = normalizer.normalize(features)
                 out_array.append(features) # save normalized features
-                action, _, probs = select_action_func(features, model, 0.05, n_actions = env.action_space.n)
+                action, _, probs = select_action_func(features, model, 0.25, n_actions = env.action_space.n) # select random action with 25% probability to create diversity in data
                 
                 if INTEGRATED_GRADIENTS:
                     input = torch.tensor(features, requires_grad=True).unsqueeze(0).to(dev)
@@ -92,11 +100,12 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
     print("Mean of Env Rewards:", sum(rewards) / len(rewards))
     
     #write results to file
-    write_results(cfg, runs, rewards, all_sco_rewards, epochs, out_array, outfile_path)
+    np.save(outfile_path, out_array) #TODO: check correctness: moved to here from inside first loop
+    print("len(out_array): ", len(out_array))
+    #write_results(cfg, runs, rewards, all_sco_rewards, epochs, out_array, outfile_path)
 
 
 def write_results(cfg, runs, rewards, all_sco_rewards, epochs, out_array, outfile_path):
-    np.save(outfile_path, out_array) #TODO: check correctness: moved to here from inside first loop
     result_file = Path(__file__).parent.parent / Path("results", "results.json")
     if result_file.exists():
        result_dict = json.load(open(result_file))

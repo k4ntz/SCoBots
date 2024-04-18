@@ -1,0 +1,7 @@
+eclaire_dir: "eclaire_Pong_s42_re_pr-ext_OCAtariinput_1l-v3"
+focus_dir: "focusfiles"
+focus_filename: "default_focus_Pong-v5.yaml"
+num_layers: 1
+input_data: "OCAtari"
+
+

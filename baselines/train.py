@@ -84,6 +84,46 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
     return func
 
 
+
+def get_settings_str(opts):
+    settings_str = ""
+    if opts.reward == "env":
+        settings_str += "_re"
+    if opts.reward == "human":
+        settings_str += "_rh"
+    if opts.reward == "mixed":
+        settings_str += "_rm"
+
+    if opts.prune == "no_prune":
+        settings_str += "_pr-nop"
+    if opts.prune == "default":
+        settings_str += "_pr-def"
+    if opts.prune == "external":
+        settings_str += "_pr-ext"
+
+    if opts.exclude_properties:
+        settings_str += '_ep'
+
+    if opts.input_data == "SPACE":
+        settings_str += "_SPACEinput"
+    if opts.input_data == "OCAtari":
+        settings_str += "_OCAtariinput"
+    
+    if opts.num_layers == 1:
+        settings_str += "_1l"
+    if opts.num_layers == 2:
+        settings_str += "_2l"
+
+
+    if opts.rgbv5:
+        settings_str = "-rgb-v5"
+    elif opts.rgbv4:
+        settings_str = "-rgb-v4"
+    else:
+        settings_str += "-v3"
+
+    return settings_str
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-g", "--game", type=str, required=True,
@@ -92,43 +132,56 @@ def main():
                         help="seed")
     parser.add_argument("-c", "--cores", type=int, required=True,
                         help="number of envs used")
-    parser.add_argument("-r", "--reward", type=str, required=False, choices=["env", "human", "mixed"],
+    parser.add_argument("-r", "--reward", type=str, default="env", choices=["env", "human", "mixed"],
                         help="reward mode, env if omitted")
-    parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"], 
+    parser.add_argument("-p", "--prune", type=str, default= "no_prune", choices=["no_prune", "default", "external"], 
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-e", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("--rgbv4", action="store_true", help="rgb observation space")
     parser.add_argument("--rgbv5", action="store_true", help="rgb observation space")
     parser.add_argument("--use_checkpoint", action="store_true", help="use checkpoint")
+    parser.add_argument("--num_layers", type=int, choices=[1, 2], default=2, help="number of layers for mlp policy")
+    parser.add_argument("--adam_step_size", type=float, choices=[0.00025, 0.001], default=0.00025, help="adam step size")
+    parser.add_argument("--input_data", type=str, choices=["SPACE", "OCAtari",], default="SPACE", help="input data")
     opts = parser.parse_args()
 
+
+    settings_str = get_settings_str(opts)
+    print(settings_str)
+    
     env_str = "ALE/" + opts.game +"-v5"
-    settings_str = ""
-    pruned_ff_name = None
-    focus_dir = "focusfiles"
-    hide_properties = False
+    if opts.rgbv4 and opts.rgbv5:
+        print("please select only one rgb mode!")
+    #override some settings if rgb
+    rgb_exp = opts.rgbv4 or opts.rgbv5
+    if opts.rgbv4:
+        env_str = opts.game + "NoFrameskip-v4"
+    if opts.rgbv5:
+        pass
     
     reward_mode = 0
     if opts.reward == "env":
-        settings_str += "_re"
+        pass
     if opts.reward == "human":
-        settings_str += "_rh"
         reward_mode = 1
     if opts.reward == "mixed":
-        settings_str += "_rm"
         reward_mode = 2
 
+    
+    pruned_ff_name = None
     game_id = env_str.split("/")[-1].lower().split("-")[0]
-
-    if opts.prune:
+    if opts.prune in ["default", "external"]:
         pruned_ff_name = f"pruned_{game_id}.yaml"
+
+    focus_dir = "focusfiles"
     if opts.prune == "default":
-        settings_str += "_pr-def"
+        focus_dir = "focusfiles"
     if opts.prune == "external":
-        settings_str += "_pr-ext"
         focus_dir = "baselines_focusfiles"
+
+
+    hide_properties = False
     if opts.exclude_properties:
-        settings_str += '_ep'
         hide_properties = True
 
 
@@ -141,20 +194,10 @@ def main():
     eval_frequency = 400_000 #500_000
     rtpt_frequency = 100_000 # 100_000
 
-    if opts.rgbv4 and opts.rgbv5:
-        print("please select only one rgb mode!")
-    
-    #override some settings if rgb
-    rgb_exp = opts.rgbv4 or opts.rgbv5
-    if opts.rgbv4:
-        settings_str = "-rgb-v4"
-        env_str = opts.game + "NoFrameskip-v4"
-    if opts.rgbv5:
-        settings_str = "-rgb-v5"
-
     exp_name = opts.game + "_s" + str(opts.seed) + settings_str
-    if not rgb_exp:
-        exp_name += "-v3"
+
+
+
     log_path = Path("baselines_logs", exp_name)
     ckpt_path = Path("baselines_checkpoints", exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
@@ -168,7 +211,8 @@ def main():
                               hide_properties=hide_properties, 
                               silent=silent,
                               reward=reward_mode,
-                              refresh_yaml=refresh)
+                              refresh_yaml=refresh,
+                              object_detector=opts.input_data)
             env = EpisodicLifeEnv(env=env)
             env = Monitor(env)
             env.reset(seed=seed + rank)
@@ -184,7 +228,8 @@ def main():
                               hide_properties=hide_properties, 
                               silent=silent,
                               reward=0, #always env reward for eval
-                              refresh_yaml=refresh) 
+                              refresh_yaml=refresh,
+                              object_detector=opts.input_data)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
@@ -249,12 +294,16 @@ def main():
             #policy_kwargs=pkwargs,
             verbose=1)
     else:
-        net_arch = dict(pi=[64, 64], vf=[64, 64])
-        #net_arch = dict(pi=[64], vf=[64])
+        if opts.num_layers == 2:
+            net_arch = dict(pi=[64, 64], vf=[64, 64])
+        elif opts.num_layers == 1:
+            net_arch = dict(pi=[64], vf=[64])
+        else:
+            raise ValueError("num_layers must be 1 or 2")
         activation_fn = th.nn.ReLU
         policy_str = "MlpPolicy"
         pkwargs = dict(activation_fn=activation_fn, net_arch=net_arch)
-        adam_step_size = 0.00025 # or 0.001
+        adam_step_size = opts.adam_step_size
         clipping_eps = 0.1
 
         if not opts.use_checkpoint:

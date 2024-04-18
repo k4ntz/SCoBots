@@ -69,6 +69,13 @@ def get_config():
     )
 
     parser.add_argument(
+        '--eclaire-cfg-file',
+        type=str,
+        metavar='FILE',
+        help='Path to eclaire config file'
+    )
+
+    parser.add_argument(
         'opts',
         help='Modify config options using the command line',
         default=None,
@@ -80,6 +87,10 @@ def get_config():
         cfg.merge_from_file(args.config_file)
     if args.opts:
         cfg.merge_from_list(args.opts)
+    
+    if args.eclaire_cfg_file:
+        eclaire_cfg.merge_from_file(args.eclaire_cfg_file)
+        cfg.eclaire = eclaire_cfg
 
     # Use config file name as the default experiment name
     if cfg.exp_name == '':
@@ -94,6 +105,9 @@ def get_config():
     torch.backends.cudnn.benchmark = False
 
     return cfg
+
+from eclaire_configs.eclaire_base_config import cfg as eclaire_cfg
+from eclaire_utils.utils import get_eclaire_config
 
 
 ###############################

@@ -1,14 +1,14 @@
 gymnasium[atari, accept-rom-license]
+shimmy[atari] # workaround for gymnasium v26.3 and ATARI https://gymnasium.farama.org/main/release_notes/gymnasium_v0.26.3/
 rtpt
 termcolor
 torch
+torchvision
 torchinfo
-numpy
 opencv_python
 joblib
 tensorboard
 tqdm
-pandas
 pyyaml
 colormath
 yacs

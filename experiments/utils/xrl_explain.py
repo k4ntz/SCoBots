@@ -2,17 +2,18 @@ import torch
 import matplotlib.pyplot as plt
 import numpy as np
 
-from torchinfo import summary
+try:
+    from remix.rules.ruleset import Ruleset
+    from remix.rules.rule import RulePredictMechanism
+except:
+    print("Could not import remix")
 from tqdm import tqdm
 from rtpt import RTPT
 from algos import reinforce
 from algos import genetic_rl as genetic
 from scobi import Environment
 from experiments.utils.normalizer import Normalizer
-from captum.attr import IntegratedGradients
 from pathlib import Path
-from remix.rules.ruleset import Ruleset
-from remix.rules.rule import RulePredictMechanism
 import matplotlib as mpl
 import json
 import os

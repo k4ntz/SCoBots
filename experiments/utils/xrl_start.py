@@ -2,28 +2,23 @@ import torch
 import matplotlib.pyplot as plt
 import numpy as np
 
-from torchinfo import summary
 from tqdm import tqdm
 from rtpt import RTPT
 
 from algos import reinforce
 from algos import genetic_rl as genetic
 from scobi import Environment
-from captum.attr import IntegratedGradients
 from pathlib import Path
 import matplotlib as mpl
 import os
 import json
-try:
-    from experiments.utils.xrl_explain import explain_agent
-except:
-    pass
+from experiments.utils.xrl_explain import explain_agent
 from experiments.utils.xrl_play_agent import play_agent
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 from experiments.utils.xrl_utils import Drawer
 from experiments.my_normalizer import load_normalizer
-from ppo_utils import ppo_load_model_v2, ppo_select_action, load_ppo_env
+from ppo_utils import ppo_load_model, ppo_select_action, load_ppo_env
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -58,17 +53,17 @@ def use_ppo(cfg, mode):
     if mode == "train":
         print(f"Mode {mode} not implemented for PPO")
     elif mode == "eval":
-        base_path = "../ppo_pruned_inx64xout"
+        base_path = os.path.join("..", cfg.eclaire.eclaire_dir)
         normalizer = load_normalizer(os.path.join(base_path, "normalizer.json"))
-        model = ppo_load_model_v2(cfg)
-        env = load_ppo_env()
-        play_agent(cfg, model, ppo_select_action, normalizer, None, env=env)
+        model = ppo_load_model(cfg)
+        env = load_ppo_env(cfg)
+        play_agent(cfg, model, ppo_select_action, normalizer, 1, env=env)
     elif mode == "discover":
         print(f"Mode {mode} not implemented for PPO")
     elif mode == "explain":
-        base_path = "../ppo_pruned_inx64xout"
+        base_path = os.path.join("..", cfg.eclaire.eclaire_dir)
         normalizer = load_normalizer(os.path.join(base_path, "normalizer.json"))
-        env = load_ppo_env()
+        env = load_ppo_env(cfg)
         ruleset_path = f"{base_path}/output.rules"
         explain_agent(cfg, normalizer, ruleset_path, env=env)
 

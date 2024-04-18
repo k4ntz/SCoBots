@@ -9,13 +9,14 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from copy import deepcopy
 from scobi.ram_object_extractor import RAMObjectExtractor
-#from scobi.space_object_extractor import CentroidTrackerAndSPACEObjectExtractor
+try:
+    from scobi.space_object_extractor import CentroidTrackerAndSPACEObjectExtractor
+except:
+    print("space object extractor can't be imported")
 import time
-USE_SPACE = False
-COMPARE = False
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
+    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, object_detector="OCAtari"):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
 
@@ -26,10 +27,11 @@ class Environment(Env):
         # TODO: oc envs should answer this, not the raw env
         actions = self.oc_env._env.unwrapped.get_action_meanings()
 
-        if not USE_SPACE or COMPARE:
+        self.object_detector_str = object_detector
+        if object_detector == "OCAtari" or object_detector == "both":
             self.object_detector_1 = RAMObjectExtractor(self.oc_env)
-        if USE_SPACE or COMPARE:
-            self.object_detector_2 = None #CentroidTrackerAndSPACEObjectExtractor(env_name)
+        if object_detector == "SPACE" or object_detector == "both":
+            self.object_detector_2 = CentroidTrackerAndSPACEObjectExtractor(env_name)
         self.oc_env.reset(seed=seed)
         max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward, self.game_object_wrapper_1)
         self.did_reset = False
@@ -72,19 +74,16 @@ class Environment(Env):
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
-            if not USE_SPACE or COMPARE:
-                start_detect_time = time.time()
+            if self.object_detector_str in ["OCAtari", "both"]: 
                 objects_by_detector = self.object_detector_1.get_objects(obs)
-                end_detect_time = time.time()
-                #print(f"get_objects time gt: {end_detect_time - start_detect_time}")
                 objects = self._wrap_map_order_game_objects(objects_by_detector, self.focus.ENV_NAME, self.focus.REWARD_SHAPING, self.game_object_wrapper_1)
                 sco_obs, sco_reward = self.focus.get_feature_vector(objects)
-            if USE_SPACE or COMPARE:
+            if self.object_detector_str in ["SPACE", "both"]:
                 objects_by_detector = self.object_detector_2.get_objects(obs)
                 #print(f"get_objects time space: {end_detect_time - start_detect_time}")
                 objects_2 = self._wrap_map_order_game_objects(objects_by_detector, self.focus.ENV_NAME, self.focus.REWARD_SHAPING, self.game_object_wrapper_2)
                 sco_obs_2, sco_reward_2 = self.focus.get_feature_vector(objects_2)
-                if USE_SPACE:
+                if self.object_detector_str == "SPACE":
                     objects = objects_2
                     sco_obs = sco_obs_2 
                     sco_reward = sco_reward_2
@@ -118,13 +117,13 @@ class Environment(Env):
         self.focus.reward_history = [0, 0]
         observation, info = self.oc_env.reset(*args, **kwargs)
         sco_obs = None
-        if COMPARE or not USE_SPACE:
+        if self.object_detector_str in ["OCAtari", "both"]:
             objects = self._wrap_map_order_game_objects(self.object_detector_1.get_objects(observation), self.focus.ENV_NAME, self.focus.REWARD_SHAPING, self.game_object_wrapper_1)
             sco_obs, _ = self.focus.get_feature_vector(objects)
-        if COMPARE or USE_SPACE:
+        if self.object_detector_str in ["SPACE", "both"]:
             objects_2 = self._wrap_map_order_game_objects(self.object_detector_2.get_objects(observation), self.focus.ENV_NAME, self.focus.REWARD_SHAPING, self.game_object_wrapper_2)
             sco_obs_2, _ = self.focus.get_feature_vector(objects_2)
-            if USE_SPACE:
+            if self.object_detector_str == "SPACE":
                 objects = objects_2
                 sco_obs = sco_obs_2
         return sco_obs, info

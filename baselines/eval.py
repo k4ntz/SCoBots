@@ -21,9 +21,11 @@ from collections import deque
 import matplotlib.pyplot as plt
 import os
 from experiments.my_normalizer import save_normalizer
+from .train import get_settings_str
 
 def flist(l):
     return ["%.2f" % e for e in l]
+
 
 
 def main():
@@ -34,59 +36,60 @@ def main():
                         help="seed")
     parser.add_argument("-t", "--times", type=int, required=True,
                         help="number of episodes to eval")
-    parser.add_argument("-r", "--reward", type=str, required=False, choices=["env", "human", "mixed"],
+    parser.add_argument("-r", "--reward", type=str, default="env", choices=["env", "human", "mixed"],
                         help="reward mode, env if omitted")
-    parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"], 
+    parser.add_argument("-p", "--prune", type=str, default= "no_prune", choices=["no_prune", "default", "external"], 
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-e", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
-    parser.add_argument("--rgb", action="store_true", help="rgb observation space")
+    parser.add_argument("--rgbv4", action="store_true", help="rgb observation space")
+    parser.add_argument("--rgbv5", action="store_true", help="rgb observation space")
     parser.add_argument("-l", "--liveplot", action="store_true", help="show liveplot")
+    parser.add_argument("--save_model", action="store_true", help="save model")
+    parser.add_argument("--num_layers", type=int, choices=[1, 2], default=2, help="number of layers for mlp policy")
+    parser.add_argument("--input_data", type=str, choices=["SPACE", "OCAtari",], default="SPACE", help="input data")
+    parser.add_argument("--create_obs", action="store_true", help="create observation data")
     opts = parser.parse_args()
 
-    env_str = "ALE/" + opts.game +"-v5"
-    settings_str = ""
-    pruned_ff_name = None
-    focus_dir = "focusfiles"
-    hide_properties = False
-    variant = "scobots"
+    settings_str = get_settings_str(opts)
+    print(settings_str)
     
-    reward_mode = 0
-    if opts.reward == "env":
-        settings_str += "_re"
-    if opts.reward == "human":
-        settings_str += "_rh"
-        reward_mode = 1
-    if opts.reward == "mixed":
-        settings_str += "_rm"
-        reward_mode = 2
+    env_str = "ALE/" + opts.game +"-v5"
+    if opts.rgbv4 and opts.rgbv5:
+        print("please select only one rgb mode!")
+    if opts.rgbv4:
+        env_str = opts.game + "NoFrameskip-v4"
+    if opts.rgbv5:
+        pass
+    
+    
+    reward_mode = 0 # for eval always use env reward
 
+    pruned_ff_name = None
     game_id = env_str.split("/")[-1].lower().split("-")[0]
-
-    if opts.prune:
+    if opts.prune in ["default", "external"]:
         pruned_ff_name = f"pruned_{game_id}.yaml"
-        variant =  "iscobots"
-        if opts.prune == "default":
-            settings_str += "_pr-def"
-        if opts.prune == "external":
-            settings_str += "_pr-ext"
-            focus_dir = "baselines_focusfiles"
+
+    focus_dir = "focusfiles"
+    if opts.prune == "default":
+        focus_dir = "focusfiles"
+    if opts.prune == "external":
+        focus_dir = "baselines_focusfiles"
             
+
+    hide_properties = False
     if opts.exclude_properties:
-        settings_str += '_ep'
         hide_properties = True
 
-    #override setting str if rgb
-    if opts.rgb:
-        settings_str = "-rgb"
-        variant= "rgb"
-    exp_name = opts.game + "_s" + str(opts.seed) + settings_str +  "-v3" #+ "_gtdata" #"-v2"
+    exp_name = opts.game + "_s" + str(opts.seed) + settings_str #+ "_gtdata" #"-v2"
+
+
 
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("baselines_checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("baselines_checkpoints",  exp_name, vecnorm_str)
     EVAL_ENV_SEED = 100 #84
-    if variant == "rgb":
+    if opts.rgbv4 or opts.rgbv5:
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
     else:
         env = Environment(env_str,
@@ -94,7 +97,9 @@ def main():
                             focus_file=pruned_ff_name, 
                             hide_properties=hide_properties, 
                             draw_features=True, # implement feature attribution
-                            reward=0) #env reward only for evaluation
+                            reward=reward_mode, # 0 for env reward
+                            object_detector= opts.input_data,
+                            ) 
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])
         #print(obs)
@@ -103,11 +108,12 @@ def main():
         env.norm_reward = False
     model = PPO.load(model_path)
 
-
-    folder_path = "ppo_pruned_inx64xout"
-    os.makedirs(folder_path, exist_ok=True)
-    torch.save(model.policy.state_dict(), os.path.join(folder_path, "model.pth"))
-    save_normalizer(env, os.path.join(folder_path, "normalizer.json"))
+    if opts.save_model:
+        folder_path = f"eclaire_{exp_name}"
+        os.makedirs(folder_path, exist_ok=True)
+        torch.save(model.policy.state_dict(), os.path.join(folder_path, "model.pth"))
+        save_normalizer(env, os.path.join(folder_path, "normalizer.json"))
+        exit()
     
     fps = 30
     sps = 20 # steps per seconds
@@ -119,40 +125,24 @@ def main():
     current_rew = 0
     current_step = 0
     obs = env.reset()
-    if variant == "rgb":
+    if opts.rgbv4 or opts.rgbv5:
         img = plt.imshow(env.get_images()[0])
     else:
         scobi_env = env.venv.envs[0]
         img = plt.imshow(scobi_env._obj_obs)
-    
-
-    # same code for tmp
-    if not os.path.exists("tmp"):
-        os.makedirs("tmp")
-    else:
-        files = os.listdir("tmp")
-        for file in files:
-            os.remove(os.path.join("tmp", file))
-
-    # initialize output file
-    outfile = os.path.join(folder_path, "obs.npy")
-    Path(outfile).unlink(missing_ok=True)
-    out_array = [] # TODO: check correctness: moved to here from inside first loop
 
     while True:
         action, _ = model.predict(obs, deterministic=True)
         obs, reward, done, info = env.step(action)
-
-        out_array.append(obs)
         
         # save observation as image
-        plt.imsave(f"tmp/obs_obj_{current_episode:05d}_{current_step:05d}.png", env.venv.envs[0]._obj_obs) # use env.envs[0].oc_env._get_obs() instead?
+        # plt.imsave(f"tmp/obs_obj_{current_episode:05d}_{current_step:05d}.png", env.venv.envs[0]._obj_obs) # use env.envs[0].oc_env._get_obs() instead?
         
         current_rew += reward #scobi_env.original_reward
         current_step += 1
         # TODO: implement feature attribution here
         if opts.liveplot:
-            if variant == "rgb":
+            if opts.rgbv4 or opts.rgbv5:
                 img.set_data(env.get_images()[0])
             else:
                 img.set_data(scobi_env._obj_obs)
@@ -168,8 +158,6 @@ def main():
         if current_episode == opts.times:
             print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
             break
-
-    np.save(outfile, out_array) #TODO: check correctness: moved to here from inside first loop
 
 if __name__ == '__main__':
     main()

@@ -15,8 +15,9 @@ from scobi.utils.SPACEGameObject import KFandSPACEGameObject
 # from space repository
 import sys
 import os
-BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(os.path.join(BASE_PATH, "spaceandmoc", "src"))
+BASE_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(BASE_PATH)
+sys.path.append(os.path.join(BASE_PATH, "space_and_moc", "src"))
 from motrackers import load_space_detector
 from motrackers import CentroidKF_Tracker, CentroidTracker
 
@@ -131,7 +132,7 @@ class TrackerAndDetectorObjectExtractor(ObjectExtractor):
         img_trans_time_end = time.time()
 
         detector_time_start = time.time()
-        bboxes, confidences, class_ids, _ = self.detector.detect(img)
+        bboxes, confidences, class_ids = self.detector.detect(img)
         #import ipdb; ipdb.set_trace()
         detector_time_end = time.time()
         bboxes = space_bboxes2scobi_bboxes(bboxes, self.game_name)

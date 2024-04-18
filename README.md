@@ -44,3 +44,37 @@ PPO Training ```/baselines```
 ```bash
 python train.py -g Pong -s 42 -c 8 -r env
 ```
+
+
+## PPO SCoBots
+
+PPO Training
+```bash
+python -m baselines.train -g Pong -s 42 -c 8 --num_layers 2 --input_data OCAtari --adam_step_size 0.001 --prune no_prune
+```
+Extract Model
+```bash
+python -m baselines.eval -g Pong -s 42 -t 1 --num_layers 2 --input_data OCAtari --prune no_prune --save_model
+```
+
+
+Collect Training Samples for ECLAIRE
+- Navigate to experiments folder: ```/experiments```
+```bash
+python -m eval --config-file configs/re-pong.yaml --eclaire-cfg-file ../eclaire_configs/config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_1l-v3.yaml rl_algo 3
+```
+
+Rule Extraction via ECLAIRE
+- Navigate back into to the root folder of repo: ```/```
+- Activate the environment for ECLAIRE
+```bash
+python -m baselines.rules --eclaire-cfg-file eclaire_configs/config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_12-v3.yaml
+```
+
+Evaluate Rule Based Policy
+- Navigate to experiments folder: ```/experiments```
+```bash
+python evaluate.py -g Pong -s 42 -c 8 -r env
+```
+
+Alternatively, you can use the provided scripts in the ```/scripts_for_experiment_exec``` folder to execute the above commands for multiple configurations. Note that you be in the root folder of the repo (SCoBots) to execute the scripts.
