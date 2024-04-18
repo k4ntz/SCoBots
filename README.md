@@ -78,3 +78,18 @@ python evaluate.py -g Pong -s 42 -c 8 -r env
 ```
 
 Alternatively, you can use the provided scripts in the ```/scripts_for_experiment_exec``` folder to execute the above commands for multiple configurations. Note that you be in the root folder of the repo (SCoBots) to execute the scripts.
+
+
+## Usage of SPACE+MOC Object Detectors
+To use SPACE+MOC object detection, you need to clone the repo https://github.com/nlsgrndn/SCoBots and switch to the branch ```dev```. The repo should be renamed to "space_and_moc" and placed in the same directory as the SCoBots repo.
+Downloaded SPACE model weights and classifier should be placed in the ```space_and_moc/scobots_spaceandmoc_detectors/``` directory. This directory be structured as follows:
+```
+scobots_spaceandmoc_detectors
+├── boxing
+│   ├── classifier
+│   │   └── z-what-classifier_relevant_nn.joblib.pkl
+│   └── space_weights
+│       └── model_000005001.pth
+├── pong
+└── skiing
+```
