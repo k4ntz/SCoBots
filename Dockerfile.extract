@@ -35,10 +35,6 @@ RUN python3.8 -m pip install -U pip setuptools numpy
 RUN git clone https://github.com/sebawastaken/remix.git remix
 RUN python3.8 -m pip install /workdir/extract/remix
 
-# remix test code
-COPY remixtest.py remixtest.py
-RUN python3.8 remixtest.py
-
 # setup scobi baselines
 COPY scobi scobi
 COPY pyproject.toml pyproject.toml
@@ -47,16 +43,16 @@ RUN mkdir "baselines"
 WORKDIR /workdir/extract/baselines
 COPY baselines/requirements.txt .
 
-# install scobi baselines
+# install and setup scobi baselines
 RUN pip install -r requirements.txt
 RUN pip install opencv-python-headless
 RUN mkdir "baselines_focusfiles"
 RUN mkdir "baselines_extract_input"
 RUN mkdir "baselines_extract_output"
-COPY baselines/baselines_extract_input/Pong_s0_re baselines_extract_input/
+# select object extractor: 'OC_Atari' or 'Noisy_OC_Atari'
+ENV SCOBI_OBJ_EXTRACTOR="OC_Atari"
+
+# copy code at last
 COPY baselines/ .
 
-# scobi test code
-ENV SCOBI_OBJ_EXTRACTOR="OC_Atari"
-RUN python3.8 extract_generate_samples.py -i Pong_s0_re -e 1
-# ENTRYPOINT ["python3", "-u" , "train.py"]
+ENTRYPOINT ["python3.8", "-u" , "extract_generate_samples.py"]

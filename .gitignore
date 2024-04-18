@@ -156,6 +156,8 @@ aiml_*/
 src/test/*
 src/visualisation/xdt*
 
+TMP/
+run_local.sh
 
 experiments/checkpoints/
 experiments/logs/

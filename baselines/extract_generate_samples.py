@@ -98,6 +98,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", type=str, required=True, help="checkpoint folder containing 'best_model.zip' and 'best_vecnormalize.pkl'")
     parser.add_argument("-e", "--episodes", type=int, required=False, help="number of episodes to generate samples from")
+    parser.add_argument("-n", "--name", type=str, required=False, help="experiment name")
     opts = parser.parse_args()
     
     # Default values
@@ -105,7 +106,7 @@ def main():
     pruned_ff_name = None
     episodes = 5
     focus_dir = "focusfiles"
-    
+    expname = "experiment"
     checkpoint_name = opts.input #"Asterix_s0_re_pr"
     checkpoint_options = checkpoint_name.split("_")
     if len(checkpoint_options) == 3:
@@ -114,7 +115,7 @@ def main():
         print("pruned")
         prune = True
     else:
-        print("error")
+        print("Wrong format. Format needed: 'Asterix_s0_re_pr' or 'Asterix_s0_re'. seed0, re:reward from env, pr:pruned")
     env, seed = checkpoint_options[0], checkpoint_options[1][1:]
     
     if opts.episodes:
@@ -129,7 +130,7 @@ def main():
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("baselines_extract_input", checkpoint_name, checkpoint_str)
     vecnorm_path = Path("baselines_extract_input",  checkpoint_name, vecnorm_str)
-    output_path = Path("baselines_extract_output", checkpoint_name)
+    output_path = Path("baselines_extract_output", checkpoint_name + "-" + expname)
     output_path.mkdir(parents=True, exist_ok=True)
     outfile = output_path / "obs.npy"
         
@@ -184,15 +185,16 @@ def main():
     
 
     # Rule extraction via ECLAIRE
+    ruleset_fname = checkpoint_name + ".rules"
     trainset = np.load(outfile)
     input = tf.convert_to_tensor(trainset.astype(np.float32))
     clean_fnames = [s.replace(' ', '') for s in fnames] # need to remove whitespaces in names otherwise remix gets mad
     ruleset = eclaire.extract_rules(keras_model, input, feature_names=clean_fnames, output_class_names=actions)
-    ruleset.to_file(output_path / "output.rules")
-    print("Ruleset saved!")
+    ruleset.to_file(output_path / ruleset_fname)
+    print(f"Ruleset saved as '%s' !" % ruleset_fname)
 
     # Eval ruleset
-    ruleset = Ruleset().from_file(output_path / "output.rules")
+    ruleset = Ruleset().from_file(output_path / ruleset_fname)
     ruleset_model_wrapped = RemixModel(ruleset)
     eval_agent(ruleset_model_wrapped, vec_env, episodes=episodes)
 
