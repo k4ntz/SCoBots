@@ -1,6 +1,7 @@
 #! /bin/sh
 
 # default values
+HOST_PATH="$(pwd)/extract"
 input="INPUT_CHECKPOINT_NAME"
 episodes=5
 expname="DEF_EXP"
@@ -31,9 +32,9 @@ done
 # replace 'HOST_PATH_CHANGE_THIS' with your path
 docker run -d \
   --name scobots-extract-$expname \
-  --mount type=bind,src=/HOST_PATH_CHANGE_THIS/baselines_focusfiles,dst=/workdir/extract/baselines/baselines_focusfiles \
-  --mount type=bind,src=/HOST_PATH_CHANGE_THIS/baselines_extract_input,dst=/workdir/extract/baselines/baselines_extract_input \
-  --mount type=bind,src=/HOST_PATH_CHANGE_THIS/baselines_extract_output,dst=/workdir/extract/baselines/baselines_extract_output \
+  --mount type=bind,src=$HOST_PATH/focusfiles,dst=/workdir/extract/baselines/baselines_focusfiles \
+  --mount type=bind,src=$HOST_PATH/input,dst=/workdir/extract/baselines/baselines_extract_input \
+  --mount type=bind,src=$HOST_PATH/output,dst=/workdir/extract/baselines/baselines_extract_output \
 	scobots-extract:latest \
 	-i $input \
 	-e $episodes \

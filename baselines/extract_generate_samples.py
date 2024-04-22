@@ -106,7 +106,7 @@ def main():
     pruned_ff_name = None
     episodes = 5
     focus_dir = "focusfiles"
-    expname = "experiment"
+    expname = opts.name if opts.name else "experiment"
     checkpoint_name = opts.input #"Asterix_s0_re_pr"
     checkpoint_options = checkpoint_name.split("_")
     if len(checkpoint_options) == 3:
@@ -197,6 +197,7 @@ def main():
     ruleset = Ruleset().from_file(output_path / ruleset_fname)
     ruleset_model_wrapped = RemixModel(ruleset)
     eval_agent(ruleset_model_wrapped, vec_env, episodes=episodes)
+    print("Done!")
 
 if __name__ == '__main__':
     main()
