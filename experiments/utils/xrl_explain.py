@@ -20,12 +20,13 @@ import os
 import math
 from experiments.utils.xrl_utils import Drawer
 import warnings
+import pandas as pd
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def explain_agent(cfg, normalizer, ruleset_path, env=None):
-    runs = 3
+    runs = 10
     # init env
     draw = False
     if env is None:
@@ -70,6 +71,11 @@ def explain_agent(cfg, normalizer, ruleset_path, env=None):
 
     ruleset = Ruleset().from_file(ruleset_path)
 
+    # initialize output file
+    if "eclaire" in cfg:
+        print("eclaire_dir: ", cfg.eclaire.eclaire_dir)
+        outfile_path = os.path.join("..", cfg.eclaire.eclaire_dir, "remix_policy_rewards.csv")
+
     for run in tqdm(range(runs)):
         t = 0
         ep_reward = 0
@@ -101,6 +107,12 @@ def explain_agent(cfg, normalizer, ruleset_path, env=None):
         rewards.append(ep_reward)
         all_sco_rewards.append(sco_reward)
         rtpt.step()
+    
+    
+    # save rewards
+    pd.DataFrame(rewards).to_csv(outfile_path, index=False)
+    
+
     print(rewards)
     print(all_sco_rewards)
     print("Mean of Env Rewards:", sum(rewards) / len(rewards))

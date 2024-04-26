@@ -5,7 +5,7 @@ def run_train_script(eclaire_cfg_file):
     # Define the command and parameters as a list
     command = [
         'python', '-m', 'baselines.rules',
-        '-- eclaire-cfg-file', eclaire_cfg_file
+        '--eclaire-cfg-file', eclaire_cfg_file
     ]
 
     # Execute the command without capturing the output, so it's displayed in the terminal
@@ -21,6 +21,10 @@ def run_train_script(eclaire_cfg_file):
 params = []
 for eclaire_config_file in os.listdir("eclaire_configs"):
     if not eclaire_config_file.endswith(".yaml"):
+        continue
+    if eclaire_config_file == "config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_1l-v3.yaml":
+        continue
+    if "SPACE" in eclaire_config_file:
         continue
     eclaire_cfg_file = os.path.join("eclaire_configs", eclaire_config_file)
     params.append(eclaire_cfg_file)

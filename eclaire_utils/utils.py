@@ -3,7 +3,7 @@ from eclaire_configs.eclaire_base_config import cfg as eclaire_cfg
 def get_eclaire_config():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--eclaire_cfg_file',
+        '--eclaire-cfg-file',
         type=str,
         default='',
         metavar='FILE',

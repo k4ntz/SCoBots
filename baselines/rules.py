@@ -112,7 +112,7 @@ else:
     train_x = np.load(os.path.join(eclaire_dir, eclaire_cfg.obs_filename))
     if len(train_x.shape) == 3:
         train_x = train_x.squeeze(axis=1) # dims: (N, 1, M) -> (N, M)
-    import ipdb; ipdb.set_trace()
+    #import ipdb; ipdb.set_trace()
     num_samples = min(eclaire_cfg.num_samples, train_x.shape[0])
     train_x = train_x[:num_samples]
     print("train_x.shape: ", train_x.shape)

@@ -29,7 +29,9 @@ for eclaire_config_file in os.listdir("eclaire_configs"):
     if not eclaire_config_file.endswith(".yaml"):
         continue
     print(eclaire_config_file)
-    if not "config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_1l-v3" in eclaire_config_file:
+    if not "OCAtariinput" in eclaire_config_file:
+        continue
+    if not "_1l-" in eclaire_config_file:
         continue
     rl_algo = 3 # encodes PPO
     eclaire_cfg_file = os.path.join("..","eclaire_configs", eclaire_config_file)

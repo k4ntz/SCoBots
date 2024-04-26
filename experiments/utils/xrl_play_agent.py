@@ -25,7 +25,7 @@ dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
     INTEGRATED_GRADIENTS = False
-    runs = 1
+    runs = 20
     # init env
     draw = cfg.liveplot
     if env is None:
@@ -56,7 +56,7 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
     # initialize output file
     if "eclaire" in cfg:
         print("eclaire_dir: ", cfg.eclaire.eclaire_dir)
-        outfile_path = os.path.join(cfg.eclaire.eclaire_dir, "obs.npy")
+        outfile_path = os.path.join("..", cfg.eclaire.eclaire_dir, "obs.npy")
     else:
         outfile_path = "obs.npy"
         Path(outfile_path).unlink(missing_ok=True)

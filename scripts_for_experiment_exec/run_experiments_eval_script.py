@@ -28,8 +28,12 @@ dummy_config_file = os.path.join("configs", "re-pong.yaml") #TODO check whether 
 for eclaire_config_file in os.listdir("eclaire_configs"):
     if not eclaire_config_file.endswith(".yaml"):
         continue
+    if eclaire_config_file == "config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_1l-v3.yaml": #TODO remove
+        continue
+    if "SPACE" in eclaire_config_file:
+        continue
     rl_algo = 3 # encodes PPO
-    eclaire_cfg_file = os.path.join("eclaire_configs", eclaire_config_file)
+    eclaire_cfg_file = os.path.join("..","eclaire_configs", eclaire_config_file)
     params.append((dummy_config_file, eclaire_cfg_file, rl_algo))
 
 os.chdir("experiments")

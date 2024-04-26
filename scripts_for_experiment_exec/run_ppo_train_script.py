@@ -26,12 +26,10 @@ def run_train_script(game, seed, cores, layers, input_data, adam_step_size, prun
 games = ["Pong",]
 seeds = [42]
 cores = [8,]
-#layers = [1,2]
-layers = [1,]
+layers = [1,2]
 #input_datas = ["OCAtari","SPACE",]
-input_datas = ["OCAtari",]
-#prunes = ["no_prune", "external"]
-prunes = ["no_prune",]
+input_datas = ["SPACE",]
+prunes = ["external", "no_prune",]
 adam_step_sizes = [0.001]
 
 # Loop over each combination of parameters and call the function
