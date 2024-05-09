@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 import torch
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,8 +28,23 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+def get_actions_for_states(cfg, states):
+    # initialize output file
+    print("eclaire_dir: ", cfg.eclaire.eclaire_dir)
+    outfile_path_actions = os.path.join("..", cfg.eclaire.eclaire_dir, "actions_eclaire.npy")
+    ruleset_path = os.path.join("..", cfg.eclaire.eclaire_dir, "output.rules")
+    ruleset = Ruleset().from_file(ruleset_path)
+
+    features = states
+    actions, rules, scores = ruleset.predict_and_explain(features,
+                                                        only_positive=True,
+                                                        use_confidence=True,
+                                                        aggregator=RulePredictMechanism.Max)
+    actions = [int(action) for action in actions]
+    np.save(outfile_path_actions, actions)
+
 def explain_agent(cfg, normalizer, ruleset_path, env=None):
-    runs = 10
+    runs = 5
     # init env
     draw = False
     if env is None:
@@ -87,8 +105,16 @@ def explain_agent(cfg, normalizer, ruleset_path, env=None):
         while t < cfg.train.max_steps_per_trajectory:
             if not drawer.pause:
                 features = normalizer.normalize(features)
-                action, rules, scores = ruleset.predict_and_explain(features, only_positive=True, use_confidence=True, aggregator=RulePredictMechanism.Max)
+                my_tuple = ruleset.predict_and_explain(features,
+                                                    only_positive=True,
+                                                    use_confidence=True,
+                                                    aggregator=RulePredictMechanism.Max)
+                if len(my_tuple) == 1: # for some enum values in RulePredictMechanism
+                    action, rules, scores = my_tuple[0][0], my_tuple[0][1], my_tuple[0][2] 
+                else: # for other enum values in RulePredictMechanism e.g. Max
+                    action, rules, scores = my_tuple[0], my_tuple[1], my_tuple[2]
                 action = int(action[0])
+
                 if draw:
                     drawer.draw_explain(rules[0][0], action, env, normalize = normalizer is not None, denorm_dict = denorm_dict)
                 obs, scobi_reward, done, done2, info = env.step(action)
@@ -110,8 +136,10 @@ def explain_agent(cfg, normalizer, ruleset_path, env=None):
     
     
     # save rewards
-    pd.DataFrame(rewards).to_csv(outfile_path, index=False)
-    
+    if "eclaire" in cfg:
+        # only save if outputfile_path does not exist
+        if not os.path.exists(outfile_path):
+            pd.DataFrame(rewards).to_csv(outfile_path, index=False)
 
     print(rewards)
     print(all_sco_rewards)

@@ -19,6 +19,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 from experiments.utils.xrl_utils import Drawer
 from experiments.my_normalizer import load_normalizer
 from ppo_utils import ppo_load_model, ppo_select_action, load_ppo_env
+from experiments.utils.xrl_explain import get_actions_for_states
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -66,6 +67,22 @@ def use_ppo(cfg, mode):
         env = load_ppo_env(cfg)
         ruleset_path = f"{base_path}/output.rules"
         explain_agent(cfg, normalizer, ruleset_path, env=env)
+    elif mode == "actions_for_states":
+        base_path = os.path.join("..", cfg.eclaire.eclaire_dir)
+        states = np.load(f"{base_path}/best_policy_obs.npy")
+        get_actions_for_states(cfg, states)
+    elif mode == "collect_states_and_actions":
+        base_path = os.path.join("..", cfg.eclaire.eclaire_dir)
+        normalizer = load_normalizer(os.path.join(base_path, "normalizer.json"))
+        model = ppo_load_model(cfg)
+        env = load_ppo_env(cfg)
+        play_agent(cfg,
+                   model,
+                   ppo_select_action,
+                   normalizer,
+                   1,
+                   env=env,
+                   collect_best_policy_states_and_actions=True)
 
 
 

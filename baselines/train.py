@@ -322,6 +322,8 @@ def main():
                 policy_kwargs=pkwargs,
                 verbose=1)
         else:
+            # TODO check whether hyperparameters are loaded correctly
+            
             # load last checkpoint
             ckpt_list = [f for f in os.listdir(ckpt_path) if f.endswith(".zip") and f.startswith("model")]
             last_ckpt = sorted(ckpt_list, key=lambda x: int(x.split("_")[1]))[-1]
@@ -339,7 +341,14 @@ def main():
             eval_env.norm_reward = False
             print(f"loading model from {last_ckpt}")
             model_path = Path(ckpt_path, last_ckpt)
-            model = PPO.load(model_path, env=train_env)
+
+            model = PPO.load(model_path,
+                             env=train_env,)
+            #                  clip_range=linear_schedule((steps_left/training_timestamps) * clipping_eps),
+            #                  adam_step_size = linear_schedule((steps_left/training_timestamps) * adam_step_size),
+            # )
+            steps_left = training_timestamps - int(last_ckpt.split("_")[1])
+            training_timestamps = steps_left
             
     rtpt_iters = training_timestamps // rtpt_frequency
     save_bm = SaveBestModelCallback(ckpt_path, rgb=rgb_exp)
@@ -379,7 +388,13 @@ def main():
     print(model.policy)
     print(f"Experiment name: {exp_name}")
     print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
-    model.learn(total_timesteps=training_timestamps, callback=cb_list, progress_bar=True)
+
+    reset_num_timesteps = False
+    if opts.use_checkpoint:
+        print("Continuing training from last checkpoint")
+        reset_num_timesteps = True
+
+    model.learn(total_timesteps=training_timestamps, callback=cb_list, progress_bar=False, reset_num_timesteps=reset_num_timesteps)
 
 if __name__ == '__main__':
     main()

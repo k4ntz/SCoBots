@@ -185,3 +185,5 @@ baselines_logs/
 a_saved_pong_training_stuff/
 baselines_checkpoints
 baselines_logs
+eclaire_Boxing*/
+eclaire_Pong*/

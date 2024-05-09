@@ -18,9 +18,12 @@ def load_ppo_env(cfg, ckpt_path = "../baselines_checkpoints",
     focus_dir = os.path.join("..", cfg.eclaire.focus_dir)
     ff_name = cfg.eclaire.focus_filename
     exp_name = cfg.eclaire.eclaire_dir.split("_", 1)[1]
-    #env_str = exp_name.split("_", 1)[0]
-    env_str = "Pong-v4"
+    env_str = exp_name.split("_", 1)[0] + "-v5"
+    env_str = "ALE/" + env_str
     hide_properties = False
+    # env_kwargs = {}
+    # env_kwargs = {"frameskip": (5,6),
+    #               "repeat_action_probability": 0.25}
     env = Environment(env_str,
                         focus_dir=focus_dir,
                         focus_file=ff_name, 
@@ -28,7 +31,7 @@ def load_ppo_env(cfg, ckpt_path = "../baselines_checkpoints",
                         draw_features=True, # implement feature attribution
                         reward=0, #env reward only for evaluation
                         object_detector=cfg.eclaire.input_data,
-                        ) 
+                        )
     if as_vecenv:
         dummy_vecenv = DummyVecEnv([lambda :  env])
         vecnorm_path = os.path.join(ckpt_path, exp_name, "best_vecnormalize.pkl")

@@ -22,9 +22,11 @@ params = []
 for eclaire_config_file in os.listdir("eclaire_configs"):
     if not eclaire_config_file.endswith(".yaml"):
         continue
-    if eclaire_config_file == "config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_1l-v3.yaml":
+    if not "Boxing" in eclaire_config_file:
         continue
-    if "SPACE" in eclaire_config_file:
+    if not "SPACE" in eclaire_config_file:
+        continue
+    if not "2l" in eclaire_config_file:
         continue
     eclaire_cfg_file = os.path.join("eclaire_configs", eclaire_config_file)
     params.append(eclaire_cfg_file)

@@ -47,7 +47,6 @@ def main():
     parser.add_argument("--save_model", action="store_true", help="save model")
     parser.add_argument("--num_layers", type=int, choices=[1, 2], default=2, help="number of layers for mlp policy")
     parser.add_argument("--input_data", type=str, choices=["SPACE", "OCAtari",], default="SPACE", help="input data")
-    parser.add_argument("--create_obs", action="store_true", help="create observation data")
     opts = parser.parse_args()
 
     settings_str = get_settings_str(opts)
@@ -158,6 +157,9 @@ def main():
         if current_episode == opts.times:
             print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
             break
+    
+    # save rewards and steps to file
+    np.savez(f"baselines_checkpoints/{exp_name}/post_training_eval.npz", rewards=rewards, steps=steps)
 
 if __name__ == '__main__':
     main()

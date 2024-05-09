@@ -1,0 +1,7 @@
+eclaire_dir: "eclaire_Boxing_s42_re_pr-ext_SPACEinput_2l-v3"
+focus_dir: "baselines_focusfiles"
+focus_filename: "pruned_boxing.yaml"
+num_layers: 2
+input_data: "SPACE"
+
+

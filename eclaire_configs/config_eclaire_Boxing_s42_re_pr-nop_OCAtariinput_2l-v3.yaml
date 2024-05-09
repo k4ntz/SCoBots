@@ -1,0 +1,7 @@
+eclaire_dir: "eclaire_Boxing_s42_re_pr-nop_OCAtariinput_2l-v3"
+focus_dir: "focusfiles"
+focus_filename: "default_focus_Boxing-v5.yaml"
+num_layers: 2
+input_data: "OCAtari"
+
+

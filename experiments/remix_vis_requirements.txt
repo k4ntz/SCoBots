@@ -17,5 +17,7 @@ notebook
 torchvision # from space and moc
 attrdict # from space and moc
 NicePrinter # from space and moc
-ocatari @ git+https://github.com/k4ntz/OC_Atari.git
+# ocatari @ git+https://github.com/k4ntz/OC_Atari.git
 remix @ git+https://github.com/mateoespinosa/remix # first R and R packages need to be installed as in README of that repo
+# visualization stuff bokeh
+bokeh

@@ -23,9 +23,9 @@ from experiments.utils.xrl_utils import Drawer
 
 dev = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
+def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None, collect_best_policy_states_and_actions=False):
     INTEGRATED_GRADIENTS = False
-    runs = 20
+    runs = 150
     # init env
     draw = cfg.liveplot
     if env is None:
@@ -57,12 +57,19 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
     if "eclaire" in cfg:
         print("eclaire_dir: ", cfg.eclaire.eclaire_dir)
         outfile_path = os.path.join("..", cfg.eclaire.eclaire_dir, "obs.npy")
+        if collect_best_policy_states_and_actions:
+            outfile_path = os.path.join("..", cfg.eclaire.eclaire_dir, "best_policy_obs.npy")
+
     else:
         outfile_path = "obs.npy"
         Path(outfile_path).unlink(missing_ok=True)
     out_array = [] # TODO: check correctness: moved to here from inside first loop
+    actions = []
 
     for run in tqdm(range(runs)):
+        if "eclaire" in cfg:
+            if len(out_array) >= cfg.eclaire.num_samples:
+                break
         t = 0
         ep_reward = 0
         sco_reward = 0
@@ -71,8 +78,11 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
             if not drawer.pause:
                 features = normalizer.normalize(features)
                 out_array.append(features) # save normalized features
-                action, _, probs = select_action_func(features, model, 0.25, n_actions = env.action_space.n) # select random action with 25% probability to create diversity in data
-                
+                if not collect_best_policy_states_and_actions:
+                    action, _, probs = select_action_func(features, model, 0.25, n_actions = env.action_space.n) # select random action with 25% probability to create diversity in data
+                else:   
+                    action, _, probs = select_action_func(features, model, 0, n_actions = env.action_space.n)
+                    actions.append(action)
                 if INTEGRATED_GRADIENTS:
                     input = torch.tensor(features, requires_grad=True).unsqueeze(0).to(dev)
                     output = int(np.argmax(probs[0]))
@@ -100,8 +110,11 @@ def play_agent(cfg, model, select_action_func, normalizer, epochs, env=None):
     print("Mean of Env Rewards:", sum(rewards) / len(rewards))
     
     #write results to file
-    np.save(outfile_path, out_array) #TODO: check correctness: moved to here from inside first loop
+    np.save(outfile_path, out_array)
     print("len(out_array): ", len(out_array))
+    if collect_best_policy_states_and_actions:
+        np.save(outfile_path.replace("best_policy_obs", "best_policy_actions"), actions)
+        print("len(actions): ", len(actions))
     #write_results(cfg, runs, rewards, all_sco_rewards, epochs, out_array, outfile_path)
 
 

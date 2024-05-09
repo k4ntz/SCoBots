@@ -1,4 +1,6 @@
+ocatari @ git+https://github.com/k4ntz/OC_Atari@asterix
 gymnasium[atari, accept-rom-license] == 0.28.1
+# pip install stable-baselines3[extra] has to be called separately afterwards
 rtpt
 termcolor
 torch
@@ -14,4 +16,6 @@ colormath
 yacs
 captum
 notebook
-ocatari @ git+https://github.com/k4ntz/OC_Atari@asterix
+torchvision # from space and moc
+attrdict # from space and moc
+NicePrinter # from space and moc

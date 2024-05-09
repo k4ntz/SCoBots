@@ -16,9 +16,9 @@ except:
 import time
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, object_detector="OCAtari"):
+    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, object_detector="OCAtari", **env_kwargs):
         self.logger = Logger(silent=silent)
-        self.oc_env = em.make(env_name, self.logger)
+        self.oc_env = em.make(env_name, self.logger, **env_kwargs)
 
         # TODO: tie to em.make
         self.game_object_wrapper_1 = get_wrapper_class("OC_Atari")

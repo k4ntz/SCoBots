@@ -13,7 +13,8 @@ except ImportError as imp_err:
     #raise imp_err
 
 
-def make(env_name, notify=False):
+def make(env_name, notify=False, **env_kwargs):
     if notify:
         print(colored("Using AtariARI", "green"))
-    return OCAtari(env_name, mode="revised")
+    kwargs = env_kwargs
+    return OCAtari(env_name, mode="revised", **kwargs)
