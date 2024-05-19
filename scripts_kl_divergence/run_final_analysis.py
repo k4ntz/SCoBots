@@ -5,7 +5,7 @@ def run_train_script(eclaire_cfg_file,):
     # Define the command and parameters as a list
 
     command = [
-        'python', '-m', 'kl_divergence_approx',
+        'python', '-m', 'experiments.experimental_kl_divergence_approx',
         '--eclaire-cfg-file', eclaire_cfg_file,
     ]
     #python -m eval --config-file configs/re-pong.yaml --eclaire-cfg-file ../eclaire_configs/config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_1l-v3.yaml rl_algo 3
@@ -25,10 +25,10 @@ params = []
 for eclaire_config_file in os.listdir("eclaire_configs"):
     if not eclaire_config_file.endswith(".yaml"):
         continue
-    if "SPACE" not in eclaire_config_file:
+    if eclaire_config_file != "config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_1l-v3.yaml":
         continue
-    eclaire_cfg_file = os.path.join("eclaire_configs", eclaire_config_file)
-    params.append(eclaire_cfg_file)
+    eclaire_config_file = os.path.join("eclaire_configs", eclaire_config_file)
+    params.append(eclaire_config_file)
 
 # Iterate over the different sets of parameters
 for param in params:

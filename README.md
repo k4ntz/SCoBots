@@ -77,7 +77,23 @@ Evaluate Rule Based Policy
 python evaluate.py -g Pong -s 42 -c 8 -r env
 ```
 
-Alternatively, you can use the provided scripts in the ```/scripts_for_experiment_exec``` folder to execute the above commands for multiple configurations. Note that you be in the root folder of the repo (SCoBots) to execute the scripts.
+Alternatively, you can use the provided scripts in the folders ```/scripts_scobots_env```, ```/scripts_remix_env```, ```/scripts_for_analysis```
+to execute the above commands for multiple configurations. Note that you be in the root folder of the repo (SCoBots) to execute the scripts.
+
+## Visualizing the Rules
+
+The code for visualizing is in the folder ```/remix_visualization```. It is copied from the Remix repository (https://github.com/mateoespinosa/remix). The style.css file is just a dummy file. The visualization can be started by running the following command:
+```bash
+python -m remix_visualization.visualize_ruleset file_path_to_ruleset
+```
+
+## In Progress: Calculating Divergence between PPO policy and Rule Based Policy
+This code is still experimental and in progress. It can be done using the scripts in the folder ```/scripts_kl_divergence```. The order should be as follows:
+1. Collect samples for the PPO policy
+2. Get rule set policy output for the samples
+3. Calculate the disagreement between the two policies
+
+
 
 
 ## Usage of SPACE+MOC Object Detectors
