@@ -37,5 +37,6 @@ docker run -d \
   --mount type=bind,src=$HOST_PATH/output,dst=/workdir/extract/baselines/baselines_extract_output \
 	scobots-extract:latest \
 	-i $input \
+  -r viper \
 	-e $episodes \
   -n $expname

@@ -116,9 +116,10 @@ class DecisionTreeExtractor: #Dagger
     
 
 class VIPER(DecisionTreeExtractor):
-    def __init__(self, model: PPO, dtpolicy: DecisionTreeClassifier, env: Env, data_per_iter: int=20_000):
+    def __init__(self, model: PPO, dtpolicy: DecisionTreeClassifier, env: Env, rtpt, data_per_iter: int=20_000):
         super().__init__(model, dtpolicy, env, data_per_iter)
         self.Q = LogProbQ(self.model, self.env)
+        self.rtpt = rtpt
 
     def fit_DT(self, S, A, weights):
         self.dt.fit(S, A, weights)
@@ -143,6 +144,7 @@ class VIPER(DecisionTreeExtractor):
         weights += [self.Q.get_disagreement_cost(s).item() for s in S_dt]
         
         for _ in range(nb_iter - 1):
+            self.rtpt.step()
             acc_dt = self.fit_DT(DS, DA, weights)
             S_dt, eval_dt = self.collect_data_dt()
             self.times.append(time.time()-start_time)

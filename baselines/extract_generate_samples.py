@@ -119,6 +119,8 @@ def main():
     parser.add_argument("-n", "--name", type=str, required=False, help="experiment name")
     opts = parser.parse_args()
     
+
+
     # Default values
     prune = False
     pruned_ff_name = None
@@ -234,11 +236,15 @@ def main():
         print("Done!")
     elif rule_extract == "viper":
         MAX_DEPTH = 5
+        NB_ITER = 10
+        process_name = checkpoint_name + "_" + expname
+        rtpt = RTPT(name_initials="QD", experiment_name=process_name, max_iterations=NB_ITER)
+        rtpt.start()
         train_observations = np.load(obs_outfile)
         train_actions = np.load(acts_outfile)
         clf = DecisionTreeClassifier(max_depth=MAX_DEPTH)
-        vip = VIPER(model, clf, vec_env)
-        vip.imitate(nb_iter=10)
+        vip = VIPER(model, clf, vec_env, rtpt)
+        vip.imitate(nb_iter=NB_ITER)
         vip.save_best_tree(output_path)
         best_viper = sorted(output_path.glob("*_best.viper"))
         if not best_viper:
