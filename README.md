@@ -68,13 +68,13 @@ Rule Extraction via ECLAIRE
 - Navigate back into to the root folder of repo: ```/```
 - Activate the environment for ECLAIRE
 ```bash
-python -m baselines.rules --eclaire-cfg-file eclaire_configs/config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_12-v3.yaml
+python -m baselines.rules --eclaire-cfg-file eclaire_configs/config_eclaire_Pong_s42_re_pr-nop_OCAtariinput_1l-v3.yaml
 ```
 
 Evaluate Rule Based Policy
 - Navigate to experiments folder: ```/experiments```
 ```bash
-python evaluate.py -g Pong -s 42 -c 8 -r env
+python -m explain --config-file configs/re-pong.yaml --eclaire-cfg-file ../eclaire_configs/config_eclaire_Pong_s42_re_pr-ext_OCAtariinput_1l-v3.yaml rl_algo 3
 ```
 
 Alternatively, you can use the provided scripts in the folders ```/scripts_scobots_env```, ```/scripts_remix_env```, ```/scripts_for_analysis```
@@ -94,18 +94,29 @@ This code is still experimental and in progress. It can be done using the script
 3. Calculate the disagreement between the two policies
 
 
+## Data
+The data for this repo can be downloaded, but you need to get permission to access the data first. The data includes the following:
+- baselines_checkpoints_s42_final.tar.gz:
+    - Contains the final checkpoints for the PPO models trained on Pong and Boxing
+    - The data should be placed in a directory called ```baselines_checkpoints``` in the root directory of the repo.
+- eclaire_results.tar.gz:
+    - Contains the results of the ECLAIRE rule extraction for Pong and Boxing
+    - The data should be placed in the root directory of the repo.
+- scobots_spaceandmoc_detectors.tar.gz:
+    - Contains the SPACE+MOC object detectors for Pong and Boxing
+    - This data must be used in conjunction with the dev branch of the repo https://github.com/nlsgrndn/SCoBots:
+        - That repo should be cloned into the same parent directory as this repo and renamed to "space_and_moc". Note that you might have temporary rename the SCoBots repo to something else while cloning the space_and_moc repo because the folder names are the same initially.
+        The final folder structure should look like this:
+        ```
+        parent_directory
+        |_ SCoBots (space_detectors branch of this repo)
+        |_ space_and_moc (dev branch of https://github.com/nlsgrndn/SCoBots)
+        ```
+        - Follow the setup instructions in the space_and_moc repo.
 
-
-## Usage of SPACE+MOC Object Detectors
-To use SPACE+MOC object detection, you need to clone the repo https://github.com/nlsgrndn/SCoBots and switch to the branch ```dev```. The repo should be renamed to "space_and_moc" and placed in the same directory as the SCoBots repo.
-Downloaded SPACE model weights and classifier should be placed in the ```space_and_moc/scobots_spaceandmoc_detectors/``` directory. This directory be structured as follows:
-```
-scobots_spaceandmoc_detectors
-├── boxing
-│   ├── classifier
-│   │   └── z-what-classifier_relevant_nn.joblib.pkl
-│   └── space_weights
-│       └── model_000005001.pth
-├── pong
-└── skiing
+## Demonstration of SCoBot with SPACE+MOC Object Detectors and ECLAIRE policy
+- Navigate to experiments folder: ```/experiments```
+```bash
+python -m explain --config-file configs/re-pong.yaml --eclaire-cfg-file ../eclaire_configs/config_eclaire_Pong_s42_re_pr-ext_SPACEinput_2l-v3
+.yaml rl_algo 3
 ```
