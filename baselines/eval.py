@@ -47,7 +47,9 @@ def main():
     parser.add_argument("--save_model", action="store_true", help="save model")
     parser.add_argument("--num_layers", type=int, choices=[1, 2], default=2, help="number of layers for mlp policy")
     parser.add_argument("--input_data", type=str, choices=["SPACE", "OCAtari",], default="SPACE", help="input data")
+    parser.add_argument("--eval_on_SPACE", action="store_true", help="override input data and evaluate on SPACE")
     opts = parser.parse_args()
+
 
     settings_str = get_settings_str(opts)
     print(settings_str)
@@ -87,6 +89,11 @@ def main():
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("baselines_checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("baselines_checkpoints",  exp_name, vecnorm_str)
+    model = PPO.load(model_path)
+
+    if opts.eval_on_SPACE:
+        opts.input_data = "SPACE"
+
     EVAL_ENV_SEED = 100 #84
     if opts.rgbv4 or opts.rgbv5:
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
@@ -105,7 +112,6 @@ def main():
         env = VecNormalize.load(vecnorm_path, dummy_vecenv)
         env.training = False
         env.norm_reward = False
-    model = PPO.load(model_path)
 
     if opts.save_model:
         folder_path = f"eclaire_{exp_name}"
@@ -113,6 +119,7 @@ def main():
         torch.save(model.policy.state_dict(), os.path.join(folder_path, "model.pth"))
         save_normalizer(env, os.path.join(folder_path, "normalizer.json"))
         exit()
+
     
     fps = 30
     sps = 20 # steps per seconds
@@ -159,7 +166,10 @@ def main():
             break
     
     # save rewards and steps to file
-    np.savez(f"baselines_checkpoints/{exp_name}/post_training_eval.npz", rewards=rewards, steps=steps)
+    if opts.eval_on_SPACE:
+        np.savez(f"baselines_checkpoints/{exp_name}/post_training_eval_SPACEinputdata.npz", rewards=rewards, steps=steps)
+    else:
+        np.savez(f"baselines_checkpoints/{exp_name}/post_training_eval.npz", rewards=rewards, steps=steps)
 
 if __name__ == '__main__':
     main()
