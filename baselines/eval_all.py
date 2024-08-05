@@ -7,20 +7,21 @@ from stable_baselines3.common.env_util import make_atari_env, make_vec_env
 from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
+from joblib import load
 from multiprocessing import JoinableQueue
 from multiprocessing import Process, Value
 
 
 def main():
-    envs = ["Asterix", "Bowling", "Boxing", "Freeway", "Kangaroo", "Pong", "Seaquest", "Skiing", "Tennis"] 
+    envs = ["Tennis", "Asterix", "Skiing", "Bowling", "Boxing", "Freeway", "Kangaroo", "Pong", "Seaquest"] 
     check_dir = "baselines_checkpoints"
-    variants = ["abl_noisy_v2"] #["abl_norel"] #["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
+    variants = ["viper"] #["abl_noisy_v2"] #["abl_norel"] #["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
-    checkpoint_str = "best_model" #"model_5000000_steps"
+    #checkpoint_str = "best_model" #"model_5000000_steps"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("abl_noisy_v2normal_eval_results.pkl")
-    eval_results_csv_path = Path("abl_noisy_v2normal_eval_results.csv")
+    eval_results_pkl_path = Path("viper_eval_results.pkl")
+    eval_results_csv_path = Path("viper_eval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 
@@ -48,14 +49,22 @@ def main():
             model_dir = task["model"]
             eval_seed = task["eval_seed"]
             variant = task["variant"]
+            pruned_ff_name = None
             vecnorm_path = Path(model_dir,  vecnorm_str)
+            if variant == "viper":
+                pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
+                checkpoint_str = sorted(Path(model_dir).glob("*_best.viper"))[0].name
+                parts = list(vecnorm_path.parts)
+                parts[-3] = "iscobots"
+                vecnorm_path = Path(*parts)
+            else:
+                checkpoint_str = "best_model" #"model_5000000_steps"
             model_path = Path(model_dir, checkpoint_str)
             train_seed = model_dir.name.split("_")[1][1:]
             trainseedsplit = train_seed.split("-")
             if len(trainseedsplit) > 1:
                 train_seed = trainseedsplit[0]
-            pruned_ff_name = None
-            if task["variant"] == "iscobots":
+            if variant == "iscobots":
                 pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
             atari_env_str = "ALE/" + env_str +"-v5"
             
@@ -102,6 +111,13 @@ def main():
                 env = VecNormalize.load(vecnorm_path, dummy_vecenv)
                 env.training = False
                 env.norm_reward = False
+            elif variant == "viper":
+                env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
+                _, _ = env.reset(seed=eval_seed)
+                dummy_vecenv = DummyVecEnv([lambda :  env])
+                env  = VecNormalize.load(vecnorm_path, dummy_vecenv)
+                env.training = False
+                env.norm_reward = False
             else:
                 env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
                 _, _ = env.reset(seed=eval_seed)
@@ -110,7 +126,10 @@ def main():
                 env.training = False
                 env.norm_reward = False
             
-            model = PPO.load(model_path)
+            if variant == "viper":
+                model = load(model_path)
+            else:
+                model = PPO.load(model_path)
             current_episode = 0
             episode_rewards = []
             steps = []
@@ -118,7 +137,10 @@ def main():
             current_step = 0
             obs = env.reset()
             while True:
-                action, _ = model.predict(obs, deterministic=True)
+                if variant == "viper":
+                    action = model.predict(obs)
+                else:
+                    action, _ = model.predict(obs, deterministic=True)
                 obs, reward, done, info = env.step(action)
                 current_rew += reward
                 current_step += 1
