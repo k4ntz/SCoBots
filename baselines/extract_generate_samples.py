@@ -135,6 +135,8 @@ def main():
     elif len(checkpoint_options) == 4:
         print("pruned")
         prune = True
+        if checkpoint_options[-1] == "pr-ext-abl":
+            focus_dir = "norel_focusfiles"
     else:
         print("Wrong format. Format needed: 'Asterix_s0_re_pr' or 'Asterix_s0_re'. seed0, re:reward from env, pr:pruned")
     env, seed = checkpoint_options[0], checkpoint_options[1][1:]
@@ -235,8 +237,8 @@ def main():
         print("DT leaves: %s | DT depth %s" % (dtree.get_n_leaves(), dtree.get_depth()))
         print("Done!")
     elif rule_extract == "viper":
-        MAX_DEPTH = 5
-        NB_ITER = 10
+        MAX_DEPTH = 7
+        NB_ITER = 25
         process_name = checkpoint_name + "_" + expname
         rtpt = RTPT(name_initials="QD", experiment_name=process_name, max_iterations=NB_ITER)
         rtpt.start()

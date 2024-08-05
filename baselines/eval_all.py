@@ -15,13 +15,13 @@ from multiprocessing import Process, Value
 def main():
     envs = ["Tennis", "Asterix", "Skiing", "Bowling", "Boxing", "Freeway", "Kangaroo", "Pong", "Seaquest"] 
     check_dir = "baselines_checkpoints"
-    variants = ["viper"] #["abl_noisy_v2"] #["abl_norel"] #["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
+    variants = ["viper_norel"] #["abl_noisy_v2"] #["abl_norel"] #["rgbv4-nn"] #["scobots"] #["scobots", "iscobots"]#, "rgb"]
     eval_env_seeds = [123, 456, 789, 1011] # [84, 58*2, 74*2]  #[123, 456, 789, 1011]
     episodes_per_seed = 5
     #checkpoint_str = "best_model" #"model_5000000_steps"
     vecnorm_str = "best_vecnormalize.pkl"
-    eval_results_pkl_path = Path("viper_eval_results.pkl")
-    eval_results_csv_path = Path("viper_eval_results.csv")
+    eval_results_pkl_path = Path("viper_norel_eval_results.pkl")
+    eval_results_csv_path = Path("viper_norel_eval_results.csv")
     results_header = ["env", "variant", "train_seed", "eval_seed", "episodes", "reward_mean", "reward_std", "steps_mean", "steps_std"]
     EVALUATORS = 4
 
@@ -56,6 +56,12 @@ def main():
                 checkpoint_str = sorted(Path(model_dir).glob("*_best.viper"))[0].name
                 parts = list(vecnorm_path.parts)
                 parts[-3] = "iscobots"
+                vecnorm_path = Path(*parts)
+            elif variant == "viper_norel":
+                pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
+                checkpoint_str = sorted(Path(model_dir).glob("*_best.viper"))[0].name
+                parts = list(vecnorm_path.parts)
+                parts[-3] = "abl_norel"
                 vecnorm_path = Path(*parts)
             else:
                 checkpoint_str = "best_model" #"model_5000000_steps"
@@ -118,6 +124,14 @@ def main():
                 env  = VecNormalize.load(vecnorm_path, dummy_vecenv)
                 env.training = False
                 env.norm_reward = False
+            elif variant == "viper_norel":
+                pruned_ff_name = f"pruned_{env_str.lower()}.yaml"
+                env = Environment(atari_env_str, focus_dir="norel_focusfiles", focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
+                _, _ = env.reset(seed=eval_seed)
+                dummy_vecenv = DummyVecEnv([lambda :  env])
+                env = VecNormalize.load(vecnorm_path, dummy_vecenv)
+                env.training = False
+                env.norm_reward = False
             else:
                 env = Environment(atari_env_str, focus_file=pruned_ff_name, silent=True, refresh_yaml=False)
                 _, _ = env.reset(seed=eval_seed)
@@ -126,7 +140,7 @@ def main():
                 env.training = False
                 env.norm_reward = False
             
-            if variant == "viper":
+            if "viper" in variant:
                 model = load(model_path)
             else:
                 model = PPO.load(model_path)
@@ -137,7 +151,7 @@ def main():
             current_step = 0
             obs = env.reset()
             while True:
-                if variant == "viper":
+                if "viper" in variant:
                     action = model.predict(obs)
                 else:
                     action, _ = model.predict(obs, deterministic=True)

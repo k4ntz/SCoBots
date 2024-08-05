@@ -32,7 +32,7 @@ class LogProbQ:
 
 
 class DecisionTreeExtractor: #Dagger
-    def __init__(self, model: PPO, dtpolicy: DecisionTreeClassifier, env: Env, data_per_iter: int=20_000):
+    def __init__(self, model: PPO, dtpolicy: DecisionTreeClassifier, env: Env, data_per_iter: int=30_000):
         self.model = model
         self.env = env # is vectorized
         self.data_per_iter = data_per_iter
@@ -116,7 +116,7 @@ class DecisionTreeExtractor: #Dagger
     
 
 class VIPER(DecisionTreeExtractor):
-    def __init__(self, model: PPO, dtpolicy: DecisionTreeClassifier, env: Env, rtpt, data_per_iter: int=20_000):
+    def __init__(self, model: PPO, dtpolicy: DecisionTreeClassifier, env: Env, rtpt, data_per_iter: int=30_000):
         super().__init__(model, dtpolicy, env, data_per_iter)
         self.Q = LogProbQ(self.model, self.env)
         self.rtpt = rtpt
