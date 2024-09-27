@@ -95,7 +95,7 @@ This code is still experimental and in progress. It can be done using the script
 
 
 ## Data
-The data for this repo can be downloaded, but you need to get permission to access the data first. The data includes the following:
+The data for this repo can be downloaded (https://hessenbox.tu-darmstadt.de/getlink/fi3BrmgYx9JyN54FokGkXwEQ/), but you need to get permission to access the data first. The data includes the following:
 - baselines_checkpoints_s42_final.tar.gz:
     - Contains the final checkpoints for the PPO models trained on Pong and Boxing
     - The data should be placed in a directory called ```baselines_checkpoints``` in the root directory of the repo.
