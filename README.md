@@ -1,48 +1,70 @@
-# scobi
-Successive Concepet Bottleneck Interface
+# Successive Concepet Bottleneck Interface SCoBot
+## Requirements
+Scobots requires OCAtari and the local var ```'SCOBI_OBJ_EXTRACTOR'``` set as either ```OC_Atari``` or ```Noisy_OC_Atari``` as well as every dependency listed in the ```requirements.txt```.
 
-you need ocatari
+Without agents SCoBots are not usable, so you can either download some pretrained agents from huggingface via the ```download_agents.sh``` script, or train one yourself, as explained in the usage guide.
 
-## How to use (example)
-Select object extractor by setting env var 'SCOBI_OBJ_EXTRACTOR'. Supported values: 'OC_Atari', 'Noisy_OC_Atari'.
+## Usage
+There are three python files which can be run directly
+1. train.py
+2. eval.py
+3. render_agent.py
 
+### Training an agent
+Execute the train.py file to train an agent for a specific game, with a specified amount of cores and a specified seed.
+The file is executable like described in the following with these flags:
+```bash
+python train.py -g -s -c -r -e --rgbv4 --rgbv5
+```
+The first three flags are required as input.
 
-```python
-from scobi import Environment
+The content of the flags can be found in the following code block:
+```bash
+-g game (e.g. -g Pong, -g Skiing, ...)
+-s seed (e.g. -s 0, -s 42, ...)
+-c cores (number of env used e.g. -c 1, -c 5, ...)
+-r reward (what reward model with options env, human, mixed)
+-e exclude-properties (properties to be excluded from the vector)
+--rgbv4 set the observation space as rgbv4
+--rgbv5 set the observation space as rgbv5
+```
+### Evaluating an agent
+The evaluate.py file evaluates an already trained agent, displaying the results afterwards and saving it in a dedicated file.
 
-# Minimal init, not interactive, no focus dir/file specified, empirical observation space normalization active
-env = Environment(env_name='PongDeterministic-v4')
-env.reset()
-obs, scobi_reward, truncated, terminated, info = env.step(1)
-env.action_space                    # Discrete(6)
-env.action_space_description        # ['NOOP', 'FIRE', 'RIGHT', 'LEFT', 'RIGHTFIRE', 'LEFTFIRE']
-env.observation_space               # Box(-1000.0, 1000.0, (81,), float32)
-env.observation_space_description   # [['POSITION', 'ball'], ['POSITION', 'enemy'], ['POSITION', 'player'], ...
-env.original_reward                 # ALE reward
-env.original_obs                    # ALE obs
-env.close()
+The file is executable like described in the following with these flags:
+```bash
+python eval.py -g -s -t -r -p -e --rgb
+```
+The first three flags are required as input.
 
-# Extensive init, interactive, custom fcous dir and focus file, empirical observation space normalization not active
-env = Environment(env_name='PongDeterministic-v4', focus_dir="my_focusfiles", focus_file="pruned_pong.yaml")
-env.reset()
-obs, scobi_reward, truncated, terminated, info = env.step(1)
-env.action_space                    # Discrete(4)
-env.action_space_description        # ['NOOP', 'FIRE', 'RIGHT', 'LEFT']
-env.observation_space               # Box(-1000.0, 1000.0, (12,), float32)
-env.observation_space_description   # [['POSITION', 'ball'], ['POSITION', 'enemy'], ['POSITION', 'player'], ...
-env.original_reward                 # ALE reward
-env.original_obs                    # ALE obs
-env.close()
+The content of the flags can be found in the following code block:
+```bash
+-g game (e.g. -g Pong, -g Skiing, ...)
+-s seed (e.g. -s 0, -s 42, ...)
+-t times (number epochs e.g. -t 1, -t 100, ...)
+-r reward (what reward model with options -r env, -r human, -r mixed)
+-p prune (used if desire to use a pruned focusfile with options -p internal, -p external)
+-e exclude-properties (properties to be excluded from the vector)
+--rgb set the observation space as rgb
 ```
 
-## Where to start
+### Watching a trained agent
+To visualize a trained agent playing a specified game the render_agent.py file can be executed.
+Running the file will open and display the game played as a gif.
 
-Reinforce Training: ```/experiments```
+The file is executable like described in the following with these flags:
 ```bash
-python train.py --config configs/scobi/re-pong.yaml seed 42
+python render_agent.py -g -s -t -r -p -e --rgb
 ```
+The first three flags are required as input.
 
-PPO Training ```/baselines```
+The content of the flags can be found in the following code block:
 ```bash
-python train.py -g Pong -s 42 -c 8 -r env
+-g game (e.g. -g Pong, -g Skiing, ...)
+-s seed (e.g. -s 0, -s 42, ...)
+-t times (number epochs e.g. -t 1, -t 100, ...)
+-r reward (what reward model with options -r env, -r human, -r mixed)
+-p prune (used if desire to use a pruned focusfile with options -p internal, -p external)
+-e exclude-properties (properties to be excluded from the vector)
+--rgb set the observation space as rgb
 ```
