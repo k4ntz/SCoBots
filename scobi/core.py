@@ -25,9 +25,20 @@ class Environment(Env):
 
         self.oc_env.reset(seed=self.seed)
         self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
-        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
+        #R: Why does it need to do that with the max_objects? -> just instantiate?
+        # Adds Numbers/Orders to the game-objects
+        # max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
+        # print(self.oc_env.objects)
+        print("initial: ", self.oc_env.objects)
+        init_objects = self._wrap_map_order_game_objects(self.oc_env.objects, env_name, reward)
+        init_objects = self.oc_env.objects 
         self.did_reset = False
-        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
+        #R: probably required to rewrite Focus to not use max_objects -> How else instantiate focus then?
+        #R: Focus is used to get feature_vec for NN later
+        # print(init_objects)
+        # exit()
+        # self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
+        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, init_objects, actions, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
@@ -70,7 +81,13 @@ class Environment(Env):
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
             objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
-            sco_obs, sco_reward = self.focus.get_feature_vector(objects)
+            print("step: ", self.oc_env.objects)
+            print(objects)
+            ns_repr = self.oc_env.ns_state
+            print(ns_repr)
+            # exit()
+            # sco_obs, sco_reward = self.focus.get_feature_vector(objects)
+            sco_obs, sco_reward = self.focus.get_feature_vector(ns_repr)
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
                 self._obj_obs = self._draw_objects_overlay(obs)
@@ -98,9 +115,11 @@ class Environment(Env):
         self.focus.reward_threshold = -1
         self.focus.reward_history = [0, 0]
         _, info = self.oc_env.reset(*args, **kwargs)
-        objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
-        sco_obs, _ = self.focus.get_feature_vector(objects)
-        # self.sco_obs = sco_obs
+        # objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
+        ns_repr = self.oc_env.ns_state
+        # sco_obs, _ = self.focus.get_feature_vector(objects)
+        # sco_obs, _ = self.focus.get_feature_vector(self.oc_env.objects)
+        sco_obs, _ = self.focus.get_feature_vector(ns_repr)
         return sco_obs, info
 
     def close(self):
