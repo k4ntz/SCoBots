@@ -1,3 +1,4 @@
+from typing import Tuple
 import yaml
 import numpy as np
 import math
@@ -50,7 +51,8 @@ class Focus():
 
         self.running_stats = []
         self.l = l
-        self.generate_property_set()
+        # self.generate_property_set()
+        self.generate_ns_repr_set()
         self.generate_function_set()
         self.last_obs_vector = []
         self.first_pass = True
@@ -104,21 +106,53 @@ class Focus():
             l.GeneralInfo("Object properties are %s from the observation vector." % colored("excluded", "light_yellow"))
         else:
             l.GeneralInfo("Object properties are %s in the observation vector." % colored("included", "light_green"))
+    
+    def generate_ns_repr_set(self):
+        #TODO implement
+        self.MAX_NB_OBJECTS =  {'Player': 1, 'Tree': 4, 'Mogul': 3, 'Flag': 4}
+        for k,v in self.MAX_NB_OBJECTS.items():
+            # match with / create corresponding object
+            # extract ns_repr (_meaning?)
+            pass
+        self.NS_REPR_LIST = [
+            ['POSITION', 'Player1'],
+            ['POSITION_HISTORY', 'Player1'],
+            ['ORIENTATION', 'Player1'],
+            ['RGB', 'Player1']
+        ]
+        self.NS_REPR_TYPES = [Tuple[int, int], Tuple[int, int, int, int], Tuple[int], Tuple[int, int, int]] 
 
-
-    def generate_property_set(self):
-        for k, v in PROPERTIES.items():
-            for o in self.OBJECTS:
-                if type(o) == v["expects"][0][0].annotation: #assume only one input from property
-                    e = [k, o.name]
-                    self.PROPERTY_LIST.append(e)
+    # def generate_property_set(self):
+    #     print(PROPERTIES)
+    #     for k, v in PROPERTIES.items():
+    #         for o in self.OBJECTS:
+    #             if type(o) == v["expects"][0][0].annotation: #assume only one input from property
+    #                 e = [k, o.name]
+    #                 self.PROPERTY_LIST.append(e)
+    #     print(self.PROPERTY_LIST)
+    #     exit()
 
     def generate_function_set(self):
         for k, v in FUNCTIONS.items():
             para_len = len(v["expects"])
-            property_combis = permutations(self.PROPERTY_LIST, para_len)
-            for combi in property_combis:
-                combi_sig = [PROPERTIES[x[0]]["returns"][0] for x in combi]
+            #TODO: Use ns_repr_overview instead of PROPERTY_LIST
+            # property_combis = permutations(self.PROPERTY_LIST, para_len)
+            ns_repr_combis = permutations(self.NS_REPR_LIST, para_len)
+            # print([c for c in ns_repr_combis])
+            function_sig = [x[0].annotation for x in v["expects"]]
+            print("func:", function_sig)
+            print("props: ", PROPERTIES)
+            for combi in ns_repr_combis:
+                print("HIIII", combi)
+                print("HIIII2", combi[0])
+                print("HIIII3", combi[0][0])
+                combi_sig_orig = [PROPERTIES[x[0]]["returns"][0] for x in combi]
+                print("combi orig: ", combi_sig_orig)
+                combi_sig = []
+                for c in combi:
+                    idx = self.NS_REPR_LIST.index(c)
+                    combi_sig.append(self.NS_REPR_TYPES[idx])
+                print("combi: ", combi_sig)
                 function_sig = [x[0].annotation for x in v["expects"]]
                 if combi_sig == function_sig:
                     self.FUNCTION_LIST.append([k, list(combi)])
@@ -140,6 +174,7 @@ class Focus():
         print("---OBJECTS---")
         for o in self.OBJECTS:
             print(o.name)
+        #TODO: Replace PROPERTY_LIST with ns_repres
         print("---PROPERTIES---")
         for p in self.PROPERTY_LIST:
             print(p)
@@ -176,18 +211,19 @@ class Focus():
 
 
     def generate_fresh_yaml(self, fpath):
+        #TODO: Do not use 'properties' anymore 
         yaml_dict = {
             "ENVIRONMENT" : "",
             "AVAILABLE_CONCEPTS" : {
                 "objects" : [],
                 "actions" : [],
-                "properties" : [],
+                # "properties" : [],
                 "functions" : []
             },
             "SELECTION": {
                 "objects" : [],
                 "actions" : [],
-                "properties" : [],
+                # "properties" : [],
                 "functions" : []
             }
         }
@@ -196,13 +232,13 @@ class Focus():
         avail = yaml_dict["AVAILABLE_CONCEPTS"]
         avail["objects"] = [x.name for x in self.OBJECTS]
         avail["actions"] = [x for x in self.ACTIONS]
-        avail["properties"] = [self.avail_to_yaml_dict(k, v) for k, v in PROPERTIES.items()]
+        # avail["properties"] = [self.avail_to_yaml_dict(k, v) for k, v in PROPERTIES.items()]
         avail["functions"] =  [self.avail_to_yaml_dict(k, v) for k, v in FUNCTIONS.items()]
 
         use = yaml_dict["SELECTION"]
         use["objects"] = [x.name for x in self.OBJECTS]
         use["actions"] = [x for x in self.ACTIONS]
-        use["properties"] = [self.proplist_to_yaml_dict(x) for x in self.PROPERTY_LIST]
+        # use["properties"] = [self.proplist_to_yaml_dict(x) for x in self.PROPERTY_LIST]
         use["functions"] = [self.funclist_to_yaml_dict(x) for x in self.FUNCTION_LIST]
 
         with open(fpath, "w") as f:
@@ -228,6 +264,7 @@ class Focus():
 
 
     def validate_properties(self, props):
+        #TODO: No need for validation properties, new function to validate ns_repr needed?
         for p in props:
             if p not in PROPERTIES.keys():
                 return False
@@ -242,6 +279,7 @@ class Focus():
 
 
     def validate_properties_signatures(self, propslist):
+        #TODO: Required?
         for p in propslist:
             if p[1] not in self.OBJECT_NAMES:
                 self.l.FocusFileParserError("Unknown object in properties selection: %s" % p[1])
@@ -256,13 +294,16 @@ class Focus():
 
 
     def validate_functions_signatures(self, funclist):
+        #TODO: DO not use PROPERTIES
         for f in funclist:
             parsed_para_sig = []
             if f[0] not in FUNCTIONS.keys():
                 self.l.FocusFileParserError("Unknown function in function selection: %s" % f[0])
             for para in f[1]:
+                print(para)
                 if para[0] not in PROPERTIES.keys():
                     self.l.FocusFileParserError("Unknown property in functions selection: %s" % para[0])
+                print(self.OBJECT_NAMES)
                 if para[1] not in self.OBJECT_NAMES:
                     self.l.FocusFileParserError("Unknown object in functions selection: %s" % para[1])
                 prop_definition = PROPERTIES[para[0]]
@@ -308,6 +349,7 @@ class Focus():
             return None
 
     def import_functions(self ,funcs):
+        print("funcs: ", funcs)
         out = []
         funcs_to_vali = []
         properties_to_vali = []
@@ -341,27 +383,28 @@ class Focus():
         sdict = in_dict["SELECTION"]
         self.PARSED_OBJECTS = self.import_objects(sdict["objects"])
         self.PARSED_ACTIONS = self.import_actions(sdict["actions"])
-        self.PARSED_PROPERTIES = self.import_properties(sdict["properties"])
+        # self.PARSED_PROPERTIES = self.import_properties(sdict["properties"])
         self.PARSED_FUNCTIONS = self.import_functions(sdict["functions"])
         # based on the focus file selection,
-        # construct a 2 layer computation graph for the feature vector:
-        # 1     PROPERTY_COMPUTE_LAYER
-        # 2     FUNC_COMPUTE_LAYER
-        prop_name_obj_name_pairs = []
+        # construct a single layer computation graph for the feature vector:
+        # 1     FUNC_COMPUTE_LAYER
         parsed_fv_index = 0
-        for p in self.PARSED_PROPERTIES:
-            property_name = p[0]
-            object_name = p[1]
-            prop_name_obj_name_pairs.append((property_name, object_name))
-            prop_func = PROPERTIES[property_name]["object"]
-            return_len = len(PROPERTIES[property_name]["returns"][0].__args__)
-            for _ in range(return_len):
-                self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
-            parsed_fv_index += 1
-            def prop(input_dict, prop_func=prop_func, object_name=object_name):
-                func = prop_func
-                return func(input_dict[object_name])
-            self.PROPERTY_COMPUTE_LAYER.append(prop)
+
+        #TODO: ADD NS_REPR to FEATURE_VECTOR_BACKMAP
+
+        # for p in self.PARSED_PROPERTIES:
+        #     property_name = p[0]
+        #     object_name = p[1]
+        #     prop_name_obj_name_pairs.append((property_name, object_name))
+        #     prop_func = PROPERTIES[property_name]["object"]
+        #     return_len = len(PROPERTIES[property_name]["returns"][0].__args__)
+        #     for _ in range(return_len):
+        #         self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+        #     parsed_fv_index += 1
+        #     def prop(input_dict, prop_func=prop_func, object_name=object_name):
+        #         func = prop_func
+        #         return func(input_dict[object_name])
+        #     self.PROPERTY_COMPUTE_LAYER.append(prop)
         for f in self.PARSED_FUNCTIONS:
             func_name = f[0]
             input_props = f[1]
@@ -369,7 +412,8 @@ class Focus():
             for p in input_props:
                 property_name = p[0]
                 object_name = p[1]
-                property_result_idxs.append(prop_name_obj_name_pairs.index((property_name, object_name)))
+                # property_result_idxs.append(prop_name_obj_name_pairs.index((property_name, object_name)))
+                property_result_idxs.append(self.NS_REPR_LIST.index([property_name, object_name]))
             f = FUNCTIONS[func_name]["object"]
             return_len = len(FUNCTIONS[func_name]["returns"][0].__args__)
             for _ in range(return_len):
@@ -383,9 +427,9 @@ class Focus():
                 return f(*f_in)
             self.FUNC_COMPUTE_LAYER.append(func)
         # init compute layer lists
-        self.PROPERTY_COMPUTE_LAYER_SIZE = len(self.PROPERTY_COMPUTE_LAYER)
+        # self.PROPERTY_COMPUTE_LAYER_SIZE = len(self.PROPERTY_COMPUTE_LAYER)
         self.FUNC_COMPUTE_LAYER_SIZE = len(self.FUNC_COMPUTE_LAYER)
-        self.CURRENT_PROPERTY_COMPUTE_LAYER = [0 for _ in range(self.PROPERTY_COMPUTE_LAYER_SIZE)]
+        # self.CURRENT_PROPERTY_COMPUTE_LAYER = [0 for _ in range(self.PROPERTY_COMPUTE_LAYER_SIZE)]
         self.CURRENT_FUNC_COMPUTE_LAYER = [0 for _ in range(self.FUNC_COMPUTE_LAYER_SIZE)]
 
     def get_feature_vector(self, inc_ns_repr_list):
@@ -402,7 +446,6 @@ class Focus():
         for i in range(self.FUNC_COMPUTE_LAYER_SIZE):
             f = self.FUNC_COMPUTE_LAYER[i]
             self.CURRENT_FUNC_COMPUTE_LAYER[i] = f(self.CURRENT_PROPERTY_COMPUTE_LAYER)
-
         if self.first_pass:
             self.first_pass = False
             props = [i for e in self.CURRENT_PROPERTY_COMPUTE_LAYER for i in e]
