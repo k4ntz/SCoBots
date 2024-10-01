@@ -27,6 +27,8 @@ class Environment(Env):
         self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
         # Since Focus expects list of all possible OCAGameObjects for setup, wrap the objects
         max_objects = self._wrap_game_objects(self.oc_env.objects)
+        # max_objects = self._wrap_game_objects(self.oc_env.max_objects_per_cat)
+        print(max_objects)
         self.did_reset = False
         self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
@@ -58,6 +60,7 @@ class Environment(Env):
         if self.noisy_objects:
             self.logger.GeneralInfo("Using noisy object detection (default: std 3, detection error rate 5%)")
 
+        self.focus.print_state()
         self.reset()
         self.step(0) # step once to set the feature vector size
         self.observation_space = spaces.Box(low=-2**63, high=2**63 - 2, shape=(self.focus.OBSERVATION_SIZE,), dtype=np.float32)
@@ -72,6 +75,7 @@ class Environment(Env):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
             ns_repr = self.oc_env.ns_state
             sco_obs, sco_reward = self.focus.get_feature_vector(ns_repr)
+            print("feat_vec: ", sco_obs)
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
                 self._obj_obs = self._draw_objects_overlay(obs)
@@ -115,7 +119,18 @@ class Environment(Env):
             scobi_obj_list = [self.game_object_wrapper(obj, std=3, error_rate=0.05, random_state=self.randomstate) for obj in oc_obj_list]
         else:
             scobi_obj_list = [self.game_object_wrapper(obj) for obj in oc_obj_list]
-        return scobi_obj_list
+
+        out = []
+        counter_dict = {}
+        # map
+        for scobi_obj in scobi_obj_list:
+            if not scobi_obj.category in counter_dict:
+                counter_dict[scobi_obj.category] = 1
+            else:
+                counter_dict[scobi_obj.category] +=1
+            scobi_obj.number = counter_dict[scobi_obj.category]
+            out.append(scobi_obj)
+        return out
 
 
     def _wrap_map_order_game_objects(self, oc_obj_list, env_name, reward_shaping):
