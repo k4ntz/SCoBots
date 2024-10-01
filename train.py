@@ -4,6 +4,7 @@ import numpy as np
 import os
 import torch as th
 import pickle
+import yaml
 
 from scobi import Environment
 from stable_baselines3.common.env_checker import check_env
@@ -115,6 +116,37 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
         return progress_remaining * initial_value
     return func
 
+def _create_yaml(flags, location):
+    data = {
+        'game': flags['game'],
+        'seed': flags['seed'],
+        'env': flags['environments'],
+        'reward': flags['reward'],
+        'prune': flags['prune'],
+        'exclude_properties': flags['exclude_properties'],
+        'rgb4': flags['rgb4'],
+        'rgb5': flags['rgb5'],
+        'status': 'not finished',
+        'completed_epochs': None,
+        'completed_steps': None
+    }
+
+    with open(location, 'w') as yaml_file:
+        yaml.dump(data, yaml_file)
+
+    print(f"YAML file with training values created at {location}")
+
+
+def _update_yaml(location, epochs, steps, finished):
+    with open(location, 'r') as yaml_file:
+        data = yaml.safe_load(yaml_file)
+    data['completed_epochs'] = completed_epochs
+    data['completed_steps'] = completed_steps
+    data['status'] = 'finished' if finished else 'not finished'
+    with open(yaml_path, 'w') as yaml_file:
+        yaml.dump(data, yaml_file)
+
+    print(f"YAML file updated with training duration at {yaml_path}")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -194,7 +226,20 @@ def main():
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
 
-
+    yaml_path = Path(ckpt_path, f"{exp_name}_training_status.yaml")
+    rgb4_yaml = opts.rgbv4 if opts.rgbv4 else 'not used'
+    rgb5_yaml = opts.rgbv5 if opts.rgbv5 else 'not used'
+    flags = {
+        'game': opts.game,
+        'seed': opts.seed,
+        'environments': opts.environments,
+        'reward': opts.reward,
+        'prune': opts.prune,
+        'exclude_properties': opts.exclude_properties,
+        'rgb4': rgb4_yaml,
+        'rgb5': rgb5_yaml
+    }
+    _create_yaml(flags, yaml_path)
 
     epoch_checkpoint_callback = EpochCheckpointCallback(
         ckpt_path,
@@ -352,6 +397,8 @@ def main():
     print(f"Experiment name: {exp_name}")
     print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
     model.learn(total_timesteps=training_timestamps, callback=cb_list)
+
+    _update_yaml(yaml_path, epoch_checkpoint_callback.epoch_counter, model.num_timesteps, True)
 
 if __name__ == '__main__':
     main()
