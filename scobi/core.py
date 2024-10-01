@@ -25,20 +25,10 @@ class Environment(Env):
 
         self.oc_env.reset(seed=self.seed)
         self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
-        #R: Why does it need to do that with the max_objects? -> just instantiate?
-        # Adds Numbers/Orders to the game-objects
-        # max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
-        # print(self.oc_env.objects)
-        print("initial: ", self.oc_env.objects)
-        init_objects = self._wrap_map_order_game_objects(self.oc_env.objects, env_name, reward)
-        init_objects = self.oc_env.objects 
+        # Since Focus expects list of all possible OCAGameObjects for setup, wrap the objects
+        max_objects = self._wrap_game_objects(self.oc_env.objects)
         self.did_reset = False
-        #R: probably required to rewrite Focus to not use max_objects -> How else instantiate focus then?
-        #R: Focus is used to get feature_vec for NN later
-        # print(init_objects)
-        # exit()
-        # self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
-        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, init_objects, actions, refresh_yaml, self.logger)
+        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
@@ -80,13 +70,7 @@ class Environment(Env):
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
-            objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
-            print("step: ", self.oc_env.objects)
-            print(objects)
             ns_repr = self.oc_env.ns_state
-            print(ns_repr)
-            # exit()
-            # sco_obs, sco_reward = self.focus.get_feature_vector(objects)
             sco_obs, sco_reward = self.focus.get_feature_vector(ns_repr)
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
@@ -115,10 +99,7 @@ class Environment(Env):
         self.focus.reward_threshold = -1
         self.focus.reward_history = [0, 0]
         _, info = self.oc_env.reset(*args, **kwargs)
-        # objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
         ns_repr = self.oc_env.ns_state
-        # sco_obs, _ = self.focus.get_feature_vector(objects)
-        # sco_obs, _ = self.focus.get_feature_vector(self.oc_env.objects)
         sco_obs, _ = self.focus.get_feature_vector(ns_repr)
         return sco_obs, info
 
@@ -128,6 +109,14 @@ class Environment(Env):
 
     def set_feature_attribution(self, att):
         self.feature_attribution = att
+    
+    def _wrap_game_objects(self, oc_obj_list):
+        if self.noisy_objects:
+            scobi_obj_list = [self.game_object_wrapper(obj, std=3, error_rate=0.05, random_state=self.randomstate) for obj in oc_obj_list]
+        else:
+            scobi_obj_list = [self.game_object_wrapper(obj) for obj in oc_obj_list]
+        return scobi_obj_list
+
 
     def _wrap_map_order_game_objects(self, oc_obj_list, env_name, reward_shaping):
         out = []
@@ -139,6 +128,7 @@ class Environment(Env):
             scobi_obj_list = [self.game_object_wrapper(obj, std=3, error_rate=0.05, random_state=self.randomstate) for obj in oc_obj_list]
         else:
             scobi_obj_list = [self.game_object_wrapper(obj) for obj in oc_obj_list]
+
         #if self.noisy_objects:
         #    for o in scobi_obj_list:
         #        o.add_noise(std=3, error_rate=0.05, random_state=self.randomstate)

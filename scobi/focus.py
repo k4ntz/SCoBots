@@ -14,11 +14,7 @@ class Focus():
         self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
         self.OBJECTS = raw_features
-        #TODO: Check if this works -> especially for downstream_functions like generate_property_set 
-        # Highly likely, they require a different object-list... I just don't like using the wrapper stuff just for that
-        print(type(self.OBJECTS[0]))
-        # self.OBJECT_NAMES = [x.name for x in self.OBJECTS]
-        self.OBJECT_NAMES = [type(x).__name__ for x in self.OBJECTS]
+        self.OBJECT_NAMES = [x.name for x in self.OBJECTS]
         self.ACTIONS = actions
         self.ENV_NAME = env_name.split("/")[-1] # handle v5 namespace case
         self.FOCUSFILEPATH = None
@@ -198,14 +194,13 @@ class Focus():
 
         yaml_dict["ENVIRONMENT"] = self.ENV_NAME
         avail = yaml_dict["AVAILABLE_CONCEPTS"]
-        # avail["objects"] = [x.name for x in self.OBJECTS]
-        avail["objects"] = [type(x).__name__ for x in self.OBJECTS]
+        avail["objects"] = [x.name for x in self.OBJECTS]
         avail["actions"] = [x for x in self.ACTIONS]
         avail["properties"] = [self.avail_to_yaml_dict(k, v) for k, v in PROPERTIES.items()]
         avail["functions"] =  [self.avail_to_yaml_dict(k, v) for k, v in FUNCTIONS.items()]
 
         use = yaml_dict["SELECTION"]
-        use["objects"] = [type(x).__name__ for x in self.OBJECTS]
+        use["objects"] = [x.name for x in self.OBJECTS]
         use["actions"] = [x for x in self.ACTIONS]
         use["properties"] = [self.proplist_to_yaml_dict(x) for x in self.PROPERTY_LIST]
         use["functions"] = [self.funclist_to_yaml_dict(x) for x in self.FUNCTION_LIST]
@@ -303,16 +298,9 @@ class Focus():
             out.append(list(p.items())[0])
         out_list =  list(map(list, out))
         
+        # sort the property-list according to the object order from the ns repres. from OCAtari 
         object_order = self.OBJECT_NAMES
-        # object_order = ['Player', 'Ball', 'Enemy']
-
-        out_list = sorted(out_list, key=lambda x: object_order.index(x[1][:-1]))
-
-        # Extract the second element from each tuple to get the desired output
-
-        # Need to ensure that order of ns_repr == order here
-        # sort by self.OBJ_NAMES 
-        # out_list.sort(key=lambda x: x[1])
+        out_list = sorted(out_list, key=lambda x: object_order.index(x[1]))
 
         if self.validate_properties_signatures(out_list):
             return out_list
@@ -400,39 +388,15 @@ class Focus():
         self.CURRENT_PROPERTY_COMPUTE_LAYER = [0 for _ in range(self.PROPERTY_COMPUTE_LAYER_SIZE)]
         self.CURRENT_FUNC_COMPUTE_LAYER = [0 for _ in range(self.FUNC_COMPUTE_LAYER_SIZE)]
 
-    # def get_feature_vector(self, inc_ns_repr_list):
-    def get_feature_vector(self, inc_objects_list):
-        # requires list of game-objects
-        # modify, s.t. ns_repr is used instead of directly defined game-object stuff...
-        # We assume that ns_repr of an object returns *all* needed properties(!)
-        # -> This means we can remove property layers
-
+    def get_feature_vector(self, inc_ns_repr_list):
         # evaluate a 2 layer computation graph for the feature vector:
-        # IN    object_dict
-        # 1     PROPERTY_COMPUTE_LAYER 
-        #       property_values
-        # 2     FUNC_COMPUTE_LAYER
+        # compute the functions given the properties from the neurosymbolic repres. of OCAtari
+        # IN   ns_repres (==property_values)
+        # 1     FUNC_COMPUTE_LAYER
         #       function_values
         # OUT   HSTACK(CONCAT(property_values, function_values))
-        # fill missing objects as None
-        # input_dict = {}
-        # for obj in inc_objects_list:
-        #     input_dict[obj.name] = obj 
-        # for name in self.OBJECT_NAMES:
-        #     if not name in input_dict.keys():
-        #         input_dict[name] = None
-        # print(f"input_dict: {input_dict}")
-        # # calc property layer
-        # for i in range(self.PROPERTY_COMPUTE_LAYER_SIZE):
-        #     f = self.PROPERTY_COMPUTE_LAYER[i]
-        #     self.CURRENT_PROPERTY_COMPUTE_LAYER[i] = f(input_dict)
-        #     print(f"prop: {i}, {f(input_dict)}")
-        self.CURRENT_PROPERTY_COMPUTE_LAYER = inc_objects_list
-
-
-        # Problem 1: the functions require tuples, we get simple list 
-        # Problem 2: some stuff like pos_history is not transferred
-
+        # Instead of having to compute the properties, we get them from OC_Atari directly
+        self.CURRENT_PROPERTY_COMPUTE_LAYER = inc_ns_repr_list
 
         # calc function layer
         for i in range(self.FUNC_COMPUTE_LAYER_SIZE):
