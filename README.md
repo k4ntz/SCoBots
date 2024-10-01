@@ -72,7 +72,7 @@ The content of the flags can be found in the following code block:
 ## Usage of Checkpoints
 Checkpoints are saved under ```checkpoints```.
 Each folder states in its name explicitly the specifications given for the training.
-So e.g. the folder ```Pong_seed0_reward-human-v2``` denotes that the trained agent was trained with a seed of 0 and its reward model is the ```human``` option.
+So e.g. the folder ```Pong_seed0_reward-human-v2``` denotes that the trained agent was trained with a ```seed``` of 0, its reward model is the ```human``` option.
 So a usage of ```eval.py``` with this agent would look like ```python eval.py -g Pong -s 0 -r human``` or ```python render_agent.py -g Pong -s 0 -r human```
 
 With the checkpoint being stored accordingly named in the checkpoints folder, it will automaticlly be loaded and there is no need to provide an explicit storage path.

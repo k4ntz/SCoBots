@@ -77,39 +77,6 @@ class SaveBestModelCallback(BaseCallback):
             self.model.get_vec_normalize_env().save(self.vec_path_name)
         self.model.save(os.path.join(self.save_path, "best_model"))
 
-class EpochCheckpointCallback(BaseCallback):
-    def __init__(self, save_path: str, verbose=0):
-        super(EpochCheckpointCallback, self).__init__(verbose)
-        self.save_path = os.path.join(save_path,'training_checkpoints')
-        if self.save_path is not None:
-            os.makedirs(self.save_path, exist_ok=True)
-        # Track the number of epochs
-        self.epoch_counter = 0
-
-    def _on_step(self) -> bool:
-        # Count steps and convert to epochs and skip saving if not desired epoch or first run
-        if 'n_steps' in self.locals and self.locals['n_steps'] > 0:
-            # Check if we are at the end of an epoch
-            if self.n_calls % self.locals['n_steps'] == 0:
-                self.epoch_counter += 1
-
-                # Saving every modulo entered epoch
-                if self.epoch_counter % 10 == 0:
-                    path = os.path.join(self.save_path, "checkpoint.zip")
-                    self.model.save(path)
-
-                    # Save random for reproducibility
-                    random_state_dict = {
-                        "numpy": np.random.get_state(),
-                        "torch": th.random.get_rng_state()
-                    }
-                    with open(f"{path}_random_states.pkl", 'wb') as f:
-                        pickle.dump(random_state_dict, f)
-
-                    if self.verbose > 0:
-                        print(f"Checkpoint saved to {path} after epoch {self.epoch_counter}")
-
-        return True
 
 def linear_schedule(initial_value: float) -> Callable[[float], float]:
     def func(progress_remaining: float) -> float:
@@ -241,11 +208,6 @@ def main():
     }
     _create_yaml(flags, yaml_path)
 
-    epoch_checkpoint_callback = EpochCheckpointCallback(
-        ckpt_path,
-        verbose=1
-    )
-
 
 
 
@@ -325,7 +287,7 @@ def main():
 
     checkpoint_callback = CheckpointCallback(
         save_freq= max(checkpoint_frequency // n_envs, 1),
-        save_path=str(ckpt_path),
+        save_path=str(os.path.join(ckpt_path,'training_checkpoints')),
         name_prefix="model",
         save_replay_buffer=True,
         save_vecnormalize=True)
@@ -339,7 +301,7 @@ def main():
         callback=rtpt_callback)
 
     tb_callback = TensorboardCallback(n_envs=n_envs)
-    cbl = [epoch_checkpoint_callback, checkpoint_callback, eval_callback, n_callback, tb_callback]
+    cbl = [checkpoint_callback, eval_callback, n_callback, tb_callback]
     if rgb_exp: #remove tb callback if rgb
         cbl = cbl[:-1]
     cb_list = CallbackList(cbl)
