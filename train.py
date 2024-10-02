@@ -1,26 +1,27 @@
+import os
+from collections import deque
+from pathlib import Path
+from typing import Callable
+
 import argparse
 import gymnasium as gym
 import numpy as np
-import os
 import torch as th
-import pickle
 import yaml
-
-from scobi import Environment
-from stable_baselines3.common.env_checker import check_env
-from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import SubprocVecEnv, VecFrameStack, VecNormalize, VecTransposeImage
-from stable_baselines3.common.atari_wrappers import EpisodicLifeEnv, WarpFrame, AtariWrapper
-from stable_baselines3.common.env_util import make_vec_env, make_atari_env
-from stable_baselines3.common.logger import configure
-from stable_baselines3.common.utils import set_random_seed
-from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common.callbacks import CheckpointCallback, EveryNTimesteps, BaseCallback, CallbackList, EvalCallback
-from pathlib import Path
-from typing import Callable
 from rtpt import RTPT
-from collections import deque
+from stable_baselines3 import PPO
+from stable_baselines3.common.atari_wrappers import EpisodicLifeEnv, AtariWrapper
+from stable_baselines3.common.callbacks import CheckpointCallback, EveryNTimesteps, BaseCallback, CallbackList, \
+    EvalCallback
+from stable_baselines3.common.env_checker import check_env
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.logger import configure
+from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.utils import set_random_seed
+from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize, VecTransposeImage
 
+import utils.parser.parser
+from scobi import Environment
 
 MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
 
@@ -91,10 +92,9 @@ def _create_yaml(flags, location):
         'reward': flags['reward'],
         'prune': flags['prune'],
         'exclude_properties': flags['exclude_properties'],
-        'rgb4': flags['rgb4'],
-        'rgb5': flags['rgb5'],
+        'rgbv4': flags['rgbv4'],
+        'rgbv5': flags['rgbv5'],
         'status': 'not finished',
-        'completed_epochs': None,
         'completed_steps': None
     }
 
@@ -104,107 +104,46 @@ def _create_yaml(flags, location):
     print(f"YAML file with training values created at {location}")
 
 
-def _update_yaml(location, epochs, steps, finished):
+def _update_yaml(location, steps, finished):
     with open(location, 'r') as yaml_file:
         data = yaml.safe_load(yaml_file)
-    data['completed_epochs'] = completed_epochs
-    data['completed_steps'] = completed_steps
+    data['completed_steps'] = steps
     data['status'] = 'finished' if finished else 'not finished'
-    with open(yaml_path, 'w') as yaml_file:
+    with open(location, 'w') as yaml_file:
         yaml.dump(data, yaml_file)
 
-    print(f"YAML file updated with training duration at {yaml_path}")
+    print(f"YAML file updated with training duration at {location}")
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-g", "--game", type=str, required=True,
-                        help="game to train (e.g. 'Pong')")
-    parser.add_argument("-s", "--seed", type=int, required=True,
-                        help="seed")
-    parser.add_argument("-env", "--environments", type=int, required=True,
-                        help="number of envs used")
-    parser.add_argument("-r", "--reward", type=str, required=False, choices=["env", "human", "mixed"],
-                        help="reward mode, env if omitted")
-    parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"],
-                        help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
-    parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
-    parser.add_argument("--rgbv4", action="store_true", help="rgb observation space")
-    parser.add_argument("--rgbv5", action="store_true", help="rgb observation space")
-    opts = parser.parse_args()
+    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgbv4, rgbv5, reward = utils.parser.parser.parse_train(parser)
 
-    env_str = "ALE/" + opts.game +"-v5"
-    settings_str = ""
-    pruned_ff_name = None
-    focus_dir = "focusfiles"
-    hide_properties = False
-    noisy = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
-
-    reward_mode = 0
-    if opts.reward == "env":
-        settings_str += "_reward-env"
-    if opts.reward == "human":
-        settings_str += "_reward-human"
-        reward_mode = 1
-    if opts.reward == "mixed":
-        settings_str += "_reward-mixed"
-        reward_mode = 2
-
-    game_id = env_str.split("/")[-1].lower().split("-")[0]
-
-    if opts.prune:
-        pruned_ff_name = f"pruned_{game_id}.yaml"
-    if opts.prune == "default":
-        settings_str += "_pruned-default"
-    if opts.prune == "external":
-        settings_str += "_pruned-external"
-        focus_dir = "baselines_focusfiles"
-    if opts.exclude_properties:
-        settings_str += '_excludeproperties'
-        hide_properties = True
-
-
-    n_envs = opts.environments
+    n_envs = envs
     n_eval_envs = 4
     n_eval_episodes = 8
-    eval_env_seed = (opts.seed + 42) * 2 #different seeds for eval
+    eval_env_seed = (seed + 42) * 2 #different seeds for eval
     training_timestamps = 20_000_000
     checkpoint_frequency = 1_000_000
     eval_frequency = 500_000
     rtpt_frequency = 100_000
 
-    if opts.rgbv4 and opts.rgbv5:
-        print("please select only one rgb mode!")
-
-    #override some settings if rgb
-    rgb_exp = opts.rgbv4 or opts.rgbv5
-    if opts.rgbv4:
-        settings_str = "-rgb-v4"
-        env_str = opts.game + "NoFrameskip-v4"
-    if opts.rgbv5:
-        settings_str = "-rgb-v5"
-
-    exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
-    if not rgb_exp:
-        exp_name += "-abl"
-    if noisy:
-        exp_name += "-noisy"
     log_path = Path("baselines_logs", exp_name)
     ckpt_path = Path("checkpoints", exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
 
     yaml_path = Path(ckpt_path, f"{exp_name}_training_status.yaml")
-    rgb4_yaml = opts.rgbv4 if opts.rgbv4 else 'not used'
-    rgb5_yaml = opts.rgbv5 if opts.rgbv5 else 'not used'
+    rgbv4_yaml = rgbv4 if rgbv4 else 'not used'
+    rgbv5_yaml = rgbv5 if rgbv5 else 'not used'
     flags = {
-        'game': opts.game,
-        'seed': opts.seed,
-        'environments': opts.environments,
-        'reward': opts.reward,
-        'prune': opts.prune,
-        'exclude_properties': opts.exclude_properties,
-        'rgb4': rgb4_yaml,
-        'rgb5': rgb5_yaml
+        'game': game,
+        'seed': seed,
+        'environments': envs,
+        'reward': reward,
+        'prune': pruned_ff_name,
+        'exclude_properties': hide_properties,
+        'rgbv4': rgbv4_yaml,
+        'rgbv5': rgbv5_yaml
     }
     _create_yaml(flags, yaml_path)
 
@@ -246,19 +185,19 @@ def main():
         return _init
 
     # preprocessing based on atari wrapper of the openai baseline implementation (https://github.com/openai/baselines/blob/master/baselines/ppo1/run_atari.py)
-    if opts.rgbv4:
+    if rgbv4:
         # NoopResetEnv:30, MaxAndSkipEnv=4, WarpFrame=84x84,grayscale, EpisodicLifeEnv, FireResetEnv, ClipRewardEnv, frame_stack=1, scale=False
         train_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : True, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
-        train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        train_env = make_vec_env(env_str, n_envs=n_envs, seed=seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
         # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
         eval_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
         eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
-    elif opts.rgbv5:
+    elif rgbv5:
         # NoopResetEnv not required, because v5 has sticky actions, and also frame_skip=5, so also not required to set in wrapper (1 means no frameskip). no reward clipping, because scobots dont clip as well
         train_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : False} # remaining values are part of AtariWrapper
-        train_env = make_vec_env(env_str, n_envs=n_envs, seed=opts.seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        train_env = make_vec_env(env_str, n_envs=n_envs, seed=seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
         # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
         eval_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False} # remaining values are part of AtariWrapper
@@ -271,7 +210,7 @@ def main():
         del monitor
         # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing
         eval_env = VecNormalize(SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False, training=False)
-        train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=opts.seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
+        train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
 
     rtpt_iters = training_timestamps // rtpt_frequency
     save_bm = SaveBestModelCallback(ckpt_path, rgb=rgb_exp)
@@ -316,7 +255,7 @@ def main():
         adam_step_size = 0.00025
         clipping_eps = 0.1
         norm_adv = True
-        if opts.rgbv4:
+        if rgbv4:
             norm_adv = False # according to sb3, adv normalization not used in original ppo paper
         model = PPO(
             policy=policy_str,
@@ -337,7 +276,7 @@ def main():
         policy_str = "MlpPolicy"
         pkwargs = dict(activation_fn=th.nn.ReLU, net_arch=dict(pi=[64, 64], vf=[64, 64]))
         adam_step_size = 0.001
-        if opts.game in ["Bowling", "Tennis"]:
+        if game in ["Bowling", "Tennis"]:
             adam_step_size = 0.00025
         clipping_eps = 0.1
         model = PPO(
@@ -360,7 +299,7 @@ def main():
     print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
     model.learn(total_timesteps=training_timestamps, callback=cb_list)
 
-    _update_yaml(yaml_path, epoch_checkpoint_callback.epoch_counter, model.num_timesteps, True)
+    _update_yaml(yaml_path, model.num_timesteps, True)
 
 if __name__ == '__main__':
     main()
