@@ -1,6 +1,5 @@
 """scobi core"""
 import numpy as np
-import os
 from gymnasium import spaces, Env
 import scobi.environments.env_manager as em
 from scobi.utils.game_object import get_wrapper_class
@@ -24,13 +23,14 @@ class Environment(Env):
         actions = self.oc_env._env.unwrapped.get_action_meanings()
 
         self.oc_env.reset(seed=self.seed)
-        self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
-        # Since Focus expects list of all possible OCAGameObjects for setup, wrap the objects
-        max_objects = self._wrap_game_objects(self.oc_env.objects)
-        # max_objects = self._wrap_game_objects(self.oc_env.max_objects_per_cat)
-        print(max_objects)
+
+        # not possible anymore
+        # self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
+
+        init_objects = self.oc_env.objects
+        max_obj_dict = self.oc_env.max_objects_per_cat
         self.did_reset = False
-        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
+        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, init_objects, max_obj_dict, actions, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
@@ -60,7 +60,6 @@ class Environment(Env):
         if self.noisy_objects:
             self.logger.GeneralInfo("Using noisy object detection (default: std 3, detection error rate 5%)")
 
-        self.focus.print_state()
         self.reset()
         self.step(0) # step once to set the feature vector size
         self.observation_space = spaces.Box(low=-2**63, high=2**63 - 2, shape=(self.focus.OBSERVATION_SIZE,), dtype=np.float32)
@@ -75,7 +74,6 @@ class Environment(Env):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
             ns_repr = self.oc_env.ns_state
             sco_obs, sco_reward = self.focus.get_feature_vector(ns_repr)
-            print("feat_vec: ", sco_obs)
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
                 self._obj_obs = self._draw_objects_overlay(obs)
@@ -114,75 +112,6 @@ class Environment(Env):
     def set_feature_attribution(self, att):
         self.feature_attribution = att
     
-    def _wrap_game_objects(self, oc_obj_list):
-        if self.noisy_objects:
-            scobi_obj_list = [self.game_object_wrapper(obj, std=3, error_rate=0.05, random_state=self.randomstate) for obj in oc_obj_list]
-        else:
-            scobi_obj_list = [self.game_object_wrapper(obj) for obj in oc_obj_list]
-
-        out = []
-        counter_dict = {}
-        # map
-        for scobi_obj in scobi_obj_list:
-            if not scobi_obj.category in counter_dict:
-                counter_dict[scobi_obj.category] = 1
-            else:
-                counter_dict[scobi_obj.category] +=1
-            scobi_obj.number = counter_dict[scobi_obj.category]
-            out.append(scobi_obj)
-        return out
-
-
-    def _wrap_map_order_game_objects(self, oc_obj_list, env_name, reward_shaping):
-        out = []
-        counter_dict = {}
-        player_obj = None
-
-        # wrap
-        if self.noisy_objects:
-            scobi_obj_list = [self.game_object_wrapper(obj, std=3, error_rate=0.05, random_state=self.randomstate) for obj in oc_obj_list]
-        else:
-            scobi_obj_list = [self.game_object_wrapper(obj) for obj in oc_obj_list]
-
-        #if self.noisy_objects:
-        #    for o in scobi_obj_list:
-        #        o.add_noise(std=3, error_rate=0.05, random_state=self.randomstate)
-
-
-        # order
-        for scobi_obj in scobi_obj_list:
-            if "Player" in scobi_obj.name or "Chicken" in scobi_obj.name:
-                player_obj = scobi_obj
-                break
-
-        if "Kangaroo" in env_name and reward_shaping != 0:
-            scales = []
-            rest = []
-            for x in scobi_obj_list:
-                scales.append(x) if "Scale" in x.name else rest.append(x)
-            scales = sorted(scales, key=lambda a : abs(a.y_distance(player_obj)))
-            rest = sorted(rest, key=lambda a : a.distance(player_obj))
-            scobi_obj_list = rest + scales
-        else:
-            scobi_obj_list = sorted(scobi_obj_list, key=lambda a : a.distance(player_obj))
-
-        # map
-        for scobi_obj in scobi_obj_list:
-            if not scobi_obj.category in counter_dict:
-                counter_dict[scobi_obj.category] = 1
-            else:
-                counter_dict[scobi_obj.category] +=1
-            scobi_obj.number = counter_dict[scobi_obj.category]
-            out.append(scobi_obj)
-
-        # returns full objectlist [closest_visible : farest_visible] + [closest_invisible : farest invisibe]
-        # if focus file specifies for example top3 closest objects (by selecting pin1, pin2, pin3),
-        # the features vector is always calculated based on the 3 closest visible objects of category pin.
-        # so if for example pin1 becomes invisible during training, the top3 list is filled accordingly with closest visible objects of category pin
-        # if there is none to fill, pin2 and pin3 are the closest visible and all derived features for the third pin (which is invisble) are frozen
-        return out
-
-
     # def _mark_bb(self, image_array, bb, color=(255, 0, 0), surround=True):
     #     """
     #     marks a bounding box on the image

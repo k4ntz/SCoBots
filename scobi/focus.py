@@ -1,21 +1,23 @@
-from typing import Tuple
 import yaml
 import numpy as np
 import math
 from pathlib import Path
 from itertools import permutations
 from scobi.concepts import init as concept_init
-from scobi.utils.decorators import FUNCTIONS, PROPERTIES
+from scobi.utils.decorators import FUNCTIONS
 from termcolor import colored
-from collections.abc import Iterable
 
 class Focus():
-    def __init__(self, env_name, reward, hide_properties, fofiles_dir_name, fofile, raw_features, actions, refresh_yaml, l):
+    def __init__(self, env_name, reward, hide_properties, fofiles_dir_name, fofile, raw_features, max_obj_dict, actions, refresh_yaml, logger):
         concept_init()
-        self.PROPERTY_LIST = []
         self.FUNCTION_LIST = []
-        self.OBJECTS = raw_features
-        self.OBJECT_NAMES = [x.name for x in self.OBJECTS]
+        self.MAX_NB_OBJECTS = max_obj_dict
+        self.INIT_OBJECTS = raw_features
+        self.INIT_OBJECT_NAMES = [type(x).__name__ for x in self.INIT_OBJECTS] #Can get this differently
+        self.NS_REPR_LIST = []
+        self.NS_REPR_TYPES = []
+        self.OBJECT_NAMES = []
+
         self.ACTIONS = actions
         self.ENV_NAME = env_name.split("/")[-1] # handle v5 namespace case
         self.FOCUSFILEPATH = None
@@ -50,7 +52,7 @@ class Focus():
         self.HIDE_PROPERTIES = hide_properties
 
         self.running_stats = []
-        self.l = l
+        self.logger = logger
         # self.generate_property_set()
         self.generate_ns_repr_set()
         self.generate_function_set()
@@ -59,28 +61,28 @@ class Focus():
 
         fofiles_dir_path = Path.cwd() / Path(fofiles_dir_name)
         fofiles_dir_path.mkdir(exist_ok=True)
-        l.GeneralInfo("Focus file directory: %s." % colored(fofiles_dir_name, "light_green"))
+        logger.GeneralInfo("Focus file directory: %s." % colored(fofiles_dir_name, "light_green"))
         if fofile: # pruned focus file passed
             fofile_path = fofiles_dir_path / Path(fofile)
             if fofile_path.exists(): # if it exists, try to load it
-                l.GeneralInfo("Specified Focus file %s found." % colored(fofile_path.name, "light_green"))
+                logger.GeneralInfo("Specified Focus file %s found." % colored(fofile_path.name, "light_green"))
                 self.load_focus_file(fofile_path)
-                l.GeneralInfo("Specified Focus File is valid. Imported.")
+                logger.GeneralInfo("Specified Focus File is valid. Imported.")
                 self.FOCUSFILEPATH = fofile_path
             else: # if passed focus file doesnt exist, exit
-                l.GeneralError("Specified Focus File %s not found!" %  colored(fofile_path.name, "light_green"))
+                logger.GeneralError("Specified Focus File %s not found!" %  colored(fofile_path.name, "light_green"))
         else: # no pruned focus file passed
             fofile_path = fofiles_dir_path / Path("default_focus_" + self.ENV_NAME + ".yaml")
             if not fofile_path.exists(): # default focus file does not exist
                 self.generate_fresh_yaml(fofile_path)
-                l.GeneralWarning("No Default Focus File found. Auto-generated %s." % colored(fofile_path.name, "light_green"))
+                logger.GeneralWarning("No Default Focus File found. Auto-generated %s." % colored(fofile_path.name, "light_green"))
             else:
-                l.GeneralInfo("Default Focus file %s found." % colored(fofile_path.name, "light_green"))
+                logger.GeneralInfo("Default Focus file %s found." % colored(fofile_path.name, "light_green"))
                 if refresh_yaml:
-                    l.GeneralInfo("Rebuilding it to make sure it's up-to-date.")
+                    logger.GeneralInfo("Rebuilding it to make sure it's up-to-date.")
                     self.generate_fresh_yaml(fofile_path)
             self.load_focus_file(fofile_path)
-            l.GeneralInfo("Default Focus File is valid. Imported.")
+            logger.GeneralInfo("Default Focus File is valid. Imported.")
             self.FOCUSFILEPATH = fofile_path
         
         if self.REWARD_SHAPING != 0: # set respective reward shaping
@@ -90,37 +92,34 @@ class Focus():
                 rewstring = "env + scobi"
             else:
                 rewstring = "unknown"
-            l.GeneralInfo("Reward Shaping: %s." % colored(rewstring, "light_green"))
+            logger.GeneralInfo("Reward Shaping: %s." % colored(rewstring, "light_green"))
             self.REWARD_FUNC = self.get_reward_func(self.ENV_NAME)
-            if not self.REWARD_FUNC is None:
+            if self.REWARD_FUNC is not None:
                 if self.REWARD_FUNC == "norew":
-                    l.GeneralError("Reward function for %s not implemented!" % colored(self.ENV_NAME, "light_green"))
+                    logger.GeneralError("Reward function for %s not implemented!" % colored(self.ENV_NAME, "light_green"))
                 else:
-                    l.GeneralInfo("Reward function is valid. Bound.")
+                    logger.GeneralInfo("Reward function is valid. Bound.")
             else:
-                l.GeneralError("Reward function for %s is expecting properties/concepts that are missing in the focus file!" % colored(self.ENV_NAME, "light_green"))
+                logger.GeneralError("Reward function for %s is expecting properties/concepts that are missing in the focus file!" % colored(self.ENV_NAME, "light_green"))
         else:
-            l.GeneralInfo("Reward Shaping: %s." % colored("disabled", "light_yellow"))
+            logger.GeneralInfo("Reward Shaping: %s." % colored("disabled", "light_yellow"))
 
-        if self.HIDE_PROPERTIES == True: # hide properties from observation or not
-            l.GeneralInfo("Object properties are %s from the observation vector." % colored("excluded", "light_yellow"))
+        if self.HIDE_PROPERTIES: # hide properties from observation or not
+            logger.GeneralInfo("Object properties are %s from the observation vector." % colored("excluded", "light_yellow"))
         else:
-            l.GeneralInfo("Object properties are %s in the observation vector." % colored("included", "light_green"))
+            logger.GeneralInfo("Object properties are %s in the observation vector." % colored("included", "light_green"))
     
     def generate_ns_repr_set(self):
-        #TODO implement
-        self.MAX_NB_OBJECTS =  {'Player': 1, 'Tree': 4, 'Mogul': 3, 'Flag': 4}
         for k,v in self.MAX_NB_OBJECTS.items():
-            # match with / create corresponding object
-            # extract ns_repr (_meaning?)
-            pass
-        self.NS_REPR_LIST = [
-            ['POSITION', 'Player1'],
-            ['POSITION_HISTORY', 'Player1'],
-            ['ORIENTATION', 'Player1'],
-            ['RGB', 'Player1']
-        ]
-        self.NS_REPR_TYPES = [Tuple[int, int], Tuple[int, int, int, int], Tuple[int], Tuple[int, int, int]] 
+            # match with first of the object
+            obj = self.INIT_OBJECTS[self.INIT_OBJECT_NAMES.index(k)]
+            # extract meanings and types of ns_repr
+            # iterate over number of objects of current kind 
+            for i in range( v):
+                self.OBJECT_NAMES.append(k+str(i+1))
+                ns_meanings = [[meaning, k+str(i+1)] for meaning in obj._ns_meaning]
+                self.NS_REPR_LIST += ns_meanings
+                self.NS_REPR_TYPES += obj._ns_types
 
     # def generate_property_set(self):
     #     print(PROPERTIES)
@@ -135,48 +134,42 @@ class Focus():
     def generate_function_set(self):
         for k, v in FUNCTIONS.items():
             para_len = len(v["expects"])
-            #TODO: Use ns_repr_overview instead of PROPERTY_LIST
             # property_combis = permutations(self.PROPERTY_LIST, para_len)
             ns_repr_combis = permutations(self.NS_REPR_LIST, para_len)
-            # print([c for c in ns_repr_combis])
             function_sig = [x[0].annotation for x in v["expects"]]
-            print("func:", function_sig)
-            print("props: ", PROPERTIES)
             for combi in ns_repr_combis:
-                print("HIIII", combi)
-                print("HIIII2", combi[0])
-                print("HIIII3", combi[0][0])
-                combi_sig_orig = [PROPERTIES[x[0]]["returns"][0] for x in combi]
-                print("combi orig: ", combi_sig_orig)
+                # combi_sig_orig = [PROPERTIES[x[0]]["returns"][0] for x in combi]
                 combi_sig = []
                 for c in combi:
                     idx = self.NS_REPR_LIST.index(c)
                     combi_sig.append(self.NS_REPR_TYPES[idx])
-                print("combi: ", combi_sig)
                 function_sig = [x[0].annotation for x in v["expects"]]
                 if combi_sig == function_sig:
                     self.FUNCTION_LIST.append([k, list(combi)])
 
-    def get_object_by_name(self, name, objs):
-        if type(objs) == dict:
-            for o in objs.values():
-                if o.name == name:
-                    return o
-            return None
-        else:
-            for o in objs:
-                if o.name == name:
-                    return o
-            return None
+    # def get_object_by_name(self, name, objs):
+    #     if type(objs) is dict:
+    #         for o in objs.values():
+    #             if o.name == name:
+    #                 return o
+    #         return None
+    #     else:
+    #         for o in objs:
+    #             if o.name == name:
+    #                 return o
+    #         return None
+        
+    # def get_initial_object_by_name(self, name, objs):
+    #     initial_name = name[:-1] + "1"
+    #     for o in objs:
+    #         if o.name == initial_name:
+    #             return o
+    #     return None
 
 
     def print_state(self):
-        print("---OBJECTS---")
-        for o in self.OBJECTS:
-            print(o.name)
-        #TODO: Replace PROPERTY_LIST with ns_repres
-        print("---PROPERTIES---")
-        for p in self.PROPERTY_LIST:
+        print("---NEUROSYMBOLIC---")
+        for p in self.NS_REPR_LIST:
             print(p)
         print("---FUNCTIONS---")
         for f in self.FUNCTION_LIST:
@@ -211,7 +204,6 @@ class Focus():
 
 
     def generate_fresh_yaml(self, fpath):
-        #TODO: Do not use 'properties' anymore 
         yaml_dict = {
             "ENVIRONMENT" : "",
             "AVAILABLE_CONCEPTS" : {
@@ -230,13 +222,13 @@ class Focus():
 
         yaml_dict["ENVIRONMENT"] = self.ENV_NAME
         avail = yaml_dict["AVAILABLE_CONCEPTS"]
-        avail["objects"] = [x.name for x in self.OBJECTS]
+        avail["objects"] = self.OBJECT_NAMES #[x.name for x in self.OBJECTS]
         avail["actions"] = [x for x in self.ACTIONS]
         # avail["properties"] = [self.avail_to_yaml_dict(k, v) for k, v in PROPERTIES.items()]
         avail["functions"] =  [self.avail_to_yaml_dict(k, v) for k, v in FUNCTIONS.items()]
 
         use = yaml_dict["SELECTION"]
-        use["objects"] = [x.name for x in self.OBJECTS]
+        use["objects"] = self.OBJECT_NAMES#[x.name for x in self.OBJECTS]
         use["actions"] = [x for x in self.ACTIONS]
         # use["properties"] = [self.proplist_to_yaml_dict(x) for x in self.PROPERTY_LIST]
         use["functions"] = [self.funclist_to_yaml_dict(x) for x in self.FUNCTION_LIST]
@@ -263,14 +255,6 @@ class Focus():
         return True
 
 
-    def validate_properties(self, props):
-        #TODO: No need for validation properties, new function to validate ns_repr needed?
-        for p in props:
-            if p not in PROPERTIES.keys():
-                return False
-        return True
-
-
     def validate_functions(self, funcs):
         for f in funcs:
             if f not in FUNCTIONS.keys():
@@ -278,45 +262,23 @@ class Focus():
         return True
 
 
-    def validate_properties_signatures(self, propslist):
-        #TODO: Required?
-        for p in propslist:
-            if p[1] not in self.OBJECT_NAMES:
-                self.l.FocusFileParserError("Unknown object in properties selection: %s" % p[1])
-            if p[0] not in PROPERTIES.keys():
-                self.l.FocusFileParserError("Unknown object in properties selection: %s" % p[0])
-            prop_definition = PROPERTIES[p[0]]
-            o = self.get_object_by_name(p[1], self.OBJECTS)
-            prop_sig = prop_definition["expects"][0][0].annotation
-            if type(o) != prop_sig:
-                 self.l.GeneralError("Signature mismatch. Property '%s' expects '%s'" % (p[0], prop_sig))
-        return True
-
-
     def validate_functions_signatures(self, funclist):
-        #TODO: DO not use PROPERTIES
         for f in funclist:
             parsed_para_sig = []
             if f[0] not in FUNCTIONS.keys():
-                self.l.FocusFileParserError("Unknown function in function selection: %s" % f[0])
+                self.logger.FocusFileParserError("Unknown function in function selection: %s" % f[0])
             for para in f[1]:
-                print(para)
-                if para[0] not in PROPERTIES.keys():
-                    self.l.FocusFileParserError("Unknown property in functions selection: %s" % para[0])
-                print(self.OBJECT_NAMES)
+                if para not in self.NS_REPR_LIST:
+                    self.logger.FocusFileParserError("Unknown property in functions selection: %s" % para[0])
                 if para[1] not in self.OBJECT_NAMES:
-                    self.l.FocusFileParserError("Unknown object in functions selection: %s" % para[1])
-                prop_definition = PROPERTIES[para[0]]
-                o = self.get_object_by_name(para[1], self.OBJECTS)
-                prop_sig = prop_definition["expects"][0][0].annotation
-                parsed_para_sig.append(prop_definition["returns"][0])
-                if type(o) != prop_sig:
-                    self.l.FocusFileParserError("Signature mismatch in functions selection. Property '%s' expects '%s'" % (para[0], prop_sig))
+                    self.logger.FocusFileParserError("Unknown object in functions selection: %s" % para[1])
+                para_idx = self.NS_REPR_LIST.index(para)
+                parsed_para_sig.append(self.NS_REPR_TYPES[para_idx])
             func_definition = FUNCTIONS[f[0]]
             function_sig = [x[0].annotation for x in func_definition["expects"]]
             sig_desc = [x[1] for x in func_definition["expects"]]
             if function_sig != parsed_para_sig:
-                self.l.FocusFileParserError("Signature mismatch in functions selection. Function '%s' expects '%s'" % (f[0], sig_desc))
+                self.logger.FocusFileParserError("Signature mismatch in functions selection. Function '%s' expects '%s'" % (f[0], sig_desc))
         return True
 
 
@@ -325,31 +287,16 @@ class Focus():
         if passed:
             return objs
         else:
-            self.l.FocusFileParserError("Invalid objects specified in objects selection: "+obj+" !")
+            self.logger.FocusFileParserError("Invalid objects specified in objects selection: "+obj+" !")
 
     def import_actions(self, acts):
         if self.validate_actions(acts):
             return acts
         else:
-            self.l.FocusFileParserError("Invalid actions specified in actions selection!")
+            self.logger.FocusFileParserError("Invalid actions specified in actions selection!")
 
-    def import_properties(self, props):
-        out = []
-        for p in props:
-            out.append(list(p.items())[0])
-        out_list =  list(map(list, out))
-        
-        # sort the property-list according to the object order from the ns repres. from OCAtari 
-        object_order = self.OBJECT_NAMES
-        out_list = sorted(out_list, key=lambda x: object_order.index(x[1]))
-
-        if self.validate_properties_signatures(out_list):
-            return out_list
-        else:
-            return None
 
     def import_functions(self ,funcs):
-        print("funcs: ", funcs)
         out = []
         funcs_to_vali = []
         properties_to_vali = []
@@ -379,11 +326,10 @@ class Focus():
             in_dict = yaml.safe_load(f)
         parsed_env_name = in_dict["ENVIRONMENT"]
         if self.ENV_NAME != parsed_env_name:
-            self.l.FocusFileParserError("Env and focus file env do not match: %s, %s" % (self.ENV_NAME, parsed_env_name))
+            self.logger.FocusFileParserError("Env and focus file env do not match: %s, %s" % (self.ENV_NAME, parsed_env_name))
         sdict = in_dict["SELECTION"]
         self.PARSED_OBJECTS = self.import_objects(sdict["objects"])
         self.PARSED_ACTIONS = self.import_actions(sdict["actions"])
-        # self.PARSED_PROPERTIES = self.import_properties(sdict["properties"])
         self.PARSED_FUNCTIONS = self.import_functions(sdict["functions"])
         # based on the focus file selection,
         # construct a single layer computation graph for the feature vector:
@@ -392,19 +338,6 @@ class Focus():
 
         #TODO: ADD NS_REPR to FEATURE_VECTOR_BACKMAP
 
-        # for p in self.PARSED_PROPERTIES:
-        #     property_name = p[0]
-        #     object_name = p[1]
-        #     prop_name_obj_name_pairs.append((property_name, object_name))
-        #     prop_func = PROPERTIES[property_name]["object"]
-        #     return_len = len(PROPERTIES[property_name]["returns"][0].__args__)
-        #     for _ in range(return_len):
-        #         self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
-        #     parsed_fv_index += 1
-        #     def prop(input_dict, prop_func=prop_func, object_name=object_name):
-        #         func = prop_func
-        #         return func(input_dict[object_name])
-        #     self.PROPERTY_COMPUTE_LAYER.append(prop)
         for f in self.PARSED_FUNCTIONS:
             func_name = f[0]
             input_props = f[1]
@@ -431,6 +364,19 @@ class Focus():
         self.FUNC_COMPUTE_LAYER_SIZE = len(self.FUNC_COMPUTE_LAYER)
         # self.CURRENT_PROPERTY_COMPUTE_LAYER = [0 for _ in range(self.PROPERTY_COMPUTE_LAYER_SIZE)]
         self.CURRENT_FUNC_COMPUTE_LAYER = [0 for _ in range(self.FUNC_COMPUTE_LAYER_SIZE)]
+    
+    def ns_repr_list_to_func_input(self, ns_repr_list):
+        # might be slow
+        out_list = []
+        # This assumes that all types are tuples
+        idx = 0
+        for t in self.NS_REPR_TYPES:
+            # get argument length from tuple string (Tuple[int, int] -> 2)
+            # TODO: Could move this computation to initialization, s.t. its only done once
+            arg_len = len(str(t).split('[')[1][:-1].split(','))
+            out_list.append(tuple(ns_repr_list[idx:idx+arg_len]))
+            idx += arg_len
+        return out_list
 
     def get_feature_vector(self, inc_ns_repr_list):
         # evaluate a 2 layer computation graph for the feature vector:
@@ -440,7 +386,8 @@ class Focus():
         #       function_values
         # OUT   HSTACK(CONCAT(property_values, function_values))
         # Instead of having to compute the properties, we get them from OC_Atari directly
-        self.CURRENT_PROPERTY_COMPUTE_LAYER = inc_ns_repr_list
+
+        self.CURRENT_PROPERTY_COMPUTE_LAYER = self.ns_repr_list_to_func_input(inc_ns_repr_list)
 
         # calc function layer
         for i in range(self.FUNC_COMPUTE_LAYER_SIZE):
