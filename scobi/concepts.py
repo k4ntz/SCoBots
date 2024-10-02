@@ -2,12 +2,12 @@
 import math
 from typing import Tuple
 import numpy as np
-from scobi.utils.game_object import get_wrapper_class
+# from scobi.utils.game_object import get_wrapper_class
 from scobi.utils.colors import get_closest_color
 from scobi.utils.decorators import register
 COLOR_INT_MEMORY = {}
 EPS = np.finfo(np.float64).eps.item()
-GameObject = get_wrapper_class()
+# GameObject = get_wrapper_class()
 
 # None forwarding crucial for feature handling when objects are invisible
 # TODO: use a wrapper instead, pretty ugly atm
@@ -19,34 +19,35 @@ def init():
 ##########################
 # PROPERTIES TO REGISTER
 ##########################
-@register(type="P", name="POSITION", params= ["OBJECT"], desc="get the position for given object")
-def get_position(obj: GameObject) -> Tuple[int, int]:
-    if not obj:
-        return None, None
-    return tuple(obj.xy)
+# TODO: Can remove all Properties
+# @register(type="P", name="POSITION", params= ["OBJECT"], desc="get the position for given object")
+# def get_position(obj: GameObject) -> Tuple[int, int]:
+#     if not obj:
+#         return None, None
+#     return tuple(obj.xy)
 
 
-@register(type="P", name="POSITION_HISTORY", params= ["OBJECT"], desc="get the current and last position for given object")
-def get_position_history(obj: GameObject) -> Tuple[int, int, int, int]:
-    if not obj:
-        return None, None, None, None
-    coords = obj.h_coords
-    return tuple(coords[0] + coords[1])
+# @register(type="P", name="POSITION_HISTORY", params= ["OBJECT"], desc="get the current and last position for given object")
+# def get_position_history(obj: GameObject) -> Tuple[int, int, int, int]:
+#     if not obj:
+#         return None, None, None, None
+#     coords = obj.h_coords
+#     return tuple(coords[0] + coords[1])
 
 
-@register(type="P", name="ORIENTATION", params= ["OBJECT"], desc="get the orientation for given object")
-def get_orientation(obj: GameObject) -> Tuple[int]:
-    if not obj:
-        return None,
-    orientation = obj.orientation
-    return orientation,
+# @register(type="P", name="ORIENTATION", params= ["OBJECT"], desc="get the orientation for given object")
+# def get_orientation(obj: GameObject) -> Tuple[int]:
+#     if not obj:
+#         return None,
+#     orientation = obj.orientation
+#     return orientation,
 
 
-@register(type="P", name="RGB", params= ["OBJECT"], desc="get the rgb value for given object")
-def get_rgb(obj: GameObject) -> Tuple[int, int, int]:
-    if not obj:
-        return None, None, None
-    return tuple(obj.rgb)
+# @register(type="P", name="RGB", params= ["OBJECT"], desc="get the rgb value for given object")
+# def get_rgb(obj: GameObject) -> Tuple[int, int, int]:
+#     if not obj:
+#         return None, None, None
+#     return tuple(obj.rgb)
 
 
 ##########################
