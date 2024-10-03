@@ -114,6 +114,14 @@ def _update_yaml(location, steps, finished):
 
     print(f"YAML file updated with training duration at {location}")
 
+def _get_directory(path, exp_name):
+    version_counter = 1
+    while True:
+        versioned_dir = path / f"{exp_name}-version{version_counter}"
+        if not versioned_dir.exists():
+            return versioned_dir
+        version_counter += 1
+
 def main():
     parser = argparse.ArgumentParser()
     exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgbv4, rgbv5, reward = utils.parser.parser.parse_train(parser)
@@ -127,8 +135,8 @@ def main():
     eval_frequency = 500_000
     rtpt_frequency = 100_000
 
-    log_path = Path("baselines_logs", exp_name)
-    ckpt_path = Path("checkpoints", exp_name)
+    log_path = _get_directory(Path("baselines_logs"), exp_name)
+    ckpt_path = _get_directory(Path("checkpoints"), exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
 

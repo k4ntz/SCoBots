@@ -1,4 +1,6 @@
 import os
+import re
+from pathlib import Path
 
 
 def parse_train(parser):
@@ -60,8 +62,6 @@ def parse_train(parser):
         settings_str = "-rgb-v5"
 
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
-    if not rgb_exp:
-        exp_name += "-abl"
     if noisy:
         exp_name += "-noisy"
 
@@ -79,8 +79,9 @@ def parse_render(parser):
                         help="reward mode, env if omitted")
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"],
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
-    parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
-    parser.add_argument("--rgb", action="store_true", help="rgb observation space")
+    parser.add_argument("-x", "--exclude_properties",  action="store_true", help="exclude properties from feature vector")
+    parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
+    parser.add_argument("--rgb", required= False, choices=["rgbv4", "rgbv5"], help="rgb observation space")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -111,11 +112,16 @@ def parse_render(parser):
         hide_properties = True
 
     if opts.rgb:
-        settings_str = "-rgb"
+        settings_str = "-" + opts.rgb
         variant= "rgb"
-    exp_name = opts.game + "_seed" + str(opts.seed) + settings_str + "-v2"
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, variant
+    if opts.version:
+        version = opts.version
+    else:
+        version = 0
+    exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
+
+    return exp_name, env_str, hide_properties, pruned_ff_name, variant, version
 
 
 def parse_eval(parser):
@@ -130,7 +136,8 @@ def parse_eval(parser):
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"],
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
-    parser.add_argument("--rgb", action="store_true", help="rgb observation space")
+    parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
+    parser.add_argument("--rgb", required= False, choices=["rgbv4", "rgbv5"], help="rgb observation space")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -162,8 +169,31 @@ def parse_eval(parser):
 
     #override setting str if rgb
     if opts.rgb:
-        settings_str = "-rgb"
-        "rgb"
-    exp_name = opts.game + "_seed" + str(opts. seed) + settings_str + "-v2"
+        settings_str = "-" + opts.rgb
+        variant= "rgb"
+    exp_name = opts.game + "_seed" + str(opts. seed) + settings_str
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, opts.times, variant
+    if opts.version:
+        version = opts.version
+    else:
+        version = 0
+
+    return exp_name, env_str, hide_properties, pruned_ff_name, opts.times, variant, version
+
+
+def get_highest_version(agent):
+    version = "-version"
+    full_path = Path(agent)
+    exp_name = full_path.name  # Extract the experiment name (e.g., 'something')
+    base_path = full_path.parent  # Get the parent directory (e.g., 'pathtosomething')
+
+    highest_version = 1
+    version_pattern = re.compile(rf"{exp_name}-version(\d+)")  # Regex to match 'exp_name-versionX'
+
+    for directory in base_path.iterdir():
+        if directory.is_dir():  # Ensure it's a directory
+            match = version_pattern.match(directory.name)
+            if match:
+                version_num = int(match.group(1))  # Extract the version number
+                highest_version = max(highest_version, version_num)
+    return version + str(highest_version)

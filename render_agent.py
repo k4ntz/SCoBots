@@ -19,7 +19,12 @@ def flist(l):
 def main():
     parser = argparse.ArgumentParser()
 
-    exp_name, env_str, hide_properties, pruned_ff_name, variant = utils.parser.parser.parse_render(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, variant, version = utils.parser.parser.parse_render(parser)
+
+    if version == 0:
+        version = utils.parser.parser.get_highest_version(exp_name)
+
+    exp_name += version
 
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
