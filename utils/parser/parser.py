@@ -56,10 +56,10 @@ def parse_train(parser):
     #override some settings if rgb
     rgb_exp = opts.rgbv4 or opts.rgbv5
     if opts.rgbv4:
-        settings_str = "-rgb-v4"
+        settings_str = "-rgbv4"
         env_str = opts.game + "NoFrameskip-v4"
     if opts.rgbv5:
-        settings_str = "-rgb-v5"
+        settings_str = "-rgbv5"
 
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
     if noisy:

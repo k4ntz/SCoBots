@@ -17,7 +17,7 @@ from scobi import Environment
 def flist(l):
     return ["%.2f" % e for e in l]
 
-def save_evals(rewards, mean_rewards, steps, mean_steps, csv_filename):
+def _save_evals(rewards, mean_rewards, steps, mean_steps, csv_filename):
 
     file_exists = os.path.isfile(csv_filename)
 
@@ -34,13 +34,15 @@ def save_evals(rewards, mean_rewards, steps, mean_steps, csv_filename):
 
     print(f"Data saved to {csv_filename}")
 
-
-
 def main():
     parser = argparse.ArgumentParser()
 
-    exp_name, env_str, hide_properties, pruned_ff_name, time, variant = utils.parser.parser.parse_eval(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, time, variant, version = utils.parser.parser.parse_eval(parser)
 
+    if version == 0:
+        version = utils.parser.parser.get_highest_version(exp_name)
+
+    exp_name += "-version" + str(version)
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("checkpoints", exp_name, checkpoint_str)
@@ -88,7 +90,7 @@ def main():
             obs = env.reset()
         if current_episode == time:
             print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
-            save_evals(rewards, np.mean(rewards), np.mean(steps), steps, "checkpoints/" + exp_name + "/" + "evaluation")
+            _save_evals(rewards, np.mean(rewards), np.mean(steps), steps, "checkpoints/" + exp_name + "/" + "evaluation")
             break
 
 if __name__ == '__main__':
