@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Define Hugging Face repository and folder paths
+REPO_ID="username/model_name"
+FOLDER_PATH="path/to/folder_on_hf"  # Folder on Hugging Face that contains the agents
+DESTINATION_PATH="resources/checkpoints"  # Local folder where agents will be stored
+
+# Use Python to download the folder from Hugging Face into the specified destination
+python - << EOF
+from huggingface_hub import snapshot_download
+import os
+import shutil
+
+snapshot_download(repo_id="$REPO_ID", local_dir="$DESTINATION_PATH", allow_patterns=["$FOLDER_PATH/*"])
+
+EOF
+
+echo "Download completed and saved to $DESTINATION_PATH"

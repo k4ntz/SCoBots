@@ -22,7 +22,7 @@ The evaluate.py file evaluates an already trained agent, displaying the results 
 
 The file is executable like described in the following with these flags:
 ```bash
-python eval.py -g Game -s Seed -t Times -r Reward Model -p Prune -x Excluding Properties --rgb RGB Observation Space
+python eval.py -g Game -s Seed -t Times -r Reward Model -p Prune -v Version Number -x Excluding Properties --rgb RGB Observation Space
 ```
 The first three flags are required as input.
 
@@ -32,15 +32,15 @@ Running the file will open and display the game played as a gif.
 
 The file is executable like described in the following with these flags:
 ```bash
-python render_agent.py -g Game -s Seed -t Times -r Reward Model -p Prune -x Excluding Properties --rgb RGB Observation Space
+python render_agent.py -g Game -s Seed -t Times -r Reward Model -p Prune -v Version Number -x Excluding Properties --rgb RGB Observation Space
 ```
 The first three flags are required as input.
 
 ## Usage Of Checkpoints And Examples
 Checkpoints are saved under ```resources/checkpoints```.
 Each folder states in its name explicitly the specifications given for the training.
-So e.g. the folder ```Pong_seed0_reward-human``` denotes that the trained agent was trained with a ```seed``` of 0, its reward model is the ```human``` option.
-So a usage of ```eval.py``` with this agent would look like ```python eval.py -g Pong -s 0 -r human``` or ```python render_agent.py -g Pong -s 0 -r human```
+So e.g. the folder ```Pong_seed0_reward-human-version2``` denotes that the trained agent was trained with a ```seed``` of 0, its reward model is the ```human``` option, and that it is the second agent trained with these values.
+So a usage with this agent would look like ```python eval.py -g Pong -s 0 -r human``` or ```python render_agent.py -g Pong -s 0 -r human```. This automatically picks the respectively latest trained agent named according to the values. For using a specific version the version flag has to be added.
 
 With the checkpoint being stored accordingly named in the checkpoints folder, it will automaticlly be loaded and there is no need to provide an explicit storage path.
 
