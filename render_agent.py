@@ -28,8 +28,8 @@ def main():
 
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
-    model_path = Path("checkpoints", exp_name, checkpoint_str)
-    vecnorm_path = Path("checkpoints",  exp_name, vecnorm_str)
+    model_path = Path("resources/checkpoints", exp_name, checkpoint_str)
+    vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
     EVAL_ENV_SEED = 84
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)

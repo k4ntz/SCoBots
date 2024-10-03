@@ -13,7 +13,7 @@ def parse_train(parser):
     parser.add_argument("-r", "--reward", type=str, required=False, choices=["env", "human", "mixed"],
                         help="reward mode, env if omitted")
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"],
-                        help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
+                        help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("--rgbv4", action="store_true", help="rgb observation space")
     parser.add_argument("--rgbv5", action="store_true", help="rgb observation space")
@@ -45,7 +45,7 @@ def parse_train(parser):
         settings_str += "_pruned-default"
     if opts.prune == "external":
         settings_str += "_pruned-external"
-        focus_dir = "baselines_focusfiles"
+        focus_dir = "resources/focusfiles"
     if opts.exclude_properties:
         settings_str += '_excludeproperties'
         hide_properties = True
@@ -78,7 +78,7 @@ def parse_render(parser):
     parser.add_argument("-r", "--reward", type=str, required=False, choices=["env", "human", "mixed"],
                         help="reward mode, env if omitted")
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"],
-                        help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
+                        help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties",  action="store_true", help="exclude properties from feature vector")
     parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
     parser.add_argument("--rgb", required= False, choices=["rgbv4", "rgbv5"], help="rgb observation space")
@@ -106,7 +106,6 @@ def parse_render(parser):
         settings_str += "_pruned-default"
     if opts.prune == "external":
         settings_str += "_pruned-external"
-        focus_dir = "baselines_focusfiles"
     if opts.exclude_properties:
         settings_str += '_excludeproperties'
         hide_properties = True
@@ -134,7 +133,7 @@ def parse_eval(parser):
     parser.add_argument("-r", "--reward", type=str, required=False, choices=["env", "human", "mixed"],
                         help="reward mode, env if omitted")
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"],
-                        help="use pruned focusfile (from default 'focusfiles' dir or external 'baselines_focusfiles' dir. for custom pruning and or docker mount)")
+                        help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
     parser.add_argument("--rgb", required= False, choices=["rgbv4", "rgbv5"], help="rgb observation space")
@@ -162,7 +161,7 @@ def parse_eval(parser):
         settings_str += "_pruned-default"
     if opts.prune == "external":
         settings_str += "_pruned-external"
-        "baselines_focusfiles"
+        "resources/focusfiles"
     if opts.exclude_properties:
         settings_str += '_excludeproperties'
         hide_properties = True

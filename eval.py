@@ -17,9 +17,11 @@ from scobi import Environment
 def flist(l):
     return ["%.2f" % e for e in l]
 
-def _save_evals(rewards, mean_rewards, steps, mean_steps, csv_filename):
+def _save_evals(rewards, mean_rewards, mean_steps, csv_filename):
 
     file_exists = os.path.isfile(csv_filename)
+    lowest_reward = min(rewards)
+    highest_reward = max(rewards)
 
     # Write to CSV file
     with open(csv_filename, mode='a', newline='') as file:
@@ -27,10 +29,10 @@ def _save_evals(rewards, mean_rewards, steps, mean_steps, csv_filename):
 
         # Write header if the file is new
         if not file_exists:
-            writer.writerow(['rewards', 'mean_rewards', 'steps', 'mean_steps'])
+            writer.writerow(['lowest reward', 'highest rewards', 'mean reward', 'mean_steps'])
 
         # Write the current data
-        writer.writerow([rewards, mean_rewards, steps, mean_steps])
+        writer.writerow([lowest_reward, highest_reward, mean_rewards, mean_steps])
 
     print(f"Data saved to {csv_filename}")
 
@@ -45,8 +47,8 @@ def main():
     exp_name += "-version" + str(version)
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
-    model_path = Path("checkpoints", exp_name, checkpoint_str)
-    vecnorm_path = Path("checkpoints",  exp_name, vecnorm_str)
+    model_path = Path("resources/checkpoints", exp_name, checkpoint_str)
+    vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
     EVAL_ENV_SEED = 84
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
@@ -90,7 +92,7 @@ def main():
             obs = env.reset()
         if current_episode == time:
             print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
-            _save_evals(rewards, np.mean(rewards), np.mean(steps), steps, "checkpoints/" + exp_name + "/" + "evaluation")
+            _save_evals(rewards, np.mean(rewards), np.mean(steps), "resources/checkpoints/" + exp_name + "/" + "evaluation")
             break
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 gymnasium[atari, accept-rom-license] == 0.28.1
+stable_baselines3[extra]
 rtpt
 termcolor
 torch

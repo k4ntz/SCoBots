@@ -1,16 +1,15 @@
-from stable_baselines3 import PPO
-from sklearn.tree import DecisionTreeClassifier
-import numpy as np
-from tqdm import tqdm
-from joblib import dump
-from statistics import mean
+import time
 from copy import deepcopy
 from operator import itemgetter
-from gymnasium import Env
 from pathlib import Path
-import os
+
+import numpy as np
 import torch
-import time
+from gymnasium import Env
+from joblib import dump
+from sklearn.tree import DecisionTreeClassifier
+from stable_baselines3 import PPO
+from tqdm import tqdm
 
 # from viperoc repository
 cuda = torch.device("cuda")
@@ -18,14 +17,14 @@ class LogProbQ:
     def __init__(self, stochastic_pol: PPO, env: Env):
         self.pol = stochastic_pol
         self.env = env
-    
+
     def q(self, s):
         s = torch.Tensor(s).to(cuda)
         s_repeat = s.repeat(self.env.action_space.n,1)
         with torch.no_grad():
             _, s_a_log_probs, _ = self.pol.policy.evaluate_actions(s_repeat, torch.arange(self.env.action_space.n).reshape(-1, 1).to(cuda))
         return s_a_log_probs
-    
+
     def get_disagreement_cost(self, s):
         log_prob = self.q(s)
         return log_prob.mean() - log_prob.min()
@@ -88,7 +87,7 @@ class DecisionTreeExtractor: #Dagger
         self.list_eval.append(eval_dt)
         DS = np.concatenate((DS, S_dt))
         DA = np.concatenate((DA, self.model.predict(S_dt)[0]))
-        
+
         for _ in range(nb_iter - 1):
             acc_dt = self.fit_DT(DS, DA)
             S_dt, eval_dt = self.collect_data_dt()
@@ -113,7 +112,7 @@ class DecisionTreeExtractor: #Dagger
         self.best_dt = self.list_dt[index]
         best_fpath = "Tree-"+str(element) + "_best.viper"
         dump(self.best_dt, out_path / best_fpath)
-    
+
 
 class VIPER(DecisionTreeExtractor):
     def __init__(self, model: PPO, dtpolicy: DecisionTreeClassifier, env: Env, rtpt, data_per_iter: int=30_000):
@@ -125,7 +124,7 @@ class VIPER(DecisionTreeExtractor):
         self.dt.fit(S, A, weights)
         acc = self.dt.score(S, A, weights)
         return acc
-    
+
     def imitate(self, nb_iter: int):
         start_time = time.time()
         self.list_acc, self.list_eval, self.list_dt, self.times =[], [], [], []
@@ -142,7 +141,7 @@ class VIPER(DecisionTreeExtractor):
         DS = np.concatenate((DS, S_dt))
         DA = np.concatenate((DA, self.model.predict(S_dt)[0]))
         weights += [self.Q.get_disagreement_cost(s).item() for s in S_dt]
-        
+
         for _ in range(nb_iter - 1):
             self.rtpt.step()
             acc_dt = self.fit_DT(DS, DA, weights)

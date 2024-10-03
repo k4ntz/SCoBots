@@ -135,8 +135,8 @@ def main():
     eval_frequency = 500_000
     rtpt_frequency = 100_000
 
-    log_path = _get_directory(Path("baselines_logs"), exp_name)
-    ckpt_path = _get_directory(Path("checkpoints"), exp_name)
+    log_path = _get_directory(Path("resources/training_logs"), exp_name)
+    ckpt_path = _get_directory(Path("resources/checkpoints"), exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
 

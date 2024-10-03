@@ -1,0 +1,7652 @@
+ENVIRONMENT: Asterix-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Reward1
+  - Reward2
+  - Reward3
+  - Reward4
+  - Reward5
+  - Reward6
+  - Reward7
+  - Reward8
+  - Enemy1
+  - Enemy2
+  - Enemy3
+  - Enemy4
+  - Enemy5
+  - Enemy6
+  - Enemy7
+  - Enemy8
+  - Consumable1
+  - Consumable2
+  - Consumable3
+  - Consumable4
+  - Consumable5
+  - Consumable6
+  - Consumable7
+  - Consumable8
+  actions:
+  - NOOP
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Reward1
+  - Reward2
+  - Reward3
+  - Reward4
+  - Reward5
+  - Reward6
+  - Reward7
+  - Reward8
+  - Enemy1
+  - Enemy2
+  - Enemy3
+  - Enemy4
+  - Enemy5
+  - Enemy6
+  - Enemy7
+  - Enemy8
+  - Consumable1
+  - Consumable2
+  - Consumable3
+  - Consumable4
+  - Consumable5
+  - Consumable6
+  - Consumable7
+  - Consumable8
+  actions:
+  - NOOP
+  - UP
+  - RIGHT
+  - LEFT
+  - DOWN
+  - UPRIGHT
+  - UPLEFT
+  - DOWNRIGHT
+  - DOWNLEFT
+  properties:
+  - POSITION: Player1
+  - POSITION: Reward1
+  - POSITION: Reward2
+  - POSITION: Reward3
+  - POSITION: Reward4
+  - POSITION: Reward5
+  - POSITION: Reward6
+  - POSITION: Reward7
+  - POSITION: Reward8
+  - POSITION: Enemy1
+  - POSITION: Enemy2
+  - POSITION: Enemy3
+  - POSITION: Enemy4
+  - POSITION: Enemy5
+  - POSITION: Enemy6
+  - POSITION: Enemy7
+  - POSITION: Enemy8
+  - POSITION: Consumable1
+  - POSITION: Consumable2
+  - POSITION: Consumable3
+  - POSITION: Consumable4
+  - POSITION: Consumable5
+  - POSITION: Consumable6
+  - POSITION: Consumable7
+  - POSITION: Consumable8
+  - POSITION_HISTORY: Player1
+  - POSITION_HISTORY: Reward1
+  - POSITION_HISTORY: Reward2
+  - POSITION_HISTORY: Reward3
+  - POSITION_HISTORY: Reward4
+  - POSITION_HISTORY: Reward5
+  - POSITION_HISTORY: Reward6
+  - POSITION_HISTORY: Reward7
+  - POSITION_HISTORY: Reward8
+  - POSITION_HISTORY: Enemy1
+  - POSITION_HISTORY: Enemy2
+  - POSITION_HISTORY: Enemy3
+  - POSITION_HISTORY: Enemy4
+  - POSITION_HISTORY: Enemy5
+  - POSITION_HISTORY: Enemy6
+  - POSITION_HISTORY: Enemy7
+  - POSITION_HISTORY: Enemy8
+  - POSITION_HISTORY: Consumable1
+  - POSITION_HISTORY: Consumable2
+  - POSITION_HISTORY: Consumable3
+  - POSITION_HISTORY: Consumable4
+  - POSITION_HISTORY: Consumable5
+  - POSITION_HISTORY: Consumable6
+  - POSITION_HISTORY: Consumable7
+  - POSITION_HISTORY: Consumable8
+  - ORIENTATION: Player1
+  - ORIENTATION: Reward1
+  - ORIENTATION: Reward2
+  - ORIENTATION: Reward3
+  - ORIENTATION: Reward4
+  - ORIENTATION: Reward5
+  - ORIENTATION: Reward6
+  - ORIENTATION: Reward7
+  - ORIENTATION: Reward8
+  - ORIENTATION: Enemy1
+  - ORIENTATION: Enemy2
+  - ORIENTATION: Enemy3
+  - ORIENTATION: Enemy4
+  - ORIENTATION: Enemy5
+  - ORIENTATION: Enemy6
+  - ORIENTATION: Enemy7
+  - ORIENTATION: Enemy8
+  - ORIENTATION: Consumable1
+  - ORIENTATION: Consumable2
+  - ORIENTATION: Consumable3
+  - ORIENTATION: Consumable4
+  - ORIENTATION: Consumable5
+  - ORIENTATION: Consumable6
+  - ORIENTATION: Consumable7
+  - ORIENTATION: Consumable8
+  - RGB: Player1
+  - RGB: Reward1
+  - RGB: Reward2
+  - RGB: Reward3
+  - RGB: Reward4
+  - RGB: Reward5
+  - RGB: Reward6
+  - RGB: Reward7
+  - RGB: Reward8
+  - RGB: Enemy1
+  - RGB: Enemy2
+  - RGB: Enemy3
+  - RGB: Enemy4
+  - RGB: Enemy5
+  - RGB: Enemy6
+  - RGB: Enemy7
+  - RGB: Enemy8
+  - RGB: Consumable1
+  - RGB: Consumable2
+  - RGB: Consumable3
+  - RGB: Consumable4
+  - RGB: Consumable5
+  - RGB: Consumable6
+  - RGB: Consumable7
+  - RGB: Consumable8
+  functions:
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward1
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward2
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward3
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward4
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward5
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward6
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward7
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Reward8
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy1
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy2
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy3
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy4
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy5
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy6
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy7
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Enemy8
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable1
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable2
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable3
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable4
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable5
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable6
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable7
+    - POSITION_HISTORY: Consumable8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Reward1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Reward2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Reward3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Reward4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Reward5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Reward6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Reward7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Reward8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Enemy1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Enemy2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Enemy3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Enemy4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Enemy5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Enemy6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Enemy7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Enemy8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Consumable1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Consumable2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Consumable3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Consumable4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Consumable5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Consumable6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Consumable7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Consumable8
+    - POSITION_HISTORY: Consumable8
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable7
+  - DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable8
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward1
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward2
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward3
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward4
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward5
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward6
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward7
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward8
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy1
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy2
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy3
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy4
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy5
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy6
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy7
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy8
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable1
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable2
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable3
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable4
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable5
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable6
+  - DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward1
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward2
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward3
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward4
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward5
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward6
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward7
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Reward8
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy1
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy2
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy3
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy4
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy5
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy6
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy7
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Enemy8
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable1
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable2
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable3
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable4
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable5
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable6
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable7
+    - POSITION: Consumable8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Reward8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Enemy8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Consumable8
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Reward1
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Reward2
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Reward3
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Reward4
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Reward5
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Reward6
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Reward7
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Reward8
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Enemy1
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Enemy2
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Enemy3
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Enemy4
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Enemy5
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Enemy6
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Enemy7
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Enemy8
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Consumable1
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Consumable2
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Consumable3
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Consumable4
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Consumable5
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Consumable7
+  - CENTER:
+    - POSITION: Consumable6
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Consumable7
+    - POSITION: Consumable8
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Reward1
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Reward2
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Reward3
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Reward4
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Reward5
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Reward6
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Reward7
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Reward8
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Enemy1
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Enemy2
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Enemy3
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Enemy4
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Enemy5
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Enemy6
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Enemy7
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Enemy8
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Consumable1
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Consumable2
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Consumable3
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Consumable4
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Consumable5
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Consumable6
+  - CENTER:
+    - POSITION: Consumable8
+    - POSITION: Consumable7
+  - VELOCITY:
+    - POSITION_HISTORY: Player1
+  - VELOCITY:
+    - POSITION_HISTORY: Reward1
+  - VELOCITY:
+    - POSITION_HISTORY: Reward2
+  - VELOCITY:
+    - POSITION_HISTORY: Reward3
+  - VELOCITY:
+    - POSITION_HISTORY: Reward4
+  - VELOCITY:
+    - POSITION_HISTORY: Reward5
+  - VELOCITY:
+    - POSITION_HISTORY: Reward6
+  - VELOCITY:
+    - POSITION_HISTORY: Reward7
+  - VELOCITY:
+    - POSITION_HISTORY: Reward8
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy1
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy2
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy3
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy4
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy5
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy6
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy7
+  - VELOCITY:
+    - POSITION_HISTORY: Enemy8
+  - VELOCITY:
+    - POSITION_HISTORY: Consumable1
+  - VELOCITY:
+    - POSITION_HISTORY: Consumable2
+  - VELOCITY:
+    - POSITION_HISTORY: Consumable3
+  - VELOCITY:
+    - POSITION_HISTORY: Consumable4
+  - VELOCITY:
+    - POSITION_HISTORY: Consumable5
+  - VELOCITY:
+    - POSITION_HISTORY: Consumable6
+  - VELOCITY:
+    - POSITION_HISTORY: Consumable7
+  - VELOCITY:
+    - POSITION_HISTORY: Consumable8
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Player1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Reward1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Reward2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Reward3
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Reward4
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Reward5
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Reward6
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Reward7
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Reward8
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy3
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy4
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy5
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy6
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy7
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Enemy8
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Consumable1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Consumable2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Consumable3
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Consumable4
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Consumable5
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Consumable6
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Consumable7
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Consumable8
+  - COLOR:
+    - RGB: Player1
+  - COLOR:
+    - RGB: Reward1
+  - COLOR:
+    - RGB: Reward2
+  - COLOR:
+    - RGB: Reward3
+  - COLOR:
+    - RGB: Reward4
+  - COLOR:
+    - RGB: Reward5
+  - COLOR:
+    - RGB: Reward6
+  - COLOR:
+    - RGB: Reward7
+  - COLOR:
+    - RGB: Reward8
+  - COLOR:
+    - RGB: Enemy1
+  - COLOR:
+    - RGB: Enemy2
+  - COLOR:
+    - RGB: Enemy3
+  - COLOR:
+    - RGB: Enemy4
+  - COLOR:
+    - RGB: Enemy5
+  - COLOR:
+    - RGB: Enemy6
+  - COLOR:
+    - RGB: Enemy7
+  - COLOR:
+    - RGB: Enemy8
+  - COLOR:
+    - RGB: Consumable1
+  - COLOR:
+    - RGB: Consumable2
+  - COLOR:
+    - RGB: Consumable3
+  - COLOR:
+    - RGB: Consumable4
+  - COLOR:
+    - RGB: Consumable5
+  - COLOR:
+    - RGB: Consumable6
+  - COLOR:
+    - RGB: Consumable7
+  - COLOR:
+    - RGB: Consumable8
