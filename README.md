@@ -12,29 +12,29 @@ There are three python files which can be run directly. Each of them comes with 
 
 ### Training An Agent
 Execute the train.py file to train an agent for a specific game, with a specified amount of cores and a specified seed.
-The file is executable like described in the following with these flags:
+The following example demonstrates the usage:
 ```bash
-python train.py -g Game -s Seed -env Number Of Environments -r Reward Model -x Excluding Properties --rgbv4 RGBV4 Observation Space --rgbv5 RGBV5 Observation Space
+python train.py -g Pong -s 0 -env 8 -r env
 ```
-The first three flags are required as input.
+The first three flags are required as input. With the help option the other flags can be displayed.
 ### Evaluating An Agent
 The evaluate.py file evaluates an already trained agent, displaying the results afterwards and saving it in a dedicated file.
 
-The file is executable like described in the following with these flags:
+The following example demonstrates the usage of the previously trained agent:
 ```bash
-python eval.py -g Game -s Seed -t Times -r Reward Model -p Prune -v Version Number -x Excluding Properties --rgb RGB Observation Space
+python eval.py -g Pong -s 0 -t 10 -r env
 ```
-The first three flags are required as input.
+The first three flags are required as input. With the help option the other flags can be displayed.
 
 ### Watching A Trained Agent
 To visualize a trained agent playing a specified game the render_agent.py file can be executed.
 Running the file will open and display the game played as a gif.
 
-The file is executable like described in the following with these flags:
+The following example demonstrates the usage of the previously trained + evaluated agent:
 ```bash
-python render_agent.py -g Game -s Seed -t Times -r Reward Model -p Prune -v Version Number -x Excluding Properties --rgb RGB Observation Space
+python render_agent.py -g Pong -s 0 -r env
 ```
-The first three flags are required as input.
+The first three flags are required as input. With the help option the other flags can be displayed.
 
 ## Usage Of Checkpoints And Examples
 Checkpoints are saved under ```resources/checkpoints```.
