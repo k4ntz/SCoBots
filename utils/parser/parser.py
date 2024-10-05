@@ -23,7 +23,7 @@ def parse_train(parser):
     settings_str = ""
     pruned_ff_name = None
     hide_properties = False
-    focus_dir = "focusfiles"
+    focus_dir = "resources/focusfiles"
     noisy = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
 
 
@@ -161,7 +161,6 @@ def parse_eval(parser):
         settings_str += "_pruned-default"
     if opts.prune == "external":
         settings_str += "_pruned-external"
-        "resources/focusfiles"
     if opts.exclude_properties:
         settings_str += '_excludeproperties'
         hide_properties = True

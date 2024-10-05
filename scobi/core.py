@@ -12,7 +12,7 @@ from copy import deepcopy
 
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
+    def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
         self.seed = seed
@@ -40,7 +40,7 @@ class Environment(Env):
         self._obj_obs = None  # observation augmented with objects
         self._rel_obs = None  # observation augmented with relations
         self._top_features = []
-        
+
         self.original_obs = []
         self.original_reward = []
         self.ep_env_reward = None
@@ -52,13 +52,13 @@ class Environment(Env):
         elif reward == 1: # scobi only
             self._reward_composition_func = lambda a, b : a
         else: # env only
-            self._reward_composition_func = lambda a, b : b 
-        
+            self._reward_composition_func = lambda a, b : b
+
         if self.noisy_objects:
             self.logger.GeneralInfo("Using noisy object detection (default: std 3, detection error rate 5%)")
 
         self.reset()
-        self.step(0) # step once to set the feature vector size 
+        self.step(0) # step once to set the feature vector size
         self.observation_space = spaces.Box(low=-2**63, high=2**63 - 2, shape=(self.focus.OBSERVATION_SIZE,), dtype=np.float32)
         self.ale = self.oc_env._env.unwrapped.ale
         self.reset()
@@ -121,7 +121,7 @@ class Environment(Env):
         #if self.noisy_objects:
         #    for o in scobi_obj_list:
         #        o.add_noise(std=3, error_rate=0.05, random_state=self.randomstate)
-                
+
 
         # order
         for scobi_obj in scobi_obj_list:
@@ -150,7 +150,7 @@ class Environment(Env):
             out.append(scobi_obj)
 
         # returns full objectlist [closest_visible : farest_visible] + [closest_invisible : farest invisibe]
-        # if focus file specifies for example top3 closest objects (by selecting pin1, pin2, pin3), 
+        # if focus file specifies for example top3 closest objects (by selecting pin1, pin2, pin3),
         # the features vector is always calculated based on the 3 closest visible objects of category pin.
         # so if for example pin1 becomes invisible during training, the top3 list is filled accordingly with closest visible objects of category pin
         # if there is none to fill, pin2 and pin3 are the closest visible and all derived features for the third pin (which is invisble) are frozen

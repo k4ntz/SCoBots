@@ -20,7 +20,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     exp_name, env_str, hide_properties, pruned_ff_name, variant, version = utils.parser.parser.parse_render(parser)
-
+    
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
 

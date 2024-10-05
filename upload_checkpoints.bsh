@@ -4,6 +4,5 @@
 export HF_TOKEN="your_huggingface_token"
 export HF_REPO_ID="your_username/your_repo"
 
-# Call python script
 cd utils
 python3 upload_agent.py

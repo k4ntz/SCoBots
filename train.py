@@ -28,7 +28,7 @@ MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' ==
 class RtptCallback(BaseCallback):
     def __init__(self, exp_name, max_iter, verbose=0):
         super(RtptCallback, self).__init__(verbose)
-        self.rtpt = RTPT(name_initials="QD",
+        self.rtpt = RTPT(name_initials="AA",
             experiment_name=exp_name,
             max_iterations=max_iter)
         self.rtpt.start()
