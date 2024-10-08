@@ -53,7 +53,9 @@ def parse_train(parser):
     #override some settings if rgb
     rgb_exp = opts.rgb
     if opts.rgb:
-        settings_str = "-rgb"
+        settings_str += "_rgb"
+    else:
+        settings_str += "_oc"
 
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
     if noisy:
@@ -75,7 +77,7 @@ def parse_render(parser):
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties",  action="store_true", help="exclude properties from feature vector")
     parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
-    parser.add_argument("--rgb", required= False, choices=["rgb"], help="rgb observation space")
+    parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -105,8 +107,10 @@ def parse_render(parser):
         hide_properties = True
 
     if opts.rgb:
-        settings_str = "-" + opts.rgb
+        settings_str += "_rgb"
         variant= "rgb"
+    else:
+        settings_str += "_oc"
 
     if opts.version:
         version = opts.version
@@ -130,7 +134,7 @@ def parse_eval(parser):
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
-    parser.add_argument("--rgb", required= False, choices=["rgb"], help="rgb observation space")
+    parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -161,8 +165,11 @@ def parse_eval(parser):
 
     #override setting str if rgb
     if opts.rgb:
-        settings_str = "-" + opts.rgb
+        settings_str += "_rgb"
         variant= "rgb"
+    else:
+        settings_str += "_oc"
+
     exp_name = opts.game + "_seed" + str(opts. seed) + settings_str
 
     if opts.version:
