@@ -11,9 +11,10 @@ There are three python files which can be run directly. Each of them comes with 
 Execute the train.py file to train an agent for a specific game, with a specified amount of cores and a specified seed.
 The following example demonstrates the usage:
 ```bash
-python train.py -g Pong -s 0 -env 8 -r env
+python train.py -g Pong -s 0 -env 8 -r env --progress
 ```
 The first three flags are required as input. With the help option the other flags can be displayed.
+A progress bar is opted in via ```--progress```, which is optional.
 ### Evaluating An Agent
 The evaluate.py file evaluates an already trained agent, displaying the results afterwards and saving it in a dedicated file.
 
