@@ -19,6 +19,7 @@ from stable_baselines3.common.logger import configure
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize, VecTransposeImage
+from datetime import datetime
 
 import utils.parser.parser
 from scobi import Environment
@@ -92,10 +93,10 @@ def _create_yaml(flags, location):
         'reward': flags['reward'],
         'prune': flags['prune'],
         'exclude_properties': flags['exclude_properties'],
-        'rgbv4': flags['rgbv4'],
-        'rgbv5': flags['rgbv5'],
+        'rgbv5': flags['rgb'],
         'status': 'not finished',
-        'completed_steps': None
+        'completed_steps': None,
+        'creation date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
 
     with open(location, 'w') as yaml_file:
@@ -117,14 +118,14 @@ def _update_yaml(location, steps, finished):
 def _get_directory(path, exp_name):
     version_counter = 1
     while True:
-        versioned_dir = path / f"{exp_name}-version{version_counter}"
+        versioned_dir = path / f"{exp_name}-n{version_counter}"
         if not versioned_dir.exists():
             return versioned_dir
         version_counter += 1
 
 def main():
     parser = argparse.ArgumentParser()
-    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgbv4, rgbv5, reward = utils.parser.parser.parse_train(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward = utils.parser.parser.parse_train(parser)
 
     n_envs = envs
     n_eval_envs = 4
@@ -141,8 +142,7 @@ def main():
     ckpt_path.mkdir(parents=True, exist_ok=True)
 
     yaml_path = Path(ckpt_path, f"{exp_name}_training_status.yaml")
-    rgbv4_yaml = rgbv4 if rgbv4 else 'not used'
-    rgbv5_yaml = rgbv5 if rgbv5 else 'not used'
+    rgb_yaml = 'used' if rgb else 'not used'
     flags = {
         'game': game,
         'seed': seed,
@@ -150,8 +150,7 @@ def main():
         'reward': reward,
         'prune': pruned_ff_name,
         'exclude_properties': hide_properties,
-        'rgbv4': rgbv4_yaml,
-        'rgbv5': rgbv5_yaml
+        'rgb': rgb_yaml
     }
     _create_yaml(flags, yaml_path)
 
@@ -193,16 +192,7 @@ def main():
         return _init
 
     # preprocessing based on atari wrapper of the openai baseline implementation (https://github.com/openai/baselines/blob/master/baselines/ppo1/run_atari.py)
-    if rgbv4:
-        # NoopResetEnv:30, MaxAndSkipEnv=4, WarpFrame=84x84,grayscale, EpisodicLifeEnv, FireResetEnv, ClipRewardEnv, frame_stack=1, scale=False
-        train_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : True, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
-        train_env = make_vec_env(env_str, n_envs=n_envs, seed=seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
-        train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
-        # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
-        eval_wrapper_params = {"noop_max" : 30, "frame_skip" : 4, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False, "action_repeat_probability" : 0.0} # remaining values are part of AtariWrapper
-        eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
-        eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
-    elif rgbv5:
+    if rgb:
         # NoopResetEnv not required, because v5 has sticky actions, and also frame_skip=5, so also not required to set in wrapper (1 means no frameskip). no reward clipping, because scobots dont clip as well
         train_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : False} # remaining values are part of AtariWrapper
         train_env = make_vec_env(env_str, n_envs=n_envs, seed=seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
@@ -263,8 +253,6 @@ def main():
         adam_step_size = 0.00025
         clipping_eps = 0.1
         norm_adv = True
-        if rgbv4:
-            norm_adv = False # according to sb3, adv normalization not used in original ppo paper
         model = PPO(
             policy=policy_str,
             n_steps=128,

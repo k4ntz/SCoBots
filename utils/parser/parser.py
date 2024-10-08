@@ -15,8 +15,7 @@ def parse_train(parser):
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"],
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
-    parser.add_argument("--rgbv4", action="store_true", help="rgb observation space")
-    parser.add_argument("--rgbv5", action="store_true", help="rgb observation space")
+    parser.add_argument("--rgb", action="store_true", help="rgb observation space")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -50,23 +49,17 @@ def parse_train(parser):
         settings_str += '_excludeproperties'
         hide_properties = True
 
-    if opts.rgbv4 and opts.rgbv5:
-        print("please select only one rgb mode!")
-
     #override some settings if rgb
-    rgb_exp = opts.rgbv4 or opts.rgbv5
-    if opts.rgbv4:
-        settings_str = "-rgbv4"
-        env_str = opts.game + "NoFrameskip-v4"
-    if opts.rgbv5:
-        settings_str = "-rgbv5"
+    rgb_exp = opts.rgb
+    if opts.rgb:
+        settings_str = "-rgb"
 
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
     if noisy:
         exp_name += "-noisy"
 
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, opts.seed, opts.environments, opts.game, opts.rgbv4, opts.rgbv5, opts.reward
+    return exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, opts.seed, opts.environments, opts.game, opts.rgb, opts.reward
 
 
 
@@ -81,7 +74,7 @@ def parse_render(parser):
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties",  action="store_true", help="exclude properties from feature vector")
     parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
-    parser.add_argument("--rgb", required= False, choices=["rgbv4", "rgbv5"], help="rgb observation space")
+    parser.add_argument("--rgb", required= False, choices=["rgb"], help="rgb observation space")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -136,7 +129,7 @@ def parse_eval(parser):
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
-    parser.add_argument("--rgb", required= False, choices=["rgbv4", "rgbv5"], help="rgb observation space")
+    parser.add_argument("--rgb", required= False, choices=["rgb"], help="rgb observation space")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -179,8 +172,8 @@ def parse_eval(parser):
     return exp_name, env_str, hide_properties, pruned_ff_name, opts.times, variant, version
 
 
-def get_highest_version(agent):
-    version = "-version"
+def get_highest_version(agent): 
+    version = "-n"
     full_path = Path(agent)
     exp_name = full_path.name  # Extract the experiment name (e.g., 'something')
     base_path = full_path.parent  # Get the parent directory (e.g., 'pathtosomething')

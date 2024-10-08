@@ -10,8 +10,8 @@ import os
 
 def get_wrapper_class():
     if not "SCOBI_OBJ_EXTRACTOR" in os.environ:
-        print("Please set the env var 'SCOBI_OBJ_EXTRACTOR'. Supported values: 'OC_Atari', 'Noisy_OC_Atari'. Every other value will default to OC_Atari")
-        exit()
+        os.environ["SCOBI_OBJ_EXTRACTOR"] = "OC_ATARI"
+        print("Set env var 'SCOBI_OBJ_EXTRACTOR' as 'OC_Atari'. Other option is 'Noisy_OC_Atari' which can be set manually")
     if os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari":
         return NoisyOCAGameObject
     elif os.environ["SCOBI_OBJ_EXTRACTOR"] == "OC_Atari":

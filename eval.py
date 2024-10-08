@@ -44,7 +44,7 @@ def main():
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
 
-    exp_name += "-version" + str(version)
+    exp_name += str(version)
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("resources/checkpoints", exp_name, checkpoint_str)
