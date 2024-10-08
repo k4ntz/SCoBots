@@ -80,22 +80,6 @@ class SaveBestModelCallback(BaseCallback):
             self.model.get_vec_normalize_env().save(self.vec_path_name)
         self.model.save(os.path.join(self.save_path, "best_model"))
 
-class ProgressBarCallback(BaseCallback):
-    def __init__(self, total_timesteps):
-        super().__init__()
-        self.total_timesteps = total_timesteps
-        self.progress_bar = None
-
-    def _on_training_start(self):
-        self.progress_bar = tqdm(total=self.total_timesteps, desc="Training Progress")
-
-    def _on_step(self) -> bool:
-        self.progress_bar.update(1)
-        return True
-
-    def _on_training_end(self):
-        self.progress_bar.close()
-
 def linear_schedule(initial_value: float) -> Callable[[float], float]:
     def func(progress_remaining: float) -> float:
         return progress_remaining * initial_value
@@ -141,7 +125,7 @@ def _get_directory(path, exp_name):
 
 def main():
     parser = argparse.ArgumentParser()
-    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward = utils.parser.parser.parse_train(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, pr_bar = utils.parser.parser.parse_train(parser)
 
     n_envs = envs
     n_eval_envs = 4
@@ -254,10 +238,8 @@ def main():
         n_steps=rtpt_frequency,
         callback=rtpt_callback)
 
-    progress_bar_callback = ProgressBarCallback(total_timesteps=training_timestamps)
-
     tb_callback = TensorboardCallback(n_envs=n_envs)
-    cbl = [checkpoint_callback, eval_callback, n_callback, tb_callback, progress_bar_callback]
+    cbl = [checkpoint_callback, eval_callback, n_callback, tb_callback]
     if rgb_exp: #remove tb callback if rgb
         cbl = cbl[:-1]
     cb_list = CallbackList(cbl)
@@ -313,7 +295,7 @@ def main():
     print(f"Experiment name: {exp_name}")
     print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")  
 
-    model.learn(total_timesteps=training_timestamps, callback=cb_list)
+    model.learn(total_timesteps=training_timestamps, callback=cb_list, progress_bar=pr_bar)
 
     _update_yaml(yaml_path, model.num_timesteps, True)
 

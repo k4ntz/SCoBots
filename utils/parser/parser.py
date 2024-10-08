@@ -16,6 +16,7 @@ def parse_train(parser):
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("--rgb", action="store_true", help="rgb observation space")
+    parser.add_argument("--progress", action="store_true", help="display a progress bar of the training process")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -59,7 +60,7 @@ def parse_train(parser):
         exp_name += "-noisy"
 
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, opts.seed, opts.environments, opts.game, opts.rgb, opts.reward
+    return exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, opts.seed, opts.environments, opts.game, opts.rgb, opts.reward, opts.progress
 
 
 
