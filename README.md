@@ -6,9 +6,6 @@ Without agents SCoBots are not usable, so you can either download some pretraine
 
 ## Usage
 There are three python files which can be run directly. Each of them comes with a ```-h``` help flag.
-1. train.py
-2. eval.py
-3. render_agent.py
 
 ### Training An Agent
 Execute the train.py file to train an agent for a specific game, with a specified amount of cores and a specified seed.
