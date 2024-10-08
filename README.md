@@ -1,6 +1,6 @@
 # Successive Concepet Bottleneck Interface SCoBot
 ## Requirements
-Scobots requires OCAtari and the local var ```'SCOBI_OBJ_EXTRACTOR'``` set as either ```OC_Atari``` or ```Noisy_OC_Atari``` as well as every dependency listed in the ```requirements.txt```.
+Scobots requires OCAtari and the local var ```'SCOBI_OBJ_EXTRACTOR'``` set as either ```OC_Atari``` or ```Noisy_OC_Atari```. If not set it will automatically resort to ```OC_Atari```.
 
 Without agents SCoBots are not usable, so you can either download some pretrained agents from huggingface via the ```download_agents.sh``` script, or train one yourself, as explained in the usage guide.
 
@@ -39,9 +39,12 @@ The first three flags are required as input. With the help option the other flag
 ## Usage Of Checkpoints And Examples
 Checkpoints are saved under ```resources/checkpoints```.
 Each folder states in its name explicitly the specifications given for the training.
-So e.g. the folder ```Pong_seed0_reward-human-version2``` denotes that the trained agent was trained with a ```seed``` of 0, its reward model is the ```human``` option, and that it is the second agent trained with these values.
+So e.g. the folder ```Pong_seed0_reward-human_oc-n2``` denotes that the trained agent was trained with a ```seed``` of 0, its reward model is the ```human``` option, it is an ```object centered``` agent,  and that it is the second agent trained with these values.
 So a usage with this agent would look like ```python eval.py -g Pong -s 0 -r human``` or ```python render_agent.py -g Pong -s 0 -r human```. This automatically picks the respectively latest trained agent named according to the values. For using a specific version the version flag has to be added.
 
 With the checkpoint being stored accordingly named in the checkpoints folder, it will automaticlly be loaded and there is no need to provide an explicit storage path.
 
-Furthermore during the training process every 10th epoch will be saved via pickle to ensure less frustrating training process in regards of potential crashes. These are saved separately in a sub-folder named ```training_checkpoints``` next to the ```best_model.zip``` and ```best_vecnormalize.pkl``` which are saved after a complete successful training process in. 
+
+Unless explictily stated via ```--rgb```, it will always be automatically resorted to object centric.
+
+Furthermore during the training process regularly checkpoints will be made and saved. These are saved separately in a sub-folder named ```training_checkpoints``` next to the ```best_model.zip``` and ```best_vecnormalize.pkl``` which are saved after a complete successful training process in. 
