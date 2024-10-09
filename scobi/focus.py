@@ -336,7 +336,30 @@ class Focus():
         # 1     FUNC_COMPUTE_LAYER
         parsed_fv_index = 0
 
+        for ns_repr_type in self.NS_REPR_TYPES:
+            arg_len = len(str(ns_repr_type).split('[')[1][:-1].split(','))
+            for _ in range(arg_len):
+                self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+            parsed_fv_index += 1
+
         #TODO: ADD NS_REPR to FEATURE_VECTOR_BACKMAP
+        # for p in self.PARSED_PROPERTIES:
+        #     property_name = p[0]
+        #     object_name = p[1]
+        #     prop_name_obj_name_pairs.append((property_name, object_name))
+        #     prop_func = PROPERTIES[property_name]["object"]
+        #     return_len = len(PROPERTIES[property_name]["returns"][0].__args__)
+        #     for _ in range(return_len):
+        #         self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+        #     parsed_fv_index += 1for p in self.PARSED_PROPERTIES:
+        #     property_name = p[0]
+        #     object_name = p[1]
+        #     prop_name_obj_name_pairs.append((property_name, object_name))
+        #     prop_func = PROPERTIES[property_name]["object"]
+        #     return_len = len(PROPERTIES[property_name]["returns"][0].__args__)
+        #     for _ in range(return_len):
+        #         self.FEATURE_VECTOR_BACKMAP.append(parsed_fv_index)
+        #     parsed_fv_index += 1
 
         for f in self.PARSED_FUNCTIONS:
             func_name = f[0]
@@ -475,7 +498,8 @@ class Focus():
         return np.asarray(out, dtype=np.float32), reward
     
     def get_feature_vector_description(self):
-        fv = self.PARSED_PROPERTIES + self.PARSED_FUNCTIONS
+        # fv = self.PARSED_PROPERTIES + self.PARSED_FUNCTIONS
+        fv = self.NS_REPR_LIST + self.PARSED_FUNCTIONS
         return (fv, np.array(self.FEATURE_VECTOR_BACKMAP))
     
     def get_current_freeze_mask(self):
