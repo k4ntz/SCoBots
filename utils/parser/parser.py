@@ -184,15 +184,17 @@ def get_highest_version(agent):
     version = "-n"
     full_path = Path(agent)
     exp_name = full_path.name  # Extract the experiment name (e.g., 'something')
-    base_path = full_path.parent  # Get the parent directory (e.g., 'pathtosomething')
 
     highest_version = 1
-    version_pattern = re.compile(rf"{exp_name}-version(\d+)")  # Regex to match 'exp_name-versionX'
+    version_pattern = re.compile(rf"{exp_name}-n(\d+)")  # Regex to match 'exp_name-versionX'
 
-    for directory in base_path.iterdir():
+    for directory in Path("resources/checkpoints").iterdir():
         if directory.is_dir():  # Ensure it's a directory
             match = version_pattern.match(directory.name)
             if match:
                 version_num = int(match.group(1))  # Extract the version number
                 highest_version = max(highest_version, version_num)
-    return version + str(highest_version)
+    if highest_version > 1:
+        return version + str(highest_version)
+    else:
+        return ""

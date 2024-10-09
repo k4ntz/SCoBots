@@ -116,7 +116,9 @@ def _update_yaml(location, steps, finished):
     print(f"YAML file updated with training duration at {location}")
 
 def _get_directory(path, exp_name):
-    version_counter = 1
+    version_counter = 2
+    if not (path / f"{exp_name}").exists():
+        return path / f"{exp_name}"
     while True:
         versioned_dir = path / f"{exp_name}-n{version_counter}"
         if not versioned_dir.exists():
