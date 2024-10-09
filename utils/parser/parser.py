@@ -39,23 +39,23 @@ def parse_train(parser):
 
     game_id = env_str.split("/")[-1].lower().split("-")[0]
 
-    if opts.prune:
-        pruned_ff_name = f"pruned_{game_id}.yaml"
-    if opts.prune == "default":
-        settings_str += "_pruned-default"
-    if opts.prune == "external":
-        settings_str += "_pruned-external"
-        focus_dir = "resources/focusfiles"
-    if opts.exclude_properties:
-        settings_str += '_excludeproperties'
-        hide_properties = True
-
     #override some settings if rgb
     rgb_exp = opts.rgb
     if opts.rgb:
         settings_str += "_rgb"
     else:
         settings_str += "_oc"
+
+    if opts.prune:
+        pruned_ff_name = f"pruned_{game_id}.yaml"
+    if opts.prune == "default":
+        settings_str += "_pruned"
+    if opts.prune == "external":
+        settings_str += "_pruned-external"
+        focus_dir = "resources/focusfiles"
+    if opts.exclude_properties:
+        settings_str += '_excludeproperties'
+        hide_properties = True
 
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
     if noisy:
@@ -95,22 +95,24 @@ def parse_render(parser):
 
     game_id = env_str.split("/")[-1].lower().split("-")[0]
 
-    if opts.prune:
-        pruned_ff_name = f"pruned_{game_id}.yaml"
-        variant =  "iscobots"
-    if opts.prune == "default":
-        settings_str += "_pruned-default"
-    if opts.prune == "external":
-        settings_str += "_pruned-external"
-    if opts.exclude_properties:
-        settings_str += '_excludeproperties'
-        hide_properties = True
 
     if opts.rgb:
         settings_str += "_rgb"
         variant= "rgb"
     else:
         settings_str += "_oc"
+
+    if opts.prune:
+        pruned_ff_name = f"pruned_{game_id}.yaml"
+        variant =  "iscobots"
+    if opts.prune == "default":
+        settings_str += "_pruned"
+    if opts.prune == "external":
+        settings_str += "_pruned-external"
+    if opts.exclude_properties:
+        settings_str += '_excludeproperties'
+        hide_properties = True
+
 
     if opts.version:
         version = opts.version
@@ -152,16 +154,6 @@ def parse_eval(parser):
 
     game_id = env_str.split("/")[-1].lower().split("-")[0]
 
-    if opts.prune:
-        pruned_ff_name = f"pruned_{game_id}.yaml"
-        variant =  "iscobots"
-    if opts.prune == "default":
-        settings_str += "_pruned-default"
-    if opts.prune == "external":
-        settings_str += "_pruned-external"
-    if opts.exclude_properties:
-        settings_str += '_excludeproperties'
-        hide_properties = True
 
     #override setting str if rgb
     if opts.rgb:
@@ -170,6 +162,17 @@ def parse_eval(parser):
     else:
         settings_str += "_oc"
 
+    if opts.prune:
+        pruned_ff_name = f"pruned_{game_id}.yaml"
+        variant =  "iscobots"
+    if opts.prune == "default":
+        settings_str += "_pruned"
+    if opts.prune == "external":
+        settings_str += "_pruned-external"
+    if opts.exclude_properties:
+        settings_str += '_excludeproperties'
+        hide_properties = True
+        
     exp_name = opts.game + "_seed" + str(opts. seed) + settings_str
 
     if opts.version:
