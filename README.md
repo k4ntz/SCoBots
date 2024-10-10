@@ -47,7 +47,14 @@ So a usage with this agent would look like ```python eval.py -g Pong -s 0 -r hum
 
 With the checkpoint being stored accordingly named in the checkpoints folder, it will automaticlly be loaded and there is no need to provide an explicit storage path.
 
-
 Unless explictily stated via ```--rgb```, it will always be automatically resorted to object centric.
 
 Furthermore during the training process regularly checkpoints will be made and saved. These are saved separately in a sub-folder named ```training_checkpoints``` next to the ```best_model.zip``` and ```best_vecnormalize.pkl``` which are saved after a complete successful training process in. 
+
+## Extracting Via Viper
+If desired an extraction from a saved agent can be performed and saved under the folder ```viper_extracts```. An example usage would be:
+```bash
+python viper_extract.py -i Pong_seed0_reward-env_oc -r viper
+```
+Otherwise one can also hand a direct path after the ```-i``` flag. In this case though is it a MUST that the corresponding focusfile is correctly named inside of the given path.
+The console prints what exactly the extractor is looking for.
