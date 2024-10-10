@@ -76,7 +76,7 @@ def parse_render(parser):
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"],
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties",  action="store_true", help="exclude properties from feature vector")
-    parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
+    parser.add_argument("-n", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
     parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
     opts = parser.parse_args()
 
@@ -135,7 +135,7 @@ def parse_eval(parser):
     parser.add_argument("-p", "--prune", type=str, required=False, choices=["default", "external"],
                         help="use pruned focusfile (from default 'focusfiles' dir or external 'resources/focusfiles' dir. for custom pruning and or docker mount)")
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
-    parser.add_argument("-v", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
+    parser.add_argument("-n", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
     parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
     opts = parser.parse_args()
 
