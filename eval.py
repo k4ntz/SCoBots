@@ -5,6 +5,7 @@ from pathlib import Path
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import WarpFrame
 from stable_baselines3.common.env_util import make_vec_env
@@ -39,7 +40,7 @@ def _save_evals(rewards, mean_rewards, mean_steps, csv_filename):
 def main():
     parser = argparse.ArgumentParser()
 
-    exp_name, env_str, hide_properties, pruned_ff_name, time, variant, version = utils.parser.parser.parse_eval(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, time, variant, version, progress_bar = utils.parser.parser.parse_eval(parser)
 
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
@@ -77,23 +78,45 @@ def main():
         scobi_env = env.venv.envs[0]
         img = plt.imshow(scobi_env._obj_obs)
 
-    while True:
-        action, _ = model.predict(obs, deterministic=True)
-        obs, reward, done, info = env.step(action)
+    if progress_bar:
+        with tqdm(total=time, desc="Episodes completed") as pbar:
+            while True:
+                action, _ = model.predict(obs, deterministic=True)
+                obs, reward, done, info = env.step(action)
 
-        current_rew += reward #scobi_env.original_reward
-        current_step += 1
-        if done:
-            current_episode += 1
-            rewards.append(current_rew)
-            steps.append(current_step)
-            current_rew = 0
-            current_step = 0
-            obs = env.reset()
-        if current_episode == time:
-            print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
-            _save_evals(rewards, np.mean(rewards), np.mean(steps), "resources/checkpoints/" + exp_name + "/" + "evaluation")
-            break
+                current_rew += reward #scobi_env.original_reward
+                current_step += 1
+                if done:
+                    current_episode += 1
+                    pbar.update(1)
+                    rewards.append(current_rew)
+                    steps.append(current_step)
+                    current_rew = 0
+                    current_step = 0
+                    obs = env.reset()
+                if current_episode == time:
+                    print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
+                    _save_evals(rewards, np.mean(rewards), np.mean(steps), "resources/checkpoints/" + exp_name + "/" + "evaluation")
+                    pbar.close()
+                    break
+    else:
+        while True:
+                action, _ = model.predict(obs, deterministic=True)
+                obs, reward, done, info = env.step(action)
+
+                current_rew += reward #scobi_env.original_reward
+                current_step += 1
+                if done:
+                    current_episode += 1
+                    rewards.append(current_rew)
+                    steps.append(current_step)
+                    current_rew = 0
+                    current_step = 0
+                    obs = env.reset()
+                if current_episode == time:
+                    print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
+                    _save_evals(rewards, np.mean(rewards), np.mean(steps), "resources/checkpoints/" + exp_name + "/" + "evaluation")
+                    break
 
 if __name__ == '__main__':
     main()
