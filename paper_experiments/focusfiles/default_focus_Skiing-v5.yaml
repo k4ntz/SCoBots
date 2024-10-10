@@ -1,0 +1,1829 @@
+ENVIRONMENT: Skiing-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Tree1
+  - Tree2
+  - Tree3
+  - Tree4
+  - Flag1
+  - Flag2
+  - Flag3
+  - Flag4
+  - Mogul1
+  - Mogul2
+  - Mogul3
+  actions:
+  - NOOP
+  - RIGHT
+  - LEFT
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Tree1
+  - Tree2
+  - Tree3
+  - Tree4
+  - Flag1
+  - Flag2
+  - Flag3
+  - Flag4
+  - Mogul1
+  - Mogul2
+  - Mogul3
+  actions:
+  - NOOP
+  - RIGHT
+  - LEFT
+  properties:
+  - POSITION: Player1
+  - POSITION: Tree1
+  - POSITION: Tree2
+  - POSITION: Tree3
+  - POSITION: Tree4
+  - POSITION: Flag1
+  - POSITION: Flag2
+  - POSITION: Flag3
+  - POSITION: Flag4
+  - POSITION: Mogul1
+  - POSITION: Mogul2
+  - POSITION: Mogul3
+  - POSITION_HISTORY: Player1
+  - POSITION_HISTORY: Tree1
+  - POSITION_HISTORY: Tree2
+  - POSITION_HISTORY: Tree3
+  - POSITION_HISTORY: Tree4
+  - POSITION_HISTORY: Flag1
+  - POSITION_HISTORY: Flag2
+  - POSITION_HISTORY: Flag3
+  - POSITION_HISTORY: Flag4
+  - POSITION_HISTORY: Mogul1
+  - POSITION_HISTORY: Mogul2
+  - POSITION_HISTORY: Mogul3
+  - ORIENTATION: Player1
+  - ORIENTATION: Tree1
+  - ORIENTATION: Tree2
+  - ORIENTATION: Tree3
+  - ORIENTATION: Tree4
+  - ORIENTATION: Flag1
+  - ORIENTATION: Flag2
+  - ORIENTATION: Flag3
+  - ORIENTATION: Flag4
+  - ORIENTATION: Mogul1
+  - ORIENTATION: Mogul2
+  - ORIENTATION: Mogul3
+  - RGB: Player1
+  - RGB: Tree1
+  - RGB: Tree2
+  - RGB: Tree3
+  - RGB: Tree4
+  - RGB: Flag1
+  - RGB: Flag2
+  - RGB: Flag3
+  - RGB: Flag4
+  - RGB: Mogul1
+  - RGB: Mogul2
+  - RGB: Mogul3
+  functions:
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree1
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree2
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree3
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Tree4
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag1
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag2
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag3
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Flag4
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul1
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul2
+    - POSITION_HISTORY: Mogul3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Tree1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Tree2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Tree3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Tree4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Flag1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Flag2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Flag3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Flag4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Mogul1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Mogul2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Mogul3
+    - POSITION_HISTORY: Mogul3
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Mogul2
+  - DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Mogul3
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Tree1
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Tree2
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Tree3
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Tree4
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Flag1
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Flag2
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Flag3
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Flag4
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Mogul1
+  - DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree1
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree2
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree3
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Tree4
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag1
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag2
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag3
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Flag4
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Mogul2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul1
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul2
+    - POSITION: Mogul3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Tree1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Tree2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Tree3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Tree4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Flag1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Flag2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Flag3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Flag4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Mogul1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Mogul3
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Tree1
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Tree2
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Tree3
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Tree4
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Flag1
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Flag2
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Flag3
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Flag4
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Mogul2
+  - CENTER:
+    - POSITION: Mogul1
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Mogul2
+    - POSITION: Mogul3
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Tree1
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Tree2
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Tree3
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Tree4
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Flag1
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Flag2
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Flag3
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Flag4
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Mogul1
+  - CENTER:
+    - POSITION: Mogul3
+    - POSITION: Mogul2
+  - VELOCITY:
+    - POSITION_HISTORY: Player1
+  - VELOCITY:
+    - POSITION_HISTORY: Tree1
+  - VELOCITY:
+    - POSITION_HISTORY: Tree2
+  - VELOCITY:
+    - POSITION_HISTORY: Tree3
+  - VELOCITY:
+    - POSITION_HISTORY: Tree4
+  - VELOCITY:
+    - POSITION_HISTORY: Flag1
+  - VELOCITY:
+    - POSITION_HISTORY: Flag2
+  - VELOCITY:
+    - POSITION_HISTORY: Flag3
+  - VELOCITY:
+    - POSITION_HISTORY: Flag4
+  - VELOCITY:
+    - POSITION_HISTORY: Mogul1
+  - VELOCITY:
+    - POSITION_HISTORY: Mogul2
+  - VELOCITY:
+    - POSITION_HISTORY: Mogul3
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Player1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Tree1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Tree2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Tree3
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Tree4
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Flag1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Flag2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Flag3
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Flag4
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Mogul1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Mogul2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Mogul3
+  - COLOR:
+    - RGB: Player1
+  - COLOR:
+    - RGB: Tree1
+  - COLOR:
+    - RGB: Tree2
+  - COLOR:
+    - RGB: Tree3
+  - COLOR:
+    - RGB: Tree4
+  - COLOR:
+    - RGB: Flag1
+  - COLOR:
+    - RGB: Flag2
+  - COLOR:
+    - RGB: Flag3
+  - COLOR:
+    - RGB: Flag4
+  - COLOR:
+    - RGB: Mogul1
+  - COLOR:
+    - RGB: Mogul2
+  - COLOR:
+    - RGB: Mogul3

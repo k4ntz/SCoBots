@@ -1,0 +1,1829 @@
+ENVIRONMENT: Freeway-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Chicken1
+  - Chicken2
+  - Car1
+  - Car2
+  - Car3
+  - Car4
+  - Car5
+  - Car6
+  - Car7
+  - Car8
+  - Car9
+  - Car10
+  actions:
+  - NOOP
+  - UP
+  - DOWN
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Chicken1
+  - Chicken2
+  - Car1
+  - Car2
+  - Car3
+  - Car4
+  - Car5
+  - Car6
+  - Car7
+  - Car8
+  - Car9
+  - Car10
+  actions:
+  - NOOP
+  - UP
+  - DOWN
+  properties:
+  - POSITION: Chicken1
+  - POSITION: Chicken2
+  - POSITION: Car1
+  - POSITION: Car2
+  - POSITION: Car3
+  - POSITION: Car4
+  - POSITION: Car5
+  - POSITION: Car6
+  - POSITION: Car7
+  - POSITION: Car8
+  - POSITION: Car9
+  - POSITION: Car10
+  - POSITION_HISTORY: Chicken1
+  - POSITION_HISTORY: Chicken2
+  - POSITION_HISTORY: Car1
+  - POSITION_HISTORY: Car2
+  - POSITION_HISTORY: Car3
+  - POSITION_HISTORY: Car4
+  - POSITION_HISTORY: Car5
+  - POSITION_HISTORY: Car6
+  - POSITION_HISTORY: Car7
+  - POSITION_HISTORY: Car8
+  - POSITION_HISTORY: Car9
+  - POSITION_HISTORY: Car10
+  - ORIENTATION: Chicken1
+  - ORIENTATION: Chicken2
+  - ORIENTATION: Car1
+  - ORIENTATION: Car2
+  - ORIENTATION: Car3
+  - ORIENTATION: Car4
+  - ORIENTATION: Car5
+  - ORIENTATION: Car6
+  - ORIENTATION: Car7
+  - ORIENTATION: Car8
+  - ORIENTATION: Car9
+  - ORIENTATION: Car10
+  - RGB: Chicken1
+  - RGB: Chicken2
+  - RGB: Car1
+  - RGB: Car2
+  - RGB: Car3
+  - RGB: Car4
+  - RGB: Car5
+  - RGB: Car6
+  - RGB: Car7
+  - RGB: Car8
+  - RGB: Car9
+  - RGB: Car10
+  functions:
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken1
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Chicken2
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car1
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car2
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car3
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car4
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car5
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car6
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car7
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car8
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car9
+    - POSITION_HISTORY: Car10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Chicken1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Chicken2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Car10
+    - POSITION_HISTORY: Car10
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car9
+  - DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car10
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Chicken1
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Chicken2
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car1
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car2
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car3
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car4
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car5
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car6
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car7
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car8
+  - DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken1
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Chicken2
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car1
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car2
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car3
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car4
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car5
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car6
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car7
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car8
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car9
+    - POSITION: Car10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Chicken1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Chicken2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Car10
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Chicken1
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Chicken2
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Car1
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Car2
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Car3
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Car4
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Car5
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Car6
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Car7
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Car9
+  - CENTER:
+    - POSITION: Car8
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Car9
+    - POSITION: Car10
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Chicken1
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Chicken2
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Car1
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Car2
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Car3
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Car4
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Car5
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Car6
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Car7
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Car8
+  - CENTER:
+    - POSITION: Car10
+    - POSITION: Car9
+  - VELOCITY:
+    - POSITION_HISTORY: Chicken1
+  - VELOCITY:
+    - POSITION_HISTORY: Chicken2
+  - VELOCITY:
+    - POSITION_HISTORY: Car1
+  - VELOCITY:
+    - POSITION_HISTORY: Car2
+  - VELOCITY:
+    - POSITION_HISTORY: Car3
+  - VELOCITY:
+    - POSITION_HISTORY: Car4
+  - VELOCITY:
+    - POSITION_HISTORY: Car5
+  - VELOCITY:
+    - POSITION_HISTORY: Car6
+  - VELOCITY:
+    - POSITION_HISTORY: Car7
+  - VELOCITY:
+    - POSITION_HISTORY: Car8
+  - VELOCITY:
+    - POSITION_HISTORY: Car9
+  - VELOCITY:
+    - POSITION_HISTORY: Car10
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Chicken1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Chicken2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car3
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car4
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car5
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car6
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car7
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car8
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car9
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Car10
+  - COLOR:
+    - RGB: Chicken1
+  - COLOR:
+    - RGB: Chicken2
+  - COLOR:
+    - RGB: Car1
+  - COLOR:
+    - RGB: Car2
+  - COLOR:
+    - RGB: Car3
+  - COLOR:
+    - RGB: Car4
+  - COLOR:
+    - RGB: Car5
+  - COLOR:
+    - RGB: Car6
+  - COLOR:
+    - RGB: Car7
+  - COLOR:
+    - RGB: Car8
+  - COLOR:
+    - RGB: Car9
+  - COLOR:
+    - RGB: Car10

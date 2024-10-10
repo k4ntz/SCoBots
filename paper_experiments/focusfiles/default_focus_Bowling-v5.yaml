@@ -1,0 +1,1835 @@
+ENVIRONMENT: Bowling-v5
+AVAILABLE_CONCEPTS:
+  objects:
+  - Player1
+  - Pin1
+  - Pin2
+  - Pin3
+  - Pin4
+  - Pin5
+  - Pin6
+  - Pin7
+  - Pin8
+  - Pin9
+  - Pin10
+  - Ball1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - DOWN
+  - UPFIRE
+  - DOWNFIRE
+  properties:
+  - POSITION:
+      in:
+      - OBJECT
+      description: get the position for given object
+  - POSITION_HISTORY:
+      in:
+      - OBJECT
+      description: get the current and last position for given object
+  - ORIENTATION:
+      in:
+      - OBJECT
+      description: get the orientation for given object
+  - RGB:
+      in:
+      - OBJECT
+      description: get the rgb value for given object
+  functions:
+  - LINEAR_TRAJECTORY:
+      in:
+      - POSITION
+      - POSITION_HISTORY
+      description: x, y distance to trajectory
+  - DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: distance between two coordinates
+  - EUCLIDEAN_DISTANCE:
+      in:
+      - POSITION
+      - POSITION
+      description: euclidean distance between two coordinates
+  - CENTER:
+      in:
+      - POSITION
+      - POSITION
+      description: center position of two objects
+  - VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: velocity of object
+  - DIR_VELOCITY:
+      in:
+      - POSITION_HISTORY
+      description: directional velocity of object
+  - COLOR:
+      in:
+      - RGB
+      description: Index of colorname
+SELECTION:
+  objects:
+  - Player1
+  - Pin1
+  - Pin2
+  - Pin3
+  - Pin4
+  - Pin5
+  - Pin6
+  - Pin7
+  - Pin8
+  - Pin9
+  - Pin10
+  - Ball1
+  actions:
+  - NOOP
+  - FIRE
+  - UP
+  - DOWN
+  - UPFIRE
+  - DOWNFIRE
+  properties:
+  - POSITION: Player1
+  - POSITION: Pin1
+  - POSITION: Pin2
+  - POSITION: Pin3
+  - POSITION: Pin4
+  - POSITION: Pin5
+  - POSITION: Pin6
+  - POSITION: Pin7
+  - POSITION: Pin8
+  - POSITION: Pin9
+  - POSITION: Pin10
+  - POSITION: Ball1
+  - POSITION_HISTORY: Player1
+  - POSITION_HISTORY: Pin1
+  - POSITION_HISTORY: Pin2
+  - POSITION_HISTORY: Pin3
+  - POSITION_HISTORY: Pin4
+  - POSITION_HISTORY: Pin5
+  - POSITION_HISTORY: Pin6
+  - POSITION_HISTORY: Pin7
+  - POSITION_HISTORY: Pin8
+  - POSITION_HISTORY: Pin9
+  - POSITION_HISTORY: Pin10
+  - POSITION_HISTORY: Ball1
+  - ORIENTATION: Player1
+  - ORIENTATION: Pin1
+  - ORIENTATION: Pin2
+  - ORIENTATION: Pin3
+  - ORIENTATION: Pin4
+  - ORIENTATION: Pin5
+  - ORIENTATION: Pin6
+  - ORIENTATION: Pin7
+  - ORIENTATION: Pin8
+  - ORIENTATION: Pin9
+  - ORIENTATION: Pin10
+  - ORIENTATION: Ball1
+  - RGB: Player1
+  - RGB: Pin1
+  - RGB: Pin2
+  - RGB: Pin3
+  - RGB: Pin4
+  - RGB: Pin5
+  - RGB: Pin6
+  - RGB: Pin7
+  - RGB: Pin8
+  - RGB: Pin9
+  - RGB: Pin10
+  - RGB: Ball1
+  functions:
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Player1
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin1
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin2
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin3
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin4
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin5
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin6
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin7
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin8
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin9
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Pin10
+    - POSITION_HISTORY: Ball1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Player1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin1
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin2
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin3
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin4
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin5
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin6
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin7
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin8
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin9
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Pin10
+  - LINEAR_TRAJECTORY:
+    - POSITION: Ball1
+    - POSITION_HISTORY: Ball1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Player1
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin10
+  - DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Ball1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Player1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin1
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin2
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin3
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin4
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin5
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin6
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin7
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin8
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin9
+  - DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Player1
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin1
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin2
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin3
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin4
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin5
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin6
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin7
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin8
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Pin10
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin9
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Pin10
+    - POSITION: Ball1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Player1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin1
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin2
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin3
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin4
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin5
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin6
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin7
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin8
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin9
+  - EUCLIDEAN_DISTANCE:
+    - POSITION: Ball1
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Player1
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Pin1
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Pin2
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Pin3
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Pin4
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Pin5
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Pin6
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Pin7
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Pin8
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Pin10
+  - CENTER:
+    - POSITION: Pin9
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Pin10
+    - POSITION: Ball1
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Player1
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin1
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin2
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin3
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin4
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin5
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin6
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin7
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin8
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin9
+  - CENTER:
+    - POSITION: Ball1
+    - POSITION: Pin10
+  - VELOCITY:
+    - POSITION_HISTORY: Player1
+  - VELOCITY:
+    - POSITION_HISTORY: Pin1
+  - VELOCITY:
+    - POSITION_HISTORY: Pin2
+  - VELOCITY:
+    - POSITION_HISTORY: Pin3
+  - VELOCITY:
+    - POSITION_HISTORY: Pin4
+  - VELOCITY:
+    - POSITION_HISTORY: Pin5
+  - VELOCITY:
+    - POSITION_HISTORY: Pin6
+  - VELOCITY:
+    - POSITION_HISTORY: Pin7
+  - VELOCITY:
+    - POSITION_HISTORY: Pin8
+  - VELOCITY:
+    - POSITION_HISTORY: Pin9
+  - VELOCITY:
+    - POSITION_HISTORY: Pin10
+  - VELOCITY:
+    - POSITION_HISTORY: Ball1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Player1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin1
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin2
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin3
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin4
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin5
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin6
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin7
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin8
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin9
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Pin10
+  - DIR_VELOCITY:
+    - POSITION_HISTORY: Ball1
+  - COLOR:
+    - RGB: Player1
+  - COLOR:
+    - RGB: Pin1
+  - COLOR:
+    - RGB: Pin2
+  - COLOR:
+    - RGB: Pin3
+  - COLOR:
+    - RGB: Pin4
+  - COLOR:
+    - RGB: Pin5
+  - COLOR:
+    - RGB: Pin6
+  - COLOR:
+    - RGB: Pin7
+  - COLOR:
+    - RGB: Pin8
+  - COLOR:
+    - RGB: Pin9
+  - COLOR:
+    - RGB: Pin10
+  - COLOR:
+    - RGB: Ball1
