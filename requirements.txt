@@ -1,14 +1,14 @@
 gymnasium[atari, accept-rom-license] == 0.28.1
-stable_baselines3[extra]
 rtpt
 termcolor
-torch
+torch==2.0.1
 torchinfo
-numpy
+numpy==1.23.5
 opencv_python
 joblib
 tensorboard
 tqdm
+rich
 pandas
 pyyaml
 colormath
@@ -17,4 +17,3 @@ captum
 notebook
 ocatari @ git+https://github.com/k4ntz/OC_Atari@asterix
 huggingface_hub
-tdqm

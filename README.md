@@ -1,8 +1,13 @@
 # Successive Concepet Bottleneck Interface SCoBot
-## Requirements
+## Installation And Requirements
 Scobots requires OCAtari and the local var ```'SCOBI_OBJ_EXTRACTOR'``` set as either ```OC_Atari``` or ```Noisy_OC_Atari```. If not set it will automatically resort to ```OC_Atari```.
 
 Without agents SCoBots are not usable, so you can either download some pretrained agents from huggingface via the ```download_agents.sh``` script, or train one yourself, as explained in the usage guide.
+
+Because of issues with the ```autorom``` module, ```stable_baselines3[extras]``` has to be installed manually. The setup is done with
+```bash
+pip install stable-baselines3[extras]==2.0.0 && pip install -r requirements.txt
+```
 
 ## Usage
 There are three python files which can be run directly. Each of them comes with a ```-h``` help flag.
