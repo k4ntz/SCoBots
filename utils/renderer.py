@@ -36,7 +36,6 @@ class Renderer:
         pygame.init()
         pygame.display.set_caption("OCAtari Environment")
         sample_image = np.repeat(np.repeat(np.swapaxes(sample_image, 0, 1), self.zoom, axis=0), self.zoom, axis=1)
-        print(sample_image.shape)
         self.env_render_shape = sample_image.shape[:2]
         window_size = self.env_render_shape[:2]
         self.window = pygame.display.set_mode(window_size)
@@ -55,7 +54,6 @@ class Renderer:
                     pass
                 else:
                     action, _ = self.model.predict(obs, deterministic=True)
-                    print(action)
                 obs, rew, _, _ = self.envs.step(action)
                 self.env.sco_obs = obs
                 self.current_frame = self.env._obj_obs
