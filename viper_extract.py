@@ -2,7 +2,7 @@ from pathlib import Path
 
 import argparse
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
 from joblib import load
 from rtpt import RTPT
 from sklearn.tree import DecisionTreeClassifier

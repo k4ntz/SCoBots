@@ -9,6 +9,7 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv
 
 import utils.parser.parser
+from utils.renderer import Renderer
 from scobi import Environment
 
 
@@ -46,28 +47,27 @@ def main():
         env.training = False
         env.norm_reward = False
     model = PPO.load(model_path)
-    fps = 30
-    sps = 20 # steps per seconds
-    steps_delta = 1.0 / sps
-    frame_delta = 1.0 / fps
     obs = env.reset()
-    if variant == "rgb":
-        img = plt.imshow(env.get_images()[0])
+    if True:
+        renderer = Renderer(env, model)
+        renderer.run()
     else:
-        scobi_env = env.venv.envs[0]
-        img = plt.imshow(scobi_env._obj_obs)
-
-    while True:
-        action, _ = model.predict(obs, deterministic=True)
-        obs, reward, done, info = env.step(action)
         if variant == "rgb":
-            img.set_data(env.get_images()[0])
+            img = plt.imshow(env.get_images()[0])
         else:
-            img.set_data(scobi_env._obj_obs)
-            time.sleep(steps_delta)
-        plt.pause(frame_delta)
-        if done:
-            obs = env.reset()
+            scobi_env = env.venv.envs[0]
+            img = plt.imshow(scobi_env._obj_obs)
+        while True:
+            action, _ = model.predict(obs, deterministic=True)
+            obs, reward, done, info = env.step(action)
+            print(action)
+            if variant == "rgb":
+                img.set_data(env.get_images()[0])
+            else:
+                img.set_data(scobi_env._obj_obs)
+            plt.pause(0.01)
+            if done:
+                obs = env.reset()
 
 if __name__ == '__main__':
     main()
