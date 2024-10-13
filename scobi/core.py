@@ -87,7 +87,7 @@ class Environment(Env):
                 self.reset_ep_reward = True
                 self.focus.reward_subgoals = 0
             final_reward = self._reward_composition_func(sco_reward, reward)
-            self.sco_obs = sco_obs
+            # self.sco_obs = sco_obs
             return sco_obs, final_reward, truncated, terminated, info # 5
         else:
             raise ValueError("scobi> Action not in action space")
@@ -100,7 +100,7 @@ class Environment(Env):
         _, info = self.oc_env.reset(*args, **kwargs)
         objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
         sco_obs, _ = self.focus.get_feature_vector(objects)
-        self.sco_obs = sco_obs
+        # self.sco_obs = sco_obs
         return sco_obs, info
 
     def close(self):

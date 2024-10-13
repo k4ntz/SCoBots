@@ -45,6 +45,7 @@ class Renderer:
 
     def run(self):
         self.running = True
+        obs = self.envs.reset()
         while self.running:
             self._handle_user_input()
             if not self.paused:
@@ -53,11 +54,10 @@ class Renderer:
                 elif self.rgb_agent:
                     pass
                 else:
-                    action, _ = self.model.predict(self.env.sco_obs, deterministic=True)
+                    action, _ = self.model.predict(obs, deterministic=True)
                     print(action)
-                tuple = self.env.step(action)
-                self.env.sco_obs = tuple[0]
-                rew = tuple[1]
+                obs, rew, _, _ = self.envs.step(action)
+                self.env.sco_obs = obs
                 self.current_frame = self.env._obj_obs
             self._render()
         pygame.quit()
