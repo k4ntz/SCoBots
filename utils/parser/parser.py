@@ -138,6 +138,7 @@ def parse_eval(parser):
     parser.add_argument("-n", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
     parser.add_argument("--progress", action="store_true", help="display a progress bar of the training process")
     parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
+    parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -181,7 +182,7 @@ def parse_eval(parser):
     else:
         version = 0
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, opts.times, variant, version, opts.progress
+    return exp_name, env_str, hide_properties, pruned_ff_name, opts.times, variant, version, opts.progress, opts.viper
 
 
 def get_highest_version(agent): 

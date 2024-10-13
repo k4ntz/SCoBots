@@ -17,3 +17,4 @@ captum
 notebook
 ocatari @ git+https://github.com/k4ntz/OC_Atari@asterix
 huggingface_hub
+joblib

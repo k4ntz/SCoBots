@@ -10,6 +10,9 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import WarpFrame
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv
+from joblib import load
+from viper_extract import DTClassifierModel
+
 
 import utils.parser.parser
 from scobi import Environment
@@ -37,10 +40,22 @@ def _save_evals(rewards, mean_rewards, mean_steps, csv_filename):
 
     print(f"Data saved to {csv_filename}")
 
+def _load_viper(exp_name, path_provided):
+    if path_provided:
+        viper_path = Path(exp_name)
+        model = load(sorted(viper_path.glob("*_best.viper"))[0])
+    else:
+        viper_path = Path("resources/viper_extracts/extract_output", exp_name + "-extraction")
+        model = load(sorted(viper_path.glob("*_best.viper"))[0])
+
+    wrapped = DTClassifierModel(model)
+
+    return wrapped
+
 def main():
     parser = argparse.ArgumentParser()
 
-    exp_name, env_str, hide_properties, pruned_ff_name, time, variant, version, progress_bar = utils.parser.parser.parse_eval(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, time, variant, version, progress_bar, viper = utils.parser.parser.parse_eval(parser)
 
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
@@ -65,7 +80,15 @@ def main():
         env = VecNormalize.load(vecnorm_path, dummy_vecenv)
         env.training = False
         env.norm_reward = False
-    model = PPO.load(model_path)
+    if viper:
+        print("loading viper tree of " + exp_name)
+        if isinstance(viper, str):
+            model = _load_viper(viper, True)
+        else:
+            model = _load_viper(exp_name, False)
+    else:
+        model = PPO.load(model_path)
+
     current_episode = 0
     rewards = []
     steps = []
