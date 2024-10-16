@@ -36,10 +36,11 @@ def get_position_history(obj: GameObject) -> Tuple[int, int, int, int]:
 
 @register(type="P", name="ORIENTATION", params= ["OBJECT"], desc="get the orientation for given object")
 def get_orientation(obj: GameObject) -> Tuple[int]:
-    if not obj:
+    if not obj or not obj.orientation: 
         return None,
-    orientation = obj.orientation.value
-    return orientation,
+    if type(obj.orientation) == np.uint8:
+        return obj.orientation,
+    return obj.orientation.value,
 
 
 @register(type="P", name="RGB", params= ["OBJECT"], desc="get the rgb value for given object")
@@ -57,7 +58,7 @@ def get_width(obj: GameObject) -> Tuple[int]:
 
 @register(type="P", name="VALUE", params=["OBJECT"], desc="get the object's value (if exists)")
 def get_value(obj: GameObject) -> Tuple[int]:
-    if not obj:
+    if not obj or not (hasattr(obj, "value") and hasattr(obj.ocgo, "value")):
         return None,
     print(obj)
     print(type(obj))

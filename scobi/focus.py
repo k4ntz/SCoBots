@@ -392,7 +392,7 @@ class Focus():
         self.PARSED_FUNCTIONS = self.import_functions(sdict["functions"])
         self.PARSED_AGGREGATIONS = self.import_aggregations(sdict.get("aggregations"))
         self.PARSED_CONCEPTS = self.PARSED_PROPERTIES + self.PARSED_FUNCTIONS + self.PARSED_AGGREGATIONS
-        
+
         # based on the focus file selection,
         # construct a 2 layer computation graph for the feature vector:
         # 1     PROPERTY_COMPUTE_LAYER
