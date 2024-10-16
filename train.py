@@ -25,7 +25,8 @@ from datetime import datetime
 import utils.parser.parser
 from scobi import Environment
 
-MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
+# MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
+MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "forkserver"  # 'nt' == Windows
 
 class RtptCallback(BaseCallback):
     def __init__(self, exp_name, max_iter, verbose=0):
@@ -94,6 +95,7 @@ def _create_yaml(flags, location):
         'prune': flags['prune'],
         'exclude_properties': flags['exclude_properties'],
         'rgbv5': flags['rgb'],
+        'normalize': flags['normalize'],
         'status': 'not finished',
         'completed_steps': None,
         'creation date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -127,7 +129,7 @@ def _get_directory(path, exp_name):
 
 def main():
     parser = argparse.ArgumentParser()
-    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, pr_bar = utils.parser.parser.parse_train(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, normalize, pr_bar = utils.parser.parser.parse_train(parser)
 
     n_envs = envs
     n_eval_envs = 4
@@ -153,7 +155,8 @@ def main():
         'reward': reward,
         'prune': pruned_ff_name,
         'exclude_properties': hide_properties,
-        'rgb': rgb_yaml
+        'rgb': rgb_yaml,
+        'normalize': normalize
     }
     _create_yaml(flags, yaml_path)
 
@@ -168,8 +171,10 @@ def main():
                               focus_file=pruned_ff_name,
                               hide_properties=hide_properties,
                               silent=silent,
-                              reward=reward_mode,
-                              refresh_yaml=refresh)
+                            #   reward=reward_mode,
+                              reward_mode=reward_mode,
+                              refresh_yaml=refresh,
+                              normalize=normalize)
             env = EpisodicLifeEnv(env=env)
             env = Monitor(env)
             env.reset(seed=seed + rank)
@@ -185,8 +190,10 @@ def main():
                               focus_file=pruned_ff_name,
                               hide_properties=hide_properties,
                               silent=silent,
-                              reward=0, #always env reward for eval
-                              refresh_yaml=refresh)
+                            #   reward=0, #always env reward for eval
+                              reward_mode=0, #always env reward for eval
+                              refresh_yaml=refresh,
+                              normalize=normalize)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env

@@ -10,9 +10,11 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 from copy import deepcopy
 
+from scobi.preprocessing import Normalizer
+from scobi.reward_shaping import get_reward_fn
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
+    def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward_mode=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, normalize=False):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger)
         self.seed = seed
@@ -25,9 +27,10 @@ class Environment(Env):
 
         self.oc_env.reset(seed=self.seed)
         self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
-        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
+        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward_mode)
         self.did_reset = False
-        self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
+        # self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
+        self.focus = Focus(env_name, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
         self.focus_file = self.focus.FOCUSFILEPATH
         self.action_space = spaces.Discrete(len(self.focus.PARSED_ACTIONS))
         self.action_space_description = self.focus.PARSED_ACTIONS
@@ -41,21 +44,29 @@ class Environment(Env):
         self._rel_obs = None  # observation augmented with relations
         self._top_features = []
 
+        self._reward_mode = reward_mode
+        self._setup_reward(env_name.split("/")[-1])
+
         self.original_obs = []
         self.original_reward = []
         self.ep_env_reward = None
         self.ep_env_reward_buffer = 0
         self.reset_ep_reward = True
 
-        if reward == 2: # mix rewards
+        if reward_mode == 2: # mix rewards
             self._reward_composition_func = lambda a, b : a + b
-        elif reward == 1: # scobi only
+        elif reward_mode == 1: # scobi only
             self._reward_composition_func = lambda a, b : a
         else: # env only
             self._reward_composition_func = lambda a, b : b
 
         if self.noisy_objects:
             self.logger.GeneralInfo("Using noisy object detection (default: std 3, detection error rate 5%)")
+
+        self.normalize = normalize
+        self.normalizer = Normalizer(self.focus) if normalize else None
+        if self.normalize:
+            self.logger.GeneralInfo("Normalizing features.")
 
         self.reset()
         self.step(0) # step once to set the feature vector size
@@ -64,13 +75,36 @@ class Environment(Env):
         self.reset()
         self.did_reset = False # still require user to properly call a (likely seeded) reset()
 
+    def _setup_reward(self, env_name: str):
+        if self._reward_mode != 0:
+            if self._reward_mode == 1:
+                log_str = "scobi"
+            elif self._reward_mode == 2:
+                log_str = "env + scobi"
+            else:
+                log_str = "unknown"
+
+            self.logger.GeneralInfo(f"Reward Shaping: {log_str}.")
+            self._reward_fn = get_reward_fn(env_name)
+
+            if self._reward_fn is None:
+                self.logger.GeneralError(
+                    f"Reward function for {env_name} not implemented!")
+            else:
+                self.logger.GeneralInfo("Reward function is valid. Bound.")
+
+        else:
+            self._reward_fn = None
+            self.logger.GeneralInfo("Reward Shaping: %s.")
+
     def step(self, action):
         if not self.did_reset:
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
-            objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
-            sco_obs, sco_reward = self.focus.get_feature_vector(objects)
+            objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self._reward_mode)
+            sco_obs = self.focus.get_feature_vector(objects)
+            sco_reward = self._reward_fn(objects, terminated) if self._reward_fn is not None else 0
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
                 self._obj_obs = self._draw_objects_overlay(obs)
@@ -87,6 +121,8 @@ class Environment(Env):
                 self.reset_ep_reward = True
                 self.focus.reward_subgoals = 0
             final_reward = self._reward_composition_func(sco_reward, reward)
+            if self.normalize:
+                sco_obs = self.normalizer(sco_obs)
             # self.sco_obs = sco_obs
             return sco_obs, final_reward, truncated, terminated, info # 5
         else:
@@ -98,9 +134,11 @@ class Environment(Env):
         self.focus.reward_threshold = -1
         self.focus.reward_history = [0, 0]
         _, info = self.oc_env.reset(*args, **kwargs)
-        objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self.focus.REWARD_SHAPING)
-        sco_obs, _ = self.focus.get_feature_vector(objects)
+        objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self._reward_mode)
+        sco_obs= self.focus.get_feature_vector(objects)
         # self.sco_obs = sco_obs
+        if self.normalize:
+            sco_obs = self.normalizer(sco_obs)
         return sco_obs, info
 
     def close(self):

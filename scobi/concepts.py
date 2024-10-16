@@ -1,6 +1,6 @@
 """Properties and Functions for scobi features"""
 import math
-from typing import Tuple
+from typing import Sequence, Tuple
 import numpy as np
 from scobi.utils.game_object import get_wrapper_class
 from scobi.utils.colors import get_closest_color
@@ -38,7 +38,7 @@ def get_position_history(obj: GameObject) -> Tuple[int, int, int, int]:
 def get_orientation(obj: GameObject) -> Tuple[int]:
     if not obj:
         return None,
-    orientation = obj.orientation
+    orientation = obj.orientation.value
     return orientation,
 
 
@@ -47,6 +47,25 @@ def get_rgb(obj: GameObject) -> Tuple[int, int, int]:
     if not obj:
         return None, None, None
     return tuple(obj.rgb)
+
+@register(type="P", name="WIDTH", params=["OBJECT"], desc="get the width for given object")
+def get_width(obj: GameObject) -> Tuple[int]:
+    if not obj:
+        return None,
+    return obj.w,
+
+
+@register(type="P", name="VALUE", params=["OBJECT"], desc="get the object's value (if exists)")
+def get_value(obj: GameObject) -> Tuple[int]:
+    if not obj:
+        return None,
+    print(obj)
+    print(type(obj))
+    print(obj.ocgo)
+    print(type(obj.ocgo))
+    print(obj.ocgo.value)
+    print(obj.value)
+    return obj.ocgo.value,
 
 
 ##########################
@@ -119,3 +138,14 @@ def get_color_name(rgb: Tuple[int, int, int]) -> Tuple[int]:
         _, col_int = get_closest_color(rgb)
         COLOR_INT_MEMORY[rgb] = col_int
         return col_int,
+
+##########################
+# AGGREGATIONS TO REGISTER
+##########################
+@register(type="A", name="COUNT", params=["OBJECT_CATEGORY"], desc="Number of objects of this category")
+def get_category_count(game_objects: Sequence[GameObject], category: str) -> Tuple[int,]:
+    cnt = 0
+    for game_object in game_objects:
+        if game_object.category == category:
+            cnt += 1
+    return cnt,

@@ -19,7 +19,7 @@ def flist(l):
 def main():
     parser = argparse.ArgumentParser()
 
-    exp_name, env_str, hide_properties, pruned_ff_name, variant, version = utils.parser.parser.parse_render(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, variant, version, normalize = utils.parser.parser.parse_render(parser)
     
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
@@ -38,13 +38,15 @@ def main():
                             focus_file=pruned_ff_name,
                             hide_properties=hide_properties,
                             draw_features=True, # implement feature attribution
-                            reward=0) #env reward only for evaluation
+                            reward=0, #env reward only for evaluation
+                            normalize=normalize)
 
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])
         env = VecNormalize.load(vecnorm_path, dummy_vecenv)
         env.training = False
         env.norm_reward = False
+    print("Loading model from: ", model_path)
     model = PPO.load(model_path)
 
     if variant == "rgb":
