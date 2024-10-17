@@ -95,7 +95,7 @@ class Environment(Env):
 
         else:
             self._reward_fn = None
-            self.logger.GeneralInfo("Reward Shaping: %s.")
+            self.logger.GeneralInfo("Reward Shaping: disabled.")
 
     def step(self, action):
         if not self.did_reset:
