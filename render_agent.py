@@ -38,7 +38,7 @@ def main():
                             focus_file=pruned_ff_name,
                             hide_properties=hide_properties,
                             draw_features=True, # implement feature attribution
-                            reward=0, #env reward only for evaluation
+                            reward_mode=0, #env reward only for evaluation
                             normalize=normalize)
 
         _, _ = env.reset(seed=EVAL_ENV_SEED)
