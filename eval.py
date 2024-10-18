@@ -55,7 +55,7 @@ def _load_viper(exp_name, path_provided):
 def main():
     parser = argparse.ArgumentParser()
 
-    exp_name, env_str, hide_properties, pruned_ff_name, time, variant, version, progress_bar, viper, normalize = utils.parser.parser.parse_eval(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, time, variant, version, progress_bar, viper, normalize, hud = utils.parser.parser.parse_eval(parser)
 
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
@@ -74,7 +74,8 @@ def main():
                             hide_properties=hide_properties,
                             draw_features=True, # implement feature attribution
                             reward=0,
-                            normalize=normalize
+                            normalize=normalize,
+                            hud=hud,
                             ) #env reward only for evaluation
 
         _, _ = env.reset(seed=EVAL_ENV_SEED)

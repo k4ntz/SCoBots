@@ -97,6 +97,12 @@ class OCAGameObject(GameObjectInterface):
     def orientation(self):
         return self.ocgo.orientation
     
+    @property
+    def value_diff(self):
+        if not hasattr(self.ocgo, "value_diff"):
+            return None
+        return self.ocgo.value_diff
+    
 
 class NoisyOCAGameObject(OCAGameObject):
     def __init__(self, ocgo, std, error_rate, random_state):

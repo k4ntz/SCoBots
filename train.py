@@ -129,10 +129,12 @@ def _get_directory(path, exp_name):
 
 def main():
     parser = argparse.ArgumentParser()
-    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, normalize, pr_bar = utils.parser.parser.parse_train(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, normalize, hud, pr_bar = utils.parser.parser.parse_train(parser)
 
-    n_envs = envs
-    n_eval_envs = 4
+    # n_envs = envs
+    # n_eval_envs = 4
+    n_envs = 1
+    n_eval_envs = 1
     n_eval_episodes = 8
     eval_env_seed = (seed + 42) * 2 #different seeds for eval
     training_timestamps = 20_000_000
@@ -156,7 +158,8 @@ def main():
         'prune': pruned_ff_name,
         'exclude_properties': hide_properties,
         'rgb': rgb_yaml,
-        'normalize': normalize
+        'normalize': normalize,
+        'hud': hud
     }
     _create_yaml(flags, yaml_path)
 
@@ -174,7 +177,8 @@ def main():
                             #   reward=reward_mode,
                               reward_mode=reward_mode,
                               refresh_yaml=refresh,
-                              normalize=normalize)
+                              normalize=normalize,
+                              hud=hud)
             env = EpisodicLifeEnv(env=env)
             env = Monitor(env)
             env.reset(seed=seed + rank)
@@ -193,7 +197,8 @@ def main():
                             #   reward=0, #always env reward for eval
                               reward_mode=0, #always env reward for eval
                               refresh_yaml=refresh,
-                              normalize=normalize)
+                              normalize=normalize,
+                              hud=hud)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env

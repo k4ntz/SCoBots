@@ -14,9 +14,9 @@ from scobi.preprocessing import Normalizer
 from scobi.reward_shaping import get_reward_fn
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward_mode=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, normalize=False):
+    def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward_mode=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, normalize=False, **kwargs):
         self.logger = Logger(silent=silent)
-        self.oc_env = em.make(env_name, self.logger)
+        self.oc_env = em.make(env_name, self.logger, **kwargs)
         self.seed = seed
         self.randomstate = np.random.RandomState(self.seed)
         # TODO: tie to em.make

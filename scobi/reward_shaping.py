@@ -68,6 +68,7 @@ def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> flo
     global last_y_distance, last_n_lives, episode_starts, last_crashed
 
     score, player, child = _get_game_objects_by_category(game_objects, ["Score", "Player", "Child"])
+    print(score, player, child)
     n_lives = _count_game_objects_of_category(game_objects, "Life")
 
     # Get current platform
@@ -86,6 +87,7 @@ def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> flo
         movement_reward = 0
 
     if score is not None and not episode_starts:
+        print(score.value_diff)
         # # Discourage monkey kicking (each monkey gives exactly 200 points)
         if score.value_diff == 200:
             score_reward = score.value_diff / 50
@@ -103,6 +105,7 @@ def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> flo
     last_crashed = player.ocgo.crashed
     episode_starts = terminated
 
+    print(score_reward, movement_reward, crash_reward)
     return score_reward + movement_reward + crash_reward
 
 

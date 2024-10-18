@@ -17,6 +17,7 @@ def parse_train(parser):
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("--rgb", action="store_true", help="rgb observation space")
     parser.add_argument("--normalize", action="store_true", help="normalizes the observations at each step")
+    parser.add_argument("--hud", action="store_true", help="allow agent to access HUD elements")
     parser.add_argument("--progress", action="store_true", help="display a progress bar of the training process")
     opts = parser.parse_args()
 
@@ -63,7 +64,7 @@ def parse_train(parser):
         exp_name += "-noisy"
 
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, opts.seed, opts.environments, opts.game, opts.rgb, opts.reward, opts.normalize, opts.progress
+    return exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, opts.seed, opts.environments, opts.game, opts.rgb, opts.reward, opts.normalize, opts.hud, opts.progress
 
 
 
@@ -80,6 +81,8 @@ def parse_render(parser):
     parser.add_argument("-n", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
     parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
     parser.add_argument("--normalize", action="store_true", help="normalizes the observations at each step")
+    parser.add_argument("--hud", action="store_true", help="allow agent to access HUD elements")
+
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -122,7 +125,7 @@ def parse_render(parser):
         version = 0
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, variant, version, opts.normalize
+    return exp_name, env_str, hide_properties, pruned_ff_name, variant, version, opts.normalize, opts.hud
 
 
 def parse_eval(parser):
@@ -141,6 +144,7 @@ def parse_eval(parser):
     parser.add_argument("--progress", action="store_true", help="display a progress bar of the training process")
     parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
     parser.add_argument("--normalize", action="store_true", help="normalizes the observations at each step")
+    parser.add_argument("--hud", action="store_true", help="allow agent to access HUD elements")
     parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
     opts = parser.parse_args()
 
@@ -185,7 +189,7 @@ def parse_eval(parser):
     else:
         version = 0
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, opts.times, variant, version, opts.progress, opts.viper, opts.normalize
+    return exp_name, env_str, hide_properties, pruned_ff_name, opts.times, variant, version, opts.progress, opts.viper, opts.normalize, opts.hud
 
 
 def get_highest_version(agent): 

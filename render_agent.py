@@ -19,7 +19,7 @@ def flist(l):
 def main():
     parser = argparse.ArgumentParser()
 
-    exp_name, env_str, hide_properties, pruned_ff_name, variant, version, normalize = utils.parser.parser.parse_render(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, variant, version, normalize, hud = utils.parser.parser.parse_render(parser)
     
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
@@ -39,7 +39,9 @@ def main():
                             hide_properties=hide_properties,
                             draw_features=True, # implement feature attribution
                             reward_mode=0, #env reward only for evaluation
-                            normalize=normalize)
+                            normalize=normalize,
+                            hud=hud
+                            )
 
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])
