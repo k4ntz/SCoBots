@@ -48,21 +48,31 @@ class TensorboardCallback(BaseCallback):
 
     def __init__(self, n_envs, verbose=0):
         self.n_envs = n_envs
-        self.buffer = deque(maxlen=100) #ppo default stat window
+        self.ep_env_buffer = deque(maxlen=100) #ppo default stat window
+        self.ep_rew_shape_buffer = deque(maxlen=100)
         super().__init__(verbose)
 
     def _on_step(self) -> bool:
-        ep_rewards = self.training_env.get_attr("ep_env_reward", range(self.n_envs))
-        for rew in ep_rewards:
+        ep_env_rewards = self.training_env.get_attr("ep_env_reward", range(self.n_envs))
+        ep_rew_shape_rewards = self.training_env.get_attr("ep_rew_shape_reward", range(self.n_envs))
+        for rew in ep_env_rewards:
             if rew is not None:
-                self.buffer.extend([rew])
+                self.ep_env_buffer.extend([rew])
+        for rew in ep_rew_shape_rewards:
+            if rew is not None:
+                self.ep_rew_shape_buffer.extend([rew])
 
 
     def on_rollout_end(self) -> None:
-        buff_list = list(self.buffer)
-        if len(buff_list) == 0:
-            return
-        self.logger.record("rollout/ep_env_rew_mean", np.mean(list(self.buffer)))
+        buff_env_list = list(self.ep_env_buffer)
+        buff_rew_shape_list = list(self.ep_rew_shape_buffer)
+        if len(buff_env_list) != 0:
+            self.logger.record("rollout/ep_env_rew_mean", np.mean(list(self.ep_env_buffer)))
+        if len(buff_rew_shape_list) != 0:
+            self.logger.record("rollout/ep_rew_shape_0", np.mean(list(self.ep_rew_shape_buffer), axis=0)[0])
+            self.logger.record("rollout/ep_rew_shape_1", np.mean(list(self.ep_rew_shape_buffer), axis=0)[1])
+            self.logger.record("rollout/ep_rew_shape_2", np.mean(list(self.ep_rew_shape_buffer), axis=0)[2])
+
 
 
 class SaveBestModelCallback(BaseCallback):

@@ -51,6 +51,8 @@ class Environment(Env):
         self.original_reward = []
         self.ep_env_reward = None
         self.ep_env_reward_buffer = 0
+        self.ep_rew_shape_reward = 0
+        self.ep_rew_shape_reward_buffer = np.array([0.0, 0.0, 0.0])
         self.reset_ep_reward = True
 
         if reward_mode == 2: # mix rewards
@@ -104,7 +106,7 @@ class Environment(Env):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
             objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self._reward_mode)
             sco_obs = self.focus.get_feature_vector(objects)
-            sco_reward = self._reward_fn(objects, terminated) if self._reward_fn is not None else 0
+            sco_rewards = self._reward_fn(objects, terminated) if self._reward_fn is not None else 0
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
                 self._obj_obs = self._draw_objects_overlay(obs)
@@ -112,14 +114,18 @@ class Environment(Env):
             self.original_obs = obs
             self.original_reward = reward
             self.ep_env_reward_buffer += self.original_reward
+            self.ep_rew_shape_reward_buffer += sco_rewards #sco_rewards is np array
             if self.reset_ep_reward:
                 self.ep_env_reward = None
                 self.reset_ep_reward = False
             if terminated or truncated:
                 self.ep_env_reward = self.ep_env_reward_buffer
                 self.ep_env_reward_buffer = 0
+                self.ep_rew_shape_reward = self.ep_rew_shape_reward_buffer
+                self.ep_rew_shape_reward_buffer = np.array([0.0,0.0,0.0]) 
                 self.reset_ep_reward = True
                 self.focus.reward_subgoals = 0
+            sco_reward = np.sum(sco_rewards)
             final_reward = self._reward_composition_func(sco_reward, reward)
             if self.normalize:
                 sco_obs = self.normalizer(sco_obs)
