@@ -1,9 +1,11 @@
 import os
 import re
 from pathlib import Path
+import argparse
 
 
-def parse_train(parser):
+def parse_train():
+    parser = argparse.ArgumentParser()
     parser.add_argument("-g", "--game", type=str, required=True,
                         help="game to train (e.g. 'Pong')")
     parser.add_argument("-s", "--seed", type=int, required=True,
@@ -66,7 +68,8 @@ def parse_train(parser):
 
 
 
-def parse_render(parser):
+def render_parser():
+    parser = argparse.ArgumentParser()
     parser.add_argument("-g", "--game", type=str, required=True,
                         help="game to train (e.g. 'Pong')")
     parser.add_argument("-s", "--seed", type=int, required=True,
@@ -78,8 +81,12 @@ def parse_render(parser):
     parser.add_argument("-x", "--exclude_properties",  action="store_true", help="exclude properties from feature vector")
     parser.add_argument("-n", "--version", type=str, required=False, help="specify which trained version. standard selects highest number")
     parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
-    opts = parser.parse_args()
+    parser.add_argument("--record", required= False, action="store_true", help="wheter to record the rendered video")
+    parser.add_argument("--nb_frames", type=int, default=0, help="stop recording after nb_frames (or 1 episode if not specified)")
+    return parser.parse_args()
 
+
+def convert_args(opts):
     env_str = "ALE/" + opts.game +"-v5"
     settings_str = ""
     pruned_ff_name = None

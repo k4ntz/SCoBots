@@ -2,6 +2,13 @@ import pickle
 import numpy as np
 import pygame
 import gymnasium as gym
+import time
+import os
+try:
+    from pygame_screen_record import ScreenRecorder
+    _screen_recorder_imported = True
+except ImportError as imp_err:
+    _screen_recorder_imported = False
 
 
 class Renderer:
@@ -10,7 +17,7 @@ class Renderer:
     env: gym.Env
     zoom: int = 4
 
-    def __init__(self, envs, model):
+    def __init__(self, envs, model, record=False, nb_frames=0):
         self.envs = envs
         self.env = envs.venv.envs[0]
         self.model = model
@@ -31,6 +38,19 @@ class Renderer:
 
         self.rgb_agent = False
         self.human_playing = False
+        self.print_reward = True
+
+        if record:
+            if _screen_recorder_imported:
+                self._screen_recorder = ScreenRecorder(60)
+                self._screen_recorder.start_rec()
+                self._recording = True
+                self.nb_frames = nb_frames
+            else:
+                print("Screen recording not available. Please install the pygame_screen_record package.")
+                exit(1)
+        else:
+            self.nb_frames = np.inf
 
     def _init_pygame(self, sample_image):
         pygame.init()
@@ -39,24 +59,31 @@ class Renderer:
         self.env_render_shape = sample_image.shape[:2]
         window_size = self.env_render_shape[:2]
         self.window = pygame.display.set_mode(window_size)
-        self.clock = pygame.time.Clock()
-        
+        self.clock = pygame.time.Clock()      
 
     def run(self):
         self.running = True
         obs = self.envs.reset()
+        i = 1
         while self.running:
             self._handle_user_input()
             if not self.paused:
                 if self.human_playing:
-                    action = self._get_action()
+                    action = [self._get_action()]
+                    time.sleep(0.05)
                 elif self.rgb_agent:
                     pass
                 else:
                     action, _ = self.model.predict(obs, deterministic=True)
-                obs, rew, _, _ = self.envs.step(action)
+                obs, rew, done, infos = self.envs.step(action)
                 self.env.sco_obs = obs
                 self.current_frame = self.env._obj_obs
+                if done:
+                    if self._recording and self.nb_frames == 0:
+                        self._save_recording()
+                    obs = self.envs.reset()
+                elif self._recording and i == self.nb_frames:
+                    self._save_recording()
             self._render()
         pygame.quit()
 
@@ -69,12 +96,25 @@ class Renderer:
         else:
             return 0  # NOOP
 
+    def _save_recording(self):
+        self._screen_recorder.stop_rec()	# stop recording
+        filename = f"{self.env.oc_env.game_name}.avi"
+        i = 0
+        while os.path.exists(filename):
+            i += 1
+            filename = f"{self.env.oc_env.game_name}_{i}.avi"
+        self._screen_recorder.save_recording(filename)
+        print(f"Recording saved as {filename}")
+        self._recording = False
+
     def _handle_user_input(self):
         self.current_mouse_pos = np.asarray(pygame.mouse.get_pos())
 
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:  # window close button clicked
+                if self._recording:
+                    self._save_recording()
                 self.running = False
 
             elif event.type == pygame.KEYDOWN:  # keyboard key pressed
