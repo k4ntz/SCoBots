@@ -1,9 +1,11 @@
 import os
 import re
 from pathlib import Path
+import argparse
 
 
-def parse_train(parser):
+def parse_train():
+    parser = argparse.ArgumentParser()
     parser.add_argument("-g", "--game", type=str, required=True,
                         help="game to train (e.g. 'Pong')")
     parser.add_argument("-s", "--seed", type=int, required=True,
@@ -68,7 +70,8 @@ def parse_train(parser):
 
 
 
-def parse_render(parser):
+def render_parser():
+    parser = argparse.ArgumentParser()
     parser.add_argument("-g", "--game", type=str, required=True,
                         help="game to train (e.g. 'Pong')")
     parser.add_argument("-s", "--seed", type=int, required=True,
@@ -84,7 +87,13 @@ def parse_render(parser):
     parser.add_argument("--hud", action="store_true", help="allow agent to access HUD elements")
 
     opts = parser.parse_args()
+    parser.add_argument("--record", required= False, action="store_true", help="wheter to record the rendered video")
+    parser.add_argument("--nb_frames", type=int, default=0, help="stop recording after nb_frames (or 1 episode if not specified)")
+    parser.add_argument("--print-reward", action="store_true", help="display the reward in the console (if not 0)")
+    return parser.parse_args()
 
+
+def convert_args(opts):
     env_str = "ALE/" + opts.game +"-v5"
     settings_str = ""
     pruned_ff_name = None
