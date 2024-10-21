@@ -47,6 +47,7 @@ def main():
     model = PPO.load(model_path)
     obs = env.reset()
     renderer = Renderer(env, model, opts.record, opts.nb_frames)
+    renderer.print_reward = opts.print_reward
     renderer.run()
 
 if __name__ == '__main__':

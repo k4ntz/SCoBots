@@ -83,6 +83,7 @@ def render_parser():
     parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
     parser.add_argument("--record", required= False, action="store_true", help="wheter to record the rendered video")
     parser.add_argument("--nb_frames", type=int, default=0, help="stop recording after nb_frames (or 1 episode if not specified)")
+    parser.add_argument("--print-reward", action="store_true", help="display the reward in the console (if not 0)")
     return parser.parse_args()
 
 

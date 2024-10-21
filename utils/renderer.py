@@ -38,7 +38,8 @@ class Renderer:
 
         self.rgb_agent = False
         self.human_playing = False
-        self.print_reward = True
+        self.print_reward = False
+        self._recording = False
 
         if record:
             if _screen_recorder_imported:
@@ -78,6 +79,8 @@ class Renderer:
                 obs, rew, done, infos = self.envs.step(action)
                 self.env.sco_obs = obs
                 self.current_frame = self.env._obj_obs
+                if self.print_reward and rew[0]:
+                    print(rew[0])
                 if done:
                     if self._recording and self.nb_frames == 0:
                         self._save_recording()
