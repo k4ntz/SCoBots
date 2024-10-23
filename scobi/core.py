@@ -118,6 +118,7 @@ class Environment(Env):
             if self.reset_ep_reward:
                 self.ep_env_reward = None
                 self.reset_ep_reward = False
+                self.ep_rew_shape_reward= None
             if terminated or truncated:
                 self.ep_env_reward = self.ep_env_reward_buffer
                 self.ep_env_reward_buffer = 0

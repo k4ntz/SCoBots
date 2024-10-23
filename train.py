@@ -138,18 +138,16 @@ def _get_directory(path, exp_name):
         version_counter += 1
 
 def main():
-    parser = argparse.ArgumentParser()
-    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, normalize, hud, pr_bar = utils.parser.parser.parse_train(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, normalize, hud, pr_bar = utils.parser.parser.parse_train()
 
-    # n_envs = envs
-    # n_eval_envs = 4
-    n_envs = 1
-    n_eval_envs = 1
+    n_envs = envs
+    n_eval_envs = 4
     n_eval_episodes = 8
     eval_env_seed = (seed + 42) * 2 #different seeds for eval
     training_timestamps = 20_000_000
     checkpoint_frequency = 1_000_000
-    eval_frequency = 500_000
+    # eval_frequency = 500_000
+    eval_frequency = 250_000
     rtpt_frequency = 100_000
     bar_update_interval = 100_000
 
@@ -302,15 +300,19 @@ def main():
         clipping_eps = 0.1
         model = PPO(
             policy_str,
-            n_steps=2048,
+            # n_steps=2048,
+            n_steps=256,
             learning_rate=linear_schedule(adam_step_size),
             n_epochs=3,
             batch_size=32*8,
             gamma=0.99,
             gae_lambda=0.95,
             clip_range=linear_schedule(clipping_eps),
-            vf_coef=1,
-            ent_coef=0.01,
+            # vf_coef=1,
+            normalize_advantage=True, # added by remunds
+            vf_coef=0.5,
+            # ent_coef=0.01,
+            ent_coef=0.05,
             env=train_env,
             policy_kwargs=pkwargs,
             verbose=1)
