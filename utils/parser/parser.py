@@ -133,7 +133,7 @@ def convert_args(opts):
         version = 0
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, variant, version, opts.normalize, opts.hud
+    return exp_name, env_str, hide_properties, pruned_ff_name, variant, version, opts.reward, opts.normalize, opts.hud
 
 
 def parse_eval(parser):

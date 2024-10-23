@@ -18,7 +18,7 @@ def flist(l):
 
 def main():
     opts = render_parser()
-    exp_name, env_str, hide_properties, pruned_ff_name, variant, version, normalize, hud = convert_args(opts)
+    exp_name, env_str, hide_properties, pruned_ff_name, variant, version, reward, normalize, hud = convert_args(opts)
     
     if version == 0:
         version = get_highest_version(exp_name)
@@ -37,7 +37,7 @@ def main():
                             focus_file=pruned_ff_name,
                             hide_properties=hide_properties,
                             draw_features=True, # implement feature attribution
-                            reward_mode=0, #env reward only for evaluation
+                            reward_mode=reward, #env reward only for evaluation
                             normalize=normalize,
                             hud=hud
                             )
