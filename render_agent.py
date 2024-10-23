@@ -41,15 +41,11 @@ def main():
                             normalize=normalize,
                             hud=hud
                             )
-        print(env.observation_space)
-
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])
-        print(dummy_vecenv.observation_space)
         env = VecNormalize.load(vecnorm_path, dummy_vecenv)
         env.training = False
         env.norm_reward = False
-    print("Loading model from: ", model_path)
     model = PPO.load(model_path)
     obs = env.reset()
     renderer = Renderer(env, model, opts.record, opts.nb_frames)
