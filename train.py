@@ -126,8 +126,7 @@ def _get_directory(path, exp_name):
         version_counter += 1
 
 def main():
-    parser = argparse.ArgumentParser()
-    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, pr_bar = utils.parser.parser.parse_train(parser)
+    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, pr_bar = utils.parser.parser.parse_train()
 
     n_envs = envs
     n_eval_envs = 4
