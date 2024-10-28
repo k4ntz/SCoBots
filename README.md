@@ -1,6 +1,6 @@
 # Successive Concepet Bottleneck Interface SCoBot
 ## Installation And Requirements
-Scobots requires OCAtari and the local var ```'SCOBI_OBJ_EXTRACTOR'``` set as either ```OC_Atari``` or ```Noisy_OC_Atari```. If not set it will automatically resort to ```OC_Atari```.
+Scobots requires OCAtari and the local var ```'SCOBI_OBJ_EXTRACTOR'``` set as either ```OC_Atari``` or ```Noisy_OC_Atari```. If not set it will automatically resort to ```OC_Atari```. Python version ```3.8.x``` is recommended if planning to use our RGB agents.
 
 Without agents SCoBots are not usable, so you can either download some pretrained agents from huggingface via the ```download_agents.sh``` script, or train one yourself, as explained in the usage guide.
 

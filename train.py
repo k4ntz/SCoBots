@@ -1,10 +1,9 @@
 import os
 from collections import deque
+from datetime import datetime
 from pathlib import Path
 from typing import Callable
-from tqdm import tqdm
 
-import argparse
 import gymnasium as gym
 import numpy as np
 import torch as th
@@ -20,7 +19,6 @@ from stable_baselines3.common.logger import configure
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize, VecTransposeImage
-from datetime import datetime
 
 import utils.parser.parser
 from scobi import Environment
