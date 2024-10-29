@@ -16,6 +16,7 @@ class Renderer:
     clock: pygame.time.Clock
     env: gym.Env
     zoom: int = 4
+    fps: int = 20
 
     def __init__(self, envs, model, record=False, nb_frames=0):
         self.envs = envs
@@ -94,6 +95,9 @@ class Renderer:
                 elif self._recording and i == self.nb_frames:
                     self._save_recording()
             self._render()
+
+            if self.rgb_agent:
+                self.clock.tick(self.fps)
         pygame.quit()
 
     def _get_action(self):
