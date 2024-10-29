@@ -84,6 +84,7 @@ def render_parser():
     parser.add_argument("--record", required= False, action="store_true", help="wheter to record the rendered video")
     parser.add_argument("--nb_frames", type=int, default=0, help="stop recording after nb_frames (or 1 episode if not specified)")
     parser.add_argument("--print-reward", action="store_true", help="display the reward in the console (if not 0)")
+    parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
     return parser.parse_args()
 
 
@@ -128,7 +129,7 @@ def convert_args(opts):
         version = 0
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, variant, version
+    return exp_name, env_str, hide_properties, pruned_ff_name, variant, version, opts.viper
 
 
 def parse_eval(parser):
