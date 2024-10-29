@@ -19,15 +19,24 @@ class Renderer:
 
     def __init__(self, envs, model, record=False, nb_frames=0):
         self.envs = envs
-        self.env = envs.venv.envs[0]
+        if hasattr(envs, 'venv') and hasattr(envs.venv, 'envs'):
+            self.env = envs.venv.envs[0]
+            self.rgb_agent = False
+        elif hasattr(envs, 'envs'):
+            self.env = envs.envs[0]  # Handles cases where envs are in a DummyVecEnv or similar
+            self.rgb_agent = True
+        else:
+            self.env = envs
+            self.rgb_agent = True
         self.model = model
-        self.current_frame = self.env._obj_obs
+        self.current_frame = self._get_current_frame()
         self._init_pygame(self.current_frame)
         self.paused = False
 
         self.current_keys_down = set()
         self.current_mouse_pos = None
-        self.keys2actions = self.env.oc_env.unwrapped.get_keys_to_action()
+        if not self.rgb_agent:
+            self.keys2actions = self.env.oc_env.unwrapped.get_keys_to_action()
 
         self.ram_grid_anchor_left = self.env_render_shape[0] + 28
         self.ram_grid_anchor_top = 28
@@ -36,7 +45,6 @@ class Renderer:
         self.candidate_cell_ids = []
         self.current_active_cell_input : str = ""
 
-        self.rgb_agent = False
         self.human_playing = False
         self.print_reward = False
         self._recording = False
@@ -72,13 +80,11 @@ class Renderer:
                 if self.human_playing:
                     action = [self._get_action()]
                     time.sleep(0.05)
-                elif self.rgb_agent:
-                    pass
                 else:
                     action, _ = self.model.predict(obs, deterministic=True)
                 obs, rew, done, infos = self.envs.step(action)
                 self.env.sco_obs = obs
-                self.current_frame = self.env._obj_obs
+                self.current_frame = self._get_current_frame()
                 if self.print_reward and rew[0]:
                     print(rew[0])
                 if done:
@@ -165,6 +171,12 @@ class Renderer:
             elif event.type == pygame.KEYUP:  # keyboard key released
                 if (event.key,) in self.keys2actions.keys():
                     self.current_keys_down.remove(event.key)
+
+    def _get_current_frame(self):
+        if self.rgb_agent:
+            return self.env.render()
+        else:
+            return self.env._obj_obs
 
     def _render(self, frame = None):
         self.window.fill((0,0,0))  # clear the entire window
