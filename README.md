@@ -19,7 +19,6 @@ The following example demonstrates the usage:
 python train.py -g Pong -s 0 -env 8 -r env --progress
 ```
 The first three flags are required as input. With the help option the other flags can be displayed.
-A progress bar is opted in via ```--progress```, which is optional.
 ### Evaluating An Agent
 The evaluate.py file evaluates an already trained agent, displaying the results afterwards and saving it in a dedicated file.
 
@@ -27,7 +26,6 @@ The following example demonstrates the usage of the previously trained agent:
 ```bash
 python eval.py -g Pong -s 0 -t 10 -r env
 ```
-The first three flags are required as input. With the help option the other flags can be displayed.
 
 ### Monitoring A Trained Agent
 To visualize a trained agent playing a specified game the render_agent.py file can be executed.
@@ -37,7 +35,6 @@ The following example demonstrates the usage of the previously trained + evaluat
 ```bash
 python render_agent.py -g Pong -s 0 -r env
 ```
-The first three flags are required as input. With the help option the other flags can be displayed.
 
 ## Usage Of Checkpoints And Example Workflow
 Checkpoints are saved under ```resources/checkpoints```.
