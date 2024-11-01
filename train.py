@@ -1,4 +1,5 @@
 import os
+import shutil
 from collections import deque
 from datetime import datetime
 from pathlib import Path
@@ -163,6 +164,10 @@ def main():
     ckpt_path = _get_directory(Path("resources/checkpoints"), exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
+    if flags_dictionary["pruned_ff_name"] is None :
+        focus_dir = ckpt_path
+    else:
+        focus_dir = flags_dictionary["focus_dir"]
 
     yaml_path = Path(ckpt_path, f"{exp_name}_training_status.yaml")
     rgb_yaml = 'used' if flags_dictionary["rgb"] else 'not used'
@@ -184,7 +189,7 @@ def main():
         def _init() -> gym.Env:
             env = Environment(flags_dictionary["env"],
                               seed=seed + rank,
-                              focus_dir=ckpt_path,
+                              focus_dir=focus_dir,
                               focus_file=flags_dictionary["pruned_ff_name"],
                               hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,
@@ -201,7 +206,7 @@ def main():
         def _init() -> gym.Env:
             env = Environment(flags_dictionary["env"],
                               seed=seed + rank,
-                              focus_dir=ckpt_path,
+                              focus_dir=focus_dir,
                               focus_file=flags_dictionary["pruned_ff_name"],
                               hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,
@@ -315,8 +320,13 @@ def main():
     model.set_logger(new_logger)
     print(model.policy)
     print(f"Experiment name: {exp_name}")
-    print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")  
+    print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
 
+    print(flags_dictionary["pruned_ff_name"])
+    print("----------------------------")
+    if flags_dictionary["pruned_ff_name"] is not None:
+        focus_file_path = Path(flags_dictionary["focus_dir"]) / flags_dictionary["pruned_ff_name"]
+        shutil.copy(focus_file_path, ckpt_path / focus_file_path.name)
     model.learn(total_timesteps=training_timestamps, callback=cb_list, progress_bar=flags_dictionary["progress"])
 
     _update_yaml(yaml_path, model.num_timesteps, True)
