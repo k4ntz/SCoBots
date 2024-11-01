@@ -136,10 +136,6 @@ def render_parser():
         hide_properties = True
 
 
-    if opts.version:
-        version = opts.version
-    else:
-        version = 0
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
 
     return {

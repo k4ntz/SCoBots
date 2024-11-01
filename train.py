@@ -96,9 +96,32 @@ def _create_yaml(flags, location):
         'completed_steps': None,
         'creation date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
+    comments = {
+        'game': "# The game trained on",
+        'seed': "# Initialised on seed number",
+        'env': "# Number of environments",
+        'reward': "# Reward type: env, human, or mixed",
+        'prune': "# Used a custom focus file using pruning",
+        'exclude_properties': "# Excluding some properties",
+        'rgbv5': "# Was the RGB space used",
+        'status': "# Training status",
+        'completed_steps': "# Steps completed in training",
+        'creation date': "# File creation date"
+    }
+
+    yaml_content = yaml.dump(data, default_flow_style=False)
+
+    commented_yaml_lines = []
+    for line in yaml_content.splitlines():
+        key = line.split(":")[0].strip()
+        if key in comments:
+            commented_yaml_lines.append(comments[key])
+        commented_yaml_lines.append(line)
+
+    commented_yaml_content = "\n".join(commented_yaml_lines)
 
     with open(location, 'w') as yaml_file:
-        yaml.dump(data, yaml_file)
+        yaml_file.write(commented_yaml_content)
 
     print(f"YAML file with training values created at {location}")
 
