@@ -158,7 +158,6 @@ def main():
     checkpoint_frequency = 1_000_000
     eval_frequency = 500_000
     rtpt_frequency = 100_000
-    bar_update_interval = 100_000
 
     log_path = _get_directory(Path("resources/training_logs"), exp_name)
     ckpt_path = _get_directory(Path("resources/checkpoints"), exp_name)
@@ -185,7 +184,7 @@ def main():
         def _init() -> gym.Env:
             env = Environment(flags_dictionary["env"],
                               seed=seed + rank,
-                              focus_dir=flags_dictionary["focus_dir"],
+                              focus_dir=ckpt_path,
                               focus_file=flags_dictionary["pruned_ff_name"],
                               hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,
@@ -202,7 +201,7 @@ def main():
         def _init() -> gym.Env:
             env = Environment(flags_dictionary["env"],
                               seed=seed + rank,
-                              focus_dir=flags_dictionary["focus_dir"],
+                              focus_dir=ckpt_path,
                               focus_file=flags_dictionary["pruned_ff_name"],
                               hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,

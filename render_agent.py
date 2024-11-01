@@ -50,12 +50,14 @@ def main():
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("resources/checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
+    ff_file_path = Path("resources/checkpoints", exp_name)
     EVAL_ENV_SEED = 84
 
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
     else:
         env = Environment(env_str,
+                          focus_dir=ff_file_path,
                           focus_file=pruned_ff_name,
                           hide_properties=hide_properties,
                           draw_features=True, # implement feature attribution

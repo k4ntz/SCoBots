@@ -65,7 +65,6 @@ def main():
     viper = flag_dictionary["viper"]
     progress_bar = flag_dictionary["progress"]
     time = int(flag_dictionary["times"])
-    
 
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
@@ -75,15 +74,17 @@ def main():
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("resources/checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
+    ff_file_path = Path("resources/checkpoints", exp_name)
     EVAL_ENV_SEED = 84
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
     else:
         env = Environment(env_str,
-                            focus_file=pruned_ff_name,
-                            hide_properties=hide_properties,
-                            draw_features=True, # implement feature attribution
-                            reward=0) #env reward only for evaluation
+                          focus_dir=ff_file_path,
+                          focus_file=pruned_ff_name,
+                          hide_properties=hide_properties,
+                          draw_features=True, # implement feature attribution
+                          reward=0) #env reward only for evaluation
 
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])
