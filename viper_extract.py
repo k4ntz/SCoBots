@@ -2,7 +2,6 @@ from pathlib import Path
 
 import argparse
 import numpy as np
-# import tensorflow as tf
 from joblib import load
 from rtpt import RTPT
 from sklearn.tree import DecisionTreeClassifier
@@ -21,18 +20,6 @@ class SB3Model():
 
     def predict(self, obs, deterministic):
         return self.model.predict(obs, deterministic) #vecenv output eg. (array([2]), True)
-
-
-class KerasModel():
-    def __init__(self, model) -> None:
-        self.name = "Translated Keras Model"
-        self.model = model
-
-    def predict(self, obs, deterministic=True):
-        out = self.model(obs)
-        idx = tf.argmax(out[0])
-        return np.array([idx]), None #increase dim to match vecenv used
-
 
 class DTClassifierModel():
     def __init__(self, model) -> None:

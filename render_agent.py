@@ -6,7 +6,7 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv
 
 from scobi import Environment
-from utils.parser.parser import render_parser, convert_args, get_highest_version
+from utils.parser.parser import render_parser, get_highest_version
 from utils.renderer import Renderer
 from viper_extract import DTClassifierModel
 from joblib import load
@@ -29,8 +29,17 @@ def _load_viper(exp_name, path_provided):
 
 
 def main():
-    opts = render_parser()
-    exp_name, env_str, hide_properties, pruned_ff_name, variant, version, viper = convert_args(opts)
+    flag_dictionary = render_parser()
+    version = int(flag_dictionary["version"])
+    exp_name = flag_dictionary["exp_name"]
+    variant = flag_dictionary["variant"]
+    env_str = flag_dictionary["env_str"]
+    pruned_ff_name = flag_dictionary["pruned_ff_name"]
+    hide_properties = flag_dictionary["hide_properties"]
+    viper = flag_dictionary["viper"]
+    record = flag_dictionary["record"]
+    nb_frames = flag_dictionary["nb_frames"]
+    print_reward = flag_dictionary["print_reward"]
     
     if version == 0:
         version = get_highest_version(exp_name)
@@ -66,8 +75,8 @@ def main():
     else:
         model = PPO.load(model_path)
     obs = env.reset()
-    renderer = Renderer(env, model, opts.record, opts.nb_frames)
-    renderer.print_reward = opts.print_reward
+    renderer = Renderer(env, model, record, nb_frames)
+    renderer.print_reward = print_reward
     renderer.run()
 
 if __name__ == '__main__':

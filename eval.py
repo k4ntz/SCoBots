@@ -55,7 +55,17 @@ def _load_viper(exp_name, path_provided):
 def main():
     parser = argparse.ArgumentParser()
 
-    exp_name, env_str, hide_properties, pruned_ff_name, time, variant, version, progress_bar, viper = utils.parser.parser.parse_eval(parser)
+    flag_dictionary = utils.parser.parser.parse_eval(parser)
+    version = int(flag_dictionary["version"])
+    exp_name = flag_dictionary["exp_name"]
+    variant = flag_dictionary["variant"]
+    env_str = flag_dictionary["env_str"]
+    pruned_ff_name = flag_dictionary["pruned_ff_name"]
+    hide_properties = flag_dictionary["hide_properties"]
+    viper = flag_dictionary["viper"]
+    progress_bar = flag_dictionary["progress"]
+    time = int(flag_dictionary["times"])
+    
 
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
