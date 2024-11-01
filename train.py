@@ -322,8 +322,6 @@ def main():
     print(f"Experiment name: {exp_name}")
     print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
 
-    print(flags_dictionary["pruned_ff_name"])
-    print("----------------------------")
     if flags_dictionary["pruned_ff_name"] is not None:
         focus_file_path = Path(flags_dictionary["focus_dir"]) / flags_dictionary["pruned_ff_name"]
         shutil.copy(focus_file_path, ckpt_path / focus_file_path.name)
