@@ -55,7 +55,18 @@ def _load_viper(exp_name, path_provided):
 def main():
     parser = argparse.ArgumentParser()
 
-    exp_name, env_str, hide_properties, pruned_ff_name, time, variant, version, progress_bar, viper, normalize, hud = utils.parser.parser.parse_eval(parser)
+    flag_dictionary = utils.parser.parser.parse_eval(parser)
+    version = int(flag_dictionary["version"])
+    exp_name = flag_dictionary["exp_name"]
+    variant = flag_dictionary["variant"]
+    env_str = flag_dictionary["env_str"]
+    pruned_ff_name = flag_dictionary["pruned_ff_name"]
+    hide_properties = flag_dictionary["hide_properties"]
+    viper = flag_dictionary["viper"]
+    normalize = flag_dictionary["normalize"]
+    hud = flag_dictionary["hud"]
+    progress_bar = flag_dictionary["progress"]
+    time = int(flag_dictionary["times"])
 
     if version == 0:
         version = utils.parser.parser.get_highest_version(exp_name)
@@ -65,18 +76,20 @@ def main():
     vecnorm_str = "best_vecnormalize.pkl"
     model_path = Path("resources/checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
+    ff_file_path = Path("resources/checkpoints", exp_name)
     EVAL_ENV_SEED = 84
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
     else:
         env = Environment(env_str,
-                            focus_file=pruned_ff_name,
-                            hide_properties=hide_properties,
-                            draw_features=True, # implement feature attribution
-                            reward=0,
-                            normalize=normalize,
-                            hud=hud,
-                            ) #env reward only for evaluation
+                          focus_dir=ff_file_path,
+                          focus_file=pruned_ff_name,
+                          hide_properties=hide_properties,
+                          draw_features=True, # implement feature attribution
+                          reward=0, #env reward only for evaluation
+                          normalize=normalize,
+                          hud=hud,
+                          )
 
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])

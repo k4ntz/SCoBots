@@ -14,7 +14,7 @@ from scobi.preprocessing import Normalizer
 from scobi.reward_shaping import get_reward_fn
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward_mode=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, normalize=False, **kwargs):
+    def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, normalize=False, **kwargs):
         self.logger = Logger(silent=silent)
         self.oc_env = em.make(env_name, self.logger, **kwargs)
         self.seed = seed
@@ -27,7 +27,7 @@ class Environment(Env):
 
         self.oc_env.reset(seed=self.seed)
         self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
-        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward_mode)
+        max_objects = self._wrap_map_order_game_objects(self.oc_env.max_objects, env_name, reward)
         self.did_reset = False
         # self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
         self.focus = Focus(env_name, hide_properties, focus_dir, focus_file, max_objects, actions, refresh_yaml, self.logger)
@@ -44,7 +44,7 @@ class Environment(Env):
         self._rel_obs = None  # observation augmented with relations
         self._top_features = []
 
-        self._reward_mode = reward_mode
+        self._reward = reward
         self._setup_reward(env_name.split("/")[-1])
 
         self.original_obs = []
@@ -55,9 +55,9 @@ class Environment(Env):
         self.ep_rew_shape_reward_buffer = np.array([0.0, 0.0, 0.0])
         self.reset_ep_reward = True
 
-        if reward_mode == 2: # mix rewards
+        if reward == 2: # mix rewards
             self._reward_composition_func = lambda a, b : a + b
-        elif reward_mode == 1: # scobi only
+        elif reward == 1: # scobi only
             self._reward_composition_func = lambda a, b : a
         else: # env only
             self._reward_composition_func = lambda a, b : b
@@ -78,10 +78,10 @@ class Environment(Env):
         self.did_reset = False # still require user to properly call a (likely seeded) reset()
 
     def _setup_reward(self, env_name: str):
-        if self._reward_mode != 0:
-            if self._reward_mode == 1:
+        if self._reward != 0:
+            if self._reward == 1:
                 log_str = "scobi"
-            elif self._reward_mode == 2:
+            elif self._reward == 2:
                 log_str = "env + scobi"
             else:
                 log_str = "unknown"
@@ -104,7 +104,7 @@ class Environment(Env):
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
-            objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self._reward_mode)
+            objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self._reward)
             sco_obs = self.focus.get_feature_vector(objects)
             sco_rewards = self._reward_fn(objects, terminated) if self._reward_fn is not None else 0
             freeze_mask = self.focus.get_current_freeze_mask()
@@ -141,7 +141,7 @@ class Environment(Env):
         self.focus.reward_threshold = -1
         self.focus.reward_history = [0, 0]
         _, info = self.oc_env.reset(*args, **kwargs)
-        objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self._reward_mode)
+        objects = self._wrap_map_order_game_objects(self.oc_env.objects, self.focus.ENV_NAME, self._reward)
         sco_obs= self.focus.get_feature_vector(objects)
         # self.sco_obs = sco_obs
         if self.normalize:

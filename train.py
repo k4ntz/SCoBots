@@ -1,10 +1,10 @@
 import os
+import shutil
 from collections import deque
+from datetime import datetime
 from pathlib import Path
 from typing import Callable
-from tqdm import tqdm
 
-import argparse
 import gymnasium as gym
 import numpy as np
 import torch as th
@@ -20,7 +20,6 @@ from stable_baselines3.common.logger import configure
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize, VecTransposeImage
-from datetime import datetime
 
 import utils.parser.parser
 from scobi import Environment
@@ -110,9 +109,32 @@ def _create_yaml(flags, location):
         'completed_steps': None,
         'creation date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
+    comments = {
+        'game': "# The game trained on",
+        'seed': "# Initialised on seed number",
+        'env': "# Number of environments",
+        'reward': "# Reward type: env, human, or mixed",
+        'prune': "# Used a custom focus file using pruning",
+        'exclude_properties': "# Excluding some properties",
+        'rgbv5': "# Was the RGB space used",
+        'status': "# Training status",
+        'completed_steps': "# Steps completed in training",
+        'creation date': "# File creation date"
+    }
+
+    yaml_content = yaml.dump(data, default_flow_style=False)
+
+    commented_yaml_lines = []
+    for line in yaml_content.splitlines():
+        key = line.split(":")[0].strip()
+        if key in comments:
+            commented_yaml_lines.append(comments[key])
+        commented_yaml_lines.append(line)
+
+    commented_yaml_content = "\n".join(commented_yaml_lines)
 
     with open(location, 'w') as yaml_file:
-        yaml.dump(data, yaml_file)
+        yaml_file.write(commented_yaml_content)
 
     print(f"YAML file with training values created at {location}")
 
@@ -138,36 +160,40 @@ def _get_directory(path, exp_name):
         version_counter += 1
 
 def main():
-    exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, seed, envs, game, rgb, reward, normalize, hud, pr_bar = utils.parser.parser.parse_train()
+    flags_dictionary = utils.parser.parser.parse_train()
 
-    n_envs = envs
+    exp_name = flags_dictionary["exp_name"]
+    n_envs = int(flags_dictionary["environments"])
     n_eval_envs = 4
     n_eval_episodes = 8
-    eval_env_seed = (seed + 42) * 2 #different seeds for eval
+    eval_env_seed = (int(flags_dictionary["seed"]) + 42) * 2 #different seeds for eval
     training_timestamps = 20_000_000
     checkpoint_frequency = 1_000_000
     # eval_frequency = 500_000
     eval_frequency = 250_000
     rtpt_frequency = 100_000
-    bar_update_interval = 100_000
 
     log_path = _get_directory(Path("resources/training_logs"), exp_name)
     ckpt_path = _get_directory(Path("resources/checkpoints"), exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
+    if flags_dictionary["pruned_ff_name"] is None :
+        focus_dir = ckpt_path
+    else:
+        focus_dir = flags_dictionary["focus_dir"]
 
     yaml_path = Path(ckpt_path, f"{exp_name}_training_status.yaml")
-    rgb_yaml = 'used' if rgb else 'not used'
+    rgb_yaml = 'used' if flags_dictionary["rgb"] else 'not used'
     flags = {
-        'game': game,
-        'seed': seed,
-        'environments': envs,
-        'reward': reward,
-        'prune': pruned_ff_name,
-        'exclude_properties': hide_properties,
+        'game': flags_dictionary["game"],
+        'seed': flags_dictionary["seed"],
+        'environments': flags_dictionary["environments"],
+        'reward': flags_dictionary["reward"],
+        'prune': flags_dictionary["pruned_ff_name"],
+        'exclude_properties': flags_dictionary["hide_properties"],
         'rgb': rgb_yaml,
-        'normalize': normalize,
-        'hud': hud
+        'normalize': flags_dictionary["normalize"],
+        'hud': flags_dictionary["hud"]
     }
     _create_yaml(flags, yaml_path)
 
@@ -176,17 +202,16 @@ def main():
 
     def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
-            env = Environment(env_str,
+            env = Environment(flags_dictionary["env"],
                               seed=seed + rank,
                               focus_dir=focus_dir,
-                              focus_file=pruned_ff_name,
-                              hide_properties=hide_properties,
+                              focus_file=flags_dictionary["pruned_ff_name"],
+                              hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,
-                            #   reward=reward_mode,
-                              reward_mode=reward_mode,
+                              reward=flags_dictionary["reward"],
                               refresh_yaml=refresh,
-                              normalize=normalize,
-                              hud=hud)
+                              normalize=flags_dictionary["normalize"],
+                              hud=flags_dictionary["hud"])
             env = EpisodicLifeEnv(env=env)
             env = Monitor(env)
             env.reset(seed=seed + rank)
@@ -196,17 +221,16 @@ def main():
 
     def make_eval_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
-            env = Environment(env_str,
+            env = Environment(flags_dictionary["env"],
                               seed=seed + rank,
                               focus_dir=focus_dir,
-                              focus_file=pruned_ff_name,
-                              hide_properties=hide_properties,
+                              focus_file=flags_dictionary["pruned_ff_name"],
+                              hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,
-                            #   reward=0, #always env reward for eval
-                              reward_mode=0, #always env reward for eval
+                              reward=0, #always env reward for eval
                               refresh_yaml=refresh,
-                              normalize=normalize,
-                              hud=hud)
+                              normalize=flags_dictionary["normalize"],
+                              hud=flags_dictionary["hud"])
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
@@ -215,14 +239,14 @@ def main():
         return _init
 
     # preprocessing based on atari wrapper of the openai baseline implementation (https://github.com/openai/baselines/blob/master/baselines/ppo1/run_atari.py)
-    if rgb:
+    if flags_dictionary["rgb"]:
         # NoopResetEnv not required, because v5 has sticky actions, and also frame_skip=5, so also not required to set in wrapper (1 means no frameskip). no reward clipping, because scobots dont clip as well
         train_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": True, "clip_reward" : False} # remaining values are part of AtariWrapper
-        train_env = make_vec_env(env_str, n_envs=n_envs, seed=seed,  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        train_env = make_vec_env(flags_dictionary["env"], n_envs=n_envs, seed=int(flags_dictionary["seed"]),  wrapper_class=AtariWrapper, wrapper_kwargs=train_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         train_env = VecTransposeImage(train_env) #required for PyTorch convolution layers.
         # disable EpisodicLifeEnv, ClipRewardEnv for evaluation
         eval_wrapper_params = {"noop_max" : 0, "frame_skip" : 1, "screen_size": 84, "terminal_on_life_loss": False, "clip_reward" : False} # remaining values are part of AtariWrapper
-        eval_env = make_vec_env(env_str, n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
+        eval_env = make_vec_env(flags_dictionary["env"], n_envs=n_eval_envs, seed=eval_env_seed, wrapper_class=AtariWrapper, wrapper_kwargs=eval_wrapper_params, vec_env_cls=SubprocVecEnv, vec_env_kwargs={"start_method" :"fork"})
         eval_env = VecTransposeImage(eval_env) #required for PyTorch convolution layers.
     else:
         # check if compatible gym env
@@ -231,10 +255,10 @@ def main():
         del monitor
         # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing
         eval_env = VecNormalize(SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False, training=False)
-        train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=seed, silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
+        train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=int(flags_dictionary["seed"]), silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
 
     rtpt_iters = training_timestamps // rtpt_frequency
-    save_bm = SaveBestModelCallback(ckpt_path, rgb=rgb_exp)
+    save_bm = SaveBestModelCallback(ckpt_path, rgb=flags_dictionary["rgb_exp"])
     eval_callback = EvalCallback(
         eval_env,
         callback_on_new_best=save_bm,
@@ -262,12 +286,12 @@ def main():
 
     tb_callback = TensorboardCallback(n_envs=n_envs)
     cbl = [checkpoint_callback, eval_callback, n_callback, tb_callback]
-    if rgb_exp: #remove tb callback if rgb
+    if flags_dictionary["rgb_exp"]: #remove tb callback if rgb
         cbl = cbl[:-1]
     cb_list = CallbackList(cbl)
     new_logger = configure(str(log_path), ["tensorboard"])
 
-    if rgb_exp:
+    if flags_dictionary["rgb_exp"]:
         # pkwargs = dict(activation_fn=th.nn.Tanh, net_arch=dict(pi=[64, 64], vf=[64, 64]))
         # was mentioned in ppo paper, but most likely not used, use Nature DQN:
         # (https://github.com/openai/baselines/blob/master/baselines/ppo1/cnn_policy.py#L6) instead
@@ -295,7 +319,7 @@ def main():
         policy_str = "MlpPolicy"
         pkwargs = dict(activation_fn=th.nn.ReLU, net_arch=dict(pi=[64, 64], vf=[64, 64]))
         adam_step_size = 0.001
-        if game in ["Bowling", "Tennis"]:
+        if flags_dictionary["game"] in ["Bowling", "Tennis"]:
             adam_step_size = 0.00025
         clipping_eps = 0.1
         model = PPO(
@@ -319,9 +343,12 @@ def main():
     model.set_logger(new_logger)
     print(model.policy)
     print(f"Experiment name: {exp_name}")
-    print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")  
+    print(f"Started {type(model).__name__} training with {n_envs} actors and {n_eval_envs} evaluators...")
 
-    model.learn(total_timesteps=training_timestamps, callback=cb_list, progress_bar=pr_bar)
+    if flags_dictionary["pruned_ff_name"] is not None:
+        focus_file_path = Path(flags_dictionary["focus_dir"]) / flags_dictionary["pruned_ff_name"]
+        shutil.copy(focus_file_path, ckpt_path / focus_file_path.name)
+    model.learn(total_timesteps=training_timestamps, callback=cb_list, progress_bar=flags_dictionary["progress"])
 
     _update_yaml(yaml_path, model.num_timesteps, True)
 

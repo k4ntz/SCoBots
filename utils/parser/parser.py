@@ -4,6 +4,8 @@ from pathlib import Path
 import argparse
 
 
+
+
 def parse_train():
     parser = argparse.ArgumentParser()
     parser.add_argument("-g", "--game", type=str, required=True,
@@ -27,8 +29,8 @@ def parse_train():
     settings_str = ""
     pruned_ff_name = None
     hide_properties = False
-    focus_dir = "resources/focusfiles"
     noisy = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
+    focus_dir = "resources/focusfiles"
 
 
     reward_mode = 0
@@ -65,8 +67,23 @@ def parse_train():
     if noisy:
         exp_name += "-noisy"
 
-
-    return exp_name, env_str, hide_properties, pruned_ff_name, focus_dir, reward_mode, rgb_exp, opts.seed, opts.environments, opts.game, opts.rgb, opts.reward, opts.normalize, opts.hud, opts.progress
+    return {
+        "exp_name": exp_name,
+        "env": env_str,
+        "hide_properties": hide_properties,
+        "pruned_ff_name": pruned_ff_name,
+        "focus_dir": focus_dir,
+        "reward_mode": reward_mode,
+        "rgb_exp": opts.rgb,
+        "seed": opts.seed,
+        "environments": opts.environments,
+        "game": opts.game,
+        "rgb": opts.rgb,
+        "reward": opts.reward,
+        "normalize": opts.normalize,
+        "hud": opts.hud,
+        "progress": opts.progress
+    }
 
 
 
@@ -88,11 +105,9 @@ def render_parser():
     parser.add_argument("--record", required= False, action="store_true", help="wheter to record the rendered video")
     parser.add_argument("--nb_frames", type=int, default=0, help="stop recording after nb_frames (or 1 episode if not specified)")
     parser.add_argument("--print-reward", action="store_true", help="display the reward in the console (if not 0)")
+    parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
     opts = parser.parse_args()
-    return parser.parse_args()
 
-
-def convert_args(opts):
     env_str = "ALE/" + opts.game +"-v5"
     settings_str = ""
     pruned_ff_name = None
@@ -127,13 +142,26 @@ def convert_args(opts):
         hide_properties = True
 
 
-    if opts.version:
-        version = opts.version
-    else:
-        version = 0
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, variant, version, opts.reward, opts.normalize, opts.hud
+    return {
+        "exp_name": exp_name,
+        "env_str": env_str,
+        "hide_properties": hide_properties,
+        "pruned_ff_name": pruned_ff_name,
+        "variant": variant,
+        "version": opts.version or 0,
+        "game": opts.game,
+        "seed": opts.seed,
+        "reward": opts.reward,
+        "normalize": opts.normalize,
+        "hud": opts.hud,
+        "rgb": opts.rgb,
+        "record": opts.record,
+        "nb_frames": opts.nb_frames,
+        "print_reward": opts.print_reward,
+        "viper": opts.viper
+    }
 
 
 def parse_eval(parser):
@@ -197,7 +225,23 @@ def parse_eval(parser):
     else:
         version = 0
 
-    return exp_name, env_str, hide_properties, pruned_ff_name, opts.times, variant, version, opts.progress, opts.viper, opts.normalize, opts.hud
+    return {
+        "exp_name": exp_name,
+        "env_str": env_str,
+        "hide_properties": hide_properties,
+        "pruned_ff_name": pruned_ff_name,
+        "times": opts.times,
+        "variant": variant,
+        "version": opts.version or 0,
+        "game": opts.game,
+        "seed": opts.seed,
+        "reward": opts.reward,
+        "progress": opts.progress,
+        "rgb": opts.rgb,
+        "viper": opts.viper,
+        "normalize": opts.normalize,
+        "hud": opts.hud
+    }
 
 
 def get_highest_version(agent): 
