@@ -23,6 +23,7 @@ def parse_train():
     parser.add_argument("--normalize", action="store_true", help="normalizes the observations at each step")
     parser.add_argument("--hud", action="store_true", help="allow agent to access HUD elements")
     parser.add_argument("--progress", action="store_true", help="display a progress bar of the training process")
+    parser.add_argument("--continue_ckpt", type=str, help="checkpoint_dir to continue from")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -82,7 +83,8 @@ def parse_train():
         "reward": opts.reward,
         "normalize": opts.normalize,
         "hud": opts.hud,
-        "progress": opts.progress
+        "progress": opts.progress,
+        "continue_ckpt": opts.continue_ckpt
     }
 
 
@@ -160,7 +162,7 @@ def render_parser():
         "record": opts.record,
         "nb_frames": opts.nb_frames,
         "print_reward": opts.print_reward,
-        "viper": opts.viper
+        "viper": opts.viper,
     }
 
 

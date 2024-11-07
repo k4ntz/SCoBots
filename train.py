@@ -164,6 +164,7 @@ def main():
 
     exp_name = flags_dictionary["exp_name"]
     n_envs = int(flags_dictionary["environments"])
+    continue_ckpt = flags_dictionary["continue_ckpt"]
     n_eval_envs = 4
     n_eval_episodes = 8
     eval_env_seed = (int(flags_dictionary["seed"]) + 42) * 2 #different seeds for eval
@@ -177,25 +178,33 @@ def main():
     ckpt_path = _get_directory(Path("resources/checkpoints"), exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
+
+    if continue_ckpt is not None:
+        # ensure exists
+        ckpt_path_old = Path(continue_ckpt)
+        assert ckpt_path_old.exists(), f"Checkpoint path {ckpt_path_old} does not exist."
+
     if flags_dictionary["pruned_ff_name"] is None :
         focus_dir = ckpt_path
     else:
         focus_dir = flags_dictionary["focus_dir"]
 
     yaml_path = Path(ckpt_path, f"{exp_name}_training_status.yaml")
-    rgb_yaml = 'used' if flags_dictionary["rgb"] else 'not used'
-    flags = {
-        'game': flags_dictionary["game"],
-        'seed': flags_dictionary["seed"],
-        'environments': flags_dictionary["environments"],
-        'reward': flags_dictionary["reward"],
-        'prune': flags_dictionary["pruned_ff_name"],
-        'exclude_properties': flags_dictionary["hide_properties"],
-        'rgb': rgb_yaml,
-        'normalize': flags_dictionary["normalize"],
-        'hud': flags_dictionary["hud"]
-    }
-    _create_yaml(flags, yaml_path)
+    if continue_ckpt is None:
+        rgb_yaml = 'used' if flags_dictionary["rgb"] else 'not used'
+        flags = {
+            'game': flags_dictionary["game"],
+            'seed': flags_dictionary["seed"],
+            'environments': flags_dictionary["environments"],
+            'reward': flags_dictionary["reward"],
+            'prune': flags_dictionary["pruned_ff_name"],
+            'exclude_properties': flags_dictionary["hide_properties"],
+            'rgb': rgb_yaml,
+            'normalize': flags_dictionary["normalize"],
+            'hud': flags_dictionary["hud"],
+            'continue_ckpt': flags_dictionary["continue_ckpt"],
+        }
+        _create_yaml(flags, yaml_path)
 
 
 
@@ -291,7 +300,23 @@ def main():
     cb_list = CallbackList(cbl)
     new_logger = configure(str(log_path), ["tensorboard"])
 
-    if flags_dictionary["rgb_exp"]:
+    if continue_ckpt is not None:
+        if flags_dictionary["rgb"]:
+            raise NotImplementedError("RGB training continuation not implemented.")
+
+        # find highest checkpoint in training_checkpoints
+        all_files = list(ckpt_path_old.glob("training_checkpoints/*"))
+        ckpt_files = [f for f in all_files if f.is_file() and f.suffix == ".zip"]
+        vecnorm_files = [f for f in all_files if f.is_file() and f.suffix == ".pkl"]
+        ckpt_files.sort(key=lambda x: int(x.stem.split("_")[-2]))
+        vecnorm_files.sort(key=lambda x: int(x.stem.split("_")[-2]))
+        if len(ckpt_files) > 0 and len(vecnorm_files) > 0:
+            train_env = VecNormalize.load(str(vecnorm_files[-1]), train_env.venv)
+            model = PPO.load(str(ckpt_files[-1]), env=train_env)
+        else:
+            raise FileNotFoundError(f"No checkpoint files found in {ckpt_path_old / 'training_checkpoints'}")
+
+    elif flags_dictionary["rgb_exp"]:
         # pkwargs = dict(activation_fn=th.nn.Tanh, net_arch=dict(pi=[64, 64], vf=[64, 64]))
         # was mentioned in ppo paper, but most likely not used, use Nature DQN:
         # (https://github.com/openai/baselines/blob/master/baselines/ppo1/cnn_policy.py#L6) instead
@@ -340,6 +365,7 @@ def main():
             env=train_env,
             policy_kwargs=pkwargs,
             verbose=1)
+        
     model.set_logger(new_logger)
     print(model.policy)
     print(f"Experiment name: {exp_name}")
