@@ -54,7 +54,6 @@ class Environment(Env):
         self.ep_rew_shape_reward = 0
         self.ep_rew_shape_reward_buffer = np.array([0.0, 0.0, 0.0])
         self.reset_ep_reward = True
-
         if reward == 2: # mix rewards
             self._reward_composition_func = lambda a, b : a + b
         elif reward == 1: # scobi only

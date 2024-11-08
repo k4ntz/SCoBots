@@ -74,13 +74,13 @@ def parse_train():
         "hide_properties": hide_properties,
         "pruned_ff_name": pruned_ff_name,
         "focus_dir": focus_dir,
-        "reward_mode": reward_mode,
+        "reward": reward_mode,
         "rgb_exp": opts.rgb,
         "seed": opts.seed,
         "environments": opts.environments,
         "game": opts.game,
         "rgb": opts.rgb,
-        "reward": opts.reward,
+        # "reward": opts.reward, #TODO: is opts.reward needed?
         "normalize": opts.normalize,
         "hud": opts.hud,
         "progress": opts.progress,
@@ -192,12 +192,15 @@ def parse_eval(parser):
     hide_properties = False
     variant = "scobots"
 
+    reward_mode = 0
     if opts.reward == "env":
         settings_str += "_reward-env"
     if opts.reward == "human":
         settings_str += "_reward-human"
+        reward_mode = 1
     if opts.reward == "mixed":
         settings_str += "_reward-mixed"
+        reward_mode = 2
 
     game_id = env_str.split("/")[-1].lower().split("-")[0]
 

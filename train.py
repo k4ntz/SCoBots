@@ -196,7 +196,8 @@ def main():
             'game': flags_dictionary["game"],
             'seed': flags_dictionary["seed"],
             'environments': flags_dictionary["environments"],
-            'reward': flags_dictionary["reward"],
+            # 'reward': flags_dictionary["reward"], #TODO: when reward and reward_mode?
+            'reward': flags_dictionary["reward"], #TODO: when reward and reward_mode?
             'prune': flags_dictionary["pruned_ff_name"],
             'exclude_properties': flags_dictionary["hide_properties"],
             'rgb': rgb_yaml,
