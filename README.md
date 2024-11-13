@@ -6,7 +6,7 @@ Without agents SCoBots are not usable, so you can either download some pre-train
 
 Due to issues with the ```autorom``` module versions, ```stable_baselines3[extras]``` has to be installed manually. The setup is completed with
 ```bash
-pip install -r requirements.txt && pip install install stable-baselines3[extras]==2.0.0
+pip install -r requirements.txt && pip install stable-baselines3[extras]==2.0.0
 ```
 
 ## How To Use
