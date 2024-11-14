@@ -184,7 +184,7 @@ def main():
 
 
 
-
+    print(flags_dictionary)
     def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
             env = Environment(flags_dictionary["env"],
@@ -193,7 +193,7 @@ def main():
                               focus_file=flags_dictionary["pruned_ff_name"],
                               hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,
-                              reward=flags_dictionary["reward"],
+                              reward=flags_dictionary["reward_mode"],
                               refresh_yaml=refresh)
             env = EpisodicLifeEnv(env=env)
             env = Monitor(env)
