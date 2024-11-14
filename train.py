@@ -84,6 +84,7 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
         return progress_remaining * initial_value
     return func
 
+# Create a yaml file which contains information about the checkpoint
 def _create_yaml(flags, location):
     data = {
         'game': flags['game'],
@@ -126,7 +127,7 @@ def _create_yaml(flags, location):
 
     print(f"YAML file with training values created at {location}")
 
-
+# Add information to the yaml file containing information about the checkpoint
 def _update_yaml(location, steps, finished):
     with open(location, 'r') as yaml_file:
         data = yaml.safe_load(yaml_file)
@@ -137,6 +138,7 @@ def _update_yaml(location, steps, finished):
 
     print(f"YAML file updated with training duration at {location}")
 
+# Helper function to get the correct checkpoint location with the correct version specified
 def _get_directory(path, exp_name):
     version_counter = 2
     if not (path / f"{exp_name}").exists():
@@ -164,6 +166,7 @@ def main():
     ckpt_path = _get_directory(Path("resources/checkpoints"), exp_name)
     log_path.mkdir(parents=True, exist_ok=True)
     ckpt_path.mkdir(parents=True, exist_ok=True)
+
     if flags_dictionary["pruned_ff_name"] is None :
         focus_dir = ckpt_path
     else:
@@ -182,9 +185,6 @@ def main():
     }
     _create_yaml(flags, yaml_path)
 
-
-
-    print(flags_dictionary)
     def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
             env = Environment(flags_dictionary["env"],

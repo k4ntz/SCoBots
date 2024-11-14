@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import yaml
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import WarpFrame
 from stable_baselines3.common.env_util import make_vec_env
@@ -15,6 +16,7 @@ from joblib import load
 def flist(l):
     return ["%.2f" % e for e in l]
 
+# Helper function to load from a dt and not a checkpoint directly
 def _load_viper(exp_name, path_provided):
     if path_provided:
         viper_path = Path(exp_name)
@@ -26,6 +28,12 @@ def _load_viper(exp_name, path_provided):
     wrapped = DTClassifierModel(model)
 
     return wrapped
+
+# Helper function ensuring that a checkpoint has completed training
+def _ensure_completeness(path):
+    with open(path, 'r') as yaml_file:
+        data = yaml.safe_load(yaml_file)
+    return data['status'] == 'finished'
 
 
 def main():
@@ -52,7 +60,11 @@ def main():
     vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
     ff_file_path = Path("resources/checkpoints", exp_name)
     EVAL_ENV_SEED = 84
-
+    yaml_path = Path(ff_file_path, f"{exp_name}_training_status.yaml")
+    if not _ensure_completeness(yaml_path):
+        print('Training not completed!')
+        print('Delete the folder ' + str(ff_file_path) + ' or complete the training process')
+        return
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
     else:

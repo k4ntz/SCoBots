@@ -5,6 +5,7 @@ from pathlib import Path
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
+import yaml
 from tqdm import tqdm
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import WarpFrame
@@ -21,6 +22,7 @@ from scobi import Environment
 def flist(l):
     return ["%.2f" % e for e in l]
 
+# Saving in a CSV file the results of the evaluation
 def _save_evals(rewards, mean_rewards, mean_steps, csv_filename):
 
     file_exists = os.path.isfile(csv_filename)
@@ -40,6 +42,7 @@ def _save_evals(rewards, mean_rewards, mean_steps, csv_filename):
 
     print(f"Data saved to {csv_filename}")
 
+# Helper function to load from a dt and not a checkpoint directly
 def _load_viper(exp_name, path_provided):
     if path_provided:
         viper_path = Path(exp_name)
@@ -51,6 +54,12 @@ def _load_viper(exp_name, path_provided):
     wrapped = DTClassifierModel(model)
 
     return wrapped
+
+# Helper function ensuring that the loaded checkpoint has completed training
+def _ensure_completeness(path):
+    with open(path, 'r') as yaml_file:
+        data = yaml.safe_load(yaml_file)
+    return data['status'] == 'finished'
 
 def main():
     parser = argparse.ArgumentParser()
@@ -75,6 +84,11 @@ def main():
     model_path = Path("resources/checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
     ff_file_path = Path("resources/checkpoints", exp_name)
+    yaml_path = Path(ff_file_path, f"{exp_name}_training_status.yaml")
+    if not _ensure_completeness(yaml_path):
+        print('Training not completed!')
+        print('Delete the folder ' + str(ff_file_path) + ' or complete the training process')
+        return
     EVAL_ENV_SEED = 84
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
