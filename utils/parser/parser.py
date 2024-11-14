@@ -24,6 +24,8 @@ def parse_train():
     parser.add_argument("--hud", action="store_true", help="allow agent to access HUD elements")
     parser.add_argument("--progress", action="store_true", help="display a progress bar of the training process")
     parser.add_argument("--continue_ckpt", type=str, help="checkpoint_dir to continue from")
+    parser.add_argument("--comment", type=str, help="add comment to save dir")
+
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -70,6 +72,8 @@ def parse_train():
         settings_str += "_hud"
     if opts.continue_ckpt:
         settings_str += "_continue"
+    if opts.comment:
+        settings_str += f"_{opts.comment}"
 
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
     if noisy:
@@ -115,6 +119,7 @@ def render_parser():
     parser.add_argument("--nb_frames", type=int, default=0, help="stop recording after nb_frames (or 1 episode if not specified)")
     parser.add_argument("--print-reward", action="store_true", help="display the reward in the console (if not 0)")
     parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
+    parser.add_argument("--comment", type=str, help="add comment to save dir")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -154,6 +159,8 @@ def render_parser():
         settings_str += "_normalize"
     if opts.hud:
         settings_str += "_hud"
+    if opts.comment:
+        settings_str += f"_{opts.comment}"
     
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
 
@@ -195,6 +202,7 @@ def parse_eval(parser):
     parser.add_argument("--normalize", action="store_true", help="normalizes the observations at each step")
     parser.add_argument("--hud", action="store_true", help="allow agent to access HUD elements")
     parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
+    parser.add_argument("--comment", type=str, help="add comment to save dir")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -238,6 +246,8 @@ def parse_eval(parser):
         settings_str += "_normalize"
     if opts.hud:
         settings_str += "_hud"
+    if opts.comment:
+        settings_str += f"_{opts.comment}"
 
         
     exp_name = opts.game + "_seed" + str(opts. seed) + settings_str
