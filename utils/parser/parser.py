@@ -63,6 +63,13 @@ def parse_train():
     if opts.exclude_properties:
         settings_str += '_excludeproperties'
         hide_properties = True
+    
+    if opts.normalize:
+        settings_str += "_normalize"
+    if opts.hud:
+        settings_str += "_hud"
+    if opts.continue_ckpt:
+        settings_str += "_continue"
 
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
     if noisy:
@@ -143,7 +150,11 @@ def render_parser():
         settings_str += '_excludeproperties'
         hide_properties = True
 
-
+    if opts.normalize:
+        settings_str += "_normalize"
+    if opts.hud:
+        settings_str += "_hud"
+    
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
 
     return {
@@ -222,6 +233,12 @@ def parse_eval(parser):
     if opts.exclude_properties:
         settings_str += '_excludeproperties'
         hide_properties = True
+
+    if opts.normalize:
+        settings_str += "_normalize"
+    if opts.hud:
+        settings_str += "_hud"
+
         
     exp_name = opts.game + "_seed" + str(opts. seed) + settings_str
 

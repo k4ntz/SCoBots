@@ -24,7 +24,7 @@ NORMALIZATION_FNS = {
 class Normalizer:
     """Normalizes a given feature vector according to the concepts as
     specified in the focus file."""
-    normalization_functions: list[Callable[[float], float]]  # for each concept one normalization function
+    # normalization_functions: list[Callable[[float], float]]  # for each concept one normalization function
 
     def __init__(self, focus: Focus):
         self.focus = focus

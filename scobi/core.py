@@ -125,11 +125,10 @@ class Environment(Env):
                 self.ep_rew_shape_reward_buffer = np.array([0.0,0.0,0.0]) 
                 self.reset_ep_reward = True
                 self.focus.reward_subgoals = 0
-            sco_reward = np.sum(sco_rewards)
+            sco_reward = np.sum(sco_rewards).item() # sum individual rewards
             final_reward = self._reward_composition_func(sco_reward, reward)
             if self.normalize:
                 sco_obs = self.normalizer(sco_obs)
-            # self.sco_obs = sco_obs
             return sco_obs, final_reward, truncated, terminated, info # 5
         else:
             raise ValueError("scobi> Action not in action space")

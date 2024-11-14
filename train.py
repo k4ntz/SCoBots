@@ -24,8 +24,12 @@ from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize, VecTra
 import utils.parser.parser
 from scobi import Environment
 
+os.environ['OMP_NUM_THREADS'] = '1'  # Limit threads for OpenMP
+os.environ['MKL_NUM_THREADS'] = '1'  # Limit threads for MKL (used by NumPy)
+os.environ['OPENBLAS_NUM_THREADS'] = '1'  # Limit threads for OpenBLAS
+
 # MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
-MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "forkserver"  # 'nt' == Windows
+# MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "forkserver"  # 'nt' == Windows
 
 class RtptCallback(BaseCallback):
     def __init__(self, exp_name, max_iter, verbose=0):
@@ -190,22 +194,22 @@ def main():
         focus_dir = flags_dictionary["focus_dir"]
 
     yaml_path = Path(ckpt_path, f"{exp_name}_training_status.yaml")
-    if continue_ckpt is None:
-        rgb_yaml = 'used' if flags_dictionary["rgb"] else 'not used'
-        flags = {
-            'game': flags_dictionary["game"],
-            'seed': flags_dictionary["seed"],
-            'environments': flags_dictionary["environments"],
-            # 'reward': flags_dictionary["reward"], #TODO: when reward and reward_mode?
-            'reward': flags_dictionary["reward"], #TODO: when reward and reward_mode?
-            'prune': flags_dictionary["pruned_ff_name"],
-            'exclude_properties': flags_dictionary["hide_properties"],
-            'rgb': rgb_yaml,
-            'normalize': flags_dictionary["normalize"],
-            'hud': flags_dictionary["hud"],
-            'continue_ckpt': flags_dictionary["continue_ckpt"],
-        }
-        _create_yaml(flags, yaml_path)
+    # if continue_ckpt is None:
+    rgb_yaml = 'used' if flags_dictionary["rgb"] else 'not used'
+    flags = {
+        'game': flags_dictionary["game"],
+        'seed': flags_dictionary["seed"],
+        'environments': flags_dictionary["environments"],
+        # 'reward': flags_dictionary["reward"], #TODO: when reward and reward_mode?
+        'reward': flags_dictionary["reward"], #TODO: when reward and reward_mode?
+        'prune': flags_dictionary["pruned_ff_name"],
+        'exclude_properties': flags_dictionary["hide_properties"],
+        'rgb': rgb_yaml,
+        'normalize': flags_dictionary["normalize"],
+        'hud': flags_dictionary["hud"],
+        'continue_ckpt': flags_dictionary["continue_ckpt"],
+    }
+    _create_yaml(flags, yaml_path)
 
 
 
@@ -218,8 +222,8 @@ def main():
                               focus_file=flags_dictionary["pruned_ff_name"],
                               hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,
-                              reward=flags_dictionary["reward"],
                               refresh_yaml=refresh,
+                              reward=flags_dictionary["reward"],
                               normalize=flags_dictionary["normalize"],
                               hud=flags_dictionary["hud"])
             env = EpisodicLifeEnv(env=env)
@@ -264,8 +268,12 @@ def main():
         check_env(monitor.env)
         del monitor
         # silent init and dont refresh default yaml file because it causes spam and issues with multiprocessing
-        eval_env = VecNormalize(SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False, training=False)
-        train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=int(flags_dictionary["seed"]), silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
+        # import pdb; pdb.set_trace()
+        # eval_env = VecNormalize(SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False, training=False)
+        # train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=int(flags_dictionary["seed"]), silent=True, refresh=False) for i in range(n_envs)], start_method=MULTIPROCESSING_START_METHOD), norm_reward=False)
+        print(f"starting {n_eval_envs} evaluators and {n_envs} actors")
+        eval_env = VecNormalize(SubprocVecEnv([make_eval_env(rank=i, seed=eval_env_seed, silent=True, refresh=False) for i in range(n_eval_envs)]), norm_reward=False, training=False)
+        train_env = VecNormalize(SubprocVecEnv([make_env(rank=i, seed=int(flags_dictionary["seed"]), silent=True, refresh=False) for i in range(n_envs)]), norm_reward=False)
 
     rtpt_iters = training_timestamps // rtpt_frequency
     save_bm = SaveBestModelCallback(ckpt_path, rgb=flags_dictionary["rgb_exp"])
