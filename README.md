@@ -12,8 +12,33 @@ pip install -r requirements.txt && pip install stable-baselines3[extras]==2.0.0
 ## How To Use
 There are three Python files that can be run directly. Each of them has a ```-h``` help flag.
 
+### Downloading Agents
+The download_agents.sh script can be used to download pre-trained agents. 
+The following commands will download and extract the agents to the ```resources``` folder:
+```bash
+# Download the agents (only seed0)
+wget https://hessenbox.tu-darmstadt.de/dl/fiWgsh2ov1WTtAy5jbJhj9x1/resources.zip
+unzip resources.zip
+```
+**or** 
+```bash
+# Download the agents (all seeds)
+wget https://hessenbox.tu-darmstadt.de/dl/fiJZ9Tj8REimgvPHzcCPgK9W/resources.zip
+unzip resources.zip
+```
+
+### Displaying A Trained Agent
+To visualize a trained agent playing a specified game the render_agent.py file can be executed.
+Running the file will open and display the game played as a gif.
+
+The following example demonstrates the usage of the previously trained + evaluated agent:
+```bash
+python render_agent.py -g Pong -s 0 -r env
+```
+
+
 ### Training An Agent
-Execute the train.py file to train an agent for a given game, with a given number of cores and a specified seed.
+Execute the ```train.py``` file to train an agent for a given game, with a given number of cores and a specified seed.
 The following example demonstrates the usage:
 ```bash
 python train.py -g Pong -s 0 -env 8 -r env --progress
@@ -25,15 +50,6 @@ The evaluate.py file evaluates an already trained agent, displaying the results 
 The following example demonstrates the usage of the previously trained agent:
 ```bash
 python eval.py -g Pong -s 0 -t 10 -r env
-```
-
-### Monitoring A Trained Agent
-To visualize a trained agent playing a specified game the render_agent.py file can be executed.
-Running the file will open and display the game played as a gif.
-
-The following example demonstrates the usage of the previously trained + evaluated agent:
-```bash
-python render_agent.py -g Pong -s 0 -r env
 ```
 
 ## Usage Of Checkpoints And Example Workflow
