@@ -1,4 +1,6 @@
 import pickle
+from fileinput import filename
+
 import numpy as np
 import pygame
 import gymnasium as gym
@@ -10,6 +12,8 @@ try:
 except ImportError as imp_err:
     _screen_recorder_imported = False
 
+from pathlib import Path
+
 
 class Renderer:
     window: pygame.Surface
@@ -18,7 +22,7 @@ class Renderer:
     zoom: int = 4
     fps: int = 20
 
-    def __init__(self, envs, model, record=False, nb_frames=0):
+    def __init__(self, envs, model, path, record=False, nb_frames=0):
         self.envs = envs
         if hasattr(envs, 'venv') and hasattr(envs.venv, 'envs'):
             self.env = envs.venv.envs[0]
@@ -33,6 +37,8 @@ class Renderer:
         self.current_frame = self._get_current_frame()
         self._init_pygame(self.current_frame)
         self.paused = False
+
+        self.path = path
 
         self.current_keys_down = set()
         self.current_mouse_pos = None
@@ -110,12 +116,15 @@ class Renderer:
             return 0  # NOOP
 
     def _save_recording(self):
+        filename = Path.joinpath(self.path, "recordings")
+        filename.mkdir(parents=True, exist_ok=True)
         self._screen_recorder.stop_rec()	# stop recording
-        filename = f"{self.env.oc_env.game_name}.avi"
+        filename = Path.joinpath(filename, f"{self.env.oc_env.game_name}.avi")
         i = 0
         while os.path.exists(filename):
             i += 1
-            filename = f"{self.env.oc_env.game_name}_{i}.avi"
+            filename = Path.joinpath(self.path, "recordings", f"{self.env.oc_env.game_name}_{i}.avi")
+        print(filename)
         self._screen_recorder.save_recording(filename)
         print(f"Recording saved as {filename}")
         self._recording = False

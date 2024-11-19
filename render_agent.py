@@ -86,7 +86,7 @@ def main():
     else:
         model = PPO.load(model_path)
     obs = env.reset()
-    renderer = Renderer(env, model, record, nb_frames)
+    renderer = Renderer(env, model, ff_file_path, record, nb_frames)
     renderer.print_reward = print_reward
     renderer.run()
 
