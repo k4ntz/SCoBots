@@ -8,7 +8,6 @@ from typing import Callable
 import gymnasium as gym
 import numpy as np
 import torch as th
-import yaml
 from rtpt import RTPT
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import EpisodicLifeEnv, AtariWrapper
@@ -23,6 +22,7 @@ from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize, VecTra
 
 import utils.parser.parser
 from scobi import Environment
+from utils.model_card import ModelCard
 
 MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
 
@@ -84,59 +84,13 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
         return progress_remaining * initial_value
     return func
 
-# Create a yaml file which contains information about the checkpoint
-def _create_yaml(flags, location):
-    data = {
-        'game': flags['game'],
-        'seed': flags['seed'],
-        'env': flags['environments'],
-        'reward': flags['reward'],
-        'prune': flags['prune'],
-        'exclude_properties': flags['exclude_properties'],
-        'rgbv5': flags['rgb'],
-        'status': 'not finished',
-        'completed_steps': None,
-        'creation date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    }
-    comments = {
-        'game': "# The game trained on",
-        'seed': "# Initialised on seed number",
-        'env': "# Number of environments",
-        'reward': "# Reward type: env, human, or mixed",
-        'prune': "# Used a custom focus file using pruning",
-        'exclude_properties': "# Excluding some properties",
-        'rgbv5': "# Was the RGB space used",
-        'status': "# Training status",
-        'completed_steps': "# Steps completed in training",
-        'creation date': "# File creation date"
-    }
 
-    yaml_content = yaml.dump(data, default_flow_style=False)
-
-    commented_yaml_lines = []
-    for line in yaml_content.splitlines():
-        key = line.split(":")[0].strip()
-        if key in comments:
-            commented_yaml_lines.append(comments[key])
-        commented_yaml_lines.append(line)
-
-    commented_yaml_content = "\n".join(commented_yaml_lines)
-
-    with open(location, 'w') as yaml_file:
-        yaml_file.write(commented_yaml_content)
-
-    print(f"YAML file with training values created at {location}")
-
-# Add information to the yaml file containing information about the checkpoint
-def _update_yaml(location, steps, finished):
-    with open(location, 'r') as yaml_file:
-        data = yaml.safe_load(yaml_file)
-    data['completed_steps'] = steps
-    data['status'] = 'finished' if finished else 'not finished'
-    with open(location, 'w') as yaml_file:
-        yaml.dump(data, yaml_file)
-
-    print(f"YAML file updated with training duration at {location}")
+def _create_modelcard(flags, location):
+    if flags['rgb'] == 'used': obs = 'rgbv5'
+    else: obs = 'object centric'
+    model_card = ModelCard(flags['game'], flags['environments'], obs, flags['prune'], flags['seed'], flags['reward'])
+    model_card.create_card(location)
+    return model_card
 
 # Helper function to get the correct checkpoint location with the correct version specified
 def _get_directory(path, exp_name):
@@ -172,8 +126,7 @@ def main():
     else:
         focus_dir = flags_dictionary["focus_dir"]
 
-    yaml_path = Path(ckpt_path, f"{exp_name}_training_status.yaml")
-    rgb_yaml = 'used' if flags_dictionary["rgb"] else 'not used'
+    rgb_info = 'used' if flags_dictionary["rgb"] else 'not used'
     flags = {
         'game': flags_dictionary["game"],
         'seed': flags_dictionary["seed"],
@@ -181,9 +134,9 @@ def main():
         'reward': flags_dictionary["reward"],
         'prune': flags_dictionary["pruned_ff_name"],
         'exclude_properties': flags_dictionary["hide_properties"],
-        'rgb': rgb_yaml
+        'rgb': rgb_info
     }
-    _create_yaml(flags, yaml_path)
+    model_card = _create_modelcard(flags, ckpt_path)
 
     def make_env(rank: int = 0, seed: int = 0, silent=False, refresh=True) -> Callable:
         def _init() -> gym.Env:
@@ -327,7 +280,9 @@ def main():
         shutil.copy(focus_file_path, ckpt_path / focus_file_path.name)
     model.learn(total_timesteps=training_timestamps, callback=cb_list, progress_bar=flags_dictionary["progress"])
 
-    _update_yaml(yaml_path, model.num_timesteps, True)
+    model_card.update_card(ckpt_path, model.num_timesteps, training_timestamps, model.sde_sample_freq, n_eval_episodes,
+                           model.gae_lambda, model.n_steps, model.batch_size, model.ent_coef, model.gamma,
+                           model.policy_class.__name__)
 
 if __name__ == '__main__':
     main()

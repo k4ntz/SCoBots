@@ -1,11 +1,8 @@
 from pathlib import Path
-
-import yaml
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import WarpFrame
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv
-
 from scobi import Environment
 from utils.parser.parser import render_parser, get_highest_version
 from utils.renderer import Renderer
@@ -31,9 +28,8 @@ def _load_viper(exp_name, path_provided):
 
 # Helper function ensuring that a checkpoint has completed training
 def _ensure_completeness(path):
-    with open(path, 'r') as yaml_file:
-        data = yaml.safe_load(yaml_file)
-    return data['status'] == 'finished'
+    checkpoint = path / "best_model.zip"
+    return checkpoint.is_file()
 
 
 def main():
@@ -49,10 +45,12 @@ def main():
     nb_frames = flag_dictionary["nb_frames"]
     print_reward = flag_dictionary["print_reward"]
     
-    if version == 0:
+    if version == -1:
         version = get_highest_version(exp_name)
+    elif version == 0:
+        version = ""
 
-    exp_name += version
+    exp_name += str(version)
 
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
     vecnorm_str = "best_vecnormalize.pkl"
@@ -60,8 +58,7 @@ def main():
     vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
     ff_file_path = Path("resources/checkpoints", exp_name)
     EVAL_ENV_SEED = 84
-    yaml_path = Path(ff_file_path, f"{exp_name}_training_status.yaml")
-    if not _ensure_completeness(yaml_path):
+    if not _ensure_completeness(ff_file_path):
         print('Training not completed!')
         print('Delete the folder ' + str(ff_file_path) + ' or complete the training process')
         return

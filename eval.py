@@ -5,7 +5,6 @@ from pathlib import Path
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
-import yaml
 from tqdm import tqdm
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import WarpFrame
@@ -57,9 +56,8 @@ def _load_viper(exp_name, path_provided):
 
 # Helper function ensuring that the loaded checkpoint has completed training
 def _ensure_completeness(path):
-    with open(path, 'r') as yaml_file:
-        data = yaml.safe_load(yaml_file)
-    return data['status'] == 'finished'
+    checkpoint = path / "best_model.zip"
+    return checkpoint.is_file()
 
 def main():
     parser = argparse.ArgumentParser()
@@ -84,8 +82,7 @@ def main():
     model_path = Path("resources/checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
     ff_file_path = Path("resources/checkpoints", exp_name)
-    yaml_path = Path(ff_file_path, f"{exp_name}_training_status.yaml")
-    if not _ensure_completeness(yaml_path):
+    if not _ensure_completeness(model_path):
         print('Training not completed!')
         print('Delete the folder ' + str(ff_file_path) + ' or complete the training process')
         return
