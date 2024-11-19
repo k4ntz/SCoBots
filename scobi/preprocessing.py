@@ -12,13 +12,13 @@ NORMALIZATION_FNS = {
     "CENTER": lambda x: x / 164,  # any object coords
     "DIR_VELOCITY": lambda x: np.tanh(x / 5),  # velocities (typically inside [-5, 5])
     "VELOCITY": lambda x: np.tanh(x / 5),  # velocities (typically inside [-5, 5])
-    # "ORIENTATION": lambda x: x / 15,  # inside [0, 15]
-    "ORIENTATION": lambda x: x / 12,  # kangaroo either 4 or 12
+    "ORIENTATION": lambda x: x / 15,  # inside [0, 15]
+    # "ORIENTATION": lambda x: x / 12,  # kangaroo either 4 or 12
     "WIDTH": lambda x: x / 64,  # oxygen bar
-    # "VALUE": lambda x: x / 3,  # lives
-    "VALUE": lambda x: x / 2000,  # kangaroo time [0, 2000]
-    # "COUNT": lambda x: x / 6,  # collected divers
-    "COUNT": lambda x: x / 2,  # kangaroo lives 
+    "VALUE": lambda x: x / 3,  # lives
+    # "VALUE": lambda x: x / 2000,  # kangaroo time [0, 2000]
+    "COUNT": lambda x: x / 6,  # collected divers
+    # "COUNT": lambda x: x / 2,  # kangaroo lives 
     "RGB": lambda x: x / 255,  # color
     "COLOR": lambda x: x / 255,  # color
 }

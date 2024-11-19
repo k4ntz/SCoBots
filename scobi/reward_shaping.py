@@ -71,17 +71,17 @@ def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> flo
     score, player, child = _get_game_objects_by_category(game_objects, ["Score", "Player", "Child"])
     n_lives = _count_game_objects_of_category(game_objects, "Life")
 
-    if episode_starts:
-       last_n_lives = 2
+    # if episode_starts:
+    #    last_n_lives = 2
 
-    if episode_starts or last_crashed: 
-       last_y_distance = player.xy[1]
+    # if episode_starts or last_crashed: 
+    #    last_y_distance = player.xy[1]
 
-    crash_reward = 0
+    # crash_reward = 0
 
-    if n_lives < last_n_lives:
-        crash_reward = -100
-        last_n_lives = n_lives
+    # if n_lives < last_n_lives:
+    #     crash_reward = -100
+    #     last_n_lives = n_lives
 
     # Get current platform
     platform = np.ceil((player.xy[1] - 16) / 48)  # 0: topmost, 3: lowest platform
@@ -92,12 +92,6 @@ def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> flo
             movement_reward = - player.dx
         else:  # encourage right movement
             movement_reward = player.dx
-
-        # Test: reward when player reaches new highest y-distance
-        if player.xy[1] < last_y_distance:
-            movement_reward += 100
-            last_y_distance = player.xy[1]
-
 
         # Always reward upward movement
         movement_reward -= player.dy / 5
@@ -114,10 +108,10 @@ def reward_kangaroo(game_objects: Sequence[GameObject], terminated: bool) -> flo
         score_reward = 0
 
     # Discourage loosing lives
-    # if player is not None and player.ocgo.crashed and not last_crashed: # new crash detected
-    #     crash_reward = -50
-    # else:
-    #     crash_reward = 0
+    if player is not None and player.ocgo.crashed and not last_crashed: # new crash detected
+        crash_reward = -50
+    else:
+        crash_reward = 0
 
     last_crashed = player.ocgo.crashed
     episode_starts = terminated

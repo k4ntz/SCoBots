@@ -22,7 +22,7 @@ dependencies = [
     "colormath",
     "torch == 2.0.1",
     #"ocatari@git+https://github.com/k4ntz/OC_Atari@asterix",
-    "ocatari@git+https://github.com/k4ntz/OC_Atari@master",
+    "ocatari",
     "stable-baselines3[extra]==2.0.0",
     "cloudpickle==2.2.1",
     "opencv-python-headless>=4.8.1.78",
@@ -41,3 +41,6 @@ namespaces = false
 
 [tool.setuptools.package-data]
 scobi = ["resources/*.ttf"]
+
+[tool.uv.sources]
+ocatari = { path = "OC_Atari", editable = true }
