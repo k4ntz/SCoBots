@@ -23,56 +23,6 @@ NORMALIZATION_FNS = {
     "COLOR": lambda x: x / 255,  # color
 }
 
-# kangarrooo
-# pos-hist: [20 - 109]
-# orientation: either 4 or 12
-# count: 2
-# value: 0
-
-#['POSITION_HISTORY', 'Player1']
-# ['POSITION', 'Child1']
-# ['POSITION', 'Fruit1']
-# ['POSITION', 'Fruit2']
-# ['POSITION', 'Fruit3']
-# ['POSITION', 'Bell1']
-# ['POSITION', 'Platform1']
-# ['POSITION', 'Platform2']
-# ['POSITION', 'Platform3']
-# ['POSITION', 'Platform4']
-# ['POSITION', 'Platform5']
-# ['POSITION', 'Platform6']
-# ['POSITION', 'Platform7']
-# ['POSITION', 'Platform8']
-# ['POSITION', 'Platform9']
-# ['POSITION', 'Platform10']
-# ['POSITION', 'Platform11']
-# ['POSITION', 'Platform12']
-# ['POSITION', 'Platform13']
-# ['POSITION', 'Platform14']
-# ['POSITION', 'Platform15']
-# ['POSITION', 'Platform16']
-# ['POSITION', 'Platform17']
-# ['POSITION', 'Platform18']
-# ['POSITION', 'Platform19']
-# ['POSITION', 'Platform20']
-# ['POSITION', 'Ladder1']
-# ['POSITION', 'Ladder2']
-# ['POSITION', 'Ladder3']
-# ['POSITION', 'Ladder4']
-# ['POSITION', 'Ladder5']
-# ['POSITION', 'Ladder6']
-# ['POSITION_HISTORY', 'Monkey1']
-# ['POSITION_HISTORY', 'Monkey2']
-# ['POSITION_HISTORY', 'Monkey3']
-# ['POSITION_HISTORY', 'Monkey4']
-# ['POSITION_HISTORY', 'FallingCoconut1']
-# ['POSITION_HISTORY', 'ThrownCoconut1']
-# ['POSITION_HISTORY', 'ThrownCoconut2']
-# ['POSITION_HISTORY', 'ThrownCoconut3']
-# ['VALUE', 'Time1']
-# ['ORIENTATION', 'Player1']
-# ['COUNT', [['category', 'Life']]]
-
 class Normalizer:
     """Normalizes a given feature vector according to the concepts as
     specified in the focus file."""
@@ -96,11 +46,6 @@ class Normalizer:
         assert len(features) == self.focus.FEATURE_VECTOR_SIZE
 
         features = features.copy()
-        # print("player: ", features[0])
-        # print("monkey: ", features[-11])
-        # print("VALUE: ", features[-3])
-        # print("ORIENTATION: ", features[-2])
-        # print("COUNT: ", features[-1])
 
         for i, normalization_fn in enumerate(self.normalization_functions):
             this_feature = self.feature_backmap == i

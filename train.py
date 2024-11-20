@@ -24,9 +24,9 @@ from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize, VecTra
 import utils.parser.parser
 from scobi import Environment
 
-os.environ['OMP_NUM_THREADS'] = '1'  # Limit threads for OpenMP
-os.environ['MKL_NUM_THREADS'] = '1'  # Limit threads for MKL (used by NumPy)
-os.environ['OPENBLAS_NUM_THREADS'] = '1'  # Limit threads for OpenBLAS
+os.environ['OMP_NUM_THREADS'] = '4'  # Limit threads for OpenMP
+os.environ['MKL_NUM_THREADS'] = '4'  # Limit threads for MKL (used by NumPy)
+os.environ['OPENBLAS_NUM_THREADS'] = '4'  # Limit threads for OpenBLAS
 
 # MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "fork"  # 'nt' == Windows
 # MULTIPROCESSING_START_METHOD = "spawn" if os.name == 'nt' else "forkserver"  # 'nt' == Windows
@@ -98,6 +98,16 @@ def linear_schedule(initial_value: float) -> Callable[[float], float]:
     def func(progress_remaining: float) -> float:
         return progress_remaining * initial_value
     return func
+
+def get_exponential_schedule(initial_value: float, half_life_period: float = 0.25) -> Callable[[float], float]:
+    """It holds exponential(half_life_period) = 0.5. If half_life_period == 0.25, then
+    exponential(0) ~= 0.06"""
+    assert 0 < half_life_period < 1
+
+    def exponential(progress_remaining: float) -> float:
+        return initial_value * np.exp((1 - progress_remaining) * np.log(0.5) / half_life_period)
+
+    return exponential
 
 def _create_yaml(flags, location):
     data = {
@@ -360,14 +370,15 @@ def main():
             policy_str,
             # n_steps=2048,
             n_steps=256,
-            learning_rate=linear_schedule(adam_step_size),
-            n_epochs=3,
-            batch_size=32*8,
+            # learning_rate=linear_schedule(adam_step_size),
+            learning_rate=get_exponential_schedule(adam_step_size, 0.25),
+            n_epochs=4,
+            batch_size=256,
             gamma=0.99,
             gae_lambda=0.95,
             clip_range=linear_schedule(clipping_eps),
             # vf_coef=1,
-            normalize_advantage=True, # added by remunds
+            normalize_advantage=True, 
             vf_coef=0.5,
             # ent_coef=0.01,
             ent_coef=0.05,
