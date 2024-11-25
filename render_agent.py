@@ -1,6 +1,6 @@
 from pathlib import Path
 from stable_baselines3 import PPO
-from stable_baselines3.common.atari_wrappers import WarpFrame
+from stable_baselines3.common.atari_wrappers import WarpFrame, FireResetEnv
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import VecNormalize, DummyVecEnv
 from scobi import Environment
@@ -71,7 +71,7 @@ def main():
                           hide_properties=hide_properties,
                           draw_features=True, # implement feature attribution
                           reward=0) #env reward only for evaluation
-
+        # env = FireResetEnv(env)
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])
         env = VecNormalize.load(vecnorm_path, dummy_vecenv)
@@ -86,7 +86,7 @@ def main():
     else:
         model = PPO.load(model_path)
     obs = env.reset()
-    renderer = Renderer(env, model, record, nb_frames)
+    renderer = Renderer(env, model, record, nb_frames, filepath=ff_file_path)
     renderer.print_reward = print_reward
     renderer.run()
 

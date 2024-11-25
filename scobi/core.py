@@ -37,7 +37,7 @@ class Environment(Env):
         self.draw_features = draw_features
         self.feature_attribution = []
         self.render_font = ImageFont.truetype(str(Path(__file__).parent / 'resources' / 'Gidole-Regular.ttf'), size=38)
-        self._obj_obs = None  # observation augmented with objects
+        self.obj_obs = None  # observation augmented with objects
         self._rel_obs = None  # observation augmented with relations
         self._top_features = []
 
@@ -73,7 +73,7 @@ class Environment(Env):
             sco_obs, sco_reward = self.focus.get_feature_vector(objects)
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
-                self._obj_obs = self._draw_objects_overlay(obs)
+                self.obj_obs = self._draw_objects_overlay(obs)
                 self._rel_obs = self._draw_relation_overlay(obs, sco_obs, freeze_mask, action)
             self.original_obs = obs
             self.original_reward = reward
@@ -102,6 +102,10 @@ class Environment(Env):
         sco_obs, _ = self.focus.get_feature_vector(objects)
         # self.sco_obs = sco_obs
         return sco_obs, info
+    
+    @property
+    def unwrapped(self):
+        return self.oc_env.unwrapped
 
     def close(self):
         # additional scobi close steps here

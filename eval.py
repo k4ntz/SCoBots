@@ -121,7 +121,7 @@ def main():
         img = plt.imshow(env.get_images()[0])
     else:
         scobi_env = env.venv.envs[0]
-        img = plt.imshow(scobi_env._obj_obs)
+        img = plt.imshow(scobi_env.obj_obs)
 
     if progress_bar:
         with tqdm(total=time, desc="Episodes completed") as pbar:
