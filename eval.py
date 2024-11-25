@@ -59,6 +59,24 @@ def _ensure_completeness(path):
     checkpoint = path / "best_model.zip"
     return checkpoint.is_file()
 
+def _add_eval_modelcard(path, episodes, mean, std):
+        if not path.exists():
+            raise FileNotFoundError(f"Model card does not exist.")
+
+        with path.open("r") as file:
+            lines = file.readlines()
+        while len(lines) < 50:
+            lines.append("\n")
+
+        if lines[49].strip() == "":
+            lines[49] =  "- **" + str(episodes) + " episodes evaluated**: " + str(mean) + " +/- std " + str(std) + "\n"
+            lines.insert(50, "\n")
+        else:
+            lines[49] =  "- **" + str(episodes) + " episodes evaluated**: " + str(mean) + " +/- std " + str(std) + "\n"
+
+        with path.open("w") as file:
+            file.writelines(lines)
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -73,8 +91,10 @@ def main():
     progress_bar = flag_dictionary["progress"]
     time = int(flag_dictionary["times"])
 
-    if version == 0:
+    if version == -1:
         version = utils.parser.parser.get_highest_version(exp_name)
+    elif version == 0:
+        version = ""
 
     exp_name += str(version)
     checkpoint_str = "best_model" # "model_5000000_steps" #"best_model"
@@ -82,7 +102,7 @@ def main():
     model_path = Path("resources/checkpoints", exp_name, checkpoint_str)
     vecnorm_path = Path("resources/checkpoints",  exp_name, vecnorm_str)
     ff_file_path = Path("resources/checkpoints", exp_name)
-    if not _ensure_completeness(model_path):
+    if not _ensure_completeness(ff_file_path):
         print('Training not completed!')
         print('Delete the folder ' + str(ff_file_path) + ' or complete the training process')
         return
@@ -140,8 +160,11 @@ def main():
                     current_step = 0
                     obs = env.reset()
                 if current_episode == time:
+                    mean_rewards = np.mean(rewards)
                     print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
-                    _save_evals(rewards, np.mean(rewards), np.mean(steps), "resources/checkpoints/" + exp_name + "/" + "evaluation")
+                    _save_evals(rewards, mean_rewards, np.mean(steps), "resources/checkpoints/" + exp_name + "/" + "evaluation")
+                    _add_eval_modelcard(ff_file_path / "README.md", current_episode, mean_rewards,
+                                        np.sqrt(np.mean((np.array(rewards) - mean_rewards) ** 2)))
                     pbar.close()
                     break
     else:
@@ -159,8 +182,11 @@ def main():
                     current_step = 0
                     obs = env.reset()
                 if current_episode == time:
+                    mean_rewards = np.mean(rewards)
                     print(f"rewards: {flist(rewards)} | mean: {np.mean(rewards):.2f} \n steps: {flist(steps)} | mean: {np.mean(steps):.2f}")
-                    _save_evals(rewards, np.mean(rewards), np.mean(steps), "resources/checkpoints/" + exp_name + "/" + "evaluation")
+                    _save_evals(rewards, mean_rewards, np.mean(steps), "resources/checkpoints/" + exp_name + "/" + "evaluation")
+                    _add_eval_modelcard(ff_file_path / "README.md", current_episode, mean_rewards,
+                                        np.sqrt(np.mean((np.array(rewards) - mean_rewards) ** 2)))
                     break
 
 if __name__ == '__main__':
