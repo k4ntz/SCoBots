@@ -1,15 +1,18 @@
 import pickle
+from fileinput import filename
+
 import numpy as np
 import pygame
 import gymnasium as gym
 import time
 import os
-from tqdm import tqdm
 try:
     from pygame_screen_record import ScreenRecorder
     _screen_recorder_imported = True
 except ImportError as imp_err:
     _screen_recorder_imported = False
+
+from pathlib import Path
 
 
 class Renderer:
@@ -19,7 +22,7 @@ class Renderer:
     zoom: int = 4
     fps: int = 20
 
-    def __init__(self, envs, model, record=False, nb_frames=0, filepath=None):
+    def __init__(self, envs, model, path, record=False, nb_frames=0):
         self.envs = envs
         if hasattr(envs, 'venv') and hasattr(envs.venv, 'envs'):
             self.env = envs.venv.envs[0]
@@ -34,6 +37,8 @@ class Renderer:
         self.current_frame = self._get_current_frame()
         self._init_pygame(self.current_frame)
         self.paused = False
+
+        self.path = path
 
         self.current_keys_down = set()
         self.current_mouse_pos = None
@@ -57,9 +62,6 @@ class Renderer:
                 self._screen_recorder.start_rec()
                 self._recording = True
                 self.nb_frames = nb_frames
-                self.pbar = tqdm(total=nb_frames)
-                assert filepath is not None, "Please provide a filepath to save the recording."
-                self.filepath = filepath
             else:
                 print("Screen recording not available. Please install the pygame_screen_record package.")
                 exit(1)
@@ -92,17 +94,12 @@ class Renderer:
                 self.current_frame = self._get_current_frame()
                 if self.print_reward and rew[0]:
                     print(rew[0])
-                if self._recording:
-                    self.pbar.update(1)
-                    i += 1
                 if done:
-                    if self._recording:
+                    if self._recording and self.nb_frames == 0:
                         self._save_recording()
                     obs = self.envs.reset()
                 elif self._recording and i == self.nb_frames:
                     self._save_recording()
-                    exit()
-
             self._render()
 
             if self.rgb_agent:
@@ -119,16 +116,18 @@ class Renderer:
             return 0  # NOOP
 
     def _save_recording(self):
+        filename = Path.joinpath(self.path, "recordings")
+        filename.mkdir(parents=True, exist_ok=True)
         self._screen_recorder.stop_rec()	# stop recording
-        filename = self.filepath / f"video.avi"
+        filename = Path.joinpath(filename, f"{self.env.oc_env.game_name}.avi")
         i = 0
         while os.path.exists(filename):
             i += 1
-            filename = self.filepath / f"video{i}.avi"
+            filename = Path.joinpath(self.path, "recordings", f"{self.env.oc_env.game_name}_{i}.avi")
+        print(filename)
         self._screen_recorder.save_recording(filename)
-        print(f"Recording saved in {filename}")
+        print(f"Recording saved as {filename}")
         self._recording = False
-        exit()
 
     def _handle_user_input(self):
         self.current_mouse_pos = np.asarray(pygame.mouse.get_pos())
@@ -190,7 +189,7 @@ class Renderer:
         if self.rgb_agent:
             return self.env.render()
         else:
-            return self.env.obj_obs
+            return self.env._obj_obs
 
     def _render(self, frame = None):
         self.window.fill((0,0,0))  # clear the entire window
