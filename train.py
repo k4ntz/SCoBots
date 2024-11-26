@@ -365,23 +365,28 @@ def main():
         adam_step_size = 0.001
         if flags_dictionary["game"] in ["Bowling", "Tennis"]:
             adam_step_size = 0.00025
+            print(f"Using lower learning rate for {flags_dictionary['game']}.")
+        if flags_dictionary["game"] in ["Kangaroo"]:
+            adam_step_size = 0.0025
+            print(f"Using higher learning rate for {flags_dictionary['game']}.")
         clipping_eps = 0.1
         model = PPO(
             policy_str,
-            # n_steps=2048,
-            n_steps=256,
+            n_steps=2048,
+            # n_steps=4096,
             # learning_rate=linear_schedule(adam_step_size),
             learning_rate=get_exponential_schedule(adam_step_size, 0.25),
-            n_epochs=4,
+            n_epochs=3,
+            # batch_size=512,
             batch_size=256,
             gamma=0.99,
             gae_lambda=0.95,
             clip_range=linear_schedule(clipping_eps),
-            # vf_coef=1,
+            vf_coef=1,
             normalize_advantage=True, 
-            vf_coef=0.5,
-            # ent_coef=0.01,
-            ent_coef=0.05,
+            # vf_coef=0.5,
+            ent_coef=0.01,
+            # ent_coef=0.05,
             env=train_env,
             policy_kwargs=pkwargs,
             verbose=1)
