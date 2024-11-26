@@ -118,12 +118,19 @@ class Renderer:
     def _save_recording(self):
         filename = Path.joinpath(self.path, "recordings")
         filename.mkdir(parents=True, exist_ok=True)
-        self._screen_recorder.stop_rec()	# stop recording
-        filename = Path.joinpath(filename, f"{self.env.oc_env.game_name}.avi")
+        self._screen_recorder.stop_rec() # stop recording
+        print(self.env.spec.name)
+        if self.rgb_agent:
+            filename = Path.joinpath(filename, f"{self.env.spec.name}.avi")
+        else:
+            filename = Path.joinpath(filename, f"{self.env.oc_env.game_name}.avi")
         i = 0
         while os.path.exists(filename):
             i += 1
-            filename = Path.joinpath(self.path, "recordings", f"{self.env.oc_env.game_name}_{i}.avi")
+            if self.rgb_agent:
+                filename = Path.joinpath(self.path, "recordings", f"{self.env.spec.name}_{i}.avi")
+            else:
+                filename = Path.joinpath(self.path, "recordings", f"{self.env.oc_env.game_name}_{i}.avi")
         print(filename)
         self._screen_recorder.save_recording(filename)
         print(f"Recording saved as {filename}")
@@ -189,7 +196,7 @@ class Renderer:
         if self.rgb_agent:
             return self.env.render()
         else:
-            return self.env._obj_obs
+            return self.env.obj_obs
 
     def _render(self, frame = None):
         self.window.fill((0,0,0))  # clear the entire window
