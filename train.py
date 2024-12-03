@@ -147,7 +147,9 @@ def main():
                               hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,
                               reward=flags_dictionary["reward_mode"],
-                              refresh_yaml=refresh)
+                              refresh_yaml=refresh,
+                              hud=flags_dictionary["hud"]
+                              )
             env = EpisodicLifeEnv(env=env)
             env = Monitor(env)
             env.reset(seed=seed + rank)
@@ -164,7 +166,8 @@ def main():
                               hide_properties=flags_dictionary["hide_properties"],
                               silent=silent,
                               reward=0, #always env reward for eval
-                              refresh_yaml=refresh)
+                              refresh_yaml=refresh,
+                              hud=flags_dictionary["hud"])
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env

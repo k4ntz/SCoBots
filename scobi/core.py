@@ -11,9 +11,9 @@ from copy import deepcopy
 
 
 class Environment(Env):
-    def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False):
+    def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, hud=False):
         self.logger = Logger(silent=silent)
-        self.oc_env = em.make(env_name, self.logger)
+        self.oc_env = em.make(env_name, self.logger, hud=hud)
         self.seed = seed
         self.randomstate = np.random.RandomState(self.seed)
         # TODO: tie to em.make

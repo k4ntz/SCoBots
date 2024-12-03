@@ -21,6 +21,8 @@ def parse_train():
     parser.add_argument("-x", "--exclude_properties", action="store_true", help="exclude properties from feature vector")
     parser.add_argument("--rgb", action="store_true", help="rgb observation space")
     parser.add_argument("--progress", action="store_true", help="display a progress bar of the training process")
+    parser.add_argument("--hud", action="store_true", help="use HUD objects")
+
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -78,7 +80,8 @@ def parse_train():
         "game": opts.game,
         "rgb": opts.rgb,
         "reward": opts.reward,
-        "progress": opts.progress
+        "progress": opts.progress,
+        "hud": opts.hud
     }
 
 
@@ -100,6 +103,7 @@ def render_parser():
     parser.add_argument("--nb_frames", type=int, default=0, help="stop recording after nb_frames (or 1 episode if not specified)")
     parser.add_argument("--print-reward", action="store_true", help="display the reward in the console (if not 0)")
     parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
+    parser.add_argument("--hud", action="store_true", help="use HUD objects")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -152,7 +156,8 @@ def render_parser():
         "record": opts.record,
         "nb_frames": opts.nb_frames,
         "print_reward": opts.print_reward,
-        "viper": opts.viper
+        "viper": opts.viper,
+        "hud": opts.hud
     }
 
 
@@ -172,6 +177,7 @@ def parse_eval(parser):
     parser.add_argument("--progress", action="store_true", help="display a progress bar of the training process")
     parser.add_argument("--rgb", required= False, action="store_true", help="rgb observation space")
     parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
+    parser.add_argument("--hud", action="store_true", help="use HUD objects")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -223,7 +229,8 @@ def parse_eval(parser):
         "reward": opts.reward,
         "progress": opts.progress,
         "rgb": opts.rgb,
-        "viper": opts.viper
+        "viper": opts.viper,
+        "hud": opts.hud
     }
 
 
