@@ -16,4 +16,4 @@ except ImportError as imp_err:
 def make(env_name, notify=False):
     if notify:
         print(colored("Using AtariARI", "green"))
-    return OCAtari(env_name, mode="revised")
+    return OCAtari(env_name, mode="ram")

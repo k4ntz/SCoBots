@@ -26,6 +26,7 @@ class Environment(Env):
 
         # not possible anymore
         # self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
+        self.noisy_objects = False
 
         init_objects = self.oc_env.objects
         max_obj_dict = self.oc_env.max_objects_per_cat

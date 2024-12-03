@@ -27,7 +27,7 @@ def parse_train():
     settings_str = ""
     pruned_ff_name = None
     hide_properties = False
-    noisy = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
+    noisy = os.environ.get("SCOBI_OBJ_EXTRACTOR", "OC_Atari") == "Noisy_OC_Atari"
     focus_dir = "resources/focusfiles"
 
 
