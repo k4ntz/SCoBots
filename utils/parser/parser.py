@@ -144,7 +144,7 @@ def render_parser():
         "hide_properties": hide_properties,
         "pruned_ff_name": pruned_ff_name,
         "variant": variant,
-        "version": opts.version or 0,
+        "version": opts.version or -1,
         "game": opts.game,
         "seed": opts.seed,
         "reward": opts.reward,
@@ -210,11 +210,6 @@ def parse_eval(parser):
         
     exp_name = opts.game + "_seed" + str(opts. seed) + settings_str
 
-    if opts.version:
-        version = opts.version
-    else:
-        version = 0
-
     return {
         "exp_name": exp_name,
         "env_str": env_str,
@@ -222,7 +217,7 @@ def parse_eval(parser):
         "pruned_ff_name": pruned_ff_name,
         "times": opts.times,
         "variant": variant,
-        "version": opts.version or 0,
+        "version": opts.version or -1,
         "game": opts.game,
         "seed": opts.seed,
         "reward": opts.reward,
