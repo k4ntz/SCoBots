@@ -2,6 +2,7 @@
 import numpy as np
 from gymnasium import spaces, Env
 import scobi.environments.env_manager as em
+from scobi.reward_shaping import get_reward_fn
 from scobi.utils.game_object import get_wrapper_class
 from scobi.focus import Focus
 from scobi.utils.logging import Logger
@@ -45,10 +46,15 @@ class Environment(Env):
         self._rel_obs = None  # observation augmented with relations
         self._top_features = []
 
+        self._reward = reward
+        self._setup_reward(env_name.split("/")[-1])
+
         self.original_obs = []
         self.original_reward = []
         self.ep_env_reward = None
         self.ep_env_reward_buffer = 0
+        self.ep_rew_shaping_reward = 0
+        self.ep_rew_shaping_reward_buffer = np.array([0.0, 0.0, 0.0])
         self.reset_ep_reward = True
 
         if reward == 2: # mix rewards
@@ -68,13 +74,38 @@ class Environment(Env):
         self.reset()
         self.did_reset = False # still require user to properly call a (likely seeded) reset()
 
+    def _setup_reward(self, env_name):
+        if self._reward != 0:
+            if self._reward == 1:
+                log_str = "scobi"
+            elif self._reward == 2:
+                log_str = "env + scobi"
+            else:
+                log_str = "unknown"
+
+            self.logger.GeneralInfo(f"Reward Shaping: {log_str}.")
+            self._reward_fn = get_reward_fn(env_name)
+
+            if self._reward_fn is None:
+                self.logger.GeneralError(
+                    f"Reward function for {env_name} not implemented!")
+            else:
+                self.logger.GeneralInfo("Reward function is valid. Bound.")
+
+        else:
+            self._reward_fn = None
+            self.logger.GeneralInfo("Reward Shaping: disabled.")
+
+
     def step(self, action):
         if not self.did_reset:
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
             ns_repr = self.oc_env.ns_state
-            sco_obs, sco_reward = self.focus.get_feature_vector(ns_repr)
+            sco_obs = self.focus.get_feature_vector(ns_repr)
+            #TODO: CHange reward_fns to use ns_repr instead of game_objects
+            sco_rewards = self._reward_fn(self.oc_env.objects, terminated) if self._reward_fn is not None else 0
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
                 self.obj_obs = self._draw_objects_overlay(obs)
@@ -82,14 +113,18 @@ class Environment(Env):
             self.original_obs = obs
             self.original_reward = reward
             self.ep_env_reward_buffer += self.original_reward
+            self.ep_rew_shaping_reward_buffer += sco_rewards # sco_rewards is np_array
             if self.reset_ep_reward:
                 self.ep_env_reward = None
                 self.reset_ep_reward = False
             if terminated or truncated:
                 self.ep_env_reward = self.ep_env_reward_buffer
                 self.ep_env_reward_buffer = 0
+                self.ep_rew_shaping_reward = self.ep_rew_shaping_reward_buffer
+                self.ep_rew_shaping_reward_buffer = np.array([0.0, 0.0, 0.0])
                 self.reset_ep_reward = True
                 self.focus.reward_subgoals = 0
+            sco_reward = np.sum(sco_rewards).item() # sum individual rewards
             final_reward = self._reward_composition_func(sco_reward, reward)
             # self.sco_obs = sco_obs
             return sco_obs, final_reward, truncated, terminated, info # 5
@@ -103,7 +138,8 @@ class Environment(Env):
         self.focus.reward_history = [0, 0]
         _, info = self.oc_env.reset(*args, **kwargs)
         ns_repr = self.oc_env.ns_state
-        sco_obs, _ = self.focus.get_feature_vector(ns_repr)
+        # sco_obs, _ = self.focus.get_feature_vector(ns_repr)
+        sco_obs = self.focus.get_feature_vector(ns_repr)
         return sco_obs, info
     
     @property
