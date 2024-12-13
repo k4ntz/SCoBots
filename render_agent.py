@@ -59,8 +59,7 @@ def main():
     ff_file_path = Path("resources/checkpoints", exp_name)
     EVAL_ENV_SEED = 84
     if not _ensure_completeness(ff_file_path):
-        print('Training not completed!')
-        print('Delete the folder ' + str(ff_file_path) + ' or complete the training process')
+        print("The folder " + str(ff_file_path) + " does not contain a completed training checkpoint.")
         return
     if variant == "rgb":
         env = make_vec_env(env_str, seed=EVAL_ENV_SEED, wrapper_class=WarpFrame)
