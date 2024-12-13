@@ -94,7 +94,19 @@ def main():
         path_entered = True
     else:
         checkpoint_name = opts.input
+
     checkpoint_options = checkpoint_name.split("_")
+
+    # list all files that match the checkpoint name
+    import os
+    a = os.listdir("resources/checkpoints")
+    a = list(filter(lambda x: checkpoint_name in x, a))
+    num_exps = len(a)
+    # choose latest
+    if num_exps > 1:
+        checkpoint_name += f"-n{num_exps}"
+    print("using: " + checkpoint_name)
+    
     if len(checkpoint_options) == 4:
         print("unpruned")
     elif len(checkpoint_options) == 5:
@@ -152,7 +164,7 @@ def main():
         MAX_DEPTH = 7
         NB_ITER = 25
         process_name = checkpoint_name + "_" + expname
-        rtpt = RTPT(name_initials="QD", experiment_name=process_name, max_iterations=NB_ITER)
+        rtpt = RTPT(name_initials="RE", experiment_name=process_name, max_iterations=NB_ITER)
         rtpt.start()
         train_observations = np.load(obs_outfile)
         train_actions = np.load(acts_outfile)

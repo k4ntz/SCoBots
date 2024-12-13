@@ -73,12 +73,15 @@ class Environment(Env):
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
+            #TODO: use obs in place of ns_state (it's the same, just with the last 4 frames instead of 1)
             ns_repr = self.oc_env.ns_state
             sco_obs, sco_reward = self.focus.get_feature_vector(ns_repr)
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
-                self.obj_obs = self._draw_objects_overlay(obs)
-                self._rel_obs = self._draw_relation_overlay(obs, sco_obs, freeze_mask, action)
+                #for drawing features, we need image here, but obs is ns_repr
+                img_obs = self.oc_env._state_buffer_rgb[-1]
+                self.obj_obs = self._draw_objects_overlay(img_obs)
+                self._rel_obs = self._draw_relation_overlay(img_obs, sco_obs, freeze_mask, action)
             self.original_obs = obs
             self.original_reward = reward
             self.ep_env_reward_buffer += self.original_reward

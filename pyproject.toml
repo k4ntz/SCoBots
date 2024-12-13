@@ -21,7 +21,6 @@ dependencies = [
     "pyyaml",
     "colormath",
     "torch == 2.0.1",
-    "ocatari",
     "ocatari@git+https://github.com/k4ntz/OC_Atari@ns_impl_re",
 ]
 
