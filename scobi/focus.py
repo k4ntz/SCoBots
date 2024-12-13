@@ -13,7 +13,7 @@ class Focus():
         self.FUNCTION_LIST = []
         self.MAX_NB_OBJECTS = max_obj_dict
         self.INIT_OBJECTS = raw_features
-        self.INIT_OBJECT_NAMES = [x.category for x in self.INIT_OBJECTS] #Can get this differently
+        self.INIT_OBJECT_NAMES = [x.category for x in self.INIT_OBJECTS]
         self.NS_REPR_LIST = []
         self.NS_REPR_TYPES = []
         self.OBJECT_NAMES = []

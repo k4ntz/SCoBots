@@ -28,7 +28,8 @@ class Environment(Env):
         # self.noisy_objects = os.environ["SCOBI_OBJ_EXTRACTOR"] == "Noisy_OC_Atari"
         self.noisy_objects = False
 
-        init_objects = self.oc_env.objects
+        # use the initialized slots from OC_Atari (ensures that there are no NoObjects)
+        init_objects = self.oc_env._slots
         max_obj_dict = self.oc_env.max_objects_per_cat
         self.did_reset = False
         self.focus = Focus(env_name, reward, hide_properties, focus_dir, focus_file, init_objects, max_obj_dict, actions, refresh_yaml, self.logger)
