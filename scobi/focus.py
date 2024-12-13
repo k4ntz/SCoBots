@@ -1,3 +1,4 @@
+from typing import Tuple
 import yaml
 import numpy as np
 import math
@@ -55,6 +56,7 @@ class Focus():
         self.logger = logger
         # self.generate_property_set()
         self.generate_ns_repr_set()
+        self.generate_history_idxs()
         self.generate_function_set()
         self.last_obs_vector = []
         self.first_pass = True
@@ -120,6 +122,13 @@ class Focus():
                 ns_meanings = [[meaning, k+str(i+1)] for meaning in obj._ns_meaning]
                 self.NS_REPR_LIST += ns_meanings
                 self.NS_REPR_TYPES += obj._ns_types
+        # Since here, we also need POSITION_HISTORY, which is not provided from OC_Atari (neurosymbolic)
+        # we add it manually. (And compute it from the previous frame later).
+        for i, ns_repr in enumerate(self.NS_REPR_LIST):
+            if ns_repr[0] == "POSITION":
+                self.NS_REPR_LIST.insert(i+1, ["POSITION_HISTORY", ns_repr[1]])
+                self.NS_REPR_TYPES.insert(i+1, Tuple[int, int, int, int])
+
 
     # def generate_property_set(self):
     #     print(PROPERTIES)
@@ -400,8 +409,44 @@ class Focus():
             out_list.append(tuple(ns_repr_list[idx:idx+arg_len]))
             idx += arg_len
         return out_list
+    
+    def generate_history_idxs(self):
+        # finds the indices of position properties and the indices where the history should be inserted
+        # (in obs)
 
-    def get_feature_vector(self, inc_ns_repr_list):
+        pos_idxs = [] # array of tuples (x, y) for each position property
+        insertion_idxs = []
+        i = 0
+        added_hists = 0
+        for (meaning, name), type_info in zip(self.NS_REPR_LIST, self.NS_REPR_TYPES):
+            arg_len = len(str(type_info).split('[')[1][:-1].split(','))
+            if meaning == "POSITION":
+                pos_idxs.append(i)
+                insertion_idxs.append(i+arg_len+added_hists*4)
+                added_hists += 1
+            if meaning == "POSITION_HISTORY":
+                # not in obs yet, so do not add idx
+                continue
+            i += arg_len
+        self.pos_idxs = pos_idxs
+        self.insertion_idxs = insertion_idxs
+
+
+    def add_history_to_obs(self, obs):
+        """
+        Transforms the observation from OC_Atari to include the history of the positions
+        """
+        # obs shape: 2,n_props (2 buffers, n properties)
+        # should be: 1,n_props+(num_position_history*4)
+        # history: [*h_coords[0], *h_coords[1]] == [x,y,prev_x,prev_y]
+        new_obs = obs[1].copy()
+        histories = [[obs[1, i], obs[0, i], obs[1, i+1], obs[0, i+1]] for i in self.pos_idxs]
+        for i, hist in enumerate(histories):
+            new_obs = np.insert(new_obs, self.insertion_idxs[i], hist)
+        return new_obs
+
+
+    def get_feature_vector(self, obs):
         # evaluate a 2 layer computation graph for the feature vector:
         # compute the functions given the properties from the neurosymbolic repres. of OCAtari
         # IN   ns_repres (==property_values)
@@ -409,6 +454,9 @@ class Focus():
         #       function_values
         # OUT   HSTACK(CONCAT(property_values, function_values))
         # Instead of having to compute the properties, we get them from OC_Atari directly
+
+        assert obs.shape[0] == 2, "OC_Atari window-buffer size should be 2"
+        inc_ns_repr_list = self.add_history_to_obs(obs)
 
         self.CURRENT_PROPERTY_COMPUTE_LAYER = self.ns_repr_list_to_func_input(inc_ns_repr_list)
 

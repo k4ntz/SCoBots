@@ -13,7 +13,8 @@ from copy import deepcopy
 class Environment(Env):
     def __init__(self, env_name, seed=None, focus_dir="resources/focusfiles", focus_file=None, reward=0, hide_properties=False, silent=False, refresh_yaml=True, draw_features=False, hud=False):
         self.logger = Logger(silent=silent)
-        self.oc_env = em.make(env_name, self.logger, hud=hud)
+        # set buffer_window=2, s.t. we can build POSITION_HISTORY properties, which are needed by all envs.
+        self.oc_env = em.make(env_name, self.logger, hud=hud, buffer_window_size=2)
         self.seed = seed
         self.randomstate = np.random.RandomState(self.seed)
         # TODO: tie to em.make
@@ -74,9 +75,7 @@ class Environment(Env):
             self.logger.GeneralError("Cannot call env.step() before calling env.reset()")
         elif self.action_space.contains(action):
             obs, reward, truncated, terminated, info = self.oc_env.step(action)
-            #TODO: use obs in place of ns_state (it's the same, just with the last 4 frames instead of 1)
-            ns_repr = self.oc_env.ns_state
-            sco_obs, sco_reward = self.focus.get_feature_vector(ns_repr)
+            sco_obs, sco_reward = self.focus.get_feature_vector(obs)
             freeze_mask = self.focus.get_current_freeze_mask()
             if self.draw_features:
                 #for drawing features, we need image here, but obs is ns_repr
@@ -105,9 +104,8 @@ class Environment(Env):
         # additional scobi reset steps here
         self.focus.reward_threshold = -1
         self.focus.reward_history = [0, 0]
-        _, info = self.oc_env.reset(*args, **kwargs)
-        ns_repr = self.oc_env.ns_state
-        sco_obs, _ = self.focus.get_feature_vector(ns_repr)
+        obs, info = self.oc_env.reset(*args, **kwargs)
+        sco_obs, _ = self.focus.get_feature_vector(obs)
         return sco_obs, info
     
     @property
