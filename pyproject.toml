@@ -21,7 +21,7 @@ dependencies = [
     "pyyaml",
     "colormath",
     "torch == 2.0.1",
-    "ocatari",
+    "ocatari@git+https://github.com/k4ntz/OC_Atari@ns_impl",
 ]
 
 #[project.urls]
@@ -37,6 +37,3 @@ namespaces = false
 
 [tool.setuptools.package-data]
 scobi = ["resources/*.ttf"]
-
-[tool.uv.sources]
-ocatari = { git = "https://github.com/k4ntz/OC_Atari", rev = "ns_impl" }
