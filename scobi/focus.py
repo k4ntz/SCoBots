@@ -441,10 +441,8 @@ class Focus():
         # history: [*h_coords[0], *h_coords[1]] == [x,y,prev_x,prev_y]
         new_obs = obs[1].copy()
         histories = [[obs[1, i], obs[1, i+1], obs[0, i], obs[0, i+1]] for i in self.pos_idxs]
-        print("histories: ", histories)
         for i, hist in enumerate(histories):
             new_obs = np.insert(new_obs, self.insertion_idxs[i], hist)
-        print("new_obs: ", new_obs)
         return new_obs
 
 
