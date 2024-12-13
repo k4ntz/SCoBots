@@ -9,21 +9,37 @@ Due to issues with the ```autorom``` module versions, ```stable_baselines3[extra
 pip install -r requirements.txt && pip install "stable-baselines3[extras]==2.0.0"
 ```
 
+Note that this version of SCoBots makes use of OC_Atari 2.0 and its neuro-symbolic state.
+
 ## How To Use
 There are three Python files that can be run directly. Each of them has a ```-h``` help flag.
 
 ### Downloading Agents
-The download_agents.sh script can be used to download pre-trained agents. 
-The following commands will download and extract the agents to the ```resources``` folder:
+The following commands will manually download and extract the agents to the ```resources``` folder.
+
+For neural agents:
 ```bash
 # Download the agents (only seed0)
-wget https://hessenbox.tu-darmstadt.de/dl/fiWgsh2ov1WTtAy5jbJhj9x1/resources.zip
-unzip resources.zip
+wget https://hessenbox.tu-darmstadt.de/download/MlJRMmN1WkF1M1N1WkJKdjF1RTlD/resources_seed0.zip 
+unzip resources_all.zip
 ```
 **or** 
 ```bash
 # Download the agents (all seeds)
-wget https://hessenbox.tu-darmstadt.de/dl/fiJZ9Tj8REimgvPHzcCPgK9W/resources.zip
+wget https://hessenbox.tu-darmstadt.de/download/MlJRMmN1WkF1M1N1WkJKdjF1RTlD/resources_all.zip 
+unzip resources.zip
+```
+
+For decision-tree agents:
+```bash
+# Download the agents (only seed0)
+wget https://hessenbox.tu-darmstadt.de/download/MlJRMmN1WkF1M1N1WkJKdjF1RTlD/resources_viper_seed0.zip 
+unzip resources_viper_all.zip
+```
+**or** 
+```bash
+# Download the agents (all seeds)
+wget https://hessenbox.tu-darmstadt.de/download/MlJRMmN1WkF1M1N1WkJKdjF1RTlD/resources_viper_all.zip 
 unzip resources.zip
 ```
 
@@ -33,7 +49,11 @@ Running the file will open and display the game played as a gif.
 
 The following example demonstrates the usage of the previously trained + evaluated agent:
 ```bash
-python render_agent.py -g Pong -s 0 -r env
+python render_agent.py -g Pong -s 0 -r human -p default
+```
+Similar for decision-tree agents:
+```bash
+python render_agent.py -g Pong -s 0 -r human -p default --viper
 ```
 
 
