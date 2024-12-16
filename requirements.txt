@@ -17,4 +17,5 @@ captum
 notebook
 huggingface_hub
 joblib
-#ocatari @ git+https://github.com/k4ntz/OC_Atari@ns_impl_re
+scikit-learn==1.3.2
+ocatari @ git+https://github.com/k4ntz/OC_Atari@ns_impl
