@@ -21,26 +21,26 @@ For neural agents:
 ```bash
 # Download the agents (only seed0)
 wget https://hessenbox.tu-darmstadt.de/download/MlJRMmN1WkF1M1N1WkJKdjF1RTlD/resources_seed0.zip 
-unzip resources_all.zip
+unzip resources_seed0.zip
 ```
 **or** 
 ```bash
 # Download the agents (all seeds)
 wget https://hessenbox.tu-darmstadt.de/download/MlJRMmN1WkF1M1N1WkJKdjF1RTlD/resources_all.zip 
-unzip resources.zip
+unzip resources_all.zip
 ```
 
 For decision-tree agents:
 ```bash
 # Download the agents (only seed0)
-wget https://hessenbox.tu-darmstadt.de/download/MlJRMmN1WkF1M1N1WkJKdjF1RTlD/resources_viper_seed0.zip 
-unzip resources_viper_all.zip
+wget https://hessenbox.tu-darmstadt.de/download/MlJRMmN1WkF1M1N1WkJKdjF1RTlD/resources_viper_seed0.zip
+unzip resources_viper_seed0.zip 
 ```
 **or** 
 ```bash
 # Download the agents (all seeds)
 wget https://hessenbox.tu-darmstadt.de/download/MlJRMmN1WkF1M1N1WkJKdjF1RTlD/resources_viper_all.zip 
-unzip resources.zip
+unzip resources_viper_all.zip
 ```
 
 ### Displaying A Trained Agent
