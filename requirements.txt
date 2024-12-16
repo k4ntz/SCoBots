@@ -1,9 +1,9 @@
-gymnasium[atari, accept-rom-license] == 0.28.1
+gymnasium[atari, accept-rom-license]
 rtpt
 termcolor
-torch==2.0.1
+torch
 torchinfo
-numpy==1.24.4
+numpy<2.0
 opencv_python
 joblib
 tensorboard
@@ -17,4 +17,4 @@ captum
 notebook
 huggingface_hub
 joblib
-ocatari @ git+https://github.com/k4ntz/OC_Atari@ns_impl_re
+#ocatari @ git+https://github.com/k4ntz/OC_Atari@ns_impl_re
