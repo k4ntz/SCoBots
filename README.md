@@ -20,7 +20,7 @@ The following commands will manually download and extract the agents to the ```r
 For neural agents:
 ```bash
 # Download the agents (only seed0)
-wget https://hessenbox.tu-darmstadt.de/dl/fi47F21YBzVZBRfGPKswumb7/resources_seed0.zip 
+wget https://hessenbox.tu-darmstadt.de/dl/fi47F21YBzVZBRfGPKswumb7/resources_seed0.zip
 unzip resources_seed0.zip
 ```
 **or** 
@@ -28,19 +28,6 @@ unzip resources_seed0.zip
 # Download the agents (all seeds)
 wget https://hessenbox.tu-darmstadt.de/dl/fiPLH36Zwi8EVv8JaLU4HpE2/resources_all.zip
 unzip resources_all.zip
-```
-
-For decision-tree agents:
-```bash
-# Download the agents (only seed0)
-wget https://hessenbox.tu-darmstadt.de/dl/fiC2r5RSFfUEBDfstS8xGc9x/resources_viper_seed0.zip
-unzip resources_viper_seed0.zip 
-```
-**or** 
-```bash
-# Download the agents (all seeds)
-wget https://hessenbox.tu-darmstadt.de/dl/fi8sRj8iY6eVFvnEoM72csvV/resources_viper_all.zip
-unzip resources_viper_all.zip
 ```
 
 ### Displaying A Trained Agent
