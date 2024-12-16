@@ -18,4 +18,4 @@ notebook
 huggingface_hub
 joblib
 scikit-learn==1.3.2
-ocatari @ git+https://github.com/k4ntz/OC_Atari@ns_impl
+ocatari==2.0.0

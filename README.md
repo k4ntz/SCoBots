@@ -17,7 +17,7 @@ There are three Python files that can be run directly. Each of them has a ```-h`
 ### Downloading Agents
 The following commands will manually download and extract the agents to the ```resources``` folder.
 
-For neural agents:
+For neural and tree-based agents:
 ```bash
 # Download the agents (only seed0)
 wget https://hessenbox.tu-darmstadt.de/dl/fi47F21YBzVZBRfGPKswumb7/resources_seed0.zip
