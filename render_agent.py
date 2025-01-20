@@ -26,6 +26,19 @@ def _load_viper(exp_name, path_provided):
 
     return wrapped
 
+def _load_interpreter(exp_name, path_provided):
+    """Helper function to load from a interpreter tree"""
+    if path_provided:
+        tree_path = Path(exp_name)
+        tree = load(sorted(tree_path.glob("tree.interpreter"))[0])
+    else:
+        tree_path = Path("resources/interpreter_extract/extract_output", exp_name + "-extraction")
+        tree = load(sorted(tree_path.glob("tree.interpreter"))[0])
+        print("Loading interpreter tree from " + str(tree_path))
+        print(tree) 
+
+    return tree
+
 # Helper function ensuring that a checkpoint has completed training
 def _ensure_completeness(path):
     checkpoint = path / "best_model.zip"
@@ -41,6 +54,7 @@ def main():
     pruned_ff_name = flag_dictionary["pruned_ff_name"]
     hide_properties = flag_dictionary["hide_properties"]
     viper = flag_dictionary["viper"]
+    interpreter = flag_dictionary["interpreter"]
     record = flag_dictionary["record"]
     nb_frames = flag_dictionary["nb_frames"]
     print_reward = flag_dictionary["print_reward"]
@@ -82,6 +96,12 @@ def main():
             model = _load_viper(viper, True)
         else:
             model = _load_viper(exp_name, False)
+    elif interpreter: 
+        print("loading interpreter tree of " + exp_name)
+        if isinstance(interpreter, str):
+            model = _load_interpreter(interpreter, True)
+        else:
+            model = _load_interpreter(exp_name, False)
     else:
         model = PPO.load(model_path)
     obs = env.reset()

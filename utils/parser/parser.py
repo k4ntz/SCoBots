@@ -103,6 +103,7 @@ def render_parser():
     parser.add_argument("--nb_frames", type=int, default=0, help="stop recording after nb_frames (or 1 episode if not specified)")
     parser.add_argument("--print-reward", action="store_true", help="display the reward in the console (if not 0)")
     parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
+    parser.add_argument("--interpreter", type=str, nargs='?', const=True, default=False, help="use interpreter tree instead of PPO model")
     parser.add_argument("--hud", action="store_true", help="use HUD objects")
     opts = parser.parse_args()
 
@@ -157,6 +158,7 @@ def render_parser():
         "nb_frames": opts.nb_frames,
         "print_reward": opts.print_reward,
         "viper": opts.viper,
+        "interpreter": opts.interpreter,
         "hud": opts.hud
     }
 
