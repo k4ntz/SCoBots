@@ -90,6 +90,8 @@ def main():
     viper = flag_dictionary["viper"]
     progress_bar = flag_dictionary["progress"]
     time = int(flag_dictionary["times"])
+    use_hacks = flag_dictionary["hackatari"]
+    mods = flag_dictionary["mods"]
 
     if version == -1:
         version = utils.parser.parser.get_highest_version(exp_name)
@@ -115,7 +117,7 @@ def main():
                           focus_file=pruned_ff_name,
                           hide_properties=hide_properties,
                           draw_features=True, # implement feature attribution
-                          reward=0) #env reward only for evaluation
+                          reward=0, hackatari=use_hacks, mods=mods) #env reward only for evaluation
 
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])

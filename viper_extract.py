@@ -79,7 +79,13 @@ def main():
     parser.add_argument("-r", "--rule_extraction", type=str, required=True, choices=["viper"], default="viper", help="rule extraction to use.")
     parser.add_argument("-e", "--episodes", type=int, required=False, help="number of episodes to evaluate agents samples on")
     parser.add_argument("-n", "--name", type=str, required=False, help="experiment name")
+    parser.add_argument("--hackatari", action="store_true", help="use Hackatari as environment")
+    parser.add_argument("-mods", "--mods", type=str, required=False, help="list which mods you want to run with hackatari, separate via comma")
     opts = parser.parse_args()
+
+    if opts.hackatari:
+        mods = [item.strip() for item in opts.mods.split(",")]
+    else: mods = None
 
     # Default values
     path_entered = False
@@ -145,7 +151,7 @@ def main():
 
     env = Environment(env_str,
                       focus_dir=focus_dir,
-                      focus_file=pruned_ff_name)
+                      focus_file=pruned_ff_name, hackatari=opts.hackatri, mods=mods)
     _, _ = env.reset(seed=EVAL_ENV_SEED)
 
 

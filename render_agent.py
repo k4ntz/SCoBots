@@ -44,6 +44,8 @@ def main():
     record = flag_dictionary["record"]
     nb_frames = flag_dictionary["nb_frames"]
     print_reward = flag_dictionary["print_reward"]
+    use_hacks = flag_dictionary["hackatari"]
+    mods = flag_dictionary["mods"]
     
     if version == -1:
         version = get_highest_version(exp_name)
@@ -69,7 +71,7 @@ def main():
                           focus_file=pruned_ff_name,
                           hide_properties=hide_properties,
                           draw_features=True, # implement feature attribution
-                          reward=0) #env reward only for evaluation
+                          reward=0, hackatari=use_hacks, mods=mods) #env reward only for evaluation
 
         _, _ = env.reset(seed=EVAL_ENV_SEED)
         dummy_vecenv = DummyVecEnv([lambda :  env])

@@ -71,6 +71,9 @@ Unless explictily stated via ```--rgb```, it will always be automatically resort
 
 Furthermore during the training process regularly checkpoints will be made and saved. These are saved separately in a sub-folder named ```training_checkpoints``` next to the ```best_model.zip``` and ```best_vecnormalize.pkl``` which are saved after a complete successful training process in. 
 
+## Using Modded Games
+Via [Hackatari](https://github.com/k4ntz/HackAtari) modded games can be used, using the ```--hackatari``` flag and declaring which mods via ```-mods mod1,mod2,mod3,...```
+
 ## Extracting Via Viper
 If desired an extraction from a saved agent can be performed and saved under the folder ```viper_extracts```. An example usage would be:
 ```bash

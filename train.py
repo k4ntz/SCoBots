@@ -108,6 +108,8 @@ def main():
 
     exp_name = flags_dictionary["exp_name"]
     n_envs = int(flags_dictionary["environments"])
+    use_hacks = flags_dictionary["hackatari"]
+    mods = flags_dictionary["mods"]
     n_eval_envs = 4
     n_eval_episodes = 8
     eval_env_seed = (int(flags_dictionary["seed"]) + 42) * 2 #different seeds for eval
@@ -148,7 +150,9 @@ def main():
                               silent=silent,
                               reward=flags_dictionary["reward_mode"],
                               refresh_yaml=refresh,
-                              hud=flags_dictionary["hud"]
+                              hud=flags_dictionary["hud"],
+                              hackatari=use_hacks,
+                              mods=mods
                               )
             env = EpisodicLifeEnv(env=env)
             env = Monitor(env)
@@ -167,7 +171,9 @@ def main():
                               silent=silent,
                               reward=0, #always env reward for eval
                               refresh_yaml=refresh,
-                              hud=flags_dictionary["hud"])
+                              hud=flags_dictionary["hud"],
+                              hackatari=use_hacks,
+                              mods=mods)
             env = Monitor(env)
             env.reset(seed=seed + rank)
             return env
