@@ -27,8 +27,6 @@ def make(env_name, useHacks=False, mods=None, notify=False, *args, **kwargs):
                          switch_frame=0, render_mode="rgb_array",
                          obs_mode="obj",
                          mode="ram",
-                         hud=False,
                          render_oc_overlay=True,
-                         buffer_window_size = 2,
                          frameskip=4, *args, **kwargs)
     else: return OCAtari(env_name, "ram", *args, **kwargs) 

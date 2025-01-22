@@ -22,6 +22,8 @@ def parse_train():
     parser.add_argument("--rgb", action="store_true", help="rgb observation space")
     parser.add_argument("--progress", action="store_true", help="display a progress bar of the training process")
     parser.add_argument("--hud", action="store_true", help="use HUD objects")
+    parser.add_argument("--hackatari", action="store_true", help="use Hackatari as environment")
+    parser.add_argument("-mods", "--mods", type=str, required=False, help="list which mods you want to run with hackatari, separate via comma")
 
     opts = parser.parse_args()
 
@@ -67,6 +69,12 @@ def parse_train():
     if noisy:
         exp_name += "-noisy"
 
+    if opts.hackatari:
+        if opts.mods:
+            mods = [item.strip() for item in opts.mods.split(",")]
+        else: mods = None
+    else: mods = None
+
     return {
         "exp_name": exp_name,
         "env": env_str,
@@ -81,7 +89,9 @@ def parse_train():
         "rgb": opts.rgb,
         "reward": opts.reward,
         "progress": opts.progress,
-        "hud": opts.hud
+        "hud": opts.hud,
+        "hackatari": opts.hackatari,
+        "mods" : mods
     }
 
 
@@ -104,6 +114,8 @@ def render_parser():
     parser.add_argument("--print-reward", action="store_true", help="display the reward in the console (if not 0)")
     parser.add_argument("--viper", nargs="?", const=True, default=False, help="evaluate the extracted viper tree instead of a checkpoint")
     parser.add_argument("--hud", action="store_true", help="use HUD objects")
+    parser.add_argument("--hackatari", action="store_true", help="use Hackatari as environment")
+    parser.add_argument("-mods", "--mods", type=str, required=False, help="list which mods you want to run with hackatari, separate via comma")
     opts = parser.parse_args()
 
     env_str = "ALE/" + opts.game +"-v5"
@@ -139,8 +151,13 @@ def render_parser():
         settings_str += '_excludeproperties'
         hide_properties = True
 
-
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
+
+    if opts.hackatari:
+        if opts.mods:
+            mods = [item.strip() for item in opts.mods.split(",")]
+        else: mods = None
+    else: mods = None
 
     return {
         "exp_name": exp_name,
@@ -157,7 +174,9 @@ def render_parser():
         "nb_frames": opts.nb_frames,
         "print_reward": opts.print_reward,
         "viper": opts.viper,
-        "hud": opts.hud
+        "hud": opts.hud,
+        "hackatari": opts.hackatari,
+        "mods" : mods
     }
 
 
@@ -219,7 +238,9 @@ def parse_eval(parser):
     exp_name = opts.game + "_seed" + str(opts.seed) + settings_str
 
     if opts.hackatari:
-        mods = [item.strip() for item in opts.mods.split(",")]
+        if opts.mods:
+            mods = [item.strip() for item in opts.mods.split(",")]
+        else: mods = None
     else: mods = None
 
     return {

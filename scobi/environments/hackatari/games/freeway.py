@@ -83,19 +83,16 @@ def handle_car_stop_mode_3(self):
 
 def handle_car_stop_mode_4(self):
     ram = self.get_ram()
-    set_ram_value(self,33,100)
-    #for i in range(5):
-     #   print("lower car value" + str(ram[112-i]))
-      #  if random.randrange(0, 10) < 3:
-       #     set_ram_value(self, 112-i, ram[112-i]+4)
-        #elif  random.randrange(0, 10) < 6:
-         #   set_ram_value(self, 112-i, ram[112-i]-1)
-    #for i in range(5):
-     #   print("upper car value" + str(ram[112-i]))
-      #  if  random.randrange(0, 10) < 3:
-       #     set_ram_value(self, 117-i, max(0, ram[117-i]-3))
-        #elif  random.randrange(0, 10) < 6:
-         #   set_ram_value(self, 117-i, max(0, ram[117-i]+1))
+    for i in range(5):
+        if random.randrange(0, 10) < 3:
+            set_ram_value(self, 112-i, ram[112-i]+4)
+        elif  random.randrange(0, 10) < 6:
+            set_ram_value(self, 112-i, ram[112-i]-1)
+    for i in range(5):
+        if  random.randrange(0, 10) < 3:
+            set_ram_value(self, 117-i, max(0, ram[117-i]-3))
+        elif  random.randrange(0, 10) < 6:
+            set_ram_value(self, 117-i, max(0, ram[117-i]+1))
 
 def _modif_funcs(env, modifs):
     for mod in modifs:
