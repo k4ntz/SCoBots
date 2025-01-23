@@ -9,7 +9,6 @@ from utils.renderer import Renderer
 from viper_extract import DTClassifierModel
 from joblib import load
 from utils.python_play_wrapper import PythonFunctionWrapper
-from tree_play import play
 
 
 def flist(l):
@@ -45,7 +44,8 @@ def _load_python_file(exp_name, path_provided):
         python_file_path = Path(exp_name)
         python_file = PythonFunctionWrapper(python_file_path)
     else:
-        python_file = PythonFunctionWrapper(play)
+        file_path = Path("resources/program_policies", exp_name+ "-extraction")
+        python_file = PythonFunctionWrapper(file_path)
     return python_file
 
 # Helper function ensuring that a checkpoint has completed training

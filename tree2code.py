@@ -2,6 +2,10 @@ from sklearn.tree import _tree
 import numpy as np
 import argparse
 from joblib import load
+from pathlib import Path
+import os
+
+
 def tree_to_code(tree):
     """
     Convert decision tree to Python if-else logic code.
@@ -30,25 +34,49 @@ def tree_to_code(tree):
     recurse(0, 1)
     return "\n".join(output)
 
-def load_interpreter_tree(folder_name):
-    tree = load(folder_name + "/tree.pkl")
-    return tree
+def load_interpreter_tree(folder_name, name=None):
+    # load file with the most leaves
+    tree_files = [f for f in os.listdir(folder_name) if f.endswith(".pkl")]
+    if name is None:
+        try:
+            tree_files.sort(key=lambda x: int(x.split("leaves")[0].split("tree")[-1]))
+            tree = load(folder_name + "/" + tree_files[-1])
+        except:
+            #choose the lastest file
+            tree_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder_name, x)))
+            tree = load(folder_name + "/" + tree_files[-1])
+        return tree
+    else:
+        tree = load(folder_name + "/" + name)
+        return tree
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", type=str, required=True, help="folder name containing 'tree.pkl'")
-    parser.add_argument("-o", "--output", type=str, required=False, default="tree_play.py", help="output file name")
+    parser.add_argument("-i", "--input", type=str, required=True, help="folder name containing '.pkl'")
+    parser.add_argument("-n", "--name", type=str, required=False, help="name of the input file")
+    parser.add_argument("-o", "--output", type=str, required=False, help="output file name")
+
     opts = parser.parse_args()
-    tree = load_interpreter_tree(opts.input)
+    tree = load_interpreter_tree(opts.input, opts.name)
+    name = opts.input.split("/")[-1]
+    if opts.output is None:
+        file_name = "play_python_"+ str(tree.get_n_leaves()) + "_leaves.py"
+        opts.output = file_name
+
+    output_file_path = Path("resources/program_policies", name, opts.output)
 
     # Generate Python code for decision tree
     tree_code = tree_to_code(tree)
 
+    os.makedirs(output_file_path.parent, exist_ok=True)
+
     # Save generated code to file
-    with open(opts.output, "w") as f:
+    with open(output_file_path, "w") as f:
         f.write("def play(state):\n")
         f.write(tree_code)
         f.write("\n    return -1  # default return -1")
+
+    print("Generated code saved to " + str(output_file_path))
 
 if __name__ == '__main__':
     main()

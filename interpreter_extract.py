@@ -99,8 +99,8 @@ def main():
 
     if rule_extract == "interpreter":
         MAX_DEPTH = 7
-        MAX_LEAVES = 16
-        NB_TIMESTEPS = 5e4
+        MAX_LEAVES = 8
+        NB_TIMESTEPS = 5e5
         DATA_PER_ITER = 5000
 
         clf = DecisionTreeClassifier(max_depth=MAX_DEPTH, max_leaf_nodes=MAX_LEAVES)
@@ -108,8 +108,9 @@ def main():
         interpreter = Interpreter(sb3_model_wrapped, learner, vec_env, data_per_iter=DATA_PER_ITER)
         interpreter.fit(NB_TIMESTEPS)
         print("Saving best tree with reward: " + str(interpreter.max_tree_reward))
-        with open(output_path / "tree.interpreter", "wb") as f:
+        with open(output_path / f"tree_{MAX_LEAVES}_leaves.pkl", "wb") as f:
             dump(interpreter._policy.clf, f)
+        print("Saved tree to " + str(output_path / f"tree_{MAX_LEAVES}_leaves.pkl"))
         print("Done!")
 
 if __name__ == "__main__":
