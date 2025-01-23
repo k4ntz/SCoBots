@@ -99,7 +99,7 @@ def main():
 
     if rule_extract == "interpreter":
         MAX_DEPTH = 7
-        MAX_LEAVES = 100
+        MAX_LEAVES = 16
         NB_TIMESTEPS = 5e4
         DATA_PER_ITER = 5000
 
@@ -109,7 +109,7 @@ def main():
         interpreter.fit(NB_TIMESTEPS)
         print("Saving best tree with reward: " + str(interpreter.max_tree_reward))
         with open(output_path / "tree.interpreter", "wb") as f:
-            dump(interpreter._policy, f)
+            dump(interpreter._policy.clf, f)
         print("Done!")
 
 if __name__ == "__main__":

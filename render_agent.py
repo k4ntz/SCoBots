@@ -8,6 +8,8 @@ from utils.parser.parser import render_parser, get_highest_version
 from utils.renderer import Renderer
 from viper_extract import DTClassifierModel
 from joblib import load
+from utils.python_play_wrapper import PythonFunctionWrapper
+from tree_play import play
 
 
 def flist(l):
@@ -35,9 +37,16 @@ def _load_interpreter(exp_name, path_provided):
         tree_path = Path("resources/interpreter_extract/extract_output", exp_name + "-extraction")
         tree = load(sorted(tree_path.glob("tree.interpreter"))[0])
         print("Loading interpreter tree from " + str(tree_path))
-        print(tree) 
 
     return tree
+
+def _load_python_file(exp_name, path_provided):
+    if path_provided:
+        python_file_path = Path(exp_name)
+        python_file = PythonFunctionWrapper(python_file_path)
+    else:
+        python_file = PythonFunctionWrapper(play)
+    return python_file
 
 # Helper function ensuring that a checkpoint has completed training
 def _ensure_completeness(path):
@@ -55,6 +64,7 @@ def main():
     hide_properties = flag_dictionary["hide_properties"]
     viper = flag_dictionary["viper"]
     interpreter = flag_dictionary["interpreter"]
+    python_file = flag_dictionary["python_file"]
     record = flag_dictionary["record"]
     nb_frames = flag_dictionary["nb_frames"]
     print_reward = flag_dictionary["print_reward"]
@@ -102,6 +112,12 @@ def main():
             model = _load_interpreter(interpreter, True)
         else:
             model = _load_interpreter(exp_name, False)
+    elif python_file:
+        print("loading python file of " + exp_name)
+        if isinstance(python_file, str):
+            model = _load_python_file(python_file, True)
+        else:
+            model = _load_python_file(exp_name, False)
     else:
         model = PPO.load(model_path)
     obs = env.reset()
