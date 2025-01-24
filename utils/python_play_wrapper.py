@@ -43,7 +43,7 @@ class PythonFunctionWrapper:
     
     def load_function(self):
         # go through the directory and find the file with the most recent modification time
-        file_list = [f for f in os.listdir(self.file_path) if f.endswith('.py') and f != '__init__.py']
+        file_list = [f for f in os.listdir(self.file_path) if f.endswith('.py')]
         file_list.sort(key=lambda x: os.path.getmtime(os.path.join(self.file_path, x)))
         module_name = os.path.splitext(file_list[-1])[0]
         spec = importlib.util.spec_from_file_location(module_name, os.path.join(self.file_path, module_name+".py"))
