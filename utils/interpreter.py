@@ -70,9 +70,10 @@ class Interpreter(DecisionTreeExtractor):
         nb_timesteps : int
             The number of environment transitions used for learning.
         """
-        print("Fitting tree nb {} ...".format(0))
         nb_iter = int(max(1, nb_timesteps // self.data_per_iter))
+        print("Collecting data...")
         S, A = self.collect_data()
+        print("Fitting tree nb {} ...".format(0))        
         self._learner.fit(S, A)
         self._policy = deepcopy(self._learner)
         S1, tree_reward = self.collect_data_dt(self._policy, self.data_per_iter)
@@ -82,7 +83,7 @@ class Interpreter(DecisionTreeExtractor):
         A = np.concatenate((A, self.model.predict(S1)[0]))
 
         for t in range(1, nb_iter):
-            print("Fitting tree nb {} ...".format(t + 1))
+            print("Fitting tree nb {} ...".format(t))
             self._learner.fit(S, A)
             S_tree, tree_reward = self.collect_data_dt(self._learner, self.data_per_iter) 
             if tree_reward > current_max_reward:

@@ -98,10 +98,10 @@ def main():
     vec_env.norm_reward = False
 
     if rule_extract == "interpreter":
-        MAX_DEPTH = 7
-        MAX_LEAVES = 12
-        NB_TIMESTEPS = 5e4
-        DATA_PER_ITER = 5000
+        MAX_DEPTH = None
+        MAX_LEAVES = 64
+        NB_TIMESTEPS = 5e4 * 2
+        DATA_PER_ITER = 5000 * 2
 
         clf = DecisionTreeClassifier(max_depth=MAX_DEPTH, max_leaf_nodes=MAX_LEAVES)
         learner = ObliqueDTPolicy(clf, vec_env)
