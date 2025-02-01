@@ -198,7 +198,7 @@ class ObliqueDTPolicy(Policy):
         Parameters
         ----------
         S : np.ndarray
-            The input observations.
+            The input observations. Each row represents an observation.
 
         Returns
         -------
@@ -206,9 +206,9 @@ class ObliqueDTPolicy(Policy):
             The original observations stacked with pairwise differences.
         """
         # Generate indices for the lower triangular part of the matrix
-        indices = np.tril_indices(self.observation_space.shape[0], k=-1)
+        indices = np.tril_indices(S.shape[1], k=-1)
         # Tile the rows to create matrices for subtraction
-        a_mat = np.tile(S[:, np.newaxis, :], (1, self.observation_space.shape[0], 1))
+        a_mat = np.tile(S[:, np.newaxis, :], (1, S.shape[1], 1))
         b_mat = np.transpose(a_mat, axes=(0, 2, 1))
 
         # Compute the differences and store them in the appropriate location in the result array
@@ -241,31 +241,16 @@ class ObliqueDTPolicy(Policy):
         state : object
             The updated state of the policy.
         """
-        if not is_vectorized_box_observation(obs, self.observation_space):
-            s_mat = np.tile(obs, (self.observation_space.shape[0], 1))
-            diff_s = s_mat - s_mat.T
-            obs = np.append(
-                obs, diff_s[np.tril_indices(self.observation_space.shape[0], k=-1)]
-            )
-            if isinstance(self.action_space, gym.spaces.Discrete):
-                action = self.clf.predict(obs.reshape(1, -1)).squeeze().astype(int)
-            else:
-                if self.action_space.shape[0] > 1:
-                    action = self.clf.predict(obs.reshape(1, -1)).squeeze()
-                else:
-                    action = self.clf.predict(obs.reshape(1, -1))
-            return action, state
+        if isinstance(self.action_space, gym.spaces.Discrete):
+            return self.clf.predict(self.get_oblique_data(obs)).astype(int), None
         else:
-            if isinstance(self.action_space, gym.spaces.Discrete):
-                return self.clf.predict(self.get_oblique_data(obs)).astype(int), None
+            if self.action_space.shape[0] > 1:
+                return self.clf.predict(self.get_oblique_data(obs)), None
             else:
-                if self.action_space.shape[0] > 1:
-                    return self.clf.predict(self.get_oblique_data(obs)), None
-                else:
-                    return (
-                        self.clf.predict(self.get_oblique_data(obs))[:, np.newaxis],
-                        None,
-                    )
+                return (
+                    self.clf.predict(self.get_oblique_data(obs))[:, np.newaxis],
+                    None,
+                )
 
     def fit(self, S, A):
         """

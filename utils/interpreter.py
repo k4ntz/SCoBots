@@ -6,6 +6,39 @@ from stable_baselines3.common.utils import check_for_correct_spaces
 import numpy as np
 from copy import deepcopy
 from tqdm import tqdm
+import yaml
+
+def mask_features(S, ff_file=None, flag=False, mask_indices=None):
+    """
+    Mask the features of the observation space.
+
+    Parameters
+    ----------
+    S : np.ndarray or list
+        The observations or Feature name list.
+    ff_file : str, optional
+
+    Returns
+    -------
+    S : np.ndarray
+        The masked observations.
+    """
+    if flag:
+        if isinstance(S, list):
+            S = [S[idx] for idx in mask_indices]
+        else:
+            S = np.array([s[mask_indices] for s in S])
+    else:
+        if ff_file:
+            with open(ff_file, 'r') as f:
+                config = yaml.safe_load(f)
+            mask_indices = config.get('FEATURE_MASK', {}).get('keep_indices', None)
+            if mask_indices:
+                if isinstance(S, list):
+                    S = [S[idx] for idx in mask_indices]
+                else:
+                    S = np.array([s[mask_indices] for s in S])
+    return S
 
 # edited from Interpreter repository
 class Interpreter(DecisionTreeExtractor):
@@ -43,7 +76,7 @@ class Interpreter(DecisionTreeExtractor):
         A list to store the rewards of the trained tree policies over iterations.
     """
 
-    def __init__(self, oracle, learner, env, data_per_iter=5000, **kwargs):
+    def __init__(self, oracle, learner, env, ff_file, data_per_iter=5000, **kwargs):
         assert isinstance(oracle, SB3Policy) and (
             isinstance(learner, DTPolicy) or isinstance(learner, ObliqueDTPolicy)
         )
@@ -51,6 +84,14 @@ class Interpreter(DecisionTreeExtractor):
         self._learner = learner
         self._policy = deepcopy(learner)
         self.max_tree_reward = float('-inf')
+        self._ff_file = ff_file
+        self.flag = False
+        self._mask_indices = None
+        if self._ff_file:
+            self.flag = True
+            with open(self._ff_file, 'r') as f:
+                config = yaml.safe_load(f)
+            self._mask_indices = config.get('FEATURE_MASK', {}).get('keep_indices', None)
 
         check_for_correct_spaces(
             self.env,
@@ -73,8 +114,11 @@ class Interpreter(DecisionTreeExtractor):
         nb_iter = int(max(1, nb_timesteps // self.data_per_iter))
         print("Collecting data...")
         S, A = self.collect_data()
+        S_masked = mask_features(S, self._ff_file, self.flag, self._mask_indices)
         print("Fitting tree nb {} ...".format(0))        
-        self._learner.fit(S, A)
+        print("S", S.shape)
+        print("S_masked", S_masked.shape[1])
+        self._learner.fit(S_masked, A)
         self._policy = deepcopy(self._learner)
         S1, tree_reward = self.collect_data_dt(self._policy, self.data_per_iter)
         print("Tree reward: {}".format(tree_reward))
@@ -84,7 +128,8 @@ class Interpreter(DecisionTreeExtractor):
 
         for t in range(1, nb_iter):
             print("Fitting tree nb {} ...".format(t))
-            self._learner.fit(S, A)
+            S_masked = mask_features(S, self._ff_file, self.flag, self._mask_indices)
+            self._learner.fit(S_masked, A)
             S_tree, tree_reward = self.collect_data_dt(self._learner, self.data_per_iter) 
             if tree_reward > current_max_reward:
                 current_max_reward = tree_reward
@@ -121,7 +166,8 @@ class Interpreter(DecisionTreeExtractor):
         S = np.zeros((nb_data, self.env.observation_space.shape[0]))
         s = self.env.reset()
         for i in tqdm(range(nb_data)):
-            action, _ = policy.predict(s)
+            s_masked = mask_features(s, self._ff_file, self.flag, self._mask_indices)
+            action, _ = policy.predict(s_masked)
             S[i] = s
             s, r, done, infos = self.env.step(action)
             ep_reward += r

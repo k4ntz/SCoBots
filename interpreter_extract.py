@@ -99,13 +99,13 @@ def main():
 
     if rule_extract == "interpreter":
         MAX_DEPTH = None
-        MAX_LEAVES = 64
-        NB_TIMESTEPS = 5e4 * 2
-        DATA_PER_ITER = 5000 * 2
+        MAX_LEAVES = 8
+        NB_TIMESTEPS = 5e4
+        DATA_PER_ITER = 5000
 
         clf = DecisionTreeClassifier(max_depth=MAX_DEPTH, max_leaf_nodes=MAX_LEAVES)
         learner = ObliqueDTPolicy(clf, vec_env)
-        interpreter = Interpreter(sb3_model_wrapped, learner, vec_env, data_per_iter=DATA_PER_ITER)
+        interpreter = Interpreter(sb3_model_wrapped, learner, vec_env,focus_dir / pruned_ff_name, data_per_iter=DATA_PER_ITER)
         interpreter.fit(NB_TIMESTEPS)
         print("Saving best tree with reward: " + str(interpreter.max_tree_reward))
         with open(output_path / f"tree_{MAX_LEAVES}_leaves.pkl", "wb") as f:

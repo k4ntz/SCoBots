@@ -39,13 +39,13 @@ def _load_interpreter(exp_name, path_provided):
 
     return tree
 
-def _load_python_file(exp_name, path_provided):
+def _load_python_file(exp_name, path_provided, ff_file=None):
     if path_provided:
         python_file_path = Path(exp_name)
-        python_file = PythonFunctionWrapper(python_file_path)
+        python_file = PythonFunctionWrapper(python_file_path, ff_file=ff_file)
     else:
         file_path = Path("resources/program_policies", exp_name+ "-extraction")
-        python_file = PythonFunctionWrapper(file_path)
+        python_file = PythonFunctionWrapper(file_path, ff_file=ff_file)
     return python_file
 
 # Helper function ensuring that a checkpoint has completed training
@@ -115,9 +115,9 @@ def main():
     elif python_file:
         print("loading python file of " + exp_name)
         if isinstance(python_file, str):
-            model = _load_python_file(python_file, True)
+            model = _load_python_file(python_file, True, ff_file_path / pruned_ff_name)
         else:
-            model = _load_python_file(exp_name, False)
+            model = _load_python_file(exp_name, False, ff_file_path / pruned_ff_name)
     else:
         model = PPO.load(model_path)
     obs = env.reset()
