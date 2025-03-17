@@ -5,7 +5,8 @@ from joblib import load
 from pathlib import Path
 import os
 from scobi import Environment
-from utils.interpreter import mask_features
+from utils.feature_utils import mask_features, auto_generate_mask
+import yaml
 
 
 def tree_to_code(tree):
@@ -62,30 +63,61 @@ def replace_feature_names(code, feature_names):
         code = code.replace(f"state[{i}]", feature_name)
     return code
 
-def get_feature_names(env_str, ff_file_path, pruned_ff_name):
+def get_feature_names(env, ff_file_path, pruned_ff_name):
     """
-    Get feature names from the environment.
-    """
-    env = Environment(env_str,
-                    focus_dir=ff_file_path,
-                    focus_file=pruned_ff_name,
-                    hide_properties=False,
-                    draw_features=True,
-                    reward=0)
+    get the feature names of the environment
     
-    feature_names = mask_features(env.get_vector_entry_descriptions(), ff_file_path + '/'+ pruned_ff_name)
-    feature_names = [name.replace("[t-1]", "_prev") for name in feature_names]
-    return feature_names
+    Parameters
+    ----------
+    env : Environment
+        the environment object
+    ff_file_path : str
+        the path of the feature filter configuration file
+    pruned_ff_name : str
+        the name of the feature filter configuration file
+    
+    Returns
+    -------
+    list
+        the filtered feature names
+    """
+    try:
+        # get the original feature descriptions
+        feature_descriptions = env.get_vector_entry_descriptions()
+        
+        # try to get the mask_indices from the configuration file
+        mask_indices = None
+        try:
+            with open(os.path.join(ff_file_path, pruned_ff_name), 'r') as f:
+                config = yaml.safe_load(f)
+            mask_indices = config.get('FEATURE_MASK', {}).get('keep_indices', None)
+        except (FileNotFoundError, yaml.YAMLError):
+            pass
+            
+        # if the configuration file does not exist or the mask_indices is not found, auto generate the mask_indices
+        if mask_indices is None:
+            mask_indices = auto_generate_mask(feature_descriptions)
+            
+        # apply the mask to get the filtered feature names
+        feature_names = mask_features(feature_descriptions, mask_indices)
+        
+        # replace the time suffix with _prev
+        feature_names = [name.replace("[t-1]", "_prev") for name in feature_names]
+        return feature_names
+        
+    except AttributeError:
+        print("Warning: Environment does not support get_vector_entry_descriptions")
+        return []
 
 def load_interpreter_tree(folder_name, name=None):
-    # load file with the most leaves
+    # load the file with the most leaves
     tree_files = [f for f in os.listdir(folder_name) if f.endswith(".pkl")]
     if name is None:
         try:
             tree_files.sort(key=lambda x: int(x.split("leaves")[0].split("tree")[-1]))
             tree = load(folder_name + "/" + tree_files[-1])
         except:
-            #choose the lastest file
+            # choose the latest file
             tree_files.sort(key=lambda x: os.path.getmtime(os.path.join(folder_name, x)))
             tree = load(folder_name + "/" + tree_files[-1])
         return tree
@@ -118,7 +150,7 @@ def main():
     parser.add_argument("-o", "--output", type=str, required=False, help="output file name")
     parser.add_argument("-g", "--game", type=str, required=False, help="game name")
     parser.add_argument("-ff", "--focus_file", type=str, required=False, help="focus file")
-
+    
     opts = parser.parse_args()
     tree = load_interpreter_tree(opts.input, opts.name)
     name = opts.input.split("/")[-1]
@@ -128,15 +160,21 @@ def main():
 
     output_file_path = Path("resources/program_policies", name, opts.output)
 
+    env_str = "ALE/" + opts.game + "-v5"
+    focus_dir = opts.focus_file.rsplit("/", 1)[0]
+    pruned_ff_name = opts.focus_file.split("/")[-1]
+
+    env = Environment(env_str,
+                    focus_dir=focus_dir,
+                    focus_file=pruned_ff_name,
+                    hide_properties=False,
+                    draw_features=True,
+                    reward=0)
+
     # Generate Python code for decision tree
     tree_code = tree_to_code(tree)
 
-    env_str = "ALE/" + opts.game + "-v5"
-    focus_dir = opts.focus_file.rsplit("/", 1)[0]
-    print(focus_dir)
-    pruned_ff_name = opts.focus_file.split("/")[-1]
-
-    orignal_features = get_feature_names(env_str, focus_dir, pruned_ff_name)
+    orignal_features = get_feature_names(env, focus_dir, pruned_ff_name)
     feature_names = get_oblique_data_strings(orignal_features)
     tree_code = replace_feature_names(tree_code, feature_names)
     variable_mapping_code = generate_variable_mapping(orignal_features)

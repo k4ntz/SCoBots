@@ -1,5 +1,6 @@
 from .policies import DTPolicy, SB3Policy, ObliqueDTPolicy
 from .viper import DecisionTreeExtractor
+from .feature_utils import mask_features, auto_generate_mask
 
 from stable_baselines3.common.utils import check_for_correct_spaces
 
@@ -7,38 +8,6 @@ import numpy as np
 from copy import deepcopy
 from tqdm import tqdm
 import yaml
-
-def mask_features(S, ff_file=None, flag=False, mask_indices=None):
-    """
-    Mask the features of the observation space.
-
-    Parameters
-    ----------
-    S : np.ndarray or list
-        The observations or Feature name list.
-    ff_file : str, optional
-
-    Returns
-    -------
-    S : np.ndarray
-        The masked observations.
-    """
-    if flag:
-        if isinstance(S, list):
-            S = [S[idx] for idx in mask_indices]
-        else:
-            S = np.array([s[mask_indices] for s in S])
-    else:
-        if ff_file:
-            with open(ff_file, 'r') as f:
-                config = yaml.safe_load(f)
-            mask_indices = config.get('FEATURE_MASK', {}).get('keep_indices', None)
-            if mask_indices:
-                if isinstance(S, list):
-                    S = [S[idx] for idx in mask_indices]
-                else:
-                    S = np.array([s[mask_indices] for s in S])
-    return S
 
 # edited from Interpreter repository
 class Interpreter(DecisionTreeExtractor):
@@ -58,6 +27,8 @@ class Interpreter(DecisionTreeExtractor):
         The environment in which the policies are evaluated (gym.Env).
     data_per_iter : int, optional
         The number of data points to generate per iteration (default is 5000).
+    use_original_obs : bool, optional
+        Whether to use original observations for tree training.
     kwargs : optional
 
     Attributes
@@ -76,7 +47,7 @@ class Interpreter(DecisionTreeExtractor):
         A list to store the rewards of the trained tree policies over iterations.
     """
 
-    def __init__(self, oracle, learner, env, ff_file, data_per_iter=5000, **kwargs):
+    def __init__(self, oracle, learner, env, ff_file, data_per_iter=5000, use_original_obs=False, feature_names = None, **kwargs):
         assert isinstance(oracle, SB3Policy) and (
             isinstance(learner, DTPolicy) or isinstance(learner, ObliqueDTPolicy)
         )
@@ -85,14 +56,35 @@ class Interpreter(DecisionTreeExtractor):
         self._policy = deepcopy(learner)
         self.max_tree_reward = float('-inf')
         self._ff_file = ff_file
-        self.flag = False
-        self._mask_indices = None
-        if self._ff_file:
-            self.flag = True
-            with open(self._ff_file, 'r') as f:
-                config = yaml.safe_load(f)
-            self._mask_indices = config.get('FEATURE_MASK', {}).get('keep_indices', None)
+        self.use_original_obs = use_original_obs
+        self._original_feature_names = feature_names
+        self._setup_masking()
+        self._validate_spaces()
 
+    def _setup_masking(self):
+        self._mask_indices = None
+        
+        try:
+            if self._ff_file:
+                with open(self._ff_file, 'r') as f:
+                    config = yaml.safe_load(f)
+                self._mask_indices = config.get('FEATURE_MASK', {}).get('keep_indices', None)
+        except (FileNotFoundError, yaml.YAMLError):
+            print(f"Failed to load feature mask configuration from {self._ff_file}, will generate mask automatically")
+        
+        # if no valid mask_indices is found, auto generate the mask
+        if self._mask_indices is None:
+            try:
+                feature_descriptions = self._original_feature_names
+                if feature_descriptions is None:
+                    raise AttributeError("No feature descriptions available")
+                self._mask_indices = auto_generate_mask(feature_descriptions)
+            except (AttributeError, TypeError) as e:
+                print(f"Warning: Failed to generate feature mask: {e}")
+                return
+            
+    def _validate_spaces(self):
+        """validate the space compatibility between the environment and the policy"""
         check_for_correct_spaces(
             self.env,
             self._policy.observation_space,
@@ -101,6 +93,14 @@ class Interpreter(DecisionTreeExtractor):
         check_for_correct_spaces(
             self.env, self.model.observation_space, self.model.action_space
         )
+
+    def _get_observation(self, env_obs):
+        """get the appropriate observation"""
+        if self.use_original_obs:
+            obs = self.env.get_original_obs()
+        else:
+            obs = env_obs
+        return mask_features(obs, self._mask_indices)
 
     def fit(self, nb_timesteps):
         """
@@ -113,24 +113,22 @@ class Interpreter(DecisionTreeExtractor):
         """
         nb_iter = int(max(1, nb_timesteps // self.data_per_iter))
         print("Collecting data...")
-        S, A = self.collect_data()
-        S_masked = mask_features(S, self._ff_file, self.flag, self._mask_indices)
+        S, A, S_masked = self.collect_data()
         print("Fitting tree nb {} ...".format(0))        
-        print("S", S.shape)
-        print("S_masked", S_masked.shape[1])
         self._learner.fit(S_masked, A)
         self._policy = deepcopy(self._learner)
-        S1, tree_reward = self.collect_data_dt(self._policy, self.data_per_iter)
+        S1, S_masked_new, tree_reward = self.collect_data_dt(self._policy, self.data_per_iter)
         print("Tree reward: {}".format(tree_reward))
         current_max_reward = tree_reward
         S = np.concatenate((S, S1))
         A = np.concatenate((A, self.model.predict(S1)[0]))
+        S_masked = np.concatenate((S_masked, S_masked_new))
 
         for t in range(1, nb_iter):
             print("Fitting tree nb {} ...".format(t))
-            S_masked = mask_features(S, self._ff_file, self.flag, self._mask_indices)
             self._learner.fit(S_masked, A)
-            S_tree, tree_reward = self.collect_data_dt(self._learner, self.data_per_iter) 
+            S_tree, S_masked_new, tree_reward = self.collect_data_dt(self._learner, self.data_per_iter) 
+            print("Tree reward: {}".format(tree_reward))
             if tree_reward > current_max_reward:
                 current_max_reward = tree_reward
                 self._policy = deepcopy(self._learner)
@@ -138,11 +136,28 @@ class Interpreter(DecisionTreeExtractor):
 
             S = np.concatenate((S, S_tree))
             A = np.concatenate((A, self.model.predict(S_tree)[0]))
+            S_masked = np.concatenate((S_masked, S_masked_new))
         self.max_tree_reward = current_max_reward
 
     def policy(self, obs):
         return self._policy.predict(obs)
-
+    
+    def collect_data(self):
+        S, A, S_masked = [], [], []
+        s = self.env.reset()
+        s_masked = self._get_observation(s)
+        for i in tqdm(range(self.data_per_iter)):
+            action = self.model.predict(s, deterministic=True)[0]
+            S.append(s[0]) #unvec
+            S_masked.append(s_masked[0]) #unvec
+            A.append(action[0]) #unvec
+            s, _, done, _ = self.env.step(action)
+            s_masked = self._get_observation(s)
+            if done:
+                s = self.env.reset()
+                s_masked = self._get_observation(s)
+        return np.array(S), np.array(A), np.array(S_masked)
+    
     def collect_data_dt(self, policy, nb_data):
         """
         Generate data by running the policy in the environment.
@@ -158,6 +173,8 @@ class Interpreter(DecisionTreeExtractor):
         -------
         S : np.ndarray
             Array of collected observations
+        S_masked : np.ndarray
+            Array of masked observations
         mean_reward : float
             Mean episode reward achieved by the policy
         """
@@ -165,16 +182,21 @@ class Interpreter(DecisionTreeExtractor):
         ep_reward = 0
         S = np.zeros((nb_data, self.env.observation_space.shape[0]))
         s = self.env.reset()
+        s_masked = self._get_observation(s)
+        S_masked = np.zeros((nb_data, s_masked[0].shape[0])) 
+
         for i in tqdm(range(nb_data)):
-            s_masked = mask_features(s, self._ff_file, self.flag, self._mask_indices)
             action, _ = policy.predict(s_masked)
             S[i] = s
+            S_masked[i] = s_masked[0]  # unvec
             s, r, done, infos = self.env.step(action)
+            s_masked = self._get_observation(s)
             ep_reward += r
             if done:
                 s = self.env.reset()
+                s_masked = self._get_observation(s)
                 episodes.append(ep_reward)
                 ep_reward = 0
         if len(episodes) < 1:
             episodes.append(ep_reward)
-        return S, np.mean(episodes)
+        return S, S_masked, np.mean(episodes)

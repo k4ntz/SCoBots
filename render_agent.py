@@ -9,6 +9,7 @@ from utils.renderer import Renderer
 from viper_extract import DTClassifierModel
 from joblib import load
 from utils.python_play_wrapper import PythonFunctionWrapper
+#from utils.python_play_wrapper_trace import PythonFunctionWrapperTrace as PythonFunctionWrapper
 
 
 def flist(l):
@@ -39,13 +40,13 @@ def _load_interpreter(exp_name, path_provided):
 
     return tree
 
-def _load_python_file(exp_name, path_provided, ff_file=None):
+def _load_python_file(exp_name, path_provided, ff_file=None, feature_descriptions=None):
     if path_provided:
         python_file_path = Path(exp_name)
-        python_file = PythonFunctionWrapper(python_file_path, ff_file=ff_file)
+        python_file = PythonFunctionWrapper(python_file_path, ff_file=ff_file, feature_descriptions=feature_descriptions)
     else:
         file_path = Path("resources/program_policies", exp_name+ "-extraction")
-        python_file = PythonFunctionWrapper(file_path, ff_file=ff_file)
+        python_file = PythonFunctionWrapper(file_path, ff_file=ff_file, feature_descriptions=feature_descriptions)
     return python_file
 
 # Helper function ensuring that a checkpoint has completed training
@@ -96,6 +97,7 @@ def main():
                           reward=0) #env reward only for evaluation
 
         _, _ = env.reset(seed=EVAL_ENV_SEED)
+        feature_descriptions = env.get_vector_entry_descriptions()
         dummy_vecenv = DummyVecEnv([lambda :  env])
         env = VecNormalize.load(vecnorm_path, dummy_vecenv)
         env.training = False
@@ -115,9 +117,9 @@ def main():
     elif python_file:
         print("loading python file of " + exp_name)
         if isinstance(python_file, str):
-            model = _load_python_file(python_file, True, ff_file_path / pruned_ff_name)
+            model = _load_python_file(python_file, True, ff_file_path / pruned_ff_name, feature_descriptions)
         else:
-            model = _load_python_file(exp_name, False, ff_file_path / pruned_ff_name)
+            model = _load_python_file(exp_name, False, ff_file_path / pruned_ff_name, feature_descriptions)
     else:
         model = PPO.load(model_path)
     obs = env.reset()

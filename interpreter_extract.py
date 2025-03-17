@@ -91,6 +91,7 @@ def main():
     # Original SB3 Model Eval and Trainset Generation
     model = PPO.load(model_path, device="cuda:0")
     sb3_model_wrapped = SB3Policy(model)
+    feature_names = env.get_vector_entry_descriptions()
     dummy_vecenv = DummyVecEnv([lambda :  env])
     vec_env = VecNormalize.load(vecnorm_path, dummy_vecenv)
     vec_env.seed = EVAL_ENV_SEED
@@ -99,13 +100,17 @@ def main():
 
     if rule_extract == "interpreter":
         MAX_DEPTH = None
-        MAX_LEAVES = 8
-        NB_TIMESTEPS = 5e4
-        DATA_PER_ITER = 5000
+        MAX_LEAVES = 16
+        NB_TIMESTEPS = 5e4 * 3
+        DATA_PER_ITER = 5000 
 
         clf = DecisionTreeClassifier(max_depth=MAX_DEPTH, max_leaf_nodes=MAX_LEAVES)
         learner = ObliqueDTPolicy(clf, vec_env)
-        interpreter = Interpreter(sb3_model_wrapped, learner, vec_env,focus_dir / pruned_ff_name, data_per_iter=DATA_PER_ITER)
+        feature_descriptions = env.get_vector_entry_descriptions()
+        interpreter = Interpreter(sb3_model_wrapped, learner, vec_env, focus_dir / pruned_ff_name, 
+                               data_per_iter=DATA_PER_ITER, 
+                               use_original_obs=False, 
+                               feature_names=feature_descriptions)
         interpreter.fit(NB_TIMESTEPS)
         print("Saving best tree with reward: " + str(interpreter.max_tree_reward))
         with open(output_path / f"tree_{MAX_LEAVES}_leaves.pkl", "wb") as f:
