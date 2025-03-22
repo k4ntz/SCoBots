@@ -101,7 +101,7 @@ def main():
     if rule_extract == "interpreter":
         MAX_DEPTH = None
         MAX_LEAVES = 16
-        NB_TIMESTEPS = 5e4 * 3
+        NB_TIMESTEPS = 5e4
         DATA_PER_ITER = 5000 
 
         clf = DecisionTreeClassifier(max_depth=MAX_DEPTH, max_leaf_nodes=MAX_LEAVES)

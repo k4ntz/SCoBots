@@ -8,6 +8,10 @@ import numpy as np
 from copy import deepcopy
 from tqdm import tqdm
 import yaml
+import time
+from pathlib import Path
+from joblib import dump
+from operator import itemgetter
 
 # edited from Interpreter repository
 class Interpreter(DecisionTreeExtractor):
@@ -60,6 +64,11 @@ class Interpreter(DecisionTreeExtractor):
         self._original_feature_names = feature_names
         self._setup_masking()
         self._validate_spaces()
+        
+        self.list_eval = []  
+        self.times = []      
+        
+        self.best_dt = None
 
     def _setup_masking(self):
         self._mask_indices = None
@@ -111,6 +120,7 @@ class Interpreter(DecisionTreeExtractor):
         nb_timesteps : int
             The number of environment transitions used for learning.
         """
+        start_time = time.time()
         nb_iter = int(max(1, nb_timesteps // self.data_per_iter))
         print("Collecting data...")
         S, A, S_masked = self.collect_data()
@@ -118,8 +128,16 @@ class Interpreter(DecisionTreeExtractor):
         self._learner.fit(S_masked, A)
         self._policy = deepcopy(self._learner)
         S1, S_masked_new, tree_reward = self.collect_data_dt(self._policy, self.data_per_iter)
-        print("Tree reward: {}".format(tree_reward))
-        current_max_reward = tree_reward
+        self.times.append(time.time() - start_time)
+        
+        print("Tree {} Evaluation: {}".format(0, tree_reward))
+        self.list_eval.append(tree_reward)
+        
+        # initialize best tree
+        self.max_tree_reward = tree_reward
+        self.best_dt = deepcopy(self._learner)
+        print(f"New best tree reward: {tree_reward}")
+        
         S = np.concatenate((S, S1))
         A = np.concatenate((A, self.model.predict(S1)[0]))
         S_masked = np.concatenate((S_masked, S_masked_new))
@@ -127,17 +145,23 @@ class Interpreter(DecisionTreeExtractor):
         for t in range(1, nb_iter):
             print("Fitting tree nb {} ...".format(t))
             self._learner.fit(S_masked, A)
-            S_tree, S_masked_new, tree_reward = self.collect_data_dt(self._learner, self.data_per_iter) 
-            print("Tree reward: {}".format(tree_reward))
-            if tree_reward > current_max_reward:
-                current_max_reward = tree_reward
+            S_tree, S_masked_new, tree_reward = self.collect_data_dt(self._learner, self.data_per_iter)
+            self.times.append(time.time() - start_time)
+            
+            print("Tree {} Evaluation: {}".format(t, tree_reward))
+            self.list_eval.append(tree_reward)
+            
+            if tree_reward > self.max_tree_reward:
+                self.max_tree_reward = tree_reward
                 self._policy = deepcopy(self._learner)
+                self.best_dt = deepcopy(self._learner)
                 print("New best tree reward: {}".format(tree_reward))
 
             S = np.concatenate((S, S_tree))
             A = np.concatenate((A, self.model.predict(S_tree)[0]))
             S_masked = np.concatenate((S_masked, S_masked_new))
-        self.max_tree_reward = current_max_reward
+            
+        print(f"Training completed, best tree reward: {self.max_tree_reward}")
 
     def policy(self, obs):
         return self._policy.predict(obs)
@@ -200,3 +224,25 @@ class Interpreter(DecisionTreeExtractor):
         if len(episodes) < 1:
             episodes.append(ep_reward)
         return S, S_masked, np.mean(episodes)
+    
+    def save_best_tree(self, out_path):
+        """
+        Only save the best decision tree to the specified path
+        
+        Parameters
+        ----------
+        out_path : Path
+            Output path
+        """
+        out_path.mkdir(parents=True, exist_ok=True)
+        
+        # save the best tree found during training
+        best_fpath = f"best_tree_reward-{self.max_tree_reward:.2f}.interpreter"
+        dump(self.best_dt, out_path / best_fpath)
+        
+        # save the evaluation results of the best tree
+        eval_info_path = out_path / "best_tree_info.txt"
+        with open(eval_info_path, "w") as f:
+            f.write(f"Best tree reward: {self.max_tree_reward}\n")
+            f.write(f"Training iterations: {len(self.list_eval)}\n")
+            f.write(f"Training time: {self.times[-1]:.2f} seconds\n")
