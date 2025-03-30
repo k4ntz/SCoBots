@@ -7,7 +7,7 @@ This branch contains three main tool sets:
 ### 1. Decision Tree Extraction Tools
 
 - **Interpreter**: Uses the Interpreter algorithm to automatically generate feature combinations through pairwise differences. [Details](README_interpreter.md)
-- **VIPER**: Uses the VIPER algorithm to extract decision trees from neural network policies. [Details](README_viper.md)
+- **VIPER**: Uses the VIPER algorithm to extract decision trees with denormalized enviroment.
 
 ### 2. Code Generation Tools
 
@@ -34,10 +34,13 @@ python render_agent.py -g Pong -r human -s 0 -p default --python_file <path_to_g
 
 ### VIPER Workflow
 ```bash
-# 1. Generate Python code (from existing VIPER tree)
+# 1.(Optional) Extract decision tree using denormalized Env
+python extract_viper_denormalized.py -g Pong -m resources/checkpoints/Pong_seed0_reward-human_oc_pruned -o resources/viper_denormalized -f pruned_pong.yaml
+
+# 2. Generate Python code (from existing VIPER tree)
 python tree2code_viper.py -i resources/viper_extracts/extract_output/Pong_seed0_reward-human_oc_pruned-extraction/viper_trees -g Pong -m readable
 
-# 2. Visualize the generated Python code
+# 3. Visualize the generated Python code
 python render_agent.py -g Pong -r human -s 0 -p default --python_file <path_to_generated_file>
 ```
 

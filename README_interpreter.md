@@ -4,7 +4,7 @@ This repository contains tools for extracting interpretable decision trees from 
 
 ## Key Features
 
-- **Denormalized Environment Support**: Works best with denormalized environments, allowing for more accurate feature combination calculations.
+- **Denormalized Environment Support (default)**: Works best with denormalized environments, allowing for more accurate feature combination calculations.
 - **Automatic Feature Filtering**: Filters out combined features from the environment and focus files, using only original features.
 - **Pairwise Difference Combinations**: Automatically generates feature combinations through pairwise differences as described in the Interpreter paper.
 - **Decision Tree Extraction**: Trains decision trees that can approximate the behavior of neural network policies.
