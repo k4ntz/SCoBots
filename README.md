@@ -1,3 +1,68 @@
+# New Features
+
+## Overview
+
+This branch contains three main tool sets:
+
+### 1. Decision Tree Extraction Tools
+
+- **Interpreter**: Uses the Interpreter algorithm to automatically generate feature combinations through pairwise differences. [Details](README_interpreter.md)
+- **VIPER**: Uses the VIPER algorithm to extract decision trees from neural network policies. [Details](README_viper.md)
+
+### 2. Code Generation Tools
+
+- **tree2code.py**: Converts Interpreter-extracted decision trees into Python code. [Details](README_interpreter.md)
+- **tree2code_viper.py**: Converts VIPER-extracted decision trees into Python code in three different formats. [Details](README_viper.md)
+
+### 3. Visualization Tools
+
+- **render_agent.py**: Visualizes and interactively runs the generated Python policy code. [Details](README_render_pythonfile.md)
+
+## Quick Start
+
+### Interpreter Workflow
+```bash
+# 1. Extract decision tree
+python interpreter_extract.py -i resources/checkpoints/Pong_seed0_reward-human_oc_pruned -r interpreter
+
+# 2. Generate Python code
+python tree2code.py -i resources/interpreter_extract/extract_output/Pong_seed0_reward-human_oc_pruned-extraction -g Pong -ff resources/focusfiles/pruned_pong.yaml
+
+# 3. Visualize the generated Python code
+python render_agent.py -g Pong -r human -s 0 -p default --python_file <path_to_generated_file>
+```
+
+### VIPER Workflow
+```bash
+# 1. Generate Python code (from existing VIPER tree)
+python tree2code_viper.py -i resources/viper_extracts/extract_output/Pong_seed0_reward-human_oc_pruned-extraction/viper_trees -g Pong -m readable
+
+# 2. Visualize the generated Python code
+python render_agent.py -g Pong -r human -s 0 -p default --python_file <path_to_generated_file>
+```
+
+## Key Features
+
+- **Denormalized Environment Support**: Both methods perform best in denormalized environments
+- **Execution Visualization**: Real-time view of code execution paths to understand decision processes
+- **Multiple Generation Formats**: Includes standard, high-performance, and readable code generation formats
+- **Automatic Feature Combination**: Interpreter automatically generates feature combinations through pairwise differences
+
+## Detailed Documentation
+
+- [Interpreter Extraction and Code Generation](README_interpreter.md)
+- [VIPER Code Generation](README_viper.md)
+- [Python Policy Visualization](README_render_pythonfile.md)
+
+## Notes
+
+1. Standard mode code works best in denormalized environments
+2. To enable code execution visualization, modify the import statement in render_agent.py
+3. Ensure extraction and code generation use the same focus file to maintain consistency
+---
+&nbsp;
+# Original README
+---
 # Successive Concept Bottleneck Agent SCoBot
 ## Installation And Requirements
 Scobots needs OCAtari and the local var ```'SCOBI_OBJ_EXTRACTOR'``` set as either ```OC_Atari``` or ```Noisy_OC_Atari```. If not set it will automatically resort to ```OC_Atari```. Python version ```3.8.x``` is recommended if planning to use our RGB agents.

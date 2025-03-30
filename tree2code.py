@@ -112,6 +112,7 @@ def get_feature_names(env, ff_file_path, pruned_ff_name):
 def load_interpreter_tree(folder_name, name=None):
     # load the file with the most leaves
     tree_files = [f for f in os.listdir(folder_name) if f.endswith(".pkl")]
+    print(tree_files)
     if name is None:
         try:
             tree_files.sort(key=lambda x: int(x.split("leaves")[0].split("tree")[-1]))
