@@ -14,6 +14,7 @@ class PythonFunctionWrapper:
         self._ff_file = ff_file
         self._mask_indices = None
         self._feature_descriptions = feature_descriptions
+        self._is_viper = False
         self.load_function()
         self._setup_masking()
         
@@ -36,7 +37,8 @@ class PythonFunctionWrapper:
                 print(f"Failed to generate feature mask: {e}")
         
     def predict(self, obs, deterministic=True):
-        obs = mask_features(obs, self._mask_indices)
+        if not self._is_viper:
+            obs = mask_features(obs, self._mask_indices)
         state = obs[0]
         return np.array([self.play_function(state)]), None
     
@@ -50,6 +52,8 @@ class PythonFunctionWrapper:
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
                 self.play_function = module.play
+                if "viper" in module_name:
+                    self._is_viper = True
                 print("Loaded function from " + str(module_name+".py"))
             else:
                 raise ValueError("The file is not a python file")

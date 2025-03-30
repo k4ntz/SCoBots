@@ -146,6 +146,7 @@ class PythonFunctionWrapperTrace:
         self._mask_indices = None
         self._feature_descriptions = feature_descriptions
         self.current_line = None
+        self._is_viper = False
         self.app = Flask(__name__)
         self.setup_trace_window()
         self.load_function()
@@ -157,8 +158,6 @@ class PythonFunctionWrapperTrace:
             file_path = self.file_path
         else:
             file_path = Path(self.file_path)
-        if file_path.is_dir():
-            file_path = file_path / "play_python_32_leaves.py"
         
         with open(file_path, 'r') as f:
             self.code = f.readlines()
@@ -206,8 +205,7 @@ class PythonFunctionWrapperTrace:
             return self.trace_calls
         
         filename = frame.f_code.co_filename
-        if filename.endswith('play_python_32_leaves.py'):
-            self.current_line = frame.f_lineno
+        self.current_line = frame.f_lineno
         
         return self.trace_calls
     
@@ -229,7 +227,8 @@ class PythonFunctionWrapperTrace:
                 print(f"Failed to generate feature mask: {e}")
     
     def predict(self, obs, deterministic=True):
-        obs = mask_features(obs, self._mask_indices)
+        if not self._is_viper:
+            obs = mask_features(obs, self._mask_indices)
         state = obs[0]
         
         # set the tracing
@@ -247,6 +246,8 @@ class PythonFunctionWrapperTrace:
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
                 self.play_function = module.play
+                if "viper" in module_name:
+                    self._is_viper = True
                 print("Loaded function from " + str(module_name+".py"))
             else:
                 raise ValueError("The file is not a python file")
@@ -258,4 +259,6 @@ class PythonFunctionWrapperTrace:
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
             self.play_function = module.play
+            if "viper" in module_name:
+                self._is_viper = True
             print("Loaded function from " + str(module_name+".py")) 
